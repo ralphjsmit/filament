@@ -10,6 +10,7 @@
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
+    'formId' => null,
     'grouped' => false,
     'href' => null,
     'icon' => null,
@@ -61,9 +62,9 @@
             // @deprecated `fi-btn-color-*` has been replaced by `fi-color-*` and `fi-color-custom`.
             is_string($color) ? "fi-btn-color-{$color}" : null,
             is_string($color) ? "fi-color-{$color}" : null,
-            "fi-size-{$size->value}" => $size instanceof ActionSize,
+            ($size instanceof ActionSize) ? "fi-size-{$size->value}" : null,
             // @deprecated `fi-btn-size-*` has been replaced by `fi-size-*`.
-            "fi-btn-size-{$size->value}" => $size instanceof ActionSize,
+            ($size instanceof ActionSize) ? "fi-btn-size-{$size->value}" : null,
             match ($size) {
                 ActionSize::ExtraSmall => 'gap-1 px-2 py-1.5 text-xs',
                 ActionSize::Small => 'gap-1 px-2.5 py-1.5 text-sm',
@@ -97,7 +98,7 @@
                     'ring-1 ring-gray-950/10 dark:ring-white/20' => (($color === 'gray') || ($tag === 'label')) && (! $grouped),
                     'bg-custom-600 text-white hover:bg-custom-500 focus-visible:ring-custom-500/50 dark:bg-custom-500 dark:hover:bg-custom-400 dark:focus-visible:ring-custom-400/50' => ($color !== 'gray') && ($tag !== 'label'),
                     '[input:checked+&]:bg-custom-600 [input:checked+&]:text-white [input:checked+&]:ring-0 [input:checked+&]:hover:bg-custom-500 dark:[input:checked+&]:bg-custom-500 dark:[input:checked+&]:hover:bg-custom-400 [input:checked:focus-visible+&]:ring-custom-500/50 dark:[input:checked:focus-visible+&]:ring-custom-400/50 [input:focus-visible+&]:z-10 [input:focus-visible+&]:ring-2 [input:focus-visible+&]:ring-gray-950/10 dark:[input:focus-visible+&]:ring-white/20' => ($color !== 'gray') && ($tag === 'label'),
-                ]
+                    ]
         ),
     ]);
 
@@ -148,6 +149,7 @@
         :color="$color"
         :disabled="$disabled"
         :form="$form"
+        :form-id="$formId"
         :href="$href"
         :icon="$icon"
         :icon-alias="$iconAlias"
@@ -156,6 +158,7 @@
         :label="$slot"
         :size="$size"
         :tag="$tag"
+        :target="$target"
         :tooltip="$tooltip"
         :type="$type"
         :class="
@@ -180,7 +183,8 @@
         x-data="{}"
     @endif
     @if ($keyBindings)
-        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+        x-bind:id="$id('key-bindings')"
+        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
     @endif
     @if ($hasTooltip)
         x-tooltip="{
@@ -212,6 +216,7 @@
         $attributes
             ->merge([
                 'disabled' => $disabled,
+                'form' => $formId,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,

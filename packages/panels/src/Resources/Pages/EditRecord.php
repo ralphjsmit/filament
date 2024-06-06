@@ -9,6 +9,8 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
@@ -21,6 +23,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Js;
 use Throwable;
 
 use function Filament\Support\is_app_url;
@@ -111,7 +114,7 @@ class EditRecord extends Page
     /**
      * @param  array<string>  $attributes
      */
-    protected function refreshFormData(array $attributes): void
+    public function refreshFormData(array $attributes): void
     {
         $this->data = [
             ...$this->data,
@@ -128,7 +131,7 @@ class EditRecord extends Page
         return $data;
     }
 
-    public function save(bool $shouldRedirect = true): void
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         $this->authorizeAccess();
 
@@ -137,7 +140,56 @@ class EditRecord extends Page
 
             $this->callHook('beforeValidate');
 
-            $data = $this->form->getState();
+            $data = $this->form->getState(afterValidate: function () {
+                $this->callHook('afterValidate');
+
+                $this->callHook('beforeSave');
+            });
+
+            $data = $this->mutateFormDataBeforeSave($data);
+
+            $this->handleRecordUpdate($this->getRecord(), $data);
+
+            $this->callHook('afterSave');
+
+            $this->commitDatabaseTransaction();
+        } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $this->rollBackDatabaseTransaction() :
+                $this->commitDatabaseTransaction();
+
+            return;
+        } catch (Throwable $exception) {
+            $this->rollBackDatabaseTransaction();
+
+            throw $exception;
+        }
+
+        $this->rememberData();
+
+        if ($shouldSendSavedNotification) {
+            $this->getSavedNotification()?->send();
+        }
+
+        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+        }
+    }
+
+    public function saveFormComponentOnly(Component $component): void
+    {
+        $this->authorizeAccess();
+
+        try {
+            $this->beginDatabaseTransaction();
+
+            $this->callHook('beforeValidate');
+
+            $data = ComponentContainer::make($component->getLivewire())
+                ->schema([$component])
+                ->model($component->getRecord())
+                ->statePath($this->getFormStatePath())
+                ->getState();
 
             $this->callHook('afterValidate');
 
@@ -163,12 +215,6 @@ class EditRecord extends Page
         }
 
         $this->rememberData();
-
-        $this->getSavedNotification()?->send();
-
-        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
-        }
     }
 
     protected function getSavedNotification(): ?Notification
@@ -313,7 +359,7 @@ class EditRecord extends Page
     {
         return Action::make('cancel')
             ->label(__('filament-panels::resources/pages/edit-record.form.actions.cancel.label'))
-            ->url($this->previousUrl ?? static::getResource()::getUrl())
+            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? static::getResource()::getUrl()) . ')')
             ->color('gray');
     }
 

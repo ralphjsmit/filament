@@ -200,8 +200,6 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-> Please note: this feature is not compatible with [SPA mode](#spa-mode).
-
 ## Enabling database transactions
 
 By default, Filament does not wrap operations in database transactions, and allows the user to enable this themselves when they have tested to ensure that their operations are safe to be wrapped in a transaction. However, you can enable database transactions at once for all operations by using the `databaseTransactions()` method:
@@ -217,11 +215,11 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-For any actions you do not want to be wrapped in a transaction, you can use the `databaseTransactions(false)` method:
+For any actions you do not want to be wrapped in a transaction, you can use the `databaseTransaction(false)` method:
 
 ```php
 CreateAction::make()
-    ->databaseTransactions(false)
+    ->databaseTransaction(false)
 ```
 
 And for any pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `false` on the page class:
@@ -241,11 +239,11 @@ class CreatePost extends CreateRecord
 
 Instead of enabling database transactions everywhere and opting out of them for specific actions and pages, you can opt in to database transactions for specific actions and pages.
 
-For actions, you can use the `databaseTransactions()` method:
+For actions, you can use the `databaseTransaction()` method:
 
 ```php
 CreateAction::make()
-    ->databaseTransactions()
+    ->databaseTransaction()
 ```
 
 For pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `true` on the page class:
@@ -342,5 +340,20 @@ public function panel(Panel $panel): Panel
         ->authMiddleware([
             // ...
         ], isPersistent: true);
+}
+```
+
+## Disabling broadcasting
+
+By default, Laravel Echo will automatically connect for every panel, if credentials have been set up in the [published `config/filament.php` configuration file](installation#publishing-configuration). To disable this automatic connection in a panel, you can use the `broadcasting(false)` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->broadcasting(false);
 }
 ```

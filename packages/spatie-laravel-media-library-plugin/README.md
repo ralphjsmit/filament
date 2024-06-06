@@ -66,9 +66,9 @@ The base file upload component also has configuration options for setting the `d
 
 ### Reordering files
 
-In addition to the behaviour of the normal file upload, Spatie's Media Library also allows users to reorder files.
+In addition to the behavior of the normal file upload, Spatie's Media Library also allows users to reorder files.
 
-To enable this behaviour, use the `reorderable()` method:
+To enable this behavior, use the `reorderable()` method:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -198,7 +198,16 @@ SpatieMediaLibraryImageColumn::make('avatar')
     ->collection('avatars')
 ```
 
-The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) you to group files into categories.
+The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) allows you to group files into categories.
+
+By default, only media without a collection (using the `default` collection) will be shown. If you want to show media from all collections, you can use the `allCollections()` method:
+
+```php
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+
+SpatieMediaLibraryImageColumn::make('avatar')
+    ->allCollections()
+```
 
 ### Using conversions
 
@@ -234,7 +243,16 @@ SpatieMediaLibraryImageEntry::make('avatar')
     ->collection('avatars')
 ```
 
-The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) you to group files into categories.
+The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) allows you to group files into categories.
+
+By default, only media without a collection (using the `default` collection) will be shown. If you want to show media from all collections, you can use the `allCollections()` method:
+
+```php
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+
+SpatieMediaLibraryImageEntry::make('avatar')
+    ->allCollections()
+```
 
 ### Using conversions
 

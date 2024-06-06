@@ -9,6 +9,7 @@
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
+    'formId' => null,
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
@@ -41,7 +42,8 @@
     }
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-70',
+        'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2',
+        'pointer-events-none opacity-70' => $disabled,
         ...match ($size) {
             ActionSize::ExtraSmall => [
                 match ($iconSize) {
@@ -126,7 +128,8 @@
             x-data="{}"
         @endif
         @if ($keyBindings)
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+            x-bind:id="$id('key-bindings')"
+            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
         @endif
         @if ($hasTooltip)
             x-tooltip="{
@@ -138,6 +141,7 @@
             $attributes
                 ->merge([
                     'disabled' => $disabled,
+                    'form' => $formId,
                     'type' => $type,
                 ], escape: false)
                 ->merge([
@@ -194,7 +198,8 @@
             x-data="{}"
         @endif
         @if ($keyBindings)
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+            x-bind:id="$id('key-bindings')"
+            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
         @endif
         @if ($hasTooltip)
             x-tooltip="{
