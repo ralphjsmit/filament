@@ -258,7 +258,7 @@ use App\Models\Author;
 use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('author')
-    ->relationship(resolveUsing: function (array $state): ?Author {
+    ->relationship(resolveUsing: function (string $state): ?Author {
         return Author::query()
             ->where('email', $state)
             ->orWhere('username', $state)
@@ -273,7 +273,7 @@ use App\Models\Author;
 use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('author')
-    ->relationship(resolveUsing: function (array $state): ?Author {
+    ->relationship(resolveUsing: function (string $state): ?Author {
         if (filter_var($state, FILTER_VALIDATE_EMAIL)) {
             return 'email';
         }
@@ -492,6 +492,15 @@ use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('sku')
     ->example('ABC123')
+```
+
+Or if you want to add more than one example row, you can pass an array to the `examples()` method:
+
+```php
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('sku')
+    ->examples(['ABC123', 'DEF456'])
 ```
 
 By default, the name of the column is used in the header of the example CSV. You can customize the header per-column using `exampleHeader()`:

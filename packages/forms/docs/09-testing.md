@@ -145,6 +145,17 @@ it('has a title field', function () {
 });
 ```
 
+To assert that a form does not have a given field, pass the field name to `assertFormFieldDoesNotExist()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('does not have a conditional field', function () {
+    livewire(CreatePost::class)
+        ->assertFormFieldDoesNotExist('no-such-field');
+});
+```
+
 > If you have multiple forms on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
 
 ### Hidden fields
@@ -198,6 +209,82 @@ test('title is disabled', function () {
 ```
 
 > For both `assertFormFieldIsEnabled()` and `assertFormFieldIsDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldIsEnabled('title', 'createPostForm')`.
+
+## Layout components
+
+If you need to check if a particular layout component exists rather than a field, you may use `assertFormComponentExists()`.  As layout components do not have names, this method uses the `key()` provided by the developer:
+
+```php
+use Filament\Forms\Components\Section;
+
+Section::make('Comments')
+    ->key('comments-section')
+    ->schema([
+        //
+    ])
+```
+
+```php
+use function Pest\Livewire\livewire;
+
+test('comments section exists' function () {
+    livewire(EditPost::class)
+        ->assertFormComponentExists('comments-section');
+});
+```
+
+To assert that a form does not have a given component, pass the component key to `assertFormComponentDoesNotExist()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('does not have a conditional component', function () {
+    livewire(CreatePost::class)
+        ->assertFormComponentDoesNotExist('no-such-section');
+});
+```
+
+To check if the component exists and passes a given truth test, you can pass a function to the second argument of `assertFormComponentExists()`, returning true or false if the component passes the test or not:
+
+```php
+use Filament\Forms\Components\Component;
+
+use function Pest\Livewire\livewire;
+
+test('comments section has heading' function () {
+    livewire(EditPost::class)
+        ->assertFormComponentExists(
+            'comments-section',
+            function (Component $component): bool {
+                return $component->getHeading() === 'Comments';
+            },
+        );
+});
+```
+
+If you want more informative test results, you can embed an assertion within your truth test callback:
+
+```php
+use Filament\Forms\Components\Component;
+use Illuminate\Testing\Assert;
+
+use function Pest\Livewire\livewire;
+
+test('comments section is enabled' function () {
+    livewire(EditPost::class)
+        ->assertFormComponentExists(
+            'comments-section',
+            function (Component $component): bool {
+                Assert::assertTrue(
+                    $component->isEnabled(),
+                    'Failed asserting that comments-section is enabled.',
+                );
+                
+                return true;
+            },
+        );
+});
+```
 
 ## Actions
 
