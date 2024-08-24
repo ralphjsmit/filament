@@ -894,6 +894,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 }
 
                 $recordsToDelete[] = $keyToCheckForDeletion;
+                $existingRecords->forget("record-{$keyToCheckForDeletion}");
             }
 
             $relationship
@@ -942,13 +943,16 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 if ($translatableContentDriver) {
                     $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
                 } else {
-                    $record = new $relatedModel();
+                    $record = new $relatedModel;
                     $record->fill($itemData);
                 }
 
                 $record = $relationship->save($record);
                 $item->model($record)->saveRelationships();
+                $existingRecords->push($record);
             }
+
+            $component->getRecord()->setRelation($component->getRelationshipName(), $existingRecords);
         });
 
         $this->dehydrated(false);

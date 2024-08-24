@@ -37,8 +37,7 @@ abstract class Importer
         protected Import $import,
         protected array $columnMap,
         protected array $options,
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array<string, mixed>  $data
@@ -57,6 +56,12 @@ abstract class Importer
             return;
         }
 
+        $recordExists = $this->record->exists;
+
+        if (! $recordExists) {
+            $this->checkColumnMappingRequirementsForNewRecords();
+        }
+
         $this->callHook('beforeValidate');
         $this->validateData();
         $this->callHook('afterValidate');
@@ -64,8 +69,6 @@ abstract class Importer
         $this->callHook('beforeFill');
         $this->fillRecord();
         $this->callHook('afterFill');
-
-        $recordExists = $this->record->exists;
 
         $this->callHook('beforeSave');
         $this->callHook($recordExists ? 'beforeUpdate' : 'beforeCreate');
@@ -97,6 +100,31 @@ abstract class Importer
         $this->data = $data;
     }
 
+    /**
+     * @throws ValidationException
+     */
+    public function checkColumnMappingRequirementsForNewRecords(): void
+    {
+        foreach ($this->getCachedColumns() as $column) {
+            $columnName = $column->getName();
+
+            if (filled($this->columnMap[$columnName] ?? null)) {
+                continue;
+            }
+
+            if (! $column->isMappingRequiredForNewRecordsOnly()) {
+                continue;
+            }
+
+            Validator::validate(
+                data: [$columnName => null],
+                rules: [$columnName => ['required']],
+                messages: ["{$columnName}.required" => __('filament-actions::import.failure_csv.column_mapping_required_for_new_record')],
+                attributes: [$columnName => $column->getLabel()],
+            );
+        }
+    }
+
     public function castData(): void
     {
         foreach ($this->getCachedColumns() as $column) {
@@ -126,14 +154,12 @@ abstract class Importer
      */
     public function validateData(): void
     {
-        $validator = Validator::make(
+        Validator::validate(
             $this->data,
             $this->getValidationRules(),
             $this->getValidationMessages(),
             $this->getValidationAttributes(),
         );
-
-        $validator->validate();
     }
 
     /**

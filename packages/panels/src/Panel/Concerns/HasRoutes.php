@@ -167,13 +167,13 @@ trait HasRoutes
 
     public function getUrl(?Model $tenant = null): ?string
     {
-        if (! $this->auth()->check()) {
-            return $this->hasLogin() ? $this->getLoginUrl() : url($this->getPath());
+        if ((! $this->auth()->check()) && $this->hasLogin()) {
+            return $this->getLoginUrl();
         }
 
         $hasTenancy = $this->hasTenancy();
 
-        if ((! $tenant) && $hasTenancy) {
+        if ((! $tenant) && $hasTenancy && $this->auth()->hasUser()) {
             $tenant = Filament::getUserDefaultTenant($this->auth()->user());
         }
 
@@ -188,7 +188,7 @@ trait HasRoutes
             Filament::setTenant($tenant, isQuiet: true);
         }
 
-        $this->navigationManager = new NavigationManager();
+        $this->navigationManager = new NavigationManager;
 
         $navigation = $this->navigationManager->get();
 

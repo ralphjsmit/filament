@@ -12,9 +12,7 @@ use function Filament\Support\generate_search_column_expression;
 
 class SpatieLaravelTranslatableContentDriver implements TranslatableContentDriver
 {
-    public function __construct(protected string $activeLocale)
-    {
-    }
+    public function __construct(protected string $activeLocale) {}
 
     public function isAttributeTranslatable(string $model, string $attribute): bool
     {
@@ -32,7 +30,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
      */
     public function makeRecord(string $model, array $data): Model
     {
-        $record = new $model();
+        $record = new $model;
 
         if (method_exists($record, 'setLocale')) {
             $record->setLocale($this->activeLocale);

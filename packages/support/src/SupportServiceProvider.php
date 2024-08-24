@@ -12,6 +12,8 @@ use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\MakeIssueCommand;
+use Filament\Support\Commands\OptimizeClearCommand;
+use Filament\Support\Commands\OptimizeCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
@@ -40,10 +42,11 @@ class SupportServiceProvider extends PackageServiceProvider
                 AssetsCommand::class,
                 CheckTranslationsCommand::class,
                 InstallCommand::class,
-                UpgradeCommand::class,
-
                 MakeIssueCommand::class,
                 MakeIssueCommandAlias::class,
+                OptimizeClearCommand::class,
+                OptimizeCommand::class,
+                UpgradeCommand::class,
             ])
             ->hasConfigFile()
             ->hasTranslations()
@@ -54,7 +57,7 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         $this->app->scoped(
             AssetManager::class,
-            fn () => new AssetManager(),
+            fn () => new AssetManager,
         );
 
         $this->app->scoped(
@@ -66,23 +69,23 @@ class SupportServiceProvider extends PackageServiceProvider
 
         $this->app->scoped(
             ColorManager::class,
-            fn () => new ColorManager(),
+            fn () => new ColorManager,
         );
 
         $this->app->scoped(
             IconManager::class,
-            fn () => new IconManager(),
+            fn () => new IconManager,
         );
 
         $this->app->scoped(
             ViewManager::class,
-            fn () => new ViewManager(),
+            fn () => new ViewManager,
         );
 
         $this->app->scoped(
             HtmlSanitizerInterface::class,
             fn (): HtmlSanitizer => new HtmlSanitizer(
-                (new HtmlSanitizerConfig())
+                (new HtmlSanitizerConfig)
                     ->allowSafeElements()
                     ->allowRelativeLinks()
                     ->allowRelativeMedias()
