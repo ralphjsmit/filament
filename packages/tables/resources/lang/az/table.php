@@ -120,7 +120,6 @@ return [
                 'label' => 'Filtrləri tətbiq et',
             ],
 
-
             'remove' => [
                 'label' => 'Filtri yığışdır',
             ],
