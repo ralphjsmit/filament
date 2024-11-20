@@ -142,6 +142,31 @@ ExportAction::make()
     ->columnMapping(false)
 ```
 
+### Limiting selectable columns
+
+By default, the user will be asked which columns to export. You can limit the list of columns shown for export by using the `columns()` method:
+
+```php
+use App\Filament\Exports\ProductExporter;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->columns([ 'name', 'sku', 'price'])
+])
+```
+
+In case you would like to disable the column selection functionality and only export the defined columns, you can combine the `columns()` method with `columnMapping(false)`:
+
+```php
+use App\Filament\Exports\ProductExporter;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->columns([ 'name', 'sku', 'price'])
+    ->columnMapping(false)
+])
+```
+
 ### Calculated export column state
 
 Sometimes you need to calculate the state of a column, instead of directly reading it from a database column.
