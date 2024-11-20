@@ -62,6 +62,9 @@ trait CanExportRecords
 
     protected bool | Closure $hasColumnMapping = true;
 
+    /**
+     * @var array<string>|Closure
+     */
     protected array | Closure $columns = [];
 
     protected function setUp(): void
@@ -82,10 +85,11 @@ trait CanExportRecords
                 ->inlineLabel()
                 ->schema(function () use ($action): array {
                     $columns = $action->getColumns();
-                    $exporterColumns = $action->getExporter()::getColumns();
 
-                    return collect($exporterColumns)
-                        ->when($columns)->filter(fn (ExportColumn $column) => in_array($column->getName(), $columns))
+                    return collect($action->getExporter()::getColumns())
+                        ->when($columns, function (Collection $exporterColumns) use ($columns): Collection {
+                            return $exporterColumns->filter(fn (ExportColumn $column) => in_array($column->getName(), $columns));
+                        })
                         ->map(function (ExportColumn $column): Split {
                             return Split::make([
                                 Forms\Components\Checkbox::make('isEnabled')
@@ -167,7 +171,9 @@ trait CanExportRecords
 
                 $columnMap = collect($exporter::getColumns())
                     ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
-                    ->when($columns)->only($columns)
+                    ->when($columns, function (Collection $exporterColumns) use ($columns) {
+                        return $exporterColumns->only($columns);
+                    })
                     ->all();
             }
 
@@ -423,6 +429,9 @@ trait CanExportRecords
         return (bool) $this->evaluate($this->hasColumnMapping);
     }
 
+    /**
+     * @param  array<string>|Closure  $columns
+     */
     public function columns(array | Closure $columns): static
     {
         $this->columns = $columns;
@@ -430,6 +439,9 @@ trait CanExportRecords
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getColumns(): array
     {
         return $this->evaluate($this->columns);
