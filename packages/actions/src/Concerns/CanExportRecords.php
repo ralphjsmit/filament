@@ -411,7 +411,7 @@ trait CanExportRecords
         return $this;
     }
 
-    public function columnMapping(bool | Closure | array $condition = true): static
+    public function columnMapping(bool | Closure $condition = true): static
     {
         $this->hasColumnMapping = $condition;
 
