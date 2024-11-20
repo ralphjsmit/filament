@@ -151,7 +151,7 @@ use App\Filament\Exports\ProductExporter;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
-    ->columns([ 'name', 'sku', 'price'])
+    ->columns(['name', 'sku', 'price'])
 ])
 ```
 
@@ -162,7 +162,7 @@ use App\Filament\Exports\ProductExporter;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
-    ->columns([ 'name', 'sku', 'price'])
+    ->columns(['name', 'sku', 'price'])
     ->columnMapping(false)
 ])
 ```
