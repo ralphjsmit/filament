@@ -60,7 +60,7 @@ trait CanExportRecords
 
     protected ?Closure $modifyQueryUsing = null;
 
-    protected bool | Closure $hasColumnMapping = true;
+    protected bool | Closure | array $columnMapping = true;
 
     protected function setUp(): void
     {
@@ -156,8 +156,11 @@ trait CanExportRecords
                     ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                     ->all();
             } else {
+                $columnMapping = $this->getColumnMapping();
+
                 $columnMap = collect($exporter::getColumns())
                     ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
+                    ->when($columnMapping)->only($columnMapping)
                     ->all();
             }
 
@@ -401,15 +404,32 @@ trait CanExportRecords
         return $this;
     }
 
-    public function columnMapping(bool | Closure $condition = true): static
+    public function columnMapping(bool | Closure | array $condition = true): static
     {
-        $this->hasColumnMapping = $condition;
+        $this->columnMapping = $condition;
 
         return $this;
     }
 
     public function hasColumnMapping(): bool
     {
-        return (bool) $this->evaluate($this->hasColumnMapping);
+        $columnMapping = $this->evaluate($this->columnMapping);
+
+        if (is_array($columnMapping)) {
+            return false;
+        }
+
+        return (bool) $columnMapping;
+    }
+
+    public function getColumnMapping(): array
+    {
+        $columnMapping = $this->evaluate($this->columnMapping);
+
+        if (! is_array($columnMapping)) {
+            return [];
+        }
+
+        return $columnMapping;
     }
 }
