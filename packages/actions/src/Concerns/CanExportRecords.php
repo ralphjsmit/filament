@@ -60,7 +60,9 @@ trait CanExportRecords
 
     protected ?Closure $modifyQueryUsing = null;
 
-    protected bool | Closure | array $columnMapping = true;
+    protected bool | Closure $hasColumnMapping = true;
+
+    protected array | Closure $columns = [];
 
     protected function setUp(): void
     {
@@ -79,26 +81,31 @@ trait CanExportRecords
                 ->columns(1)
                 ->inlineLabel()
                 ->schema(function () use ($action): array {
-                    return array_map(
-                        fn (ExportColumn $column): Split => Split::make([
-                            Forms\Components\Checkbox::make('isEnabled')
-                                ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
-                                ->hiddenLabel()
-                                ->default($column->isEnabledByDefault())
-                                ->live()
-                                ->grow(false),
-                            Forms\Components\TextInput::make('label')
-                                ->label(__('filament-actions::export.modal.form.columns.form.label.label', ['column' => $column->getName()]))
-                                ->hiddenLabel()
-                                ->default($column->getLabel())
-                                ->placeholder($column->getLabel())
-                                ->disabled(fn (Forms\Get $get): bool => ! $get('isEnabled'))
-                                ->required(fn (Forms\Get $get): bool => (bool) $get('isEnabled')),
-                        ])
-                            ->verticallyAlignCenter()
-                            ->statePath($column->getName()),
-                        $action->getExporter()::getColumns(),
-                    );
+                    $columns = $action->getColumns();
+                    $exporterColumns = $action->getExporter()::getColumns();
+
+                    return collect($exporterColumns)
+                        ->when($columns)->filter(fn (ExportColumn $column) => in_array($column->getName(), $columns))
+                        ->map(function (ExportColumn $column): Split {
+                            return Split::make([
+                                Forms\Components\Checkbox::make('isEnabled')
+                                    ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
+                                    ->hiddenLabel()
+                                    ->default($column->isEnabledByDefault())
+                                    ->live()
+                                    ->grow(false),
+                                Forms\Components\TextInput::make('label')
+                                    ->label(__('filament-actions::export.modal.form.columns.form.label.label', ['column' => $column->getName()]))
+                                    ->hiddenLabel()
+                                    ->default($column->getLabel())
+                                    ->placeholder($column->getLabel())
+                                    ->disabled(fn (Forms\Get $get): bool => ! $get('isEnabled'))
+                                    ->required(fn (Forms\Get $get): bool => (bool) $get('isEnabled')),
+                            ])
+                                ->verticallyAlignCenter()
+                                ->statePath($column->getName());
+                        })
+                        ->all();
                 })
                 ->statePath('columnMap')] : []),
             ...$action->getExporter()::getOptionsFormComponents(),
@@ -156,11 +163,11 @@ trait CanExportRecords
                     ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                     ->all();
             } else {
-                $columnMapping = $this->getColumnMapping();
+                $columns = $this->getColumns();
 
                 $columnMap = collect($exporter::getColumns())
                     ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
-                    ->when($columnMapping)->only($columnMapping)
+                    ->when($columns)->only($columns)
                     ->all();
             }
 
@@ -406,30 +413,25 @@ trait CanExportRecords
 
     public function columnMapping(bool | Closure | array $condition = true): static
     {
-        $this->columnMapping = $condition;
+        $this->hasColumnMapping = $condition;
 
         return $this;
     }
 
     public function hasColumnMapping(): bool
     {
-        $columnMapping = $this->evaluate($this->columnMapping);
-
-        if (is_array($columnMapping)) {
-            return false;
-        }
-
-        return (bool) $columnMapping;
+        return (bool) $this->evaluate($this->hasColumnMapping);
     }
 
-    public function getColumnMapping(): array
+    public function columns(array | Closure $columns): static
     {
-        $columnMapping = $this->evaluate($this->columnMapping);
+        $this->columns = $columns;
 
-        if (! is_array($columnMapping)) {
-            return [];
-        }
+        return $this;
+    }
 
-        return $columnMapping;
+    public function getColumns(): array
+    {
+        return $this->evaluate($this->columns);
     }
 }
