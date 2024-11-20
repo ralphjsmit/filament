@@ -857,7 +857,6 @@
                                         ->class([
                                             'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
                                             'w-full' => blank($columnWidth) && $column->canGrow(default: false),
-                                            '[&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e border-gray-200 dark:border-white/5' => $column->getGroup(),
                                             $getHiddenClasses($column),
                                         ])
                                         ->style([
