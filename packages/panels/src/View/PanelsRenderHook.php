@@ -78,6 +78,10 @@ class PanelsRenderHook
 
     const PAGE_SUB_NAVIGATION_END_BEFORE = 'panels::page.sub-navigation.end.before';
 
+    const PAGES_DASHBOARD_TABS_START = 'panels::pages.dashboard.tabs.start';
+
+    const PAGES_DASHBOARD_TABS_END = 'panels::pages.dashboard.tabs.end';
+
     const RESOURCE_PAGES_LIST_RECORDS_TABLE_AFTER = 'panels::resource.pages.list-records.table.after';
 
     const RESOURCE_PAGES_LIST_RECORDS_TABLE_BEFORE = 'panels::resource.pages.list-records.table.before';

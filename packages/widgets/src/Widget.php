@@ -19,6 +19,8 @@ abstract class Widget extends Component
      */
     protected static string $view;
 
+    protected static ?string $tab = null;
+
     /**
      * @var int | string | array<string, int | null>
      */
@@ -37,6 +39,11 @@ abstract class Widget extends Component
     public static function getSort(): int
     {
         return static::$sort ?? -1;
+    }
+
+    public static function getTab(): ?string
+    {
+        return static::$tab;
     }
 
     /**

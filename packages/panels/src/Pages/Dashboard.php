@@ -10,6 +10,8 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Dashboard extends Page
 {
+    use Dashboard\Concerns\HasTabs;
+
     protected static string $routePath = '/';
 
     protected static ?int $navigationSort = -2;
@@ -49,9 +51,31 @@ class Dashboard extends Page
     /**
      * @return array<class-string<Widget> | WidgetConfiguration>
      */
-    public function getVisibleWidgets(): array
+    public function getVisibleWidgets(?string $tab = null): array
     {
-        return $this->filterVisibleWidgets($this->getWidgets());
+        $visibleWidgets = $this->filterVisibleWidgets($this->getWidgets());
+
+        if (filled($tab)) {
+            $defaultActiveTab = $this->getDefaultActiveTab();
+
+            $defaultActiveTabLabel = $this->getCachedTabs()[$defaultActiveTab]->getLabel() ?? $this->generateTabLabel($defaultActiveTab);
+
+            return array_filter($visibleWidgets, function (string | WidgetConfiguration $widget) use ($tab, $defaultActiveTabLabel): bool {
+                if (blank($tab)) {
+                    return true;
+                }
+
+                $widgetTab = $this->normalizeWidgetClass($widget)::getTab();
+
+                if (blank($widgetTab)) {
+                    return $tab === $defaultActiveTabLabel;
+                }
+
+                return $widgetTab === $tab;
+            });
+        }
+
+        return $visibleWidgets;
     }
 
     /**
