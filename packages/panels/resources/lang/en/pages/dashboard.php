@@ -30,4 +30,14 @@ return [
 
     ],
 
+    'tabs' => [
+
+        'default' => [
+
+            'label' => 'General',
+
+        ],
+
+    ],
+
 ];

@@ -215,6 +215,32 @@ class Dashboard extends BaseDashboard
 
 Handling data from the filter action is the same as handling data from the filters header form, except that the data is validated before being passed to the widget. The `InteractsWithPageFilters` trait still applies.
 
+You may group widgets into tabs to keep the dashboard organized. To do this, each widget class contains a `$tab` property that may be used to change the tab it belongs to on the page:
+
+```php
+protected static ?string $tab = 'Overview';
+```
+
+In the case of a dashboard with tabs, the widgets without a tab will be grouped on front under tab called 'General'.
+
+In order to customize the tabs or change the order of the tabs, you can override the `getTabs()` method in the `Dashboard` class:
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+    public function getTabs(): array
+    {
+        return [
+            BaseDashboard\Components\Tab::make('Overview'),
+            BaseDashboard\Components\Tab::make('Orders')
+                ->icon('heroicon-m-shopping-bag'),
+        ];
+    }
+}
+```
+
 ## Disabling the default widgets
 
 By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets()` array of the [configuration](configuration):
