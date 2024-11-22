@@ -6,11 +6,7 @@
         {{ $this->filtersForm }}
     @endif
 
-    @php
-        $tabs = $this->getCachedTabs();
-    @endphp
-
-    @if (count($tabs))
+    @if (count($tabs = $this->getCachedTabs()))
         @php
             $renderHookScopes = $this->getRenderHookScopes();
         @endphp
