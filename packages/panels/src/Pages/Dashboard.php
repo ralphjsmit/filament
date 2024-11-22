@@ -59,12 +59,8 @@ class Dashboard extends Page
             $defaultActiveTab = $this->getDefaultActiveTab();
 
             $defaultActiveTabLabel = $this->getCachedTabs()[$defaultActiveTab]->getLabel() ?? $this->generateTabLabel($defaultActiveTab);
-
-            return array_filter($visibleWidgets, function (string | WidgetConfiguration $widget) use ($tab, $defaultActiveTabLabel): bool {
-                if (blank($tab)) {
-                    return true;
-                }
-
+	        
+	        $visibleWidgets = array_filter($visibleWidgets, function (string | WidgetConfiguration $widget) use ($tab, $defaultActiveTabLabel): bool {
                 $widgetTab = $this->normalizeWidgetClass($widget)::getTab();
 
                 if (blank($widgetTab)) {
