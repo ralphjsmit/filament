@@ -944,7 +944,7 @@
                                 <x-filament-tables::cell
                                     @class([
                                         'fi-table-individual-search-cell-' . str($column->getName())->camel()->kebab(),
-                                        'px-3 py-2',
+                                        'min-w-48 px-3 py-2',
                                     ])
                                 >
                                     @if ($column->isIndividuallySearchable())
