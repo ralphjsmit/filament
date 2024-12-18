@@ -34,7 +34,7 @@ trait HasExtraTopbarAttributes
         $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraTopbarAttributes as $extraTopbarAttributes) {
-            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraTopbarAttributes));
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraTopbarAttributes), escape: false);
         }
 
         return $temporaryAttributeBag->getAttributes();

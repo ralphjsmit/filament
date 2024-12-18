@@ -55,7 +55,7 @@
 <div
     {{
         $attributes
-            ->merge($entry?->getExtraEntryWrapperAttributes() ?? [])
+            ->merge($entry?->getExtraEntryWrapperAttributes() ?? [], escape: false)
             ->class(['fi-in-entry-wrp'])
     }}
 >

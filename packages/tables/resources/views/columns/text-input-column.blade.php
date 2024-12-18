@@ -122,7 +122,7 @@
                                 isLoading = false
                             ',
                             'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
-                        ])
+                        ], escape: false)
                         ->class([
                             match ($alignment) {
                                 Alignment::Start => 'text-start',

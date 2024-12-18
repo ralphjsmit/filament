@@ -371,7 +371,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
         $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraTriggerAttributes as $extraTriggerAttributes) {
-            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraTriggerAttributes));
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraTriggerAttributes), escape: false);
         }
 
         return $temporaryAttributeBag->getAttributes();
