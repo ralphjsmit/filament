@@ -34,7 +34,7 @@ trait HasExtraSidebarAttributes
         $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraSidebarAttributes as $extraSidebarAttributes) {
-            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraSidebarAttributes));
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraSidebarAttributes), escape: false);
         }
 
         return $temporaryAttributeBag->getAttributes();

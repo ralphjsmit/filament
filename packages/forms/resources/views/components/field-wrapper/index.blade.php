@@ -53,7 +53,7 @@
     data-field-wrapper
     {{
         $attributes
-            ->merge($field?->getExtraFieldWrapperAttributes() ?? [])
+            ->merge($field?->getExtraFieldWrapperAttributes() ?? [], escape: false)
             ->class(['fi-fo-field-wrp'])
     }}
 >
