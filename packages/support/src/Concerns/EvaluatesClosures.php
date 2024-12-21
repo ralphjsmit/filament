@@ -4,6 +4,7 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Eloquent\Model;
 use ReflectionFunction;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -81,7 +82,10 @@ trait EvaluatesClosures
             return $this;
         }
 
-        if (filled($typedParameterClassName)) {
+        if (
+            filled($typedParameterClassName)
+            && ! is_subclass_of($parameter->getType()->getName(), Model::class)
+        ) {
             return app()->make($typedParameterClassName);
         }
 
