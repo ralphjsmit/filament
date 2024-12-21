@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanAggregateRelatedModels;
 use Filament\Support\Concerns\CanGrow;
+use Filament\Support\Concerns\CanSpanColumns;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasCellState;
 use Filament\Support\Concerns\HasExtraAttributes;
@@ -25,6 +26,7 @@ class Column extends ViewComponent
 {
     use CanAggregateRelatedModels;
     use CanGrow;
+    use CanSpanColumns;
     use Concerns\BelongsToGroup;
     use Concerns\BelongsToLayout;
     use Concerns\BelongsToTable;
@@ -46,7 +48,6 @@ class Column extends ViewComponent
     use Concerns\HasRowLoopObject;
     use Concerns\HasWidth;
     use Concerns\InteractsWithTableQuery;
-    use \Filament\Support\Concerns\CanSpanColumns;
     use HasAlignment;
     use HasCellState;
     use HasExtraAttributes;
