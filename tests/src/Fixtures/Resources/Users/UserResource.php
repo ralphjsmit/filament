@@ -11,10 +11,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\User;
-use Filament\Tests\Fixtures\Resources\Users\Pages\CreateUser;
-use Filament\Tests\Fixtures\Resources\Users\Pages\EditUser;
-use Filament\Tests\Fixtures\Resources\Users\Pages\ListUsers;
-use Filament\Tests\Fixtures\Resources\Users\Pages\ViewUser;
 
 class UserResource extends Resource
 {
@@ -72,10 +68,10 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListUsers::route('/'),
-            'create' => CreateUser::route('/create'),
-            'view' => ViewUser::route('/{record}'),
-            'edit' => EditUser::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'view' => Pages\ViewUser::route('/{record}'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

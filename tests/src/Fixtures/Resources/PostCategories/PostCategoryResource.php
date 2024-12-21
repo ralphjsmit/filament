@@ -4,10 +4,6 @@ namespace Filament\Tests\Fixtures\Resources\PostCategories;
 
 use Filament\Resources\Resource;
 use Filament\Tests\Fixtures\Models\PostCategory;
-use Filament\Tests\Fixtures\Resources\PostCategories\Pages\CreatePostCategory;
-use Filament\Tests\Fixtures\Resources\PostCategories\Pages\EditPostCategory;
-use Filament\Tests\Fixtures\Resources\PostCategories\Pages\ListPostCategories;
-use Filament\Tests\Fixtures\Resources\PostCategories\Pages\ViewPostCategory;
 
 class PostCategoryResource extends Resource
 {
@@ -20,10 +16,10 @@ class PostCategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListPostCategories::route('/'),
-            'create' => CreatePostCategory::route('/create'),
-            'view' => ViewPostCategory::route('/{record}'),
-            'edit' => EditPostCategory::route('/{record}/edit'),
+            'index' => Pages\ListPostCategories::route('/'),
+            'create' => Pages\CreatePostCategory::route('/create'),
+            'view' => Pages\ViewPostCategory::route('/{record}'),
+            'edit' => Pages\EditPostCategory::route('/{record}/edit'),
         ];
     }
 }

@@ -12,10 +12,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
-use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePost;
-use Filament\Tests\Fixtures\Resources\Posts\Pages\EditPost;
-use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
-use Filament\Tests\Fixtures\Resources\Posts\Pages\ViewPost;
 use Illuminate\Database\Eloquent\Builder;
 
 class PostResource extends Resource
@@ -74,10 +70,10 @@ class PostResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListPosts::route('/'),
-            'create' => CreatePost::route('/create'),
-            'view' => ViewPost::route('/{record}'),
-            'edit' => EditPost::route('/{record}/edit'),
+            'index' => Pages\ListPosts::route('/'),
+            'create' => Pages\CreatePost::route('/create'),
+            'view' => Pages\ViewPost::route('/{record}'),
+            'edit' => Pages\EditPost::route('/{record}/edit'),
         ];
     }
 }
