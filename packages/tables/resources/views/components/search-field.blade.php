@@ -38,7 +38,7 @@
                     $wireModelAttribute => $wireModel,
                     'x-bind:id' => '$id(\'input\')',
                     'x-on:keyup' => 'if ($event.key === \'Enter\') { $wire.$refresh() }',
-                ])
+                ], escape: false)
             "
         />
     </x-filament::input.wrapper>

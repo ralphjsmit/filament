@@ -16,7 +16,7 @@
     <img
         {{
             $attributes
-                ->merge(['src' => $icon])
+                ->merge(['src' => $icon], escape: true)
                 ->class($class)
         }}
     />
