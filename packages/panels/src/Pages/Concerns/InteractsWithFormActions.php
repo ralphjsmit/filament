@@ -2,7 +2,6 @@
 
 namespace Filament\Pages\Concerns;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use InvalidArgumentException;
@@ -14,18 +13,9 @@ trait InteractsWithFormActions
      */
     protected array $cachedFormActions = [];
 
-    public function bootedInteractsWithFormActions(): void
+    public function cacheInteractsWithFormActions(): void
     {
-        $this->cacheFormActions();
-    }
-
-    protected function cacheFormActions(): void
-    {
-        /** @var array<string, Action | ActionGroup> */
-        $actions = Action::configureUsing(
-            Closure::fromCallable([$this, 'configureAction']),
-            fn (): array => $this->getFormActions(),
-        );
+        $actions = $this->getFormActions();
 
         foreach ($actions as $action) {
             if ($action instanceof ActionGroup) {

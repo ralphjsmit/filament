@@ -29,6 +29,7 @@ class RestoreAction extends Action
 
         $this->color('gray');
 
+        $this->tableIcon(FilamentIcon::resolve('actions::restore-action') ?? 'heroicon-m-arrow-uturn-left');
         $this->groupedIcon(FilamentIcon::resolve('actions::restore-action.grouped') ?? 'heroicon-m-arrow-uturn-left');
 
         $this->requiresConfirmation();

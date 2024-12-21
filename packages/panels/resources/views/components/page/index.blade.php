@@ -3,7 +3,7 @@
 ])
 
 @php
-    use Filament\Pages\SubNavigationPosition;
+    use Filament\Pages\Enums\SubNavigationPosition;
 
     $subNavigation = $this->getCachedSubNavigation();
     $subNavigationPosition = $this->getSubNavigationPosition();
@@ -15,6 +15,7 @@
         $attributes->class([
             'fi-page',
             'h-full' => $fullHeight,
+            ...$this->getPageClasses(),
         ])
     }}
 >
@@ -103,33 +104,11 @@
                     'h-full' => $fullHeight,
                 ])
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_WIDGETS_BEFORE, scopes: $this->getRenderHookScopes()) }}
-
-                @if ($headerWidgets = $this->getVisibleHeaderWidgets())
-                    <x-filament-widgets::widgets
-                        :columns="$this->getHeaderWidgetsColumns()"
-                        :data="$widgetData"
-                        :widgets="$headerWidgets"
-                        class="fi-page-header-widgets"
-                    />
-                @endif
-
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_WIDGETS_AFTER, scopes: $this->getRenderHookScopes()) }}
+                {{ $this->headerWidgets }}
 
                 {{ $slot }}
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_FOOTER_WIDGETS_BEFORE, scopes: $this->getRenderHookScopes()) }}
-
-                @if ($footerWidgets = $this->getVisibleFooterWidgets())
-                    <x-filament-widgets::widgets
-                        :columns="$this->getFooterWidgetsColumns()"
-                        :data="$widgetData"
-                        :widgets="$footerWidgets"
-                        class="fi-page-footer-widgets"
-                    />
-                @endif
-
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER, scopes: $this->getRenderHookScopes()) }}
+                {{ $this->footerWidgets }}
             </div>
 
             @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
@@ -150,19 +129,88 @@
 
     @if (! ($this instanceof \Filament\Tables\Contracts\HasTable))
         <x-filament-actions::modals />
-    @elseif ($this->isTableLoaded() && filled($this->defaultTableAction))
-        <div
-            wire:init="mountTableAction(@js($this->defaultTableAction), @if (filled($this->defaultTableActionRecord)) @js($this->defaultTableActionRecord) @else {{ 'null' }} @endif @if (filled($this->defaultTableActionArguments)) , @js($this->defaultTableActionArguments) @endif)"
-        ></div>
     @endif
 
     @if (filled($this->defaultAction))
         <div
-            wire:init="mountAction(@js($this->defaultAction) @if (filled($this->defaultActionArguments)) , @js($this->defaultActionArguments) @endif)"
+            wire:init="mountAction(@js($this->defaultAction) @if (filled($this->defaultActionArguments) || filled($this->defaultActionContext)) , @if (filled($this->defaultActionArguments)) @js($this->defaultActionArguments) @else {} @endif @endif @if (filled($this->defaultActionContext)) @js($this->defaultActionContext) @endif)"
         ></div>
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_END, scopes: $this->getRenderHookScopes()) }}
+
+    @if (method_exists($this, 'hasUnsavedDataChangesAlert') && $this->hasUnsavedDataChangesAlert())
+        @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
+            @script
+                <script>
+                    let formSubmitted = false
+
+                    document.addEventListener(
+                        'submit',
+                        () => (formSubmitted = true),
+                    )
+
+                    shouldPreventNavigation = () => {
+                        if (formSubmitted) {
+                            return
+                        }
+
+                        return (
+                            window.jsMd5(
+                                JSON.stringify($wire.data).replace(/\\/g, ''),
+                            ) !== $wire.savedDataHash ||
+                            $wire?.__instance?.effects?.redirect
+                        )
+                    }
+
+                    const showUnsavedChangesAlert = () => {
+                        return confirm(@js(__('filament-panels::unsaved-changes-alert.body')))
+                    }
+
+                    document.addEventListener('livewire:navigate', (event) => {
+                        if (typeof @this !== 'undefined') {
+                            if (!shouldPreventNavigation()) {
+                                return
+                            }
+
+                            if (showUnsavedChangesAlert()) {
+                                return
+                            }
+
+                            event.preventDefault()
+                        }
+                    })
+
+                    window.addEventListener('beforeunload', (event) => {
+                        if (!shouldPreventNavigation()) {
+                            return
+                        }
+
+                        event.preventDefault()
+                        event.returnValue = true
+                    })
+                </script>
+            @endscript
+        @else
+            @script
+                <script>
+                    window.addEventListener('beforeunload', (event) => {
+                        if (
+                            window.jsMd5(
+                                JSON.stringify($wire.data).replace(/\\/g, ''),
+                            ) === $wire.savedDataHash ||
+                            $wire?.__instance?.effects?.redirect
+                        ) {
+                            return
+                        }
+
+                        event.preventDefault()
+                        event.returnValue = true
+                    })
+                </script>
+            @endscript
+        @endif
+    @endif
 
     <x-filament-panels::unsaved-action-changes-alert />
 </div>

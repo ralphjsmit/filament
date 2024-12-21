@@ -2,8 +2,8 @@
 
 use Filament\Facades\Filament;
 use Filament\Pages\Tenancy\EditTenantProfile;
-use Filament\Tests\Models\Team;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Support\Facades\Gate;
 

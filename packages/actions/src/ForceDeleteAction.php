@@ -27,6 +27,7 @@ class ForceDeleteAction extends Action
 
         $this->color('danger');
 
+        $this->tableIcon(FilamentIcon::resolve('actions::force-delete-action') ?? 'heroicon-m-trash');
         $this->groupedIcon(FilamentIcon::resolve('actions::force-delete-action.grouped') ?? 'heroicon-m-trash');
 
         $this->requiresConfirmation();

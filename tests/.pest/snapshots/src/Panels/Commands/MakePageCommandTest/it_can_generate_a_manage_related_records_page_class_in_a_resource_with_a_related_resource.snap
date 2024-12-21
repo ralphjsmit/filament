@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Filament\Resources\Users\Pages;
+
+use App\Filament\Resources\Teams\TeamResource;
+use App\Filament\Resources\Users\UserResource;
+use Filament\Resources\Pages\ManageRelatedRecords;
+
+class ManageUserTeams extends ManageRelatedRecords
+{
+    protected static string $resource = UserResource::class;
+
+    protected static string $relationship = 'teams';
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $relatedResource = TeamResource::class;
+
+    protected static function getNavigationLabel(): string
+    {
+        return 'Teams';
+    }
+}

@@ -21,6 +21,15 @@ it('can register navigation items from resources and pages', function () {
                     fn ($item) => $item
                         ->getLabel()->toBe('Actions'),
                     fn ($item) => $item
+                        ->getLabel()->toBe('Departments')
+                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Tickets')
+                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Ticket Messages')
+                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
+                    fn ($item) => $item
                         ->getLabel()->toBe('Users')
                         ->getIcon()->toBe('heroicon-o-user'),
                     fn ($item) => $item
@@ -55,7 +64,7 @@ it('can register navigation items from resources and pages', function () {
 });
 
 it('can reorder navigation groups by registering them', function () {
-    Filament::getCurrentPanel()->navigationGroups([
+    Filament::getCurrentOrDefaultPanel()->navigationGroups([
         NavigationGroup::make()->label('Shop'),
         NavigationGroup::make()->label('Blog'),
     ]);
@@ -75,7 +84,7 @@ it('can reorder navigation groups by registering them', function () {
 });
 
 it('can reorder navigation groups by registering them with different labels', function () {
-    Filament::getCurrentPanel()->navigationGroups([
+    Filament::getCurrentOrDefaultPanel()->navigationGroups([
         'Shop' => NavigationGroup::make()->label('Store'),
         'Blog' => NavigationGroup::make()->label('Posts'),
     ]);
@@ -95,7 +104,7 @@ it('can reorder navigation groups by registering them with different labels', fu
 });
 
 it('can reorder navigation groups by registering their labels', function () {
-    Filament::getCurrentPanel()->navigationGroups([
+    Filament::getCurrentOrDefaultPanel()->navigationGroups([
         'Shop',
         'Blog',
     ]);

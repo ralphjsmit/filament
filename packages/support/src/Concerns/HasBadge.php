@@ -16,15 +16,12 @@ trait HasBadge
 
     protected string | Closure | null $badgeIcon = null;
 
+    protected string | Closure | null $badgeTooltip = null;
+
     protected IconPosition | string | Closure | null $badgeIconPosition = null;
 
-    public function badge(string | int | float | Closure | null $badge = null): static
+    public function badge(string | int | float | Closure | null $badge): static
     {
-        if (func_num_args() === 0) {
-            /** @phpstan-ignore-next-line */
-            return $this->view(static::BADGE_VIEW);
-        }
-
         $this->badge = $badge;
 
         return $this;
@@ -51,6 +48,13 @@ trait HasBadge
     public function badgeIcon(string | Closure | null $icon): static
     {
         $this->badgeIcon = $icon;
+
+        return $this;
+    }
+
+    public function badgeTooltip(string | Closure | null $tooltip): static
+    {
+        $this->badgeTooltip = $tooltip;
 
         return $this;
     }
@@ -88,6 +92,11 @@ trait HasBadge
     public function getBadgeIcon(): ?string
     {
         return $this->evaluate($this->badgeIcon);
+    }
+
+    public function getBadgeTooltip(): ?string
+    {
+        return $this->evaluate($this->badgeTooltip);
     }
 
     public function getBadgeIconPosition(): IconPosition | string

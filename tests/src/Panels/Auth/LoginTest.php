@@ -2,7 +2,7 @@
 
 use Filament\Facades\Filament;
 use Filament\Pages\Auth\Login;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
 
@@ -18,7 +18,7 @@ it('can render page', function () {
 });
 
 it('can render page with a custom slug', function () {
-    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+    Filament::setCurrentPanel('slugs');
 
     expect(Filament::getLoginUrl())->toEndWith('/login-test');
 
@@ -77,7 +77,7 @@ it('cannot authenticate with incorrect credentials', function () {
 it('cannot authenticate on unauthorized panel', function () {
     $userToAuthenticate = User::factory()->create();
 
-    Filament::setCurrentPanel(Filament::getPanel('custom'));
+    Filament::setCurrentPanel('custom');
 
     livewire(Login::class)
         ->fillForm([

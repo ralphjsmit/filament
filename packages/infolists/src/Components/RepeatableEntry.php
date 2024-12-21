@@ -2,14 +2,15 @@
 
 namespace Filament\Infolists\Components;
 
-use Filament\Infolists\ComponentContainer;
+use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
+use Filament\Schemas\Schema;
 use Filament\Support\Concerns\CanBeContained;
 use Illuminate\Database\Eloquent\Model;
 
 class RepeatableEntry extends Entry
 {
     use CanBeContained;
-    use Concerns\HasContainerGridLayout;
+    use HasContainerGridLayout;
 
     /**
      * @var view-string
@@ -17,7 +18,7 @@ class RepeatableEntry extends Entry
     protected string $view = 'filament-infolists::components.repeatable-entry';
 
     /**
-     * @return array<ComponentContainer>
+     * @return array<Schema>
      */
     public function getChildComponentContainers(bool $withHidden = false): array
     {

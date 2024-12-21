@@ -3,6 +3,9 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
+use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Support\Facades\FilamentIcon;
 
 class ToggleButtons extends Field implements Contracts\CanDisableOptions
@@ -105,5 +108,38 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         }
 
         return $state;
+    }
+
+    public function getEnumDefaultStateCast(): ?StateCast
+    {
+        $enum = $this->getEnum();
+
+        if (blank($enum)) {
+            return null;
+        }
+
+        return app(
+            $this->isMultiple() ? EnumArrayStateCast::class : EnumStateCast::class,
+            ['enum' => $enum],
+        );
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if ($values !== null) {
+            return $values;
+        }
+
+        return array_keys($this->getEnabledOptions());
+    }
+
+    public function hasInValidationOnMultipleValues(): bool
+    {
+        return $this->isMultiple();
     }
 }

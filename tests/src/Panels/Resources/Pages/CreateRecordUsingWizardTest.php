@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\CreatePostUsingWizard;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePostUsingWizard;
 use Filament\Tests\Panels\Resources\TestCase;
 
 use function Filament\Tests\livewire;

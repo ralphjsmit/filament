@@ -20,7 +20,7 @@ test('render hooks can be registered', function () {
 
 test('render hooks can render view files', function () {
     FilamentView::registerRenderHook('view-foo', function (): View {
-        return view('app.fixtures.pages.render-hooks.foo');
+        return view('pages.render-hooks.foo');
     });
 
     expect(FilamentView::renderHook('view-foo'))

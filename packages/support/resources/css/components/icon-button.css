@@ -1,0 +1,148 @@
+.fi-icon-btn {
+    @apply relative -m-2 flex size-9 items-center justify-center rounded-lg text-gray-400 outline-none transition duration-75 dark:text-gray-500;
+
+    &:not(.fi-disabled):not([disabled]) {
+        @apply hover:text-gray-500 focus-visible:ring-2 focus-visible:ring-primary-600 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500;
+    }
+
+    & > .fi-icon {
+        @apply size-5;
+    }
+
+    &.fi-disabled,
+    &[disabled] {
+        @apply cursor-default opacity-70;
+
+        &:not([x-tooltip]) {
+            @apply pointer-events-none;
+        }
+    }
+
+    &.fi-size-xs {
+        @apply size-7;
+
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-1.5;
+        }
+
+        &:has(.fi-icon.fi-size-md) {
+            @apply -m-1;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-0.5;
+        }
+
+        & > .fi-icon {
+            @apply size-4;
+        }
+    }
+
+    &.fi-size-sm {
+        @apply size-8;
+
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-2;
+        }
+
+        &:has(.fi-icon.fi-size-md) {
+            @apply -m-1.5;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-1;
+        }
+    }
+
+    &.fi-size-md {
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-2.5;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-1.5;
+        }
+    }
+
+    &.fi-size-lg {
+        @apply size-10;
+
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-3;
+        }
+
+        &:has(.fi-icon.fi-size-md) {
+            @apply -m-2.5;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-2;
+        }
+
+        & > .fi-icon {
+            @apply size-6;
+        }
+    }
+
+    &.fi-size-xl {
+        @apply size-11;
+
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-3.5;
+        }
+
+        &:has(.fi-icon.fi-size-md) {
+            @apply -m-3;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-2.5;
+        }
+
+        & > .fi-icon {
+            @apply size-6;
+        }
+    }
+
+    & > .fi-icon {
+        &.fi-size-sm {
+            @apply size-4;
+        }
+
+        &.fi-size-lg {
+            @apply size-6;
+        }
+    }
+
+    &.fi-color-custom {
+        @apply text-custom-500 dark:text-custom-400;
+
+        &:not(.fi-disabled):not([disabled]) {
+            @apply hover:text-custom-600 focus-visible:ring-custom-600 dark:hover:text-custom-300 dark:focus-visible:ring-custom-500;
+        }
+    }
+
+    & > .fi-icon-btn-badge-ctn {
+        @apply absolute start-full top-1 z-[1] w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-sm) {
+        @apply sm:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-md) {
+        @apply md:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-lg) {
+        @apply lg:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-xl) {
+        @apply xl:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-2xl) {
+        @apply 2xl:hidden;
+    }
+}

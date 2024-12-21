@@ -2,13 +2,13 @@
 
 use BladeUI\Icons\Factory;
 use BladeUI\Icons\IconsManifest;
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
-use Filament\Tests\Notifications\Fixtures\CustomNotification;
+use Filament\Tests\Fixtures\Notifications\CustomNotification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

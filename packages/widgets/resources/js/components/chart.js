@@ -72,14 +72,16 @@ export default function chart({ cachedData, options, type }) {
             options.pointRadius ??= 2
             options.scales ??= {}
             options.scales.x ??= {}
+            options.scales.x.border ??= {}
+            options.scales.x.border.display ??= false
             options.scales.x.grid ??= {}
             options.scales.x.grid.color = gridColor
             options.scales.x.grid.display ??= false
-            options.scales.x.grid.drawBorder ??= false
             options.scales.y ??= {}
+            options.scales.y.border ??= {}
+            options.scales.y.border.display ??= false
             options.scales.y.grid ??= {}
             options.scales.y.grid.color = gridColor
-            options.scales.y.grid.drawBorder ??= false
 
             return new Chart(this.$refs.canvas, {
                 type: type,

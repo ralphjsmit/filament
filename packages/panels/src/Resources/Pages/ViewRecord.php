@@ -2,35 +2,26 @@
 
 namespace Filament\Resources\Pages;
 
+use Closure;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
+use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ReplicateAction;
-use Filament\Actions\RestoreAction;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
-use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Actions\ViewAction;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\NestedSchema;
+use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 /**
- * @property Form $form
+ * @property-read Schema $form
  */
 class ViewRecord extends Page
 {
     use Concerns\HasRelationManagers;
-    use Concerns\InteractsWithRecord {
-        configureAction as configureActionRecord;
-    }
-    use InteractsWithFormActions;
-
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::resources.pages.view-record';
+    use Concerns\InteractsWithRecord;
 
     /**
      * @var array<string, mixed> | null
@@ -72,7 +63,7 @@ class ViewRecord extends Page
 
     protected function hasInfolist(): bool
     {
-        return (bool) count($this->getInfolist('infolist')->getComponents());
+        return (bool) count($this->getSchema('infolist')->getComponents());
     }
 
     protected function fillForm(): void
@@ -120,61 +111,13 @@ class ViewRecord extends Page
         return $data;
     }
 
-    protected function configureAction(Action $action): void
+    public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
-        $this->configureActionRecord($action);
-
-        match (true) {
-            $action instanceof DeleteAction => $this->configureDeleteAction($action),
-            $action instanceof EditAction => $this->configureEditAction($action),
-            $action instanceof ForceDeleteAction => $this->configureForceDeleteAction($action),
-            $action instanceof ReplicateAction => $this->configureReplicateAction($action),
-            $action instanceof RestoreAction => $this->configureRestoreAction($action),
+        return match (true) {
+            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => static::getResource()::form($schema->columns(2)),
+            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->hasInfolist() ? $this->configureInfolist($schema) : $this->configureForm($schema),
             default => null,
         };
-    }
-
-    protected function configureEditAction(EditAction $action): void
-    {
-        $resource = static::getResource();
-
-        $action
-            ->authorize($resource::canEdit($this->getRecord()))
-            ->form(fn (Form $form): Form => static::getResource()::form($form));
-
-        if ($resource::hasPage('edit')) {
-            $action->url(fn (): string => static::getResource()::getUrl('edit', ['record' => $this->getRecord()]));
-        }
-    }
-
-    protected function configureForceDeleteAction(ForceDeleteAction $action): void
-    {
-        $resource = static::getResource();
-
-        $action
-            ->authorize($resource::canForceDelete($this->getRecord()))
-            ->successRedirectUrl($resource::getUrl('index'));
-    }
-
-    protected function configureReplicateAction(ReplicateAction $action): void
-    {
-        $action
-            ->authorize(static::getResource()::canReplicate($this->getRecord()));
-    }
-
-    protected function configureRestoreAction(RestoreAction $action): void
-    {
-        $action
-            ->authorize(static::getResource()::canRestore($this->getRecord()));
-    }
-
-    protected function configureDeleteAction(DeleteAction $action): void
-    {
-        $resource = static::getResource();
-
-        $action
-            ->authorize($resource::canDelete($this->getRecord()))
-            ->successRedirectUrl($resource::getUrl('index'));
     }
 
     public function getTitle(): string | Htmlable
@@ -188,26 +131,46 @@ class ViewRecord extends Page
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
+    public function configureForm(Schema $form): Schema
+    {
+        $form->columns($this->hasInlineLabels() ? 1 : 2);
+        $form->inlineLabel($this->hasInlineLabels());
+
+        static::getResource()::form($form);
+
+        $this->form($form);
+
+        return $form;
+    }
+
+    public function configureInfolist(Schema $infolist): Schema
+    {
+        $infolist->columns($this->hasInlineLabels() ? 1 : 2);
+        $infolist->inlineLabel($this->hasInlineLabels());
+
+        static::getResource()::infolist($infolist);
+
+        return $infolist;
+    }
+
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
         return [
-            'form' => $this->form(static::getResource()::form(
-                $this->makeForm()
+            'form' => $this->configureForm(
+                $this->makeSchema()
                     ->operation('view')
                     ->disabled()
                     ->model($this->getRecord())
-                    ->statePath($this->getFormStatePath())
-                    ->columns($this->hasInlineLabels() ? 1 : 2)
-                    ->inlineLabel($this->hasInlineLabels()),
-            )),
+                    ->statePath($this->getFormStatePath()),
+            ),
         ];
     }
 
@@ -216,21 +179,59 @@ class ViewRecord extends Page
         return 'data';
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(): Schema
     {
-        return static::getResource()::infolist($infolist);
-    }
-
-    protected function makeInfolist(): Infolist
-    {
-        return parent::makeInfolist()
-            ->record($this->getRecord())
-            ->columns($this->hasInlineLabels() ? 1 : 2)
-            ->inlineLabel($this->hasInlineLabels());
+        return $this->configureInfolist(
+            $this->makeSchema()
+                ->record($this->getRecord()),
+        );
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool
     {
         return parent::shouldRegisterNavigation($parameters) && static::getResource()::canView($parameters['record']);
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                ...($this->hasCombinedRelationManagerTabsWithContent() ? [] : $this->getContentComponents()),
+                $this->getRelationManagersContentComponent(),
+            ]);
+    }
+
+    /**
+     * @return array<Component>
+     */
+    public function getContentComponents(): array
+    {
+        return [
+            $this->hasInfolist()
+                ? $this->getInfolistContentComponent()
+                : $this->getFormContentComponent(),
+        ];
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        return NestedSchema::make('form');
+    }
+
+    public function getInfolistContentComponent(): Component
+    {
+        return NestedSchema::make('infolist');
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getPageClasses(): array
+    {
+        return [
+            'fi-resource-view-record-page',
+            'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
+            "fi-resource-record-{$this->getRecord()->getKey()}",
+        ];
     }
 }

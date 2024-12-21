@@ -3,9 +3,12 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Components\Concerns\CanBeCollapsed;
+use Filament\Schemas\Components\Contracts\CanConcealComponents;
+use Filament\Schemas\Components\Contracts\HasExtraItemActions;
+use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
@@ -20,14 +23,14 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Repeater extends Field implements Contracts\CanConcealComponents, Contracts\HasExtraItemActions
+class Repeater extends Field implements CanConcealComponents, HasExtraItemActions
 {
+    use CanBeCollapsed;
     use Concerns\CanBeCloned;
-    use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
-    use Concerns\HasContainerGridLayout;
     use Concerns\HasExtraItemActions;
+    use \Filament\Schemas\Components\Concerns\HasContainerGridLayout;
     use HasReorderAnimationDuration;
 
     protected string | Closure | null $addActionLabel = null;
@@ -185,6 +188,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->button()
             ->size(ActionSize::Small)
@@ -260,6 +265,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->button()
             ->size(ActionSize::Small)
@@ -320,6 +327,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -359,6 +368,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -397,6 +408,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -435,6 +448,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -476,6 +491,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -787,7 +804,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     }
 
     /**
-     * @return array<ComponentContainer>
+     * @return array<Schema>
      */
     public function getChildComponentContainers(bool $withHidden = false): array
     {
@@ -1162,6 +1179,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         $this->cachedExistingRecords = null;
     }
 
+    /**
+     * @return class-string<Model>
+     */
     public function getRelatedModel(): string
     {
         return $this->getRelationship()->getModel()::class;

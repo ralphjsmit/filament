@@ -10,8 +10,13 @@
     "
 >
     <x-filament::input.select
-        x-data="{}"
-        x-on:change="window.location.href = $event.target.value"
+        x-on:change="
+            if ($event.target.options[$event.target.selectedIndex].dataset.spaMode) {
+                Livewire.navigate($event.target.value)
+            } else {
+                window.location.href = $event.target.value
+            }
+        "
     >
         @foreach ($navigation as $navigationGroup)
             @capture($options)
@@ -19,7 +24,10 @@
                     @foreach ([$navigationItem, ...$navigationItem->getChildItems()] as $navigationItemChild)
                         <option
                             @selected($navigationItemChild->isActive())
-                            value="{{ $navigationItemChild->getUrl() }}"
+                            value="{{ $url = $navigationItemChild->getUrl() }}"
+                            @if (\Filament\Support\Facades\FilamentView::hasSpaMode($url))
+                                data-spa-mode="1"
+                            @endif
                         >
                             @if ($loop->index)
                                 &ensp;&ensp;

@@ -5,17 +5,17 @@ use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
-use Filament\Tests\Panels\Fixtures\Pages\Settings;
-use Filament\Tests\Panels\Fixtures\Resources\PostCategoryResource;
-use Filament\Tests\Panels\Fixtures\Resources\PostResource;
-use Filament\Tests\Panels\Fixtures\Resources\ProductResource;
-use Filament\Tests\Panels\Fixtures\Resources\UserResource;
+use Filament\Tests\Fixtures\Pages\Settings;
+use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
+use Filament\Tests\Fixtures\Resources\Posts\PostResource;
+use Filament\Tests\Fixtures\Resources\Shop\Products\ProductResource;
+use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Navigation\TestCase;
 
 uses(TestCase::class);
 
 it('can register navigation', function () {
-    Filament::getCurrentPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
+    Filament::getCurrentOrDefaultPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
         return $navigation
             ->items([
                 ...Dashboard::getNavigationItems(),
@@ -80,7 +80,7 @@ it('can register navigation', function () {
 });
 
 it('can register navigation groups individually', function () {
-    Filament::getCurrentPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
+    Filament::getCurrentOrDefaultPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
         return $navigation
             ->group('Blog', [
                 ...PostResource::getNavigationItems(),

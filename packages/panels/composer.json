@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.1",
+        "chillerlan/php-qrcode": "^5.0",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "filament/actions": "self.version",
         "filament/forms": "self.version",
@@ -27,6 +28,8 @@
         "illuminate/session": "^10.45|^11.0",
         "illuminate/support": "^10.45|^11.0",
         "illuminate/view": "^10.45|^11.0",
+        "pragmarx/google2fa": "^8.0",
+        "pragmarx/google2fa-qrcode": "^3.0",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

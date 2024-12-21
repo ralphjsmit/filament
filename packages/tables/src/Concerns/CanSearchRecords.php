@@ -69,12 +69,15 @@ trait CanSearchRecords
 
     protected function applyColumnSearchesToTableQuery(Builder $query): Builder
     {
+        $table = $this->getTable();
+        $shouldSplitSearchTerms = $table->shouldSplitSearchTerms();
+
         foreach ($this->getTableColumnSearches() as $column => $search) {
             if (blank($search)) {
                 continue;
             }
 
-            $column = $this->getTable()->getColumn($column);
+            $column = $table->getColumn($column);
 
             if (! $column) {
                 continue;
@@ -85,6 +88,18 @@ trait CanSearchRecords
             }
 
             if (! $column->isIndividuallySearchable()) {
+                continue;
+            }
+
+            if (! $shouldSplitSearchTerms) {
+                $isFirst = true;
+
+                $column->applySearchConstraint(
+                    $query,
+                    $search,
+                    $isFirst,
+                );
+
                 continue;
             }
 
@@ -123,6 +138,32 @@ trait CanSearchRecords
             return $query;
         }
 
+        if (! $this->getTable()->shouldSplitSearchTerms()) {
+            $query->where(function (Builder $query) use ($search) {
+                $isFirst = true;
+
+                foreach ($this->getTable()->getColumns() as $column) {
+                    if ($column->isHidden()) {
+                        continue;
+                    }
+
+                    if (! $column->isGloballySearchable()) {
+                        continue;
+                    }
+
+                    $column->applySearchConstraint(
+                        $query,
+                        $search,
+                        $isFirst,
+                    );
+                }
+
+                $this->getTable()->applyExtraSearchConstraints($query, $search, $isFirst);
+            });
+
+            return $query;
+        }
+
         foreach ($this->extractTableSearchWords($search) as $searchWord) {
             $query->where(function (Builder $query) use ($searchWord) {
                 $isFirst = true;
@@ -142,6 +183,8 @@ trait CanSearchRecords
                         $isFirst,
                     );
                 }
+
+                $this->getTable()->applyExtraSearchConstraints($query, $searchWord, $isFirst);
             });
         }
 

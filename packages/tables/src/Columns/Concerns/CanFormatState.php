@@ -282,6 +282,10 @@ trait CanFormatState
             'state' => $state,
         ]);
 
+        if (is_array($state)) {
+            $state = json_encode($state);
+        }
+
         if ($isHtml) {
             $state = Str::sanitizeHtml($state);
         }

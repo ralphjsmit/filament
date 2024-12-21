@@ -73,7 +73,14 @@ const defaultOptions = {
     ],
 }
 
-const corePackages = ['forms', 'notifications', 'panels', 'support', 'tables']
+const corePackages = [
+    'forms',
+    'notifications',
+    'panels',
+    'schemas',
+    'support',
+    'tables',
+]
 
 corePackages.forEach((packageName) => {
     compile({
@@ -87,15 +94,15 @@ corePackages.forEach((packageName) => {
 compile({
     ...defaultOptions,
     platform: 'browser',
-    entryPoints: [`./node_modules/async-alpine/dist/async-alpine.script.js`],
-    outfile: `./packages/support/dist/async-alpine.js`,
+    entryPoints: [`./packages/panels/resources/js/echo.js`],
+    outfile: `./packages/panels/dist/echo.js`,
 })
 
 compile({
     ...defaultOptions,
     platform: 'browser',
-    entryPoints: [`./packages/panels/resources/js/echo.js`],
-    outfile: `./packages/panels/dist/echo.js`,
+    entryPoints: [`./packages/panels/resources/js/fonts/inter.js`],
+    outfile: `./packages/panels/dist/fonts/inter/index.js`,
 })
 
 const formComponents = [
@@ -124,6 +131,38 @@ compile({
     ...defaultOptions,
     entryPoints: [`./packages/tables/resources/js/components/table.js`],
     outfile: `./packages/tables/dist/components/table.js`,
+})
+
+compile({
+    ...defaultOptions,
+    entryPoints: [
+        `./packages/tables/resources/js/components/columns/checkbox.js`,
+    ],
+    outfile: `./packages/tables/dist/components/columns/checkbox.js`,
+})
+
+compile({
+    ...defaultOptions,
+    entryPoints: [
+        `./packages/tables/resources/js/components/columns/select.js`,
+    ],
+    outfile: `./packages/tables/dist/components/columns/select.js`,
+})
+
+compile({
+    ...defaultOptions,
+    entryPoints: [
+        `./packages/tables/resources/js/components/columns/text-input.js`,
+    ],
+    outfile: `./packages/tables/dist/components/columns/text-input.js`,
+})
+
+compile({
+    ...defaultOptions,
+    entryPoints: [
+        `./packages/tables/resources/js/components/columns/toggle.js`,
+    ],
+    outfile: `./packages/tables/dist/components/columns/toggle.js`,
 })
 
 compile({

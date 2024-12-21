@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Filament\Pages\Site;
+
+use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
+use Filament\Tests\Panels\Commands\Settings;
+
+class ManageSettings extends SettingsPage
+{
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+
+    protected static string $settings = Settings::class;
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                //
+            ]);
+    }
+}

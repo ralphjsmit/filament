@@ -17,6 +17,6 @@ trait HasGroupedIcon
 
     public function getGroupedIcon(): ?string
     {
-        return $this->evaluate($this->groupedIcon) ?? $this->getIcon();
+        return $this->evaluate($this->groupedIcon);
     }
 }

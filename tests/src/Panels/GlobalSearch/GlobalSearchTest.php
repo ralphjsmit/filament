@@ -1,11 +1,11 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\GlobalSearch\GlobalSearchResults;
+use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\Livewire\GlobalSearch;
-use Filament\Tests\Models\Post;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Str;
@@ -51,7 +51,7 @@ it('can retrieve limited search results', function () {
 });
 
 it('can retrieve results via custom search provider', function () {
-    Filament::getCurrentPanel()->globalSearch(CustomSearchProvider::class);
+    Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
 
     livewire(GlobalSearch::class)
         ->set('search', 'foo')

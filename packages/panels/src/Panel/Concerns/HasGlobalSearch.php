@@ -4,8 +4,8 @@ namespace Filament\Panel\Concerns;
 
 use Closure;
 use Exception;
-use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
-use Filament\GlobalSearch\DefaultGlobalSearchProvider;
+use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
+use Filament\GlobalSearch\Providers\DefaultGlobalSearchProvider;
 use Filament\Support\Enums\Platform;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Stringable;

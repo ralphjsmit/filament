@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
@@ -24,7 +24,7 @@ it('can verify an email', function () {
 });
 
 it('can verify an email with a custom slug', function () {
-    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+    Filament::setCurrentPanel('slugs');
 
     $userToVerify = User::factory()->create([
         'email_verified_at' => null,

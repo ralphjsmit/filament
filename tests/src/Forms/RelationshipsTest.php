@@ -1,9 +1,9 @@
 <?php
 
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Field;
-use Filament\Tests\Forms\Fixtures\Livewire;
-use Filament\Tests\Models\Post;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
 
@@ -17,7 +17,7 @@ test('fields can save relationships', function () {
         $numberOfRelationshipsSaved++;
     };
 
-    $componentContainer = ComponentContainer::make(Livewire::make())
+    $componentContainer = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Field(Str::random()))
@@ -57,7 +57,7 @@ test('hidden fields can save relationships when requested', function () {
         $numberOfRelationshipsSaved++;
     };
 
-    $componentContainer = ComponentContainer::make(Livewire::make())
+    $componentContainer = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Field(Str::random()))

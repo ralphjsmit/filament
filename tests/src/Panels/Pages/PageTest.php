@@ -2,7 +2,7 @@
 
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Tests\Panels\Fixtures\Pages\Settings;
+use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Validation\ValidationException;
 

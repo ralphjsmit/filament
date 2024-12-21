@@ -5,6 +5,7 @@
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
+    $key = $getKey();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
@@ -110,27 +111,36 @@
                 }"
             ></div>
             <div
-                x-ignore
                 @if (FilamentView::hasSpaMode())
-                    {{-- format-ignore-start --}}ax-load="visible || event (ax-modal-opened)"{{-- format-ignore-end --}}
+                    {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
                 @else
-                    ax-load
+                    x-load
                 @endif
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
+                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
                             canSelectPlaceholder: @js($canSelectPlaceholder),
                             isHtmlAllowed: @js($isHtmlAllowed()),
                             getOptionLabelUsing: async () => {
-                                return await $wire.getFormSelectOptionLabel(@js($statePath))
+                                return await $wire.callSchemaComponentMethod(@js($key), 'getOptionLabel')
                             },
                             getOptionLabelsUsing: async () => {
-                                return await $wire.getFormSelectOptionLabels(@js($statePath))
+                                return await $wire.callSchemaComponentMethod(
+                                    @js($key),
+                                    'getOptionLabelsForJs',
+                                )
                             },
                             getOptionsUsing: async () => {
-                                return await $wire.getFormSelectOptions(@js($statePath))
+                                return await $wire.callSchemaComponentMethod(
+                                    @js($key),
+                                    'getOptionsForJs',
+                                )
                             },
                             getSearchResultsUsing: async (search) => {
-                                return await $wire.getFormSelectSearchResults(@js($statePath), search)
+                                return await $wire.callSchemaComponentMethod(
+                                    @js($key),
+                                    'getSearchResultsForJs',
+                                    { search },
+                                )
                             },
                             isAutofocused: @js($isAutofocused()),
                             isMultiple: @js($isMultiple()),

@@ -1,8 +1,8 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\Tests\Models\DomainTeam;
-use Filament\Tests\Models\Team;
+use Filament\Tests\Fixtures\Models\DomainTeam;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;

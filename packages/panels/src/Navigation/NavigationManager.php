@@ -25,7 +25,7 @@ class NavigationManager
 
     public function __construct()
     {
-        $this->panel = Filament::getCurrentPanel();
+        $this->panel = Filament::getCurrentOrDefaultPanel();
 
         $this->navigationGroups = array_map(
             fn (NavigationGroup | string $group): NavigationGroup | string => $group instanceof NavigationGroup ? (clone $group) : $group,

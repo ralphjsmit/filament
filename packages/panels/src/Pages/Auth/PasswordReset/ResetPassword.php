@@ -7,13 +7,17 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\PasswordResetResponse;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Decorations\FormActionsDecorations;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\NestedSchema;
+use Filament\Schemas\Components\RenderHook;
+use Filament\Schemas\Schema;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -26,17 +30,11 @@ use Illuminate\Validation\Rules\Password as PasswordRule;
 use Livewire\Attributes\Locked;
 
 /**
- * @property Form $form
+ * @property-read Schema $form
  */
 class ResetPassword extends SimplePage
 {
-    use InteractsWithFormActions;
     use WithRateLimiting;
-
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::pages.auth.password-reset.reset-password';
 
     #[Locked]
     public ?string $email = null;
@@ -119,7 +117,7 @@ class ResetPassword extends SimplePage
             ->danger();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -189,5 +187,25 @@ class ResetPassword extends SimplePage
     protected function hasFullWidthFormActions(): bool
     {
         return true;
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                RenderHook::make(PanelsRenderHook::AUTH_PASSWORD_RESET_RESET_FORM_BEFORE),
+                $this->getFormContentComponent(),
+                RenderHook::make(PanelsRenderHook::AUTH_PASSWORD_RESET_RESET_FORM_AFTER),
+            ]);
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        return Form::make([NestedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('resetPassword')
+            ->footer(FormActionsDecorations::make($this->getFormActions())
+                ->alignment($this->getFormActionsAlignment())
+                ->fullWidth($this->hasFullWidthFormActions()));
     }
 }

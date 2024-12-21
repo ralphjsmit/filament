@@ -1,11 +1,11 @@
 <?php
 
+use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tests\Models\Post;
-use Filament\Tests\Tables\Fixtures\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
 
 use function Filament\Tests\livewire;

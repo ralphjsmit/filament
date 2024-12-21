@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
 
 trait CanFixIndistinctState
@@ -53,7 +53,7 @@ trait CanFixIndistinctState
                         ->values()
                         ->all())
                     ->each(fn (array $newSiblingItemState, string $itemKey) => $set(
-                        path: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
+                        key: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
                         state: $newSiblingItemState,
                         isAbsolute: true,
                     ));
@@ -75,7 +75,7 @@ trait CanFixIndistinctState
                     return $siblingItemComponentState === $state;
                 })
                 ->each(fn (mixed $siblingItemComponentState, string $itemKey) => $set(
-                    path: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
+                    key: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
                     state: match ($siblingItemComponentState) {
                         true => false,
                         default => null,

@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Facades\FilamentView;
 
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
@@ -20,9 +21,9 @@
             "
         >
             <div
-                {{-- prettier-ignore-start --}}ax-load="visible || event (ax-modal-opened)"
+                {{-- prettier-ignore-start --}}x-load="visible || event (x-modal-opened)"
                 {{-- prettier-ignore-end --}}
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
+                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
                 x-data="markdownEditorFormComponent({
                             canAttachFiles: @js($hasToolbarButton('attachFiles')),
                             isLiveDebounced: @js($isLiveDebounced()),
@@ -35,9 +36,12 @@
                             toolbarButtons: @js($getToolbarButtons()),
                             translations: @js(__('filament-forms::components.markdown_editor')),
                             uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
-                                $wire.upload(`componentFileAttachments.{{ $statePath }}`, file, () => {
+                                $wire.upload(`componentFileAttachments.{{ $key }}`, file, () => {
                                     $wire
-                                        .getFormComponentFileAttachmentUrl('{{ $statePath }}')
+                                        .callSchemaComponentMethod(
+                                            '{{ $key }}',
+                                            'saveUploadedFileAttachment',
+                                        )
                                         .then((url) => {
                                             if (! url) {
                                                 return onError()
@@ -48,7 +52,6 @@
                                 })
                             },
                         })"
-                x-ignore
                 wire:ignore
                 {{ $getExtraAlpineAttributeBag() }}
             >

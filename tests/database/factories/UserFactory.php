@@ -2,8 +2,11 @@
 
 namespace Filament\Tests\Database\Factories;
 
-use Filament\Tests\Models\User;
+use Filament\MultiFactorAuthentication\EmailCode\EmailCodeAuthentication;
+use Filament\MultiFactorAuthentication\GoogleTwoFactor\GoogleTwoFactorAuthentication;
+use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class UserFactory extends Factory
@@ -19,5 +22,30 @@ class UserFactory extends Factory
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
         ];
+    }
+
+    public function hasEmailCodeAuthentication(): self
+    {
+        $emailCodeAuthentication = EmailCodeAuthentication::make();
+
+        return $this->state(fn (): array => [
+            'email_code_authentication_secret' => $emailCodeAuthentication->generateSecret(),
+        ]);
+    }
+
+    /**
+     * @param  ?array<string>  $recoveryCodes
+     */
+    public function hasGoogleTwoFactorAuthentication(?array $recoveryCodes = null): self
+    {
+        $googleTwoFactorAuthentication = GoogleTwoFactorAuthentication::make();
+
+        return $this->state(fn (): array => [
+            'google_two_factor_authentication_secret' => $googleTwoFactorAuthentication->generateSecret(),
+            'google_two_factor_authentication_recovery_codes' => array_map(
+                fn (string $code): string => Hash::make($code),
+                $recoveryCodes ?? $googleTwoFactorAuthentication->generateRecoveryCodes(),
+            ),
+        ]);
     }
 }

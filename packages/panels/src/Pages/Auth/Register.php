@@ -9,42 +9,45 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Events\Auth\Registered;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
 use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
-use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Decorations\FormActionsDecorations;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\NestedSchema;
+use Filament\Schemas\Components\RenderHook;
+use Filament\Schemas\Schema;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 
 /**
- * @property Form $form
+ * @property-read Action $loginAction
+ * @property-read Schema $form
  */
 class Register extends SimplePage
 {
     use CanUseDatabaseTransactions;
-    use InteractsWithFormActions;
     use WithRateLimiting;
-
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::pages.auth.register';
 
     /**
      * @var array<string, mixed> | null
      */
     public ?array $data = [];
 
+    /**
+     * @var class-string<Model>
+     */
     protected string $userModel;
 
     public function mount(): void
@@ -145,19 +148,19 @@ class Register extends SimplePage
         $user->notify($notification);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->schema([
                         $this->getNameFormComponent(),
                         $this->getEmailFormComponent(),
@@ -219,6 +222,9 @@ class Register extends SimplePage
             ->url(filament()->getLoginUrl());
     }
 
+    /**
+     * @return class-string<Model>
+     */
     protected function getUserModel(): string
     {
         if (isset($this->userModel)) {
@@ -273,5 +279,34 @@ class Register extends SimplePage
     protected function mutateFormDataBeforeRegister(array $data): array
     {
         return $data;
+    }
+
+    public function getSubheading(): string | Htmlable | null
+    {
+        if (! filament()->hasLogin()) {
+            return null;
+        }
+
+        return new HtmlString(__('filament-panels::pages/auth/register.actions.login.before') . ' ' . $this->loginAction->toHtml());
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                RenderHook::make(PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE),
+                $this->getFormContentComponent(),
+                RenderHook::make(PanelsRenderHook::AUTH_REGISTER_FORM_AFTER),
+            ]);
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        return Form::make([NestedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('register')
+            ->footer(FormActionsDecorations::make($this->getFormActions())
+                ->alignment($this->getFormActionsAlignment())
+                ->fullWidth($this->hasFullWidthFormActions()));
     }
 }

@@ -8,30 +8,29 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Decorations\FormActionsDecorations;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\NestedSchema;
+use Filament\Schemas\Components\RenderHook;
+use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
 
 /**
- * @property Form $form
+ * @property-read Action $loginAction
+ * @property-read Schema $form
  */
 class RequestPasswordReset extends SimplePage
 {
-    use InteractsWithFormActions;
     use WithRateLimiting;
-
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::pages.auth.password-reset.request-password-reset';
 
     /**
      * @var array<string, mixed> | null
@@ -106,19 +105,19 @@ class RequestPasswordReset extends SimplePage
             ->danger();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->schema([
                         $this->getEmailFormComponent(),
                     ])
@@ -179,5 +178,34 @@ class RequestPasswordReset extends SimplePage
     protected function hasFullWidthFormActions(): bool
     {
         return true;
+    }
+
+    public function getSubheading(): string | Htmlable | null
+    {
+        if (! filament()->hasLogin()) {
+            return null;
+        }
+
+        return $this->loginAction;
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                RenderHook::make(PanelsRenderHook::AUTH_PASSWORD_RESET_REQUEST_FORM_BEFORE),
+                $this->getFormContentComponent(),
+                RenderHook::make(PanelsRenderHook::AUTH_PASSWORD_RESET_REQUEST_FORM_AFTER),
+            ]);
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        return Form::make([NestedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('request')
+            ->footer(FormActionsDecorations::make($this->getFormActions())
+                ->alignment($this->getFormActionsAlignment())
+                ->fullWidth($this->hasFullWidthFormActions()));
     }
 }

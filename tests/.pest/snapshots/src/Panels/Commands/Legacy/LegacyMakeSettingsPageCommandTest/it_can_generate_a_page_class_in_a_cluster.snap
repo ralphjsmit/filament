@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Filament\Clusters\Site\Pages;
+
+use App\Filament\Clusters\Site;
+use Filament\Forms;
+use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
+use Filament\Tests\Panels\Commands\Legacy\Settings;
+
+class ManageSettings extends SettingsPage
+{
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+
+    protected static string $settings = Settings::class;
+
+    protected static ?string $cluster = Site::class;
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                //
+            ]);
+    }
+}

@@ -3,6 +3,9 @@
 namespace Filament\Pages;
 
 use Filament\Facades\Filament;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\NestedSchema;
+use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
@@ -13,11 +16,6 @@ class Dashboard extends Page
     protected static string $routePath = '/';
 
     protected static ?int $navigationSort = -2;
-
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::pages.dashboard';
 
     public static function getNavigationLabel(): string
     {
@@ -47,6 +45,8 @@ class Dashboard extends Page
     }
 
     /**
+     * @deprecated Use `getWidgetsSchemaComponents($this->getWidgets())` to transform widgets into schema components instead, which also filters their visibility.
+     *
      * @return array<class-string<Widget> | WidgetConfiguration>
      */
     public function getVisibleWidgets(): array
@@ -55,9 +55,9 @@ class Dashboard extends Page
     }
 
     /**
-     * @return int | string | array<string, int | string | null>
+     * @return int | array<string, ?int>
      */
-    public function getColumns(): int | string | array
+    public function getColumns(): int | array
     {
         return 2;
     }
@@ -65,5 +65,15 @@ class Dashboard extends Page
     public function getTitle(): string | Htmlable
     {
         return static::$title ?? __('filament-panels::pages/dashboard.title');
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                ...(method_exists($this, 'getFiltersForm') ? [NestedSchema::make('filtersForm')] : []),
+                Grid::make($this->getColumns())
+                    ->schema($this->getWidgetsSchemaComponents($this->getWidgets())),
+            ]);
     }
 }

@@ -1,5 +1,7 @@
 @php
-    $gridDirection = $getGridDirection() ?? 'column';
+    use Filament\Support\Enums\GridDirection;
+
+    $gridDirection = $getGridDirection() ?? GridDirection::Column;
     $isBulkToggleable = $isBulkToggleable();
     $isDisabled = $isDisabled();
     $isSearchable = $isSearchable();
@@ -122,12 +124,12 @@
                 <div
                     x-cloak
                     class="mb-2"
-                    wire:key="{{ $this->getId() }}.{{ $getStatePath() }}.{{ $field::class }}.actions"
+                    wire:key="{{ $getLivewireKey() }}.actions"
                 >
                     <span
                         x-show="! areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.select-all"
+                        wire:key="{{ $getLivewireKey() }}.actions.select-all"
                     >
                         {{ $getAction('selectAll') }}
                     </span>
@@ -135,7 +137,7 @@
                     <span
                         x-show="areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.deselect-all"
+                        wire:key="{{ $getLivewireKey() }}.actions.deselect-all"
                     >
                         {{ $getAction('deselectAll') }}
                     </span>
@@ -143,27 +145,22 @@
             @endif
         @endif
 
-        <x-filament::grid
-            :default="$getColumns('default')"
-            :sm="$getColumns('sm')"
-            :md="$getColumns('md')"
-            :lg="$getColumns('lg')"
-            :xl="$getColumns('xl')"
-            :two-xl="$getColumns('2xl')"
-            :direction="$gridDirection"
-            :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes($attributes)
-                    ->merge($getExtraAttributes(), escape: false)
+        <div
+            {{
+                $getExtraAttributeBag()
+                    ->grid($getColumns(), $gridDirection)
+                    ->merge([
+                        'x-show' => $isSearchable ? 'visibleCheckboxListOptions.length' : null,
+                    ], escape: false)
                     ->class([
                         'fi-fo-checkbox-list gap-4',
-                        '-mt-4' => $gridDirection === 'column',
+                        '-mt-4' => $gridDirection === GridDirection::Column,
                     ])
-            "
+            }}
         >
             @forelse ($getOptions() as $value => $label)
                 <div
-                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
+                    wire:key="{{ $getLivewireKey() }}.options.{{ $value }}"
                     @if ($isSearchable)
                         x-show="
                             $el
@@ -177,7 +174,7 @@
                         "
                     @endif
                     @class([
-                        'break-inside-avoid pt-4' => $gridDirection === 'column',
+                        'break-inside-avoid pt-4' => $gridDirection === GridDirection::Column,
                     ])
                 >
                     <label
@@ -220,11 +217,9 @@
                     </label>
                 </div>
             @empty
-                <div
-                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.empty"
-                ></div>
+                <div wire:key="{{ $getLivewireKey() }}.empty"></div>
             @endforelse
-        </x-filament::grid>
+        </div>
 
         @if ($isSearchable)
             <div

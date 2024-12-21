@@ -29,6 +29,7 @@ class DeleteAction extends Action
 
         $this->color('danger');
 
+        $this->tableIcon(FilamentIcon::resolve('actions::delete-action') ?? 'heroicon-m-trash');
         $this->groupedIcon(FilamentIcon::resolve('actions::delete-action.grouped') ?? 'heroicon-m-trash');
 
         $this->requiresConfirmation();

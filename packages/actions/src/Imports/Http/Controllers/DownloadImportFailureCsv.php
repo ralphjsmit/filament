@@ -4,22 +4,35 @@ namespace Filament\Actions\Imports\Http\Controllers;
 
 use Filament\Actions\Imports\Models\FailedImportRow;
 use Filament\Actions\Imports\Models\Import;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use League\Csv\ByteSequence;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-use function Filament\authorize;
-
 class DownloadImportFailureCsv
 {
-    public function __invoke(Import $import): StreamedResponse
+    public function __invoke(Request $request, Import $import): StreamedResponse
     {
-        if (filled(Gate::getPolicyFor($import::class))) {
-            authorize('view', $import);
+        abort_unless(auth(
+            $request->hasValidSignature(absolute: false)
+                ? $request->query('authGuard')
+                : null,
+        )->check(), 401);
+
+        $user = auth(
+            $request->hasValidSignature(absolute: false)
+                ? $request->query('authGuard')
+                : null,
+        )->user();
+
+        $importPolicy = Gate::getPolicyFor($import::class);
+
+        if (filled($importPolicy) && method_exists($importPolicy, 'view')) {
+            Gate::forUser($user)->authorize('view', $import);
         } else {
-            abort_unless($import->user()->is(auth()->user()), 403);
+            abort_unless($import->user()->is($user), 403);
         }
 
         $csv = Writer::createFromFileObject(new SplTempFileObject);

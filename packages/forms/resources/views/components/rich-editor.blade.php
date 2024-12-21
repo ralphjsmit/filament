@@ -2,6 +2,7 @@
     use Filament\Support\Facades\FilamentView;
 
     $id = $getId();
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
@@ -24,34 +25,29 @@
         >
             <div
                 @if (FilamentView::hasSpaMode())
-                    {{-- format-ignore-start --}}ax-load="visible || event (ax-modal-opened)"{{-- format-ignore-end --}}
+                    {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
                 @else
-                    ax-load
+                    x-load
                 @endif
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
+                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
                 x-data="richEditorFormComponent({
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         })"
-                x-ignore
                 x-on:trix-attachment-add="
                     if (! $event.attachment.file) return
 
                     let attachment = $event.attachment
 
-                    $wire.upload(
-                        `componentFileAttachments.{{ $statePath }}`,
-                        attachment.file,
-                        () => {
-                            $wire
-                                .getFormComponentFileAttachmentUrl('{{ $statePath }}')
-                                .then((url) => {
-                                    attachment.setAttributes({
-                                        url: url,
-                                        href: url,
-                                    })
+                    $wire.upload(`componentFileAttachments.{{ $key }}`, attachment.file, () => {
+                        $wire
+                            .callSchemaComponentMethod('{{ $key }}', 'saveUploadedFileAttachment')
+                            .then((url) => {
+                                attachment.setAttributes({
+                                    url: url,
+                                    href: url,
                                 })
-                        },
-                    )
+                            })
+                    })
                 "
                 x-on:trix-change="
                     let value = $event.target.value

@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\Tests\Panels\Fixtures\Pages\Settings;
+use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Pages\TestCase;
 
 uses(TestCase::class);

@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Filament\Resources\Users\Pages;
+
+use App\Filament\Resources\Teams\Tables\TeamsTable;
+use App\Filament\Resources\Users\UserResource;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+
+class ManageUserTeams extends ManageRelatedRecords
+{
+    protected static string $resource = UserResource::class;
+
+    protected static string $relationship = 'teams';
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static function getNavigationLabel(): string
+    {
+        return 'Teams';
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return TeamsTable::configure($table);
+    }
+}

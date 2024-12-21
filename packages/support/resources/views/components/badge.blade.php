@@ -2,6 +2,7 @@
     use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
+    use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
@@ -38,21 +39,9 @@
         $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
     }
 
-    $isDeletable = count($deleteButton?->attributes->getAttributes() ?? []) > 0;
+    $iconClasses = ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : (is_string($iconSize) ? $iconSize : '');
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-badge-icon h-4 w-4',
-        match ($iconSize) {
-            IconSize::Small => 'h-4 w-4',
-            IconSize::Medium => 'h-5 w-5',
-            IconSize::Large => 'h-6 w-6',
-            default => $iconSize,
-        },
-        match ($color) {
-            'gray' => 'text-gray-400 dark:text-gray-500',
-            default => 'text-custom-500',
-        },
-    ]);
+    $isDeletable = count($deleteButton?->attributes->getAttributes() ?? []) > 0;
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
@@ -74,7 +63,7 @@
 @endphp
 
 <{{ $tag }}
-    @if ($tag === 'a')
+    @if (($tag === 'a') && (! ($disabled && filled($tooltip))))
         {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
     @endif
     @if ($keyBindings || $hasTooltip)
@@ -93,26 +82,28 @@
     {{
         $attributes
             ->merge([
-                'disabled' => $disabled,
+                'aria-disabled' => $disabled ? 'true' : null,
+                'disabled' => $disabled && blank($tooltip),
                 'form' => $tag === 'button' ? $formId : null,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
+            ->when(
+                $disabled && filled($tooltip),
+                fn (ComponentAttributeBag $attributes) => $attributes->filter(
+                    fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
+                ),
+            )
             ->class([
-                'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset',
-                'pointer-events-none opacity-70' => $disabled,
-                match ($size) {
-                    ActionSize::ExtraSmall => 'px-0.5 min-w-[theme(spacing.4)] tracking-tighter',
-                    ActionSize::Small => 'px-1.5 min-w-[theme(spacing.5)] py-0.5 tracking-tight',
-                    ActionSize::Medium, ActionSize::Large, ActionSize::ExtraLarge => 'px-2 min-w-[theme(spacing.6)] py-1',
-                    default => $size,
-                },
+                'fi-badge',
+                'fi-disabled' => $disabled,
                 match ($color) {
-                    'gray' => 'bg-gray-50 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
-                    default => 'fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
+                    'gray' => '',
+                    default => 'fi-color-custom',
                 },
                 is_string($color) ? "fi-color-{$color}" : null,
+                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
             ])
             ->style([
                 \Filament\Support\get_color_css_variables(
@@ -129,57 +120,48 @@
 >
     @if ($iconPosition === IconPosition::Before)
         @if ($icon)
-            <x-filament::icon
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'alias' => $iconAlias,
-                            'icon' => $icon,
-                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
-                        ])
-                    )
-                        ->class([$iconClasses])
-                        ->style([$iconStyles])
-                "
-            />
+            {{
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
 
         @if ($hasLoadingIndicator)
-            <x-filament::loading-indicator
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => $loadingIndicatorTarget,
-                        ])
-                    )
-                        ->class([$iconClasses])
-                        ->style([$iconStyles])
-                "
-            />
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                    'wire:target' => $loadingIndicatorTarget,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
     @endif
 
-    <span class="grid">
-        <span class="truncate">
+    <span class="fi-badge-label-ctn">
+        <span class="fi-badge-label">
             {{ $slot }}
         </span>
     </span>
 
     @if ($isDeletable)
+        @php
+            $deleteButtonWireTarget = $deleteButton->attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+
+            $deleteButtonHasLoadingIndicator = filled($deleteButtonWireTarget);
+
+            if ($deleteButtonHasLoadingIndicator) {
+                $deleteButtonLoadingIndicatorTarget = html_entity_decode($deleteButtonWireTarget, ENT_QUOTES);
+            }
+        @endphp
+
         <button
             type="button"
             {{
-                $deleteButton
-                    ->attributes
+                $deleteButton->attributes
                     ->except(['label'])
                     ->class([
-                        'fi-badge-delete-button -my-1 -me-2 -ms-1 flex items-center justify-center p-1 outline-none transition duration-75',
-                        match ($color) {
-                            'gray' => 'text-gray-700/50 hover:text-gray-700/75 focus-visible:text-gray-700/75 dark:text-gray-300/50 dark:hover:text-gray-300/75 dark:focus-visible:text-gray-300/75',
-                            default => 'text-custom-700/50 hover:text-custom-700/75 focus-visible:text-custom-700/75 dark:text-custom-300/50 dark:hover:text-custom-300/75 dark:focus-visible:text-custom-300/75',
-                        },
+                        'fi-badge-delete-btn',
                     ])
                     ->style([
                         \Filament\Support\get_color_css_variables(
@@ -190,11 +172,21 @@
                     ])
             }}
         >
-            <x-filament::icon
-                alias="badge.delete-button"
-                icon="heroicon-m-x-mark"
-                class="h-3.5 w-3.5"
-            />
+            {{
+                \Filament\Support\generate_icon_html('heroicon-m-x-mark', alias: 'badge.delete-button', attributes: (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $deleteButtonHasLoadingIndicator,
+                    'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : false,
+                ])))
+            }}
+
+            @if ($deleteButtonHasLoadingIndicator)
+                {{
+                    \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                        'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                        'wire:target' => $deleteButtonLoadingIndicatorTarget,
+                    ])))
+                }}
+            @endif
 
             @if (filled($label = $deleteButton->attributes->get('label')))
                 <span class="sr-only">
@@ -204,35 +196,21 @@
         </button>
     @elseif ($iconPosition === IconPosition::After)
         @if ($icon)
-            <x-filament::icon
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'alias' => $iconAlias,
-                            'icon' => $icon,
-                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
-                        ])
-                    )
-                        ->class([$iconClasses])
-                        ->style([$iconStyles])
-                "
-            />
+            {{
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
 
         @if ($hasLoadingIndicator)
-            <x-filament::loading-indicator
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => $loadingIndicatorTarget,
-                        ])
-                    )
-                        ->class([$iconClasses])
-                        ->style([$iconStyles])
-                "
-            />
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                    'wire:target' => $loadingIndicatorTarget,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
     @endif
 </{{ $tag }}>

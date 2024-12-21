@@ -3,12 +3,12 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
 
@@ -158,7 +158,7 @@ trait HasFilters
         return $this->getFilters()[$name] ?? null;
     }
 
-    public function getFiltersForm(): Form
+    public function getFiltersForm(): Schema
     {
         return $this->getLivewire()->getTableFiltersForm();
     }

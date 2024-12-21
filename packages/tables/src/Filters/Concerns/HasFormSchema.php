@@ -3,9 +3,9 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Schema;
 
 trait HasFormSchema
 {
@@ -75,7 +75,7 @@ trait HasFormSchema
         return null;
     }
 
-    public function getForm(): ComponentContainer
+    public function getForm(): Schema
     {
         return $this->getLivewire()
             ->getTableFiltersForm()

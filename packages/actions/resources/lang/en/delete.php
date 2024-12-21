@@ -54,6 +54,16 @@ return [
                 'title' => 'Deleted',
             ],
 
+            'deleted_partial' => [
+                'title' => 'Deleted :count of :total',
+                'missing_message' => ':count could not be deleted.',
+            ],
+
+            'deleted_none' => [
+                'title' => 'Failed to delete',
+                'missing_message' => ':count could not be deleted.',
+            ],
+
         ],
 
     ],

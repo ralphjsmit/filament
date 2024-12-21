@@ -22,6 +22,10 @@ return [
             'label' => 'Confirm new password',
         ],
 
+        'current_password' => [
+            'label' => 'Current password',
+        ],
+
         'actions' => [
 
             'save' => [

@@ -1,11 +1,12 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\Tests\Models\Post;
-use Filament\Tests\Panels\Fixtures\Resources\PostCategoryResource;
-use Filament\Tests\Panels\Fixtures\Resources\PostResource;
-use Filament\Tests\Panels\Fixtures\Resources\Shop\OrderInvoiceResource;
-use Filament\Tests\Panels\Fixtures\Resources\Shop\OrderResource;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
+use Filament\Tests\Fixtures\Resources\Posts\PostResource;
+use Filament\Tests\Fixtures\Resources\Shop\OrderInvoiceResource;
+use Filament\Tests\Fixtures\Resources\Shop\OrderResource;
+use Filament\Tests\Fixtures\Resources\Shop\Products\ProductResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -28,6 +29,11 @@ it('can generate a slug based on the multi-word model name', function () {
 });
 
 it('can generate a nested slug based on the model name', function () {
+    expect(ProductResource::getSlug())
+        ->toBe('shop/products');
+});
+
+it('can generate a nested slug based on the model name with a resource outside of its directory', function () {
     expect(OrderResource::getSlug())
         ->toBe('shop/orders');
 });
