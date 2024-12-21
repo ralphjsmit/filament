@@ -17,9 +17,9 @@ it('will make any object from container', function () {
 
 it('will instantiate Eloquent Models provided by name', function () {
     $isEvaluatingClosures = new IsEvaluatingClosures(
-		record: $recordModel = new RecordModel,
-	    shouldResolveDefaultClosureDependencyForEvaluationByName: true,
-	    shouldResolveDefaultClosureDependencyForEvaluationByType: false,
+        record: $recordModel = new RecordModel,
+        shouldResolveDefaultClosureDependencyForEvaluationByName: true,
+        shouldResolveDefaultClosureDependencyForEvaluationByType: false,
     );
 
     $isEvaluatingClosures->evaluate(function (RecordModel $record) {
@@ -29,9 +29,9 @@ it('will instantiate Eloquent Models provided by name', function () {
 
 it('will not instantiate Eloquent Models not provided by name', function () {
     $isEvaluatingClosures = new IsEvaluatingClosures(
-		record: $recordModel = new RecordModel,
-	    shouldResolveDefaultClosureDependencyForEvaluationByName: true,
-	    shouldResolveDefaultClosureDependencyForEvaluationByType: false,
+        record: $recordModel = new RecordModel,
+        shouldResolveDefaultClosureDependencyForEvaluationByName: true,
+        shouldResolveDefaultClosureDependencyForEvaluationByType: false,
     );
 
     $this->expectException(BindingResolutionException::class);
@@ -42,19 +42,19 @@ it('will not instantiate Eloquent Models not provided by name', function () {
 });
 
 it('will instantiate Eloquent Models provided by type', function () {
-	$isEvaluatingClosures = new IsEvaluatingClosures(
-		record: $recordModel = new RecordModel,
-		shouldResolveDefaultClosureDependencyForEvaluationByName: false,
-		shouldResolveDefaultClosureDependencyForEvaluationByType: true,
-	);
-	
-	$isEvaluatingClosures->evaluate(function (RecordModel $record) use ($recordModel) {
-		expect($record)->toBe($recordModel);
-	});
-	
-	$isEvaluatingClosures->evaluate(function (RecordModel $recordModelWithDifferentName) use ($recordModel) {
-		expect($recordModelWithDifferentName)->toBe($recordModel);
-	});
+    $isEvaluatingClosures = new IsEvaluatingClosures(
+        record: $recordModel = new RecordModel,
+        shouldResolveDefaultClosureDependencyForEvaluationByName: false,
+        shouldResolveDefaultClosureDependencyForEvaluationByType: true,
+    );
+
+    $isEvaluatingClosures->evaluate(function (RecordModel $record) use ($recordModel) {
+        expect($record)->toBe($recordModel);
+    });
+
+    $isEvaluatingClosures->evaluate(function (RecordModel $recordModelWithDifferentName) use ($recordModel) {
+        expect($recordModelWithDifferentName)->toBe($recordModel);
+    });
 });
 
 it('will not instantiate empty Models from container', function () {
@@ -74,13 +74,13 @@ class RecordModel extends Model
 
 class IsEvaluatingClosures
 {
+    use Support\Concerns\EvaluatesClosures;
+
     public function __construct(
         public ?RecordModel $record = null,
         public bool $shouldResolveDefaultClosureDependencyForEvaluationByName = false,
         public bool $shouldResolveDefaultClosureDependencyForEvaluationByType = false,
     ) {}
-
-    use Support\Concerns\EvaluatesClosures;
 
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
