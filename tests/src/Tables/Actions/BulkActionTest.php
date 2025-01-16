@@ -7,6 +7,7 @@ use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
+use function Pest\Laravel\assertNotSoftDeleted;
 use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
@@ -26,10 +27,14 @@ it('can unmount bulk action', function () {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
-	    ->mountTableBulkAction(DeleteBulkAction::class, $posts)
-	    ->assertTableBulkActionMounted(DeleteBulkAction::class)
-	    ->unmountTableBulkAction()
-	    ->assertTableBulkActionNotMounted(DeleteBulkAction::class);
+        ->mountTableBulkAction(DeleteBulkAction::class, $posts)
+        ->assertTableBulkActionMounted(DeleteBulkAction::class)
+        ->unmountTableBulkAction()
+        ->assertTableBulkActionNotMounted(DeleteBulkAction::class);
+
+    foreach ($posts as $post) {
+        assertNotSoftDeleted($post);
+    }
 });
 
 it('can call a bulk action with data', function () {
