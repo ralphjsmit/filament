@@ -22,6 +22,16 @@ it('can call bulk action', function () {
     }
 });
 
+it('can unmount bulk action', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(PostsTable::class)
+	    ->mountTableBulkAction(DeleteBulkAction::class, $posts)
+	    ->assertTableBulkActionMounted(DeleteBulkAction::class)
+	    ->unmountTableBulkAction()
+	    ->assertTableBulkActionNotMounted(DeleteBulkAction::class);
+});
+
 it('can call a bulk action with data', function () {
     $posts = Post::factory()->count(10)->create();
 
