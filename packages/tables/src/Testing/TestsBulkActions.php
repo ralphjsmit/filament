@@ -56,15 +56,15 @@ class TestsBulkActions
             return $this;
         };
     }
-	
-	public function unmountTableBulkAction(): Closure
-	{
-		return function (): static {
-			$this->call('unmountTableBulkAction');
-			
-			return $this;
-		};
-	}
+
+    public function unmountTableBulkAction(): Closure
+    {
+        return function (): static {
+            $this->call('unmountTableBulkAction');
+
+            return $this;
+        };
+    }
 
     public function setTableBulkActionData(): Closure
     {
