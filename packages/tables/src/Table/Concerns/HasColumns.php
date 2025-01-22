@@ -146,7 +146,7 @@ trait HasColumns
 
         foreach ($this->getVisibleColumns() as $column) {
             $columnGroup = $column->getGroup();
-            
+
             if (! $columnGroup) {
                 continue;
             }
