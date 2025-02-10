@@ -113,13 +113,12 @@
     @if (! $isLoaded)
         wire:init="loadTable"
     @endif
-    x-ignore
     @if (FilamentView::hasSpaMode())
-        ax-load="visible"
+        x-load="visible"
     @else
-        ax-load
+        x-load
     @endif
-    ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
+    x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
     x-data="table"
     @class([
         'fi-ta',
@@ -944,10 +943,10 @@
                                 <x-filament-tables::cell
                                     @class([
                                         'fi-table-individual-search-cell-' . str($column->getName())->camel()->kebab(),
-                                        'min-w-48 px-3 py-2',
+                                        'min-w-48 px-3 py-2' => $isIndividuallySearchable = $column->isIndividuallySearchable(),
                                     ])
                                 >
-                                    @if ($column->isIndividuallySearchable())
+                                    @if ($isIndividuallySearchable)
                                         <x-filament-tables::search-field
                                             :debounce="$searchDebounce"
                                             :on-blur="$isSearchOnBlur"
