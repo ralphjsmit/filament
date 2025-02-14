@@ -28,6 +28,11 @@
 @endphp
 
 @if ($hasPageSummary)
+    @php
+        $query = $this->getPageTableSummaryQuery();
+        $selectedState = $this->getTableSummarySelectedState($query)[0] ?? [];
+    @endphp
+
     <x-filament-tables::row
         class="fi-ta-summary-header-row bg-gray-50 dark:bg-white/5"
     >
@@ -46,7 +51,7 @@
         @endif
 
         @foreach ($columns as $column)
-            @if ($placeholderColumns || $column->hasSummary())
+            @if ($placeholderColumns || $column->hasSummary($query))
                 @php
                     $alignment = $column->getAlignment() ?? Alignment::Start;
 
@@ -54,7 +59,7 @@
                         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
                     }
 
-                    $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();
+                    $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary($query);
                 @endphp
 
                 <x-filament-tables::summary.header-cell
@@ -92,11 +97,6 @@
             <td></td>
         @endif
     </x-filament-tables::row>
-
-    @php
-        $query = $this->getPageTableSummaryQuery();
-        $selectedState = $this->getTableSummarySelectedState($query)[0] ?? [];
-    @endphp
 
     <x-filament-tables::summary.row
         :actions="$actions"

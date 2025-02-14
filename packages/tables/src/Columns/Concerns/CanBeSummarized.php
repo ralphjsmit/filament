@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Filament\Tables\Columns\Summarizers\Summarizer;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 trait CanBeSummarized
@@ -38,13 +39,16 @@ trait CanBeSummarized
     /**
      * @return array<string | int, Summarizer>
      */
-    public function getSummarizers(): array
+    public function getSummarizers(?Builder $query): array
     {
-        return $this->summarizers;
+        return array_filter(
+            $this->summarizers,
+            fn (Summarizer $summarizer) => $summarizer->query($query)->isVisible()
+        );
     }
 
-    public function hasSummary(): bool
+    public function hasSummary(?Builder $query): bool
     {
-        return (bool) count($this->getSummarizers());
+        return (bool) count($this->getSummarizers($query));
     }
 }
