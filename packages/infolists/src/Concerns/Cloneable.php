@@ -2,8 +2,22 @@
 
 namespace Filament\Infolists\Concerns;
 
+use Closure;
+
 trait Cloneable
 {
+    /**
+     * @var array<Closure>
+     */
+    protected array $cloneCallbacks = [];
+
+    public function afterClone(Closure $callback): static
+    {
+        $this->cloneCallbacks[] = $callback;
+
+        return $this;
+    }
+
     public function cloneComponents(): static
     {
         $components = [];
@@ -20,6 +34,13 @@ trait Cloneable
         $clone = clone $this;
         $clone->flushCachedAbsoluteStatePath();
         $clone->cloneComponents();
+
+        foreach ($this->cloneCallbacks as $callback) {
+            $clone->evaluate($callback->bindTo($clone), [
+                'clone' => $clone,
+                'original' => $this,
+            ]);
+        }
 
         return $clone;
     }
