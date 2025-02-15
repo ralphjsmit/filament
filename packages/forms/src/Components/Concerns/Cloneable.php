@@ -23,14 +23,13 @@ trait Cloneable
 
         return $this;
     }
-	
-	
-	public function afterClone(Closure $callback): static
-	{
-		$this->cloneCallbacks[] = $callback;
-		
-		return $this;
-	}
+
+    public function afterClone(Closure $callback): static
+    {
+        $this->cloneCallbacks[] = $callback;
+
+        return $this;
+    }
 
     public function getClone(): static
     {
