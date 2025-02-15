@@ -40,10 +40,10 @@ trait Cloneable
         $clone->cloneComponents();
 
         foreach ($this->cloneCallbacks as $callback) {
-            $clone->evaluate($callback->bindTo($clone), [
-                'clone' => $clone,
-                'original' => $this,
-            ]);
+            $clone->evaluate(
+                value: $callback->bindTo($clone),
+                namedInjections: ['clone' => $clone, 'original' => $this]
+            );
         }
 
         return $clone;
