@@ -20,7 +20,7 @@ class BadgeColor extends Page
                     ->label('Orders')
                     ->url(fn (): string => '#')
                     ->icon(Heroicon::OutlinedShoppingCart)
-                    ->badge(32, Color::Red),
+                    ->badge(32, 'danger'),
             ]);
     }
 }

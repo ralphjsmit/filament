@@ -82,7 +82,7 @@
                             'fi-input',
                             'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
                             'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
-                         ) }}
+                         ]) }}
             />
 
             <div

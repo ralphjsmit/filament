@@ -98,15 +98,11 @@
     }
 
     & .fi-fo-repeater-add {
-        @apply flex w-full;
+        @apply flex w-full justify-center;
 
         &.fi-align-start,
         &.fi-align-left {
             @apply justify-start;
-        }
-
-        &.fi-align-center {
-            @apply justify-center;
         }
 
         &.fi-align-end,
@@ -136,15 +132,11 @@
     }
 
     & .fi-fo-repeater-add {
-        @apply flex w-full;
+        @apply flex w-full justify-center;
 
         &.fi-align-start,
         &.fi-align-left {
             @apply justify-start;
-        }
-
-        &.fi-align-center {
-            @apply justify-center;
         }
 
         &.fi-align-end,

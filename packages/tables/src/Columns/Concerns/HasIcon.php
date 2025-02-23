@@ -79,6 +79,10 @@ trait HasIcon
     {
         $position = $this->evaluate($this->iconPosition);
 
+        if ($position instanceof IconPosition) {
+            return $position;
+        }
+
         if (blank($position)) {
             return IconPosition::Before;
         }

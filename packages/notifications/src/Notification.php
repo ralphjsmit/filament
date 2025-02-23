@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications;
 
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
@@ -11,6 +12,8 @@ use Filament\Notifications\View\Components\NotificationComponent\IconComponent;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
+use Filament\Support\Contracts\ScalableIcon;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
@@ -70,13 +73,21 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public function toArray(): array
     {
+        $icon = $this->getIcon();
+
+        if ($icon instanceof ScalableIcon) {
+            $icon = $icon->getIconForSize(IconSize::Large);
+        } elseif ($icon instanceof BackedEnum) {
+            $icon = $icon->value;
+        }
+
         return [
             'id' => $this->getId(),
             'actions' => array_map(fn (Action | ActionGroup $action): array => $action->toArray(), $this->getActions()),
             'body' => $this->getBody(),
             'color' => $this->getColor(),
             'duration' => $this->getDuration(),
-            'icon' => $this->getIcon(),
+            'icon' => $icon,
             'iconColor' => $this->getIconColor(),
             'status' => $this->getStatus(),
             'title' => $this->getTitle(),

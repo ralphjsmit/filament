@@ -11,7 +11,7 @@ export default function checkboxListFormComponent({ livewireId }) {
         init: function () {
             this.checkboxListOptions = Array.from(
                 this.$root.querySelectorAll(
-                    '.fi-fo-checkbox-list-option-label',
+                    '.fi-fo-checkbox-list-option',
                 ),
             )
 
@@ -32,7 +32,7 @@ export default function checkboxListFormComponent({ livewireId }) {
 
                             this.checkboxListOptions = Array.from(
                                 this.$root.querySelectorAll(
-                                    '.fi-fo-checkbox-list-option-label',
+                                    '.fi-fo-checkbox-list-option',
                                 ),
                             )
 
@@ -78,6 +78,10 @@ export default function checkboxListFormComponent({ livewireId }) {
         updateVisibleCheckboxListOptions: function () {
             this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
                 (checkboxListItem) => {
+                    if (['', null, undefined].includes(this.search)) {
+                        return true
+                    }
+
                     if (
                         checkboxListItem
                             .querySelector('.fi-fo-checkbox-list-option-label')

@@ -94,40 +94,40 @@
         @endif
 
         {{ $field?->getChildSchema($field::BELOW_LABEL_SCHEMA_KEY) }}
-
-        @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $aboveContentContainer || $belowContentContainer || $beforeContentContainer || $afterContentContainer || $aboveErrorMessageContainer || $belowErrorMessageContainer)
-            <div class="fi-fo-field-content-col">
-                {{ $aboveContentContainer }}
-
-                @if ($beforeContentContainer || $afterContentContainer)
-                    <div class="fi-fo-field-content-ctn">
-                        {{ $beforeContentContainer }}
-
-                        <div class="fi-fo-field-content">
-                            {{ $slot }}
-                        </div>
-
-                        {{ $afterContentContainer }}
-                    </div>
-                @else
-                    {{ $slot }}
-                @endif
-
-                {{ $belowContentContainer }}
-
-                {{ $aboveErrorMessageContainer }}
-
-                @if ($hasError)
-                    <p
-                        data-validation-error
-                        class="fi-fo-field-wrp-error-message"
-                    >
-                        {{ $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
-                    </p>
-                @endif
-
-                {{ $belowErrorMessageContainer }}
-            </div>
-        @endif
     </div>
+
+    @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $aboveContentContainer || $belowContentContainer || $beforeContentContainer || $afterContentContainer || $aboveErrorMessageContainer || $belowErrorMessageContainer)
+        <div class="fi-fo-field-content-col">
+            {{ $aboveContentContainer }}
+
+            @if ($beforeContentContainer || $afterContentContainer)
+                <div class="fi-fo-field-content-ctn">
+                    {{ $beforeContentContainer }}
+
+                    <div class="fi-fo-field-content">
+                        {{ $slot }}
+                    </div>
+
+                    {{ $afterContentContainer }}
+                </div>
+            @else
+                {{ $slot }}
+            @endif
+
+            {{ $belowContentContainer }}
+
+            {{ $aboveErrorMessageContainer }}
+
+            @if ($hasError)
+                <p
+                    data-validation-error
+                    class="fi-fo-field-wrp-error-message"
+                >
+                    {{ $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
+                </p>
+            @endif
+
+            {{ $belowErrorMessageContainer }}
+        </div>
+    @endif
 </div>

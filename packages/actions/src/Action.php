@@ -185,7 +185,7 @@ class Action extends ViewComponent implements Arrayable
 
         $view = $data['view'] ?? null;
 
-        if (filled($view) && ($static->getView() !== $view) && static::isViewSafe($view)) {
+        if (filled($view) && static::isViewSafe($view)) {
             $static->view($view);
         }
 

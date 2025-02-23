@@ -51,20 +51,6 @@
                         }
                     }
                 }
-
-                &:not(.fi-active) {
-                    & .fi-sc-wizard-header-step-btn {
-                        & .fi-sc-wizard-header-step-icon-ctn {
-                            @apply border-gray-300 dark:border-gray-600;
-                        }
-
-                        & .fi-sc-wizard-header-step-text {
-                            & .fi-sc-wizard-header-step-label {
-                                @apply text-gray-500 dark:text-gray-400;
-                            }
-                        }
-                    }
-                }
             }
 
             &:not(.fi-completed) {
@@ -116,8 +102,16 @@
             &:not(.fi-active) {
                 & .fi-sc-wizard-header-step-btn {
                     & .fi-sc-wizard-header-step-icon-ctn {
+                        @apply border-gray-300 dark:border-gray-600;
+
                         & .fi-sc-wizard-header-step-number {
                             @apply text-gray-500 dark:text-gray-400;
+                        }
+
+                        & .fi-sc-wizard-header-step-text {
+                            & .fi-sc-wizard-header-step-label {
+                                @apply text-gray-500 dark:text-gray-400;
+                            }
                         }
                     }
                 }

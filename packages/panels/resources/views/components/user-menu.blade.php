@@ -15,6 +15,10 @@
     $hasProfileHeader = $itemsBeforeThemeSwitcher->has('profile') &&
         blank(($item = Arr::first($itemsBeforeThemeSwitcher))->getUrl()) &&
         (! $item->hasAction());
+
+    if ($itemsBeforeThemeSwitcher->has('profile')) {
+        $itemsBeforeThemeSwitcher = $itemsBeforeThemeSwitcher->prepend($itemsBeforeThemeSwitcher->pull('profile'), 'profile');
+    }
 @endphp
 
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_BEFORE) }}

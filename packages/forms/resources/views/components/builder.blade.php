@@ -296,7 +296,7 @@
                 :columns="$blockPickerColumns"
                 :key="$key"
                 :width="$blockPickerWidth"
-                :class="($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment) : $addActionAlignment"
+                :class="($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment"
             >
                 <x-slot name="trigger">
                     {{ $addAction }}

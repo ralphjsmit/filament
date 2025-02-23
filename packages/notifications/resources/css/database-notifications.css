@@ -16,7 +16,7 @@
     }
 
     & .fi-modal-content {
-        @apply -mx-6 -mt-6 divide-y divide-gray-200 dark:divide-white/10;
+        @apply -mx-6 -mt-6 gap-y-0 divide-y divide-gray-200 dark:divide-white/10;
     }
 
     & .fi-modal-window:not(.fi-modal-window-has-footer) .fi-modal-content {

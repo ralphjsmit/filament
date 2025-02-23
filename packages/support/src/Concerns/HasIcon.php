@@ -63,6 +63,10 @@ trait HasIcon
             return $position;
         }
 
+        if (blank($position)) {
+            return IconPosition::Before;
+        }
+
         return IconPosition::tryFrom($position) ?? IconPosition::Before;
     }
 

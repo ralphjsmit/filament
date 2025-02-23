@@ -8,6 +8,8 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -53,8 +55,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use stdClass;
 
-class TablesDemo extends Component implements HasSchemas, HasTable
+class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
 {
+    use InteractsWithActions;
     use InteractsWithSchemas;
     use InteractsWithTable;
 

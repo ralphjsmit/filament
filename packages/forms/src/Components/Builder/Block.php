@@ -53,7 +53,7 @@ class Block extends Component
         return $this;
     }
 
-    public function getIcon(): string | BackedEnum
+    public function getIcon(): string | BackedEnum | null
     {
         return $this->evaluate($this->icon);
     }

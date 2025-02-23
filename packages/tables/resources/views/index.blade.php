@@ -1901,9 +1901,9 @@
                             {{ $getEmptyStateHeading() }}
                         </{{ $secondLevelHeadingTag }}>
 
-                        @if ($emptyStateDescription = $getEmptyStateDescription())
+                        @if (filled($emptyStateDescription = $getEmptyStateDescription()))
                             <p class="fi-ta-empty-state-description">
-                                {{ $description }}
+                                {{ $emptyStateDescription }}
                             </p>
                         @endif
 

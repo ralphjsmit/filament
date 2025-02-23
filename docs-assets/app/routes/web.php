@@ -52,7 +52,7 @@ Route::prefix('schemas')->group(function (): void {
     Route::get('layout', LayoutDemo::class);
 });
 
-Route::prefix('panels')->group(function (): void {
+Route::prefix('panels')->middleware(['panel:admin'])->group(function (): void {
     Route::prefix('navigation')->group(function (): void {
         Route::get('user-menu-customization', UserMenuCustomization::class);
         Route::get('disabled-navigation', DisabledNavigation::class);

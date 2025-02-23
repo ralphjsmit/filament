@@ -119,7 +119,7 @@
             <div
                 @class([
                     'fi-fo-repeater-add',
-                    ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment) : $addActionAlignment,
+                    ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
                 ])
             >
                 {{ $addAction }}

@@ -21,7 +21,7 @@
             activeTab: @js($activeTab),
             isTabPersistedInQueryString: @js($isTabPersistedInQueryString()),
             livewireId: @js($this->getId()),
-            tab: @if ($isTabPersisted() && filled($persistenceKey = $getKey())) $persist(null).as('tabs-{{ $persistenceKey }}') @elsenull @endif,
+            tab: @if ($isTabPersisted() && filled($persistenceKey = $getKey())) $persist(null).as('tabs-{{ $persistenceKey }}') @else @js(null) @endif,
             tabQueryStringKey: @js($getTabQueryStringKey()),
         })"
         wire:ignore.self
