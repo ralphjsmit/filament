@@ -119,10 +119,7 @@
             {{ $aboveErrorMessageContainer }}
 
             @if ($hasError)
-                <p
-                    data-validation-error
-                    class="fi-fo-field-wrp-error-message"
-                >
+                <p data-validation-error class="fi-fo-field-wrp-error-message">
                     {{ $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
                 </p>
             @endif

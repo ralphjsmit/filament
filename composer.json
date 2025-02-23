@@ -75,7 +75,6 @@
     },
     "scripts": {
         "cs": [
-            "rector",
             "pint",
             "npm run prettier"
         ],

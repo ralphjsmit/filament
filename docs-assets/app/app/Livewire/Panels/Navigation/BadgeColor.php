@@ -4,7 +4,6 @@ namespace App\Livewire\Panels\Navigation;
 
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 
 class BadgeColor extends Page

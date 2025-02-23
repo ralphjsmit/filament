@@ -10,9 +10,7 @@ export default function checkboxListFormComponent({ livewireId }) {
 
         init: function () {
             this.checkboxListOptions = Array.from(
-                this.$root.querySelectorAll(
-                    '.fi-fo-checkbox-list-option',
-                ),
+                this.$root.querySelectorAll('.fi-fo-checkbox-list-option'),
             )
 
             this.updateVisibleCheckboxListOptions()

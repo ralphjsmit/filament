@@ -67,7 +67,8 @@
                 x-on:focus="$refs.panel.open($refs.input)"
                 x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                 x-ref="input"
-                {{ $getExtraInputAttributeBag()
+                {{
+                    $getExtraInputAttributeBag()
                         ->merge([
                             'autocomplete' => 'off',
                             'disabled' => $isDisabled,
@@ -78,11 +79,12 @@
                             'x-model' . ($isLiveDebounced ? '.debounce.' . $liveDebounce : null) => 'state',
                             'x-on:blur' => $isLiveOnBlur ? 'isOpen() ? null : commitState()' : null,
                         ], escape: false)
-                         ->class([
+                        ->class([
                             'fi-input',
                             'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
                             'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
-                         ]) }}
+                        ])
+                }}
             />
 
             <div
