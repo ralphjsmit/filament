@@ -2,7 +2,7 @@
 title: Overview
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjectionDisclosure from "@components/UtilityInjectionDisclosure.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -62,7 +62,7 @@ TextInput::make('name')
     ->label('Full name')
 ```
 
-<UtilityInjectionDisclosure utilities="formFields">The `label()` method accepts a function to dynamically inject utilities.</UtilityInjectionDisclosure>
+<UtilityInjection set="formFields">The `label()` method accepts a function to dynamically inject utilities.</UtilityInjection>
 
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
