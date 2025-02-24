@@ -68,15 +68,6 @@ TextColumn::make('title')
     ->label('Post title')
 ```
 
-Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('title')
-    ->translateLabel() // Equivalent to `label(__('Title'))`
-```
-
 ## Sorting
 
 Columns may be sortable, by clicking on the column label. To make a column sortable, you must use the `sortable()` method:

@@ -83,16 +83,6 @@ Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
 ```
 
-Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('edit')
-    ->translateLabel() // Equivalent to `label(__('Edit'))`
-    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
-```
-
 ## Setting a color
 
 Buttons may have a [color](../styling/colors) to indicate their significance:

@@ -2,6 +2,8 @@
 title: Overview
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjectionDisclosure from "@components/UtilityInjectionDisclosure.astro"
+import fieldsUtilities from "@utilities/forms/fields.js"
 
 ## Overview
 
@@ -52,7 +54,20 @@ You may also [create your own custom fields](custom) to edit data however you wi
 
 ## Setting a label
 
-By default, the label of the field will be automatically determined based on its name. To override the field's label, you may use the `label()` method. Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
+By default, the label of the field will be automatically determined based on its name. To override the field's label, you may use the `label()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->label('Full name')
+```
+
+<UtilityInjectionDisclosure utilities={fieldsUtilities}>
+    The `label()` method accepts a function to dynamically inject utilities.
+</UtilityInjectionDisclosure>
+
+Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -61,66 +76,15 @@ TextInput::make('name')
     ->label(__('fields.name'))
 ```
 
-Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')
-    ->translateLabel() // Equivalent to `label(__('Name'))`
-```
-
-## Setting an ID
-
-In the same way as labels, field IDs are also automatically determined based on their names. To override a field ID, use the `id()` method:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')
-    ->id('name-field')
-```
-
 ## Setting a default value
 
-Fields may have a default value. This will be filled if the form's `fill()` method is called without any arguments. To define a default value, use the `default()` method:
+Fields may have a default value. The default is only used when a schema is loaded with no data. In a standard [panel resource](../../resources), defaults are used on the Create page, not the Edit page. To define a default value, use the `default()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
     ->default('John')
-```
-
-Note that these defaults are only used when the form is loaded without existing data. Inside [panel resources](../../panels/resources#resource-forms) this only works on Create Pages, as Edit Pages will always fill the data from the model.
-
-## Adding extra HTML attributes
-
-You can pass extra HTML attributes to the field, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')
-    ->extraAttributes(['title' => 'Text input'])
-```
-
-Some fields use an underlying `<input>` or `<select>` DOM element, but this is often not the outer element in the field, so the `extraAttributes()` method may not work as you wish. In this case, you may use the `extraInputAttributes()` method, which will merge the attributes onto the `<input>` or `<select>` element:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('categories')
-    ->extraInputAttributes(['width' => 200])
-```
-
-You can also pass extra HTML attributes to the field wrapper which surrounds the label, entry, and any other text:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('categories')
-    ->extraFieldWrapperAttributes(['class' => 'components-locked'])
 ```
 
 ## Disabling a field
@@ -218,6 +182,35 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
     ->markAsRequired()
+```
+
+## Adding extra HTML attributes
+
+You can pass extra HTML attributes to the field, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->extraAttributes(['title' => 'Text input'])
+```
+
+Some fields use an underlying `<input>` or `<select>` DOM element, but this is often not the outer element in the field, so the `extraAttributes()` method may not work as you wish. In this case, you may use the `extraInputAttributes()` method, which will merge the attributes onto the `<input>` or `<select>` element:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('categories')
+    ->extraInputAttributes(['width' => 200])
+```
+
+You can also pass extra HTML attributes to the field wrapper which surrounds the label, entry, and any other text:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('categories')
+    ->extraFieldWrapperAttributes(['class' => 'components-locked'])
 ```
 
 ## Validating fields

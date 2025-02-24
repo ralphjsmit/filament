@@ -61,15 +61,6 @@ Filter::make('is_featured')
     ->label('Featured')
 ```
 
-Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
-
-```php
-use Filament\Tables\Filters\Filter;
-
-Filter::make('is_featured')
-    ->translateLabel() // Equivalent to `label(__('Is featured'))`
-```
-
 ## Customizing the filter form
 
 By default, creating a filter with the `Filter` class will render a [checkbox form component](../../forms/fields/checkbox). When the checkbox is checked, the `query()` function will be applied to the table's query, scoping the records in the table. When the checkbox is unchecked, the `query()` function will be removed from the table's query.

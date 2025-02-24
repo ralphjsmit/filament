@@ -67,15 +67,6 @@ TextEntry::make('title')
     ->label('Post title')
 ```
 
-Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('title')
-    ->translateLabel() // Equivalent to `label(__('Title'))`
-```
-
 ## Entry URLs
 
 When an entry is clicked, you may open a URL.
