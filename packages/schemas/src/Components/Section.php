@@ -88,8 +88,6 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     {
         parent::setUp();
 
-        $this->columnSpan('full');
-
         $this->key(function (Section $component): ?string {
             if ($statePath = $component->getStatePath(isAbsolute: false)) {
                 return $statePath;

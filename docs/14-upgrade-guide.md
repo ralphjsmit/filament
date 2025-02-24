@@ -15,9 +15,9 @@ import Disclosure from "@components/Disclosure.astro"
 - Tailwind CSS v4.0+, if you are currently using Tailwind CSS v3.0 with Filament. This does not apply if you are just using a Filament panel without a custom theme CSS file.
 - Filament no longer requires `doctrine/dbal`, but if your application still does, and you do not have it installed directly, you should add it to your `composer.json` file.
 
-## Upgrading automatically
+## Running the automated upgrade script
 
-The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes.
+The first set tp upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
 
 ```bash
 composer require filament/upgrade:"^4.0" -W --dev
@@ -27,15 +27,11 @@ vendor/bin/filament-v4
 
 Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
 
-Finally, you must run `php artisan filament:install` to finalize the Filament v4 installation. This command must be run for all new Filament projects.
-
 You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 > Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
-## Upgrading manually
-
-After upgrading the dependencies via Composer, you should execute `php artisan filament:upgrade` in order to clear any Laravel caches and publish the new frontend assets.
+## Breaking changes that must be handled manually
 
 <div x-data="{ packages: ['panels', 'forms', 'infolists', 'tables', 'actions', 'notifications', 'widgets', 'support'] }">
 
@@ -118,6 +114,29 @@ If you have not published the Filament configuration file, or you have removed t
     - If it is different from `FILESYSTEM_DISK`, and it should be, you can [publish the Filament configuration file](installation#publishing-configuration) and set the `default_filesystem_disk` to reference the old `FILAMENT_FILESYSTEM_DISK` environment variable like it was before.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('forms') || packages.includes('infolists')">
+<span slot="summary">The `Grid`, `Section` and `Fieldset` layout components now do not span all columns by default</span>
+
+In v3, the `Grid`, `Section` and `Fieldset` layout components consumed the full width of their parent grid by default. This was inconsistent with the behaviour of every other component in Filament, which only consumes one column of the grid by default. The intention was to make these components easier to integrate into the default Filament resource form and infolist, which uses a two column grid out of the box.
+
+In v4, the `Grid`, `Section` and `Fieldset` layout components now only consume one column of the grid by default. If you want them to span all columns, you can use the `columnSpanFull()` method:
+
+```php
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+
+Fieldset::make()
+    ->columnSpanFull()
+    
+Grid::make()
+    ->columnSpanFull()
+
+Section::make()
+    ->columnSpanFull()
+```
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">The `all` pagination page option is not available for tables by default</span>
 
@@ -154,18 +173,6 @@ Table::configureUsing(function (Table $table): void {
 When using tenancy in v3, Filament only scoped resource queries to the current tenant: to render the resource table, resolve URL parameters, and fetch global search results. There were many situations where other queries in the panel were not scoped by default, and the developer had to manually scope them. While this was a documented feature, it created a lot of additional work for developers.
 
 In v4, Filament automatically scopes all queries in a panel to the current tenant, and automatically associates new records with the current tenant using model events. This means that you no longer need to manually scope queries or associate new Eloquent records in most cases. There are still some important points to consider, so the [documentation](panels/tenancy#tenancy-security) has been updated to reflect this.
-</Disclosure>
-
-<Disclosure x-show="packages.includes('panels')">
-<span slot="summary">The `$maxContentWidth` property on page classes</span>
-
-The `$maxContentWidth` property on page classes has a new type. It is now able to accept `MaxWidth` enum values, as well as strings and null:
-
-```php
-use Filament\Support\Enums\Width;
-
-protected MaxWidth | string | null $maxContentWidth = null;
-```
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">

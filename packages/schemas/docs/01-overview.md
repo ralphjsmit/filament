@@ -16,7 +16,7 @@ Schemas act as a container for many components, and you can add any combination 
 
 A schema is represented by a `Filament\Schemas\Schema` object, and you can pass an array of components to it in the `components()` method.
 
-## A basic schema example
+## An example schema
 
 For example, you may want to build a form with a schema. The name of the schema is usually dictated by the name of the method that it is defined in (`form` in this example). Filament creates the `Schema` object and passes it to the method, which then returns the schema with the components added:
 
@@ -24,29 +24,43 @@ For example, you may want to build a form with a schema. The name of the schema 
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-public function form(Schema $schema): Schema
-{
-    return $schema
-        ->components([
-            Section::make('User details')
-                ->schema([
-                    TextInput::make('name'),
-                    Select::make('position')
-                        ->options([
-                            'developer' => 'Developer',
-                            'designer' => 'Designer',
-                        ]),
-                    Checkbox::make('is_admin'),
-                    // More components can be added here to be rendered inside the "User details" section
-                ]),
-            // More components can be added here, which will be rendered after the "User details" section
-        ]);
-}
+$schema
+    ->components([
+        Grid::make(2)
+            ->schema([
+                Section::make('Details')
+                    ->schema([
+                        TextInput::make('name'),
+                        Select::make('position')
+                            ->options([
+                                'developer' => 'Developer',
+                                'designer' => 'Designer',
+                            ]),
+                        Checkbox::make('is_admin'),
+                    ]),
+                Section::make('Auditing')
+                    ->schema([
+                        TextEntry::make('created_at')
+                            ->dateTime(),
+                        TextEntry::make('updated_at')
+                            ->dateTime(),
+                    ]),
+            ]),
+    ])
 ```
 
-"Section" is a layout component that renders multiple components together in a card, with a heading at the top. The `schema()` method is used to nest components within the section.
+<AutoScreenshot name="schemas/overview/example" alt="Example schema" version="4.x" />
+
+"Grid" is a layout component that renders multiple components together in a responsive grid. The number of columns in the grid is specified in the `make()` method. The `schema()` method is used to nest components within the grid.
+
+"Section" is another layout component that renders multiple components together in a card, with a heading at the top.
+
+"TextInput", "Select", and "Checkbox" are form components that accept input from the user.
+
+"TextEntry" is an infolist component that displays read-only information. In this example, it is used to display the created and updated timestamps of the record. The `dateTime()` method is used to format the timestamps as dates and times.
 
 The schema object is the container for the components and can now be rendered. Rendering the schema will render all the components within it in the correct layout.

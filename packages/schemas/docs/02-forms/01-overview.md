@@ -5,11 +5,9 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-Field classes can be found in the `Filament\Form\Components` namespace.
+Form field classes can be found in the `Filament\Form\Components` namespace.
 
-Fields reside within the schema of your form, alongside any [layout components](../schemas/layout).
-
-Fields may be created using the static `make()` method, passing its unique name. The name of the field should correspond to a property on your Livewire component. You may use "dot notation" to bind fields to keys in arrays.
+Fields may be created using the static `make()` method, passing its unique name. Usually, the name of a field corresponds to the name of an attribute on an Eloquent model:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -18,6 +16,14 @@ TextInput::make('name')
 ```
 
 <AutoScreenshot name="forms/fields/simple" alt="Form field" version="4.x" />
+
+You may use "dot notation" to bind fields to keys in arrays:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('socials.github_url')
+```
 
 ## Available fields
 

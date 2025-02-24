@@ -269,42 +269,6 @@ export default {
         url: 'admin',
         selector: 'body',
     },
-    'forms/getting-started/fields': {
-        url: 'forms/getting-started',
-        selector: '#fields',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/getting-started/columns': {
-        url: 'forms/getting-started',
-        selector: '#columns',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/getting-started/column-span': {
-        url: 'forms/getting-started',
-        selector: '#columnSpan',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/getting-started/section': {
-        url: 'forms/getting-started',
-        selector: '#section',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
     'forms/fields/simple': {
         url: 'forms/fields',
         selector: '#simple',
@@ -1063,6 +1027,15 @@ export default {
     'forms/fields/actions/suffix': {
         url: 'forms/fields',
         selector: '#suffixAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/overview/example': {
+        url: 'schemas/overview',
+        selector: '#example',
         viewport: {
             width: 1920,
             height: 640,

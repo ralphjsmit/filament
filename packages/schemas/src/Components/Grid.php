@@ -32,11 +32,4 @@ class Grid extends Component implements CanEntangleWithSingularRelationships
 
         return $static;
     }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->columnSpan('full');
-    }
 }
