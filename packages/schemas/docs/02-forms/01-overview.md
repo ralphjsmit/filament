@@ -62,9 +62,7 @@ TextInput::make('name')
     ->label('Full name')
 ```
 
-<UtilityInjectionDisclosure utilities="formFields">
-    The `label()` method accepts a function to dynamically inject utilities.
-</UtilityInjectionDisclosure>
+<UtilityInjectionDisclosure utilities="formFields">The `label()` method accepts a function to dynamically inject utilities.</UtilityInjectionDisclosure>
 
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
