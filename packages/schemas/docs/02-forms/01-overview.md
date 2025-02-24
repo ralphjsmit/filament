@@ -51,7 +51,27 @@ Filament ships with many types of field, suitable for editing different types of
 
 You may also [create your own custom fields](custom) to edit data however you wish.
 
-## Setting a label
+## Validating fields
+
+In Laravel, validation rules are usually defined in arrays like `['required', 'max:255']` or a combined string like `required|max:255`. This is fine if you're exclusively working in the backend with simple form requests. But Filament is also able to give your users frontend validation, so they can fix their mistakes before any backend requests are made.
+
+In Filament, you can add validation rules to your fields by using methods like `required()` and `maxLength()`. This is also advantageous over Laravel's validation syntax, since your IDE can autocomplete these methods:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+TextInput::make('name')
+    ->required()
+    ->maxLength(255)
+```
+
+In this example, the fields is `required()`, and has a `maxLength()`. We have [methods for most of Laravel's validation rules](validation#available-rules), and you can even add your own [custom rules](validation#custom-rules).
+
+## Setting a field's label
 
 By default, the label of the field will be automatically determined based on its name. To override the field's label, you may use the `label()` method:
 
@@ -62,7 +82,7 @@ TextInput::make('name')
     ->label('Full name')
 ```
 
-<UtilityInjection set="formFields">The `label()` method accepts a function to dynamically inject utilities.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
@@ -73,7 +93,29 @@ TextInput::make('name')
     ->label(__('fields.name'))
 ```
 
-## Setting a default value
+### Hiding a field's label
+
+It may be tempting to set the label to an empty string to hide it, but this is not recommended. Setting the label to an empty string will not communicate the purpose of the field to screen readers, even if the purpose is clear visually. Instead, you should use the `hiddenLabel()` method, so it is hidden visually but still accessible to screen readers:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->hiddenLabel()
+```
+
+Optionally, you may pass a boolean value to control if the label should be hidden or not:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->hiddenLabel(auth()->user()->isAdmin())
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `hiddenLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Setting a default value of a field
 
 Fields may have a default value. The default is only used when a schema is loaded with no data. In a standard [panel resource](../../resources), defaults are used on the Create page, not the Edit page. To define a default value, use the `default()` method:
 
@@ -83,6 +125,8 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
     ->default('John')
 ```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `default()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disabling a field
 
@@ -106,9 +150,13 @@ Toggle::make('is_admin')
     ->disabled(! auth()->user()->isAdmin())
 ```
 
+<UtilityInjection set="formFields">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `dehydrated()` method:
 
 ```php
+use Filament\Forms\Components\Toggle;
+
 Toggle::make('is_admin')
     ->disabled()
     ->dehydrated()
@@ -116,25 +164,197 @@ Toggle::make('is_admin')
 
 > If you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
 
-### Hiding a field
+Optionally, you may pass a boolean value to control if the field should be dehydrated or not:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->disabled()
+    ->dehydrated(auth()->user()->isAdmin())
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `dehydrated()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Disabling a field based on the current operation
+
+The "operation" of a schema is the current action being performed on it. Usually, this is either `create`, `edit` or `view`, if you are using the [panel resource](../../resources).
+
+You can disable a field based on the current operation by passing an operation to the `disabledOn()` method:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->disabledOn('edit')
+
+// is the same as
+
+Toggle::make('is_admin')
+    ->disabled(fn (string $operation): bool => $operation === 'edit')
+```
+
+You can also pass an array of operations to the `disabledOn()` method, and the field will be disabled if the current operation is any of the operations in the array:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->disabledOn(['edit', 'view'])
+    
+// is the same as
+
+Toggle::make('is_admin')
+    ->disabled(fn (string $operation): bool => in_array($operation, ['edit', 'view']))
+```
+
+> Note: The `disabledOn()` method will overwrite any previous calls to the `disabled()` method, and vice versa.
+
+## Hiding a field
 
 You may hide a field:
 
- ```php
- use Filament\Forms\Components\TextInput;
+```php
+use Filament\Forms\Components\TextInput;
 
- TextInput::make('name')
+TextInput::make('name')
     ->hidden()
- ```
+```
 
 Optionally, you may pass a boolean value to control if the field should be hidden or not:
 
- ```php
- use Filament\Forms\Components\TextInput;
+```php
+use Filament\Forms\Components\TextInput;
 
- TextInput::make('name')
+TextInput::make('name')
     ->hidden(! auth()->user()->isAdmin())
- ```
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `hidden()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Alternatively, you may use the `visible()` method to control if the field should be hidden or not. In some situations, this may help to make your code more readable:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->visible(auth()->user()->isAdmin())
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `visible()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+> Note: If both `hidden()` and `visible()` are used, they both need to indicate that the field should be visible for it to be shown.
+
+### Hiding a field using JavaScript
+
+If you need to hide a field based on a user interaction, you can use the `hidden()` or `visible()` methods, passing a function that uses utilities injected to determine whether the field should be hidden or not:
+
+```php
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+
+Select::make('role')
+    ->options([
+        'user' => 'User',
+        'staff' => 'Staff',
+    ])
+    ->live()
+
+Toggle::make('is_admin')
+    ->hidden(fn (Get $get): bool => $get('role') !== 'staff')
+```
+
+In this example, the `role` field is set to `live()`, which means that the form will reload the schema each time the `role` field is changed. This will cause the function that is passed to the `hidden()` method to be re-evaluated, which will hide the `is_admin` field if the `role` field is not set to `staff`.
+
+However, reloading the schema each time a field causes a network request to be made, since there is no way to re-run the PHP function from the client-side. This is not ideal for performance.
+
+Alternatively, you can write JavaScript to hide the field based on the value of another field. This is done by passing a JavaScript expression to the `hiddenJs()` method:
+
+```php
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+
+Select::make('role')
+    ->options([
+        'user' => 'User',
+        'staff' => 'Staff',
+    ])
+
+Toggle::make('is_admin')
+    ->hiddenJs(>>>JS
+        \$get('role') !== 'staff'
+    JS)
+```
+
+Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on field to be `live()`.
+
+The `visibleJs()` method is also available, which works in the same way as `hiddenJs()`, but controls if the field should be visible or not:
+
+```php
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+
+Select::make('role')
+    ->options([
+        'user' => 'User',
+        'staff' => 'Staff',
+    ])
+    
+Toggle::make('is_admin')
+    ->visibleJs(>>>JS
+        \$get('role') === 'staff'
+    JS)
+```
+
+> Note: If both `hiddenJs()` and `visibleJs()` are used, they both need to indicate that the field should be visible for it to be shown.
+
+### Hiding a field based on the current operation
+
+The "operation" of a schema is the current action being performed on it. Usually, this is either `create`, `edit` or `view`, if you are using the [panel resource](../../resources).
+
+You can hide a field based on the current operation by passing an operation to the `hiddenOn()` method:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->hiddenOn('edit')
+    
+// is the same as
+
+Toggle::make('is_admin')
+    ->hidden(fn (string $operation): bool => $operation === 'edit')
+```
+
+You can also pass an array of operations to the `hiddenOn()` method, and the field will be hidden if the current operation is any of the operations in the array:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->hiddenOn(['edit', 'view'])
+    
+// is the same as
+
+Toggle::make('is_admin')
+    ->hidden(fn (string $operation): bool => in_array($operation, ['edit', 'view']))
+```
+
+> Note: The `hiddenOn()` method will overwrite any previous calls to the `hidden()` method, and vice versa.
+
+Alternatively, you may use the `visibleOn()` method to control if the field should be hidden or not. In some situations, this may help to make your code more readable:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->visibleOn('create')
+
+Toggle::make('is_admin')
+    ->visibleOn(['create', 'edit'])
+```
+
+> Note: The `visibleOn()` method will overwrite any previous calls to the `visible()` method, and vice versa.
 
 ## Autofocusing a field when the form is loaded
 
@@ -147,9 +367,20 @@ TextInput::make('name')
     ->autofocus()
 ```
 
-## Setting a placeholder
+Optionally, you may pass a boolean value to control if the field should be autofocused or not:
 
-Many fields will also include a placeholder value for when it has no value. This is displayed in the UI but not saved if the field is submitted with no value. You may customize this placeholder using the `placeholder()` method:
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->autofocus(auth()->user()->isAdmin())
+```
+
+<UtilityInjection set="formFields">As well as allowing a static value, the `autofocus()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Setting the placeholder of a field
+
+Many fields can display a placeholder for when they have no value. This is displayed in the UI but never saved when the form is submitted. You may customize this placeholder using the `placeholder()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -158,32 +389,13 @@ TextInput::make('name')
     ->placeholder('John Doe')
 ```
 
+<UtilityInjection set="formFields">As well as allowing a static value, the `placeholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/placeholder" alt="Form field with placeholder" version="4.x" />
 
-## Marking a field as required
+### Adding extra HTML attributes to a field
 
-By default, [required fields](validation#required) will show an asterisk `*` next to their label. You may want to hide the asterisk on forms where all fields are required, or where it makes sense to add a [hint](#adding-a-hint-next-to-the-label) to optional fields instead:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')
-    ->required() // Adds validation to ensure the field is required
-    ->markAsRequired(false) // Removes the asterisk
-```
-
-If your field is not `required()`, but you still wish to show an asterisk `*` you can use `markAsRequired()` too:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')
-    ->markAsRequired()
-```
-
-## Adding extra HTML attributes
-
-You can pass extra HTML attributes to the field, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
+You can pass extra HTML attributes to the field via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -192,7 +404,13 @@ TextInput::make('name')
     ->extraAttributes(['title' => 'Text input'])
 ```
 
-Some fields use an underlying `<input>` or `<select>` DOM element, but this is often not the outer element in the field, so the `extraAttributes()` method may not work as you wish. In this case, you may use the `extraInputAttributes()` method, which will merge the attributes onto the `<input>` or `<select>` element:
+<UtilityInjection set="formFields">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+
+#### Adding extra HTML attributes to the input element of a field
+
+Some fields use an underlying `<input>` or `<select>` DOM element, but this is often not the outer element in the field, so the `extraAttributes()` method may not work as you wish. In this case, you may use the `extraInputAttributes()` method, which will merge the attributes onto the `<input>` or `<select>` element in the field's HTML:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -201,7 +419,13 @@ TextInput::make('categories')
     ->extraInputAttributes(['width' => 200])
 ```
 
-You can also pass extra HTML attributes to the field wrapper which surrounds the label, entry, and any other text:
+<UtilityInjection set="formFields">As well as allowing a static value, the `extraInputAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+
+#### Adding extra HTML attributes to the field wrapper
+
+You can also pass extra HTML attributes to the very outer element of the "field wrapper" which surrounds the label and content of the field. This is useful if you want to style the label or spacing of the field via CSS, since you could target elements as children of the wrapper:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -210,93 +434,9 @@ TextInput::make('categories')
     ->extraFieldWrapperAttributes(['class' => 'components-locked'])
 ```
 
-## Validating fields
+<UtilityInjection set="formFields">As well as allowing a static value, the `extraFieldWrapperAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-In Laravel, validation rules are usually defined in arrays like `['required', 'max:255']` or a combined string like `required|max:255`. This is fine if you're exclusively working in the backend with simple form requests. But Filament is also able to give your users frontend validation, so they can fix their mistakes before any backend requests are made.
-
-In Filament, you can add validation rules to your fields by using methods like `required()` and `maxLength()`. This is also advantageous over Laravel's validation syntax, since your IDE can autocomplete these methods:
-
-```php
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
-
-[
-    TextInput::make('title')
-        ->required()
-        ->maxLength(255),
-    TextInput::make('slug')
-        ->required()
-        ->maxLength(255),
-    RichEditor::make('content')
-        ->columnSpan(2)
-        ->maxLength(65535),
-    Section::make('Publishing')
-        ->description('Settings for publishing this post.')
-        ->schema([
-            Select::make('status')
-                ->options([
-                    'draft' => 'Draft',
-                    'reviewing' => 'Reviewing',
-                    'published' => 'Published',
-                ])
-                ->required(),
-            DateTimePicker::make('published_at'),
-        ]),
-]
-```
-
-In this example, some fields are `required()`, and some have a `maxLength()`. We have [methods for most of Laravel's validation rules](validation#available-rules), and you can even add your own [custom rules](validation#custom-rules).
-
-## Dependant fields
-
-Since all Filament forms are built on top of Livewire, form schemas are completely dynamic. There are so many possibilities, but here are a couple of examples of how you can use this to your advantage:
-
-Fields can hide or show based on another field's values. In our form, we can hide the `published_at` timestamp field until the `status` field is set to `published`. This is done by passing a closure to the `hidden()` method, which allows you to dynamically hide or show a field while the form is being used. Closures have access to many useful arguments like `$get`, and you can find a [full list here](advanced#form-component-utility-injection). The field that you depend on (the `status` in this case) needs to be set to `live()`, which tells the form to reload the schema each time it gets changed.
-
-```php
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
-
-[
-    Select::make('status')
-        ->options([
-            'draft' => 'Draft',
-            'reviewing' => 'Reviewing',
-            'published' => 'Published',
-        ])
-        ->required()
-        ->live(),
-    DateTimePicker::make('published_at')
-        ->hidden(fn (Get $get) => $get('status') !== 'published'),
-]
-```
-
-It's not just `hidden()` - all Filament form methods support closures like this. You can use them to change the label, placeholder, or even the options of a field, based on another. You can even use them to add new fields to the form, or remove them. This is a powerful tool that allows you to create complex forms with minimal effort.
-
-Fields can also write data to other fields. For example, we can set the title to automatically generate a slug when the title is changed. This is done by passing a closure to the `afterStateUpdated()` method, which gets run each time the title is changed. This closure has access to the title (`$state`) and a function (`$set`) to set the slug field's state. You can find a [full list of closure arguments here](advanced#form-component-utility-injection). The field that you depend on (the `title` in this case) needs to be set to `live()`, which tells the form to reload and set the slug each time it gets changed.
-
-```php
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Support\Str;
-
-[
-    TextInput::make('title')
-        ->required()
-        ->maxLength(255)
-        ->live()
-        ->afterStateUpdated(function (Set $set, $state) {
-            $set('slug', Str::slug($state));
-        }),
-    TextInput::make('slug')
-        ->required()
-        ->maxLength(255),
-]
-```
+By default, calling `extraFieldWrapperAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
 ## Global settings
 

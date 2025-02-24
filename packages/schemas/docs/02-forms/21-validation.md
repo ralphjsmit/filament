@@ -351,6 +351,27 @@ The field value must not be empty. [See the Laravel documentation.](https://lara
 Field::make('name')->required()
 ```
 
+#### Marking a field as required
+
+By default, required fields will show an asterisk `*` next to their label. You may want to hide the asterisk on forms where all fields are required, or where it makes sense to add a [hint](#adding-a-hint-next-to-the-label) to optional fields instead:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->required() // Adds validation to ensure the field is required
+    ->markAsRequired(false) // Removes the asterisk
+```
+
+If your field is not `required()`, but you still wish to show an asterisk `*` you can use `markAsRequired()` too:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->markAsRequired()
+```
+
 ### Required If
 
 The field value must not be empty _only if_ the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-if)

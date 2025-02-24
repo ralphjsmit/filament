@@ -17,7 +17,6 @@ class Field extends Component implements Contracts\HasValidationRules
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeMarkedAsRequired;
     use Concerns\CanBeValidated;
-    use Concerns\CanDisableGrammarly;
     use Concerns\HasEnum;
     use Concerns\HasExtraFieldWrapperAttributes;
     use Concerns\HasHelperText;
