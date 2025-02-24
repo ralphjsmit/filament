@@ -3,7 +3,6 @@ title: Overview
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjectionDisclosure from "@components/UtilityInjectionDisclosure.astro"
-import fieldsUtilities from "@utilities/forms/fields.js"
 
 ## Overview
 
@@ -63,7 +62,7 @@ TextInput::make('name')
     ->label('Full name')
 ```
 
-<UtilityInjectionDisclosure utilities={fieldsUtilities}>
+<UtilityInjectionDisclosure utilities="formFields">
     The `label()` method accepts a function to dynamically inject utilities.
 </UtilityInjectionDisclosure>
 
