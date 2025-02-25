@@ -2,7 +2,6 @@
 
 use App\Livewire\ActionsDemo;
 use App\Livewire\Forms\FieldsDemo;
-use App\Livewire\Forms\GettingStartedDemo;
 use App\Livewire\Infolists\EntriesDemo;
 use App\Livewire\NotificationsDemo;
 use App\Livewire\Panels\Navigation\ActiveIcon;

@@ -9,8 +9,8 @@
     },
     "require": {
         "php": "^8.2",
-        "illuminate/contracts": "^11.15",
-        "illuminate/support": "^11.15",
+        "illuminate/contracts": "^11.15|^12.0",
+        "illuminate/support": "^11.15|^12.0",
         "spatie/laravel-google-fonts": "^1.0"
     },
     "autoload": {
