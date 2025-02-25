@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Schemas;
 
-
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
