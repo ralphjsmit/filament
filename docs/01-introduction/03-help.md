@@ -30,7 +30,7 @@ You can also reach out to us on our [GitHub discussions forum](https://github.co
 
 If you find a bug, you can open an [issue](https://github.com/filamentphp/filament/issues/new/choose), and even donate to the bug fix by using the link automatically added to the bottom of every new issue description.
 
-If you have a feature request, you can create a discussion on GitHub [following these instructions](contributing#development-of-new-features). If you are not planning to contribute the feature yourself but the core team adds it to the roadmap, an issue will be created. You can sometimes fast-track the development of a new feature by donating money to it using the link added to the bottom of the issue description.
+If you have a feature request, you can create a discussion on GitHub [following these instructions](05-contributing#development-of-new-features). If you are not planning to contribute the feature yourself but the core team adds it to the roadmap, an issue will be created. You can sometimes fast-track the development of a new feature by donating money to it using the link added to the bottom of the issue description.
 
 ## One-on-one private support & consulting (paid)
 
@@ -53,4 +53,4 @@ Since we make use of [Answer Overflow](https://www.answeroverflow.com/c/88308379
 
 ## Helping others
 
-We encourage you to join any of the above platforms and help yourself and our community. Additionally, we encourage you to [contribute](contributing) to Filament itself. We are always looking for new contributors to help us improve Filament.
+We encourage you to join any of the above platforms and help yourself and our community. Additionally, we encourage you to [contribute](05-contributing#development-of-new-features) to Filament itself. We are always looking for new contributors to help us improve Filament.

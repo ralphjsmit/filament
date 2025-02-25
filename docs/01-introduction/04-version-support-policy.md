@@ -18,13 +18,13 @@ Pull requests for new features are only accepted for the latest major version, e
 
 ## Bug fixes
 
-After a major version is released, the Filament team will continue to merge pull requests for bug fixes in the previous major version for 2 years. After this period, pull requests for that version will no longer be accepted.
+After a major version is released, the Filament team will continue to merge pull requests for bug fixes in the previous major version for two years. After this period, pull requests for that version will no longer be accepted.
 
 The Filament team processes bug reports for supported versions in chronological order, though critical bugs may be prioritized. Bug fixes are typically developed only for the latest major version. However, contributors can backport fixes to other supported versions by submitting pull requests.
 
 ## Security fixes
 
-The Filament team currently plans to continue providing security fixes for all major versions indefinitely. If this policy changes, the team will announce the change at least one year before discontinuing support for any major version.
+The Filament team currently plans to continue providing security fixes for major versions for at least three years. When the team decides a major version will no longer receive security fixes, they will announce the change at least one year before discontinuing support.
 
 If you discover a security vulnerability in Filament, please report it by emailing Dan Harrin at [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be addressed promptly.
 

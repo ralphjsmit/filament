@@ -7,9 +7,9 @@ import RadioGroupOption from "@components/RadioGroupOption.astro"
 
 Filament requires the following to run:
 
-- PHP 8.1+
-- Laravel v10.0+
-- Livewire v3.0+
+- PHP 8.2+
+- Laravel v11.15+
+- Tailwind CSS v4.0+
 
 Installation comes in two flavors, depending on whether you want to build an app using our panel builder or use the components within your app's Blade views:
 
@@ -47,7 +47,7 @@ php artisan filament:install --panels
 
 This will create and register a new [Laravel service provider](https://laravel.com/docs/providers) called `app/Providers/Filament/AdminPanelProvider.php`.
 
-> If you get an error when accessing your panel, check that the service provider is registered in `bootstrap/providers.php` (Laravel 11+) or `config/app.php` (Laravel 10 and below). If it's not registered, you'll need to add it manually.
+> If you get an error when accessing your panel, check that the service provider is registered in `bootstrap/providers.php`. If it's not registered, you'll need to [add it manually](https://laravel.com/docs/12.x/providers#registering-providers).
 
 You can create a new user account using the following command:
 
@@ -118,7 +118,7 @@ npm install
 npm run dev
 ```
 
-During scaffolding, if you have the [notifications](notifications) package installed, Filament will ask if you want to install the required Livewire component into your default layout file. This component is required if you want to send flash notifications to users through Filament.
+During scaffolding, if you have the [Notifications](../notifications) package installed, Filament will ask if you want to install the required Livewire component into your default layout file. This component is required if you want to send flash notifications to users through Filament.
 
 </div>
 
@@ -229,7 +229,7 @@ Create a new layout file at `resources/views/components/layouts/app.blade.php` f
 </html>
 ```
 
-Please note the `@livewire('notifications')` line above - this is only required if you have the [Notifications](.../notifications) package installed and wish to send flash notifications to your users through Filament.
+Please note the `@livewire('notifications')` line above - this is only required if you have the [Notifications](../notifications) package installed and wish to send flash notifications to your users through Filament.
 
 </div>
 

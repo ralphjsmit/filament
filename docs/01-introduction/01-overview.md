@@ -31,7 +31,7 @@ Filament is designed to be highly extensible, allowing you to add your own UI co
 
 The vast majority of plugins in the ecosystem are open-source and free to use. Some premium plugins are available for purchase, often offering enhanced customer support and quality.
 
-You can browse an extensive list of official and community plugins on the [Filament website](/plugins).
+You can browse an extensive list of official and community plugins on the [Filament website](https://filamentphp.com/plugins).
 
 ## Customizing the appearance
 

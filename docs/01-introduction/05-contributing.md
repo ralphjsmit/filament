@@ -63,7 +63,7 @@ Once you've finished making changes, you can commit them and submit a pull reque
 
 ## Checking for missing translations
 
-To check for missing Spanish translations, run:
+To check for missing translations, you can use the Artisan command `php artisan filament:check-translations` followed by a locale. For example, to check for missing Spanish translations run:
 
 ```bash
 php artisan filament:check-translations es
@@ -79,7 +79,7 @@ php artisan filament:check-translations es --source=app
 
 ## Security vulnerabilities
 
-If you discover a security vulnerability within Filament, please email Dan Harrin via [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be promptly addressed. Please see our [version support policy](version-support-policy) to understand which versions are currently under maintenance.
+If you discover a security vulnerability within Filament, please email Dan Harrin via [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be promptly addressed. Please see our [version support policy](04-version-support-policy#overview) to understand which versions are currently under maintenance.
 
 ## Code of Conduct
 
