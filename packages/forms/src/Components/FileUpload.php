@@ -77,6 +77,11 @@ class FileUpload extends BaseFileUpload
      */
     protected array | Closure $imageEditorAspectRatios = [];
 
+    /**
+     * @var array<string, string> | Closure
+     */
+    protected array | Closure $mimeTypeMap = [];
+
     public function appendFiles(bool | Closure $condition = true): static
     {
         $this->shouldAppendFiles = $condition;
@@ -628,5 +633,23 @@ class FileUpload extends BaseFileUpload
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param  array<string, string> | Closure  $map
+     */
+    public function mimeTypeMap(array | Closure $map): static
+    {
+        $this->mimeTypeMap = $map;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getMimeTypeMap(): array
+    {
+        return $this->evaluate($this->mimeTypeMap);
     }
 }
