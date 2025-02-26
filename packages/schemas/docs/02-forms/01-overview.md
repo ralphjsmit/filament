@@ -668,7 +668,7 @@ TextInput::make('name')
     })
 ```
 
-<UtilityInjection set="formFields" version="4.x" extra={{
+<UtilityInjection set="formFields" version="4.x" extra={[
     {
         name: 'Old state',
         type: 'mixed',
@@ -687,7 +687,7 @@ TextInput::make('name')
         parameter: '$set',
         description: 'A function to set values in the current form data.',
     },
-}}>The `afterStateUpdated()` method injects various utilities into the function as parameters.</UtilityInjection>
+]}>The `afterStateUpdated()` method injects various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting the state of another field
 
