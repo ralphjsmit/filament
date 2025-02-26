@@ -4,12 +4,7 @@ title: Overview
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-const afterStateUpdatedUtilities = [
-    {
-        name: 'Old state',
-        type: 'mixed',
-    },
-]
+const afterStateUpdatedUtilities = [{name: 'Old state', type: 'mixed'}]
 
 ## Overview
 
