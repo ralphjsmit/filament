@@ -4,6 +4,27 @@ title: Overview
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
+const afterStateUpdatedUtilities = [
+    {
+        name: 'Old state',
+        type: 'mixed',
+        parameter: '$old',
+        description: 'The old value of the field, before it was updated.',
+    },
+    {
+        name: 'Old raw state',
+        type: 'mixed',
+        parameter: '$oldRaw',
+        description: 'The old value of the field, before state casts were applied.',
+    },
+    {
+        name: 'Set function',
+        type: 'Filament\\Schemas\\Components\\Utilities\\Set',
+        parameter: '$set',
+        description: 'A function to set values in the current form data.',
+    },
+]
+
 ## Overview
 
 Form field classes can be found in the `Filament\Form\Components` namespace.
@@ -668,26 +689,7 @@ TextInput::make('name')
     })
 ```
 
-<UtilityInjection set="formFields" version="4.x" extra="[
-    {
-        name: 'Old state',
-        type: 'mixed',
-        parameter: '$old',
-        description: 'The old value of the field, before it was updated.'
-    },
-    {
-        name: 'Old raw state',
-        type: 'mixed',
-        parameter: '$oldRaw',
-        description: 'The old value of the field, before state casts were applied.'
-    },
-    {
-        name: 'Set function',
-        type: 'Filament\\Schemas\\Components\\Utilities\\Set',
-        parameter: '$set',
-        description: 'A function to set values in the current form data.'
-    }
-]">The `afterStateUpdated()` method injects various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extra={afterStateUpdatedUtilities}>The `afterStateUpdated()` method injects various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting the state of another field
 
