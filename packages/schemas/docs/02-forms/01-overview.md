@@ -8,20 +8,6 @@ const afterStateUpdatedUtilities = [
     {
         name: 'Old state',
         type: 'mixed',
-        parameter: '$old',
-        description: 'The old value of the field, before it was updated.',
-    },
-    {
-        name: 'Old raw state',
-        type: 'mixed',
-        parameter: '$oldRaw',
-        description: 'The old value of the field, before state casts were applied.',
-    },
-    {
-        name: 'Set function',
-        type: 'Filament\\Schemas\\Components\\Utilities\\Set',
-        parameter: '$set',
-        description: 'A function to set values in the current form data.',
     },
 ]
 
