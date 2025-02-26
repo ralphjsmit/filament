@@ -1,15 +1,6 @@
 ---
 title: Getting started
 ---
-import LaracastsBanner from "@components/LaracastsBanner.astro"
-
-<LaracastsBanner
-    title="Setting up a Plugin"
-    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to get started with your plugin. The text-based guide on this page can also give a good overview."
-    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/12"
-    series="building-advanced-components"
-/>
-
 ## Overview
 
 While Filament comes with virtually any tool you'll need to build great apps, sometimes you'll need to add your own functionality either for just your app or as redistributable packages that other developers can include in their own apps. This is why Filament offers a plugin system that allows you to extend its functionality.

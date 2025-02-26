@@ -1,8 +1,6 @@
 ---
 title: Managing relationships
 ---
-import LaracastsBanner from "@components/LaracastsBanner.astro"
-
 ## Choosing the right tool for the job
 
 Filament provides many ways to manage relationships in the app. Which feature you should use depends on the type of relationship you are managing, and which UI you are looking for.
@@ -55,13 +53,6 @@ In this example, the `title`, `description` and `image` are automatically loaded
 This feature is explained more in depth in the [Forms documentation](../../forms/advanced#saving-data-to-relationships). Please visit that page for more information about how to use it.
 
 ## Creating a relation manager
-
-<LaracastsBanner
-    title="Relation Managers"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding relation managers to Filament resources."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/13"
-    series="rapid-laravel-development"
-/>
 
 To create a relation manager, you can use the `make:filament-relation-manager` command:
 
