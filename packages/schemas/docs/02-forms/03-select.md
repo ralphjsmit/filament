@@ -358,7 +358,7 @@ Select::make('author_id')
     ]),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Schema;Filament\\Schemas\\Schema;$schema;The schema object for the form in the modal.">As well as allowing a static value, the `createOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Schema;Filament\Schemas\Schema;$schema;The schema object for the form in the modal.">As well as allowing a static value, the `createOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/select/create-option" alt="Select with create option button" version="4.x" />
 
@@ -383,7 +383,7 @@ Select::make('author_id')
     }),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Data;array<string, mixed>;$data;The data from the form in the modal.|Schema;Filament\\Schemas\\Schema;$schema;The schema object for the form in the modal.">The `createOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Data;array<string, mixed>;$data;The data from the form in the modal.|Schema;Filament\Schemas\Schema;$schema;The schema object for the form in the modal.">The `createOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Editing the selected option in a modal
 
@@ -403,7 +403,7 @@ Select::make('author_id')
     ]),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Schema;Filament\\Schemas\\Schema;$schema;The schema object for the form in the modal.">As well as allowing a static value, the `editOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Schema;Filament\Schemas\Schema;$schema;The schema object for the form in the modal.">As well as allowing a static value, the `editOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/select/edit-option" alt="Select with edit option button" version="4.x" />
 
@@ -429,7 +429,7 @@ Select::make('author_id')
     }),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Data;array<string, mixed>;$data;The data from the form in the modal.|Schema;Filament\\Schemas\\Schema;$schema;The schema object for the form in the modal.">The `updateOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Data;array<string, mixed>;$data;The data from the form in the modal.|Schema;Filament\Schemas\Schema;$schema;The schema object for the form in the modal.">The `updateOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Handling `MorphTo` relationships
 
@@ -486,7 +486,7 @@ MorphToSelect::make('commentable')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Eloquent query builder;Illuminate\\Database\\Eloquent\\Builder;$query;The query builder to modify.">The `modifyOptionsQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Eloquent query builder;Illuminate\Database\Eloquent\Builder;$query;The query builder to modify.">The `modifyOptionsQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 
@@ -767,4 +767,4 @@ Select::make('author_id')
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Action;Filament\\Actions\\Action;$action;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Action;Filament\Actions\Action;$action;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>
