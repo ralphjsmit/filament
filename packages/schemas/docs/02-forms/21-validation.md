@@ -1,16 +1,17 @@
 ---
 title: Validation
 ---
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
-Validation rules may be added to any [field](fields).
+Validation rules may be added to any [field](overview#available-fields).
 
 In Laravel, validation rules are usually defined in arrays like `['required', 'max:255']` or a combined string like `required|max:255`. This is fine if you're exclusively working in the backend with simple form requests. But Filament is also able to give your users frontend validation, so they can fix their mistakes before any backend requests are made.
 
-Filament includes several [dedicated validation methods](#available-rules), but you can also use any [other Laravel validation rules](#other-rules), including [custom validation rules](#custom-rules).
+Filament includes many [dedicated validation methods](#available-rules), but you can also use any [other Laravel validation rules](#other-rules), including [custom validation rules](#custom-rules).
 
-> Beware that some validations rely on the field name and therefore won't work when passed via `->rule()`/`->rules()`. Use the dedicated validation methods whenever you can.
+> Beware that some default Laravel validation rules rely on the correct attribute names and therefore won't work when passed via `->rule()`/`->rules()`. Use the dedicated validation methods whenever you can.
 
 ## Available rules
 
@@ -185,7 +186,7 @@ By default, the field name will be used as the column to search. You may specify
 Field::make('invitation')->exists(column: 'id')
 ```
 
-You can further customize the rule by passing a [closure](advanced#closure-customization) to the `callback` parameter:
+You can further customize the rule by passing a [closure](overview#closure-customization) to the `callback` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Exists;
@@ -493,7 +494,7 @@ If you're using the [Panel Builder](../panels), you can easily ignore the curren
 Field::make('email')->unique(ignoreRecord: true)
 ```
 
-You can further customize the rule by passing a [closure](advanced#closure-customization) to the `modifyRuleUsing` parameter:
+You can further customize the rule by passing a [closure](overview#closure-customization) to the `modifyRuleUsing` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Unique;
@@ -553,7 +554,7 @@ TextInput::make('slug')->rules([
 ])
 ```
 
-You may [inject utilities](advanced#form-component-utility-injection) like [`$get`](advanced#injecting-the-state-of-another-field) into your custom rules, for example if you need to reference other field values in your form:
+You may [inject utilities](overview#field-utility-injection) like [`$get`](overview#injecting-the-state-of-another-field) into your custom rules, for example if you need to reference other field values in your form. To do this, wrap the closure rule in another function that returns it:
 
 ```php
 use Filament\Schemas\Components\Utilities\Get;
@@ -574,8 +575,11 @@ When fields fail validation, their label is used in the error message. To custom
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')->validationAttribute('full name')
+TextInput::make('name')
+    ->validationAttribute('full name')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `validationAttribute()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Validation messages
 
@@ -591,41 +595,11 @@ TextInput::make('email')
     ])
 ```
 
-## Sending validation notifications
-
-If you want to send a notification when validation error occurs, you may do so by using the `onValidationError()` method on your Livewire component:
-
-```php
-use Filament\Notifications\Notification;
-use Illuminate\Validation\ValidationException;
-
-protected function onValidationError(ValidationException $exception): void
-{
-    Notification::make()
-        ->title($exception->getMessage())
-        ->danger()
-        ->send();
-}
-```
-
-Alternatively, if you are using the Panel Builder and want this behavior on all the pages, add this inside the `boot()` method of your `AppServiceProvider`:
-
-```php
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
-use Illuminate\Validation\ValidationException;
-
-Page::$reportValidationErrorUsing = function (ValidationException $exception) {
-    Notification::make()
-        ->title($exception->getMessage())
-        ->danger()
-        ->send();
-};
-```
+<UtilityInjection set="formFields" version="4.x">As well as allowing an array of static value, the `validationMessages()` method also accepts a function for each message. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ## Disabling validation when fields are not dehydrated
 
-When a field is not dehydrated, it is still validated. To disable validation for fields that are not dehydrated, use the `validatedWhenNotDehydrated()` method:
+When a field is [not dehydrated](overview#preventing-a-field-from-being-dehydrated), it is still validated. To disable validation for fields that are not dehydrated, use the `validatedWhenNotDehydrated()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -635,3 +609,5 @@ TextInput::make('name')
     ->dehydrated(false)
     ->validatedWhenNotDehydrated(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `validatedWhenNotDehydrated()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

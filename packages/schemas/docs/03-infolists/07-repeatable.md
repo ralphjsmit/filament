@@ -39,7 +39,7 @@ RepeatableEntry::make('comments')
     ->grid(2)
 ```
 
-This method accepts the same options as the `columns()` method of the [grid](../../schemas/layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../../schemas/layouts/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
 
 <AutoScreenshot name="infolists/entries/repeatable/grid" alt="Repeatable entry in grid layout" version="4.x" />
 

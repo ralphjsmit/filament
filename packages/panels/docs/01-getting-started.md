@@ -749,7 +749,7 @@ Congratulations! Now that you know how to build a basic Filament application, he
 - [Create custom pages in the panel that don't belong to resources.](pages)
 - [Learn more about adding action buttons to pages and resources, with modals to collect user input or for confirmation.](../actions/overview)
 - [Explore the available fields to collect input from your users.](../forms/fields#available-fields)
-- [Check out the list of form layout components.](../schemas/layout)
+- [Check out the list of form layout components.](../schemas/layouts)
 - [Discover how to build complex, responsive table layouts without touching CSS.](../tables/layout)
 - [Add summaries to your tables](../tables/summaries)
 - [Write automated tests for your panel using our suite of helper methods.](testing)

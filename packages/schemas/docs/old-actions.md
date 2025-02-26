@@ -191,7 +191,7 @@ Now, to render the action in the view of the custom component, you need to call 
 
 ## Component action utility injection
 
-An action is able to [inject utilities](../forms/advanced#form-component-utility-injection) from the component it is attached to, inside the `action()` function. For instance, you can inject [`$set`](advanced#injecting-a-function-to-set-the-state-of-another-field) and [`$state`](advanced#injecting-the-current-state-of-a-field):
+An action is able to [inject utilities](../forms/advanced#form-component-utility-injection) from the component it is attached to, inside the `action()` function. For instance, you can inject [`$set`](advanced#setting-the-state-of-another-field) and [`$state`](advanced#injecting-the-current-state-of-the-field):
 
 ```php
 use Filament\Actions\Action;

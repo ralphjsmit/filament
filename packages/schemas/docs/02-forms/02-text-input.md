@@ -2,6 +2,7 @@
 title: Text input
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -40,6 +41,22 @@ TextInput::make('backgroundColor')
     ->type('color')
 ```
 
+The individual type methods also allow you to pass in a boolean value to control if the field should be that or not:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('text')
+    ->email(FeatureFlag::active()) // or
+    ->numeric(FeatureFlag::active()) // or
+    ->integer(FeatureFlag::active()) // or
+    ->password(FeatureFlag::active()) // or
+    ->tel(FeatureFlag::active()) // or
+    ->url(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value these methods also accept a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Setting the HTML input mode
 
 You may set the [`inputmode` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#inputmode) of the input using the `inputMode()` method:
@@ -52,6 +69,8 @@ TextInput::make('text')
     ->inputMode('decimal')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `inputMode()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Setting the numeric step
 
 You may set the [`step` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#step) of the input using the `step()` method:
@@ -63,6 +82,8 @@ TextInput::make('number')
     ->numeric()
     ->step(100)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `step()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Autocompleting text
 
@@ -86,6 +107,8 @@ TextInput::make('password')
     ->autocomplete(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `autocomplete()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 For more complex autocomplete options, text inputs also support [datalists](#autocompleting-text-with-a-datalist).
 
 ### Autocompleting text with a datalist
@@ -107,6 +130,8 @@ TextInput::make('manufacturer')
 
 Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking to strictly limit users to a set of predefined options, check out the [select field](select).
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `datalist()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Autocapitalizing text
 
 You may allow the text to be [autocapitalized by the browser](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#autocapitalize) using the `autocapitalize()` method:
@@ -117,6 +142,8 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
     ->autocapitalize('words')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `autocapitalize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding affix text aside the field
 
@@ -129,6 +156,8 @@ TextInput::make('domain')
     ->prefix('https://')
     ->suffix('.com')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="4.x" />
 
@@ -143,6 +172,8 @@ TextInput::make('domain')
     ->url()
     ->suffixIcon('heroicon-m-globe-alt')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" version="4.x" />
 
@@ -159,6 +190,8 @@ TextInput::make('domain')
     ->suffixIconColor('success')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Revealable password inputs
 
 When using `password()`, you can also make the input `revealable()`, so that the user can see a plain text version of the password they're typing by clicking a button:
@@ -172,6 +205,18 @@ TextInput::make('password')
 ```
 
 <AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" version="4.x" />
+
+Optionally, you may pass a boolean value to control if the input should be revealable or not:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('password')
+    ->password()
+    ->revealable(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `revealable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Input masking
 
@@ -199,6 +244,8 @@ TextInput::make('cardNumber')
     JS))
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `mask()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 Alpine.js will send the entire masked value to the server, so you may need to strip certain characters from the state before validating the field and saving it. You can do this with the `stripCharacters()` method, passing in a character or an array of characters to remove from the masked value:
 
 ```php
@@ -210,6 +257,8 @@ TextInput::make('amount')
     ->stripCharacters(',')
     ->numeric()
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `stripCharacters()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Making the field read-only
 
@@ -224,7 +273,7 @@ TextInput::make('name')
 
 There are a few differences, compared to [`disabled()`](overview#disabling-a-field):
 
-- When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](advanced#preventing-a-field-from-being-dehydrated) to prevent this.
+- When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](overview#preventing-a-field-from-being-dehydrated) to prevent this.
 - There are no styling changes, such as less opacity, when using `readOnly()`.
 - The field is still focusable when using `readOnly()`.
 
@@ -253,6 +302,8 @@ TextInput::make('code')
     ->length(8)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minLength()`, `maxLength()` and `length()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Size validation
 
 You may validate the minimum and maximum value of a numeric input by setting the `minValue()` and `maxValue()` methods:
@@ -265,6 +316,8 @@ TextInput::make('number')
     ->minValue(1)
     ->maxValue(100)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minValue()` and `maxValue()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Phone number validation
 
@@ -289,3 +342,5 @@ TextInput::configureUsing(function (TextInput $component): void {
     $component->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/');
 });
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `telRegex()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

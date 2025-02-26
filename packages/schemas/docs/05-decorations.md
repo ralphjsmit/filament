@@ -78,12 +78,12 @@ All [form fields](../forms/fields#available-fields) can also use:
 - `aboveErrorMessage()` - above the error message, start (left) aligned by default. These are rendered regardless of whether the field has an error.
 - `belowErrorMessage()` - below the error message, start (left) aligned by default. These are rendered regardless of whether the field has an error.
 
-The [Form layout component](layout/form) can use:
+The [Form layout component](layouts/form) can use:
 
 - `footer()` - below the `Form` component content, start (left) aligned by default.
 - `header()` - above the `Form` component content, start (left) aligned by default.
 
-The [Section layout component](layout/section) can use:
+The [Section layout component](layouts/section) can use:
 
 - `afterHeader()` - horizontally after the `Section` component heading and description, end (right) aligned by default. These are rendered regardless of whether the `Section` has a heading or description.
 - `footer()` - below the `Section` component content, start (left) aligned by default.

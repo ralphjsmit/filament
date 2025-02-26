@@ -52,7 +52,7 @@ In this example, `500` is the number of milliseconds to wait before sending a ne
 
 ## Form component utility injection
 
-The vast majority of methods used to configure [fields](fields) and [layout components](../schemas/layout) accept functions as parameters instead of hardcoded values:
+The vast majority of methods used to configure [fields](fields) and [layout components](../schemas/layouts) accept functions as parameters instead of hardcoded values:
 
 ```php
 use App\Models\User;
@@ -304,7 +304,7 @@ TextInput::make('company_name')
     ->hidden(fn (Get $get): bool => ! $get('is_company'))
 ```
 
-In this example, the `is_company` checkbox is [`live()`](#the-basics-of-reactivity). This allows the form to rerender when the value of the `is_company` field changes. You can access the value of that field from within the `hidden()` function using the [`$get()` utility](#injecting-the-current-state-of-a-field). The value of the field is inverted using `!` so that the `company_name` field is hidden when the `is_company` field is `false`.
+In this example, the `is_company` checkbox is [`live()`](#the-basics-of-reactivity). This allows the form to rerender when the value of the `is_company` field changes. You can access the value of that field from within the `hidden()` function using the [`$get()` utility](#injecting-the-current-state-of-the-field). The value of the field is inverted using `!` so that the `company_name` field is hidden when the `is_company` field is `false`.
 
 Alternatively, you can use the `visible()` method to show a field conditionally. It does the exact inverse of `hidden()`, and could be used if you prefer the clarity of the code when written this way:
 
@@ -335,13 +335,13 @@ TextInput::make('vat_number')
     ->required(fn (Get $get): bool => filled($get('company_name')))
 ```
 
-In this example, the `company_name` field is [`live(onBlur: true)`](#reactive-fields-on-blur). This allows the form to rerender after the value of the `company_name` field changes and the user clicks away. You can access the value of that field from within the `required()` function using the [`$get()` utility](#injecting-the-current-state-of-a-field). The value of the field is checked using `filled()` so that the `vat_number` field is required when the `company_name` field is not `null` or an empty string. The result is that the `vat_number` field is only required when the `company_name` field is filled in.
+In this example, the `company_name` field is [`live(onBlur: true)`](#reactive-fields-on-blur). This allows the form to rerender after the value of the `company_name` field changes and the user clicks away. You can access the value of that field from within the `required()` function using the [`$get()` utility](#injecting-the-current-state-of-the-field). The value of the field is checked using `filled()` so that the `vat_number` field is required when the `company_name` field is not `null` or an empty string. The result is that the `vat_number` field is only required when the `company_name` field is filled in.
 
 Using a function is able to make any other [validation rule](validation) dynamic in a similar way.
 
 ### Generating a slug from a title
 
-To generate a slug from a title while the user is typing, you can use the [`afterStateUpdated()` method](#field-updates) on the title field to [`$set()`](#injecting-a-function-to-set-the-state-of-another-field) the value of the slug field:
+To generate a slug from a title while the user is typing, you can use the [`afterStateUpdated()` method](#field-updates) on the title field to [`$set()`](#setting-the-state-of-another-field) the value of the slug field:
 
 ```php
 use Filament\Schemas\Components\Utilities\Set;
@@ -355,7 +355,7 @@ TextInput::make('title')
 TextInput::make('slug')
 ```
 
-In this example, the `title` field is [`live(onBlur: true)`](#reactive-fields-on-blur). This allows the form to rerender when the value of the `title` field changes and the user clicks away. The `afterStateUpdated()` method is used to run a function after the state of the `title` field is updated. The function injects the [`$set()` utility](#injecting-a-function-to-set-the-state-of-another-field) and the new state of the `title` field. The `Str::slug()` utility method is part of Laravel and is used to generate a slug from a string. The `slug` field is then updated using the `$set()` function.
+In this example, the `title` field is [`live(onBlur: true)`](#reactive-fields-on-blur). This allows the form to rerender when the value of the `title` field changes and the user clicks away. The `afterStateUpdated()` method is used to run a function after the state of the `title` field is updated. The function injects the [`$set()` utility](#setting-the-state-of-another-field) and the new state of the `title` field. The `Str::slug()` utility method is part of Laravel and is used to generate a slug from a string. The `slug` field is then updated using the `$set()` function.
 
 One thing to note is that the user may customize the slug manually, and we don't want to overwrite their changes if the title changes. To prevent this, we can use the old version of the title to work out if the user has modified it themselves. To access the old version of the title, you can inject `$old`, and to get the current value of the slug before it gets changed, we can use the [`$get()` utility](#injecting-the-state-of-another-field):
 
@@ -380,7 +380,7 @@ TextInput::make('slug')
 
 ### Dependant select options
 
-To dynamically update the options of a [select field](fields/select) based on the value of another field, you can pass a function to the `options()` method of the select field. The function can [inject utilities](#form-component-utility-injection) as parameters, so you can do things like check the value of another field using the [`$get()` utility](#injecting-the-current-state-of-a-field):
+To dynamically update the options of a [select field](fields/select) based on the value of another field, you can pass a function to the `options()` method of the select field. The function can [inject utilities](#form-component-utility-injection) as parameters, so you can do things like check the value of another field using the [`$get()` utility](#injecting-the-current-state-of-the-field):
 
 ```php
 use Filament\Schemas\Components\Utilities\Get;
@@ -412,7 +412,7 @@ Select::make('sub_category')
     })
 ```
 
-In this example, the `category` field is [`live()`](#the-basics-of-reactivity). This allows the form to rerender when the value of the `category` field changes. You can access the value of that field from within the `options()` function using the [`$get()` utility](#injecting-the-current-state-of-a-field). The value of the field is used to determine which options should be available in the `sub_category` field. The `match ()` statement in PHP is used to return an array of options based on the value of the `category` field. The result is that the `sub_category` field will only show options relevant to the selected `category` field.
+In this example, the `category` field is [`live()`](#the-basics-of-reactivity). This allows the form to rerender when the value of the `category` field changes. You can access the value of that field from within the `options()` function using the [`$get()` utility](#injecting-the-current-state-of-the-field). The value of the field is used to determine which options should be available in the `sub_category` field. The `match ()` statement in PHP is used to return an array of options based on the value of the `category` field. The result is that the `sub_category` field will only show options relevant to the selected `category` field.
 
 You could adapt this example to use options loaded from an Eloquent model or other data source, by querying within the function:
 
@@ -476,7 +476,7 @@ Grid::make(2)
     ->key('dynamicTypeFields')
 ```
 
-In this example, the `type` field is [`live()`](#the-basics-of-reactivity). This allows the form to rerender when the value of the `type` field changes. The `afterStateUpdated()` method is used to run a function after the state of the `type` field is updated. In this case, we [inject the current select field instance](#injecting-the-current-form-component-instance), which we can then use to get the form "container" instance that holds both the select and the grid components. With this container, we can target the grid component using a unique key (`dynamicTypeFields`) that we have assigned to it. With that grid component instance, we can call `fill()`, just as we do on a normal form to initialise it. The `schema()` method of the grid component is then used to return a different schema based on the value of the `type` field. This is done by using the [`$get()` utility](#injecting-the-current-state-of-a-field), and returning a different schema array dynamically.
+In this example, the `type` field is [`live()`](#the-basics-of-reactivity). This allows the form to rerender when the value of the `type` field changes. The `afterStateUpdated()` method is used to run a function after the state of the `type` field is updated. In this case, we [inject the current select field instance](#injecting-the-current-field-instance), which we can then use to get the form "container" instance that holds both the select and the grid components. With this container, we can target the grid component using a unique key (`dynamicTypeFields`) that we have assigned to it. With that grid component instance, we can call `fill()`, just as we do on a normal form to initialise it. The `schema()` method of the grid component is then used to return a different schema based on the value of the `type` field. This is done by using the [`$get()` utility](#injecting-the-current-state-of-the-field), and returning a different schema array dynamically.
 
 ### Auto-hashing password field
 
@@ -512,7 +512,7 @@ TextInput::make('password')
     ->dehydrated(fn (?string $state): bool => filled($state))
 ```
 
-However, you want to require the password to be filled when the user is being created, by [injecting the `$operation` utility](#injecting-the-current-form-operation), and then [conditionally making the field required](#conditionally-making-a-field-required):
+However, you want to require the password to be filled when the user is being created, by [injecting the `$operation` utility](#injecting-the-current-operation), and then [conditionally making the field required](#conditionally-making-a-field-required):
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -696,4 +696,36 @@ use App\Livewire\Foo;
 use Filament\Schemas\Components\Livewire;
 
 Livewire::make(Foo::class)->lazy()       
+```
+
+## Sending validation notifications
+
+If you want to send a notification when validation error occurs, you may do so by using the `onValidationError()` method on your Livewire component:
+
+```php
+use Filament\Notifications\Notification;
+use Illuminate\Validation\ValidationException;
+
+protected function onValidationError(ValidationException $exception): void
+{
+    Notification::make()
+        ->title($exception->getMessage())
+        ->danger()
+        ->send();
+}
+```
+
+Alternatively, if you are using the Panel Builder and want this behavior on all the pages, add this inside the `boot()` method of your `AppServiceProvider`:
+
+```php
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Illuminate\Validation\ValidationException;
+
+Page::$reportValidationErrorUsing = function (ValidationException $exception) {
+    Notification::make()
+        ->title($exception->getMessage())
+        ->danger()
+        ->send();
+};
 ```
