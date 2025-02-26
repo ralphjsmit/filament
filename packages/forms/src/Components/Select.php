@@ -93,9 +93,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $isMultiple = false;
 
-    protected Closure $getOptionLabelUsing;
+    protected ?Closure $getOptionLabelUsing;
 
-    protected Closure $getOptionLabelsUsing;
+    protected ?Closure $getOptionLabelsUsing;
 
     protected ?Closure $getSearchResultsUsing = null;
 
@@ -500,7 +500,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->editOptionModalHeading);
     }
 
-    public function getOptionLabelUsing(Closure $callback): static
+    public function getOptionLabelUsing(?Closure $callback): static
     {
         $this->getOptionLabelUsing = $callback;
 
@@ -514,7 +514,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
-    public function getOptionLabelsUsing(Closure $callback): static
+    public function getOptionLabelsUsing(?Closure $callback): static
     {
         $this->getOptionLabelsUsing = $callback;
 
