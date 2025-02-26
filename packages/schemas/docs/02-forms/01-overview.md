@@ -459,7 +459,7 @@ DatePicker::make('date_of_birth')
 
 Select::make('user_id')
     ->options(function (): array {
-        return User::all()->pluck('name', 'id')->all();
+        return User::query()->pluck('name', 'id')->all();
     })
 
 TextInput::make('middle_name')

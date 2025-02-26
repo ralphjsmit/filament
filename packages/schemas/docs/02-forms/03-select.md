@@ -2,6 +2,7 @@
 title: Select
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -17,6 +18,8 @@ Select::make('status')
         'published' => 'Published',
     ])
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/select/simple" alt="Select" version="4.x" />
 
@@ -36,6 +39,8 @@ Select::make('status')
     ->native(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `native()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/select/javascript" alt="JavaScript select" version="4.x" />
 
 ## Searching options
@@ -47,9 +52,22 @@ use Filament\Forms\Components\Select;
 
 Select::make('author_id')
     ->label('Author')
-    ->options(User::all()->pluck('name', 'id'))
+    ->options(User::query()->pluck('name', 'id'))
     ->searchable()
 ```
+
+Optionally, you may pass a boolean value to control if the input should be searchable or not:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->label('Author')
+    ->options(User::query()->pluck('name', 'id'))
+    ->searchable(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/select/searchable" alt="Searchable select" version="4.x" />
 
@@ -64,11 +82,19 @@ The `getOptionLabelUsing()` method accepts a callback that transforms the select
 Both `getSearchResultsUsing()` and `getOptionLabelUsing()` must be used on the select if you want to provide custom search results:
 
 ```php
+use Filament\Forms\Components\Select;
+
 Select::make('author_id')
     ->searchable()
-    ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+    ->getSearchResultsUsing(fn (string $search): array => User::query()
+        ->where('name', 'like', "%{$search}%")
+        ->limit(50)
+        ->pluck('name', 'id')
+        ->all())
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Option key;mixed;$option;[<code>getOptionLabelUsing()</code> only] The option key to retrieve the label for.|Option keys;array<mixed>;$options;[<code>getOptionLabelsUsing()</code> only] The option keys to retrieve the labels for.|Search;?string;$search;[<code>getSearchResultsUsing()</code> only] The current search input value, if the field is searchable.">You can inject various utilities into these functions as parameters.</UtilityInjection>
 
 ## Multi-select
 
@@ -86,6 +112,23 @@ Select::make('technologies')
         'livewire' => 'Laravel Livewire',
     ])
 ```
+
+Optionally, you may pass a boolean value to control if the input should be multiple or not:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple(FeatureFlag::active())
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/select/multiple" alt="Multi-select" version="4.x" />
 
@@ -110,9 +153,18 @@ If you're [returning custom search results](#returning-custom-search-results), y
 Select::make('technologies')
     ->multiple()
     ->searchable()
-    ->getSearchResultsUsing(fn (string $search): array => Technology::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
-    ->getOptionLabelsUsing(fn (array $values): array => Technology::whereIn('id', $values)->pluck('name', 'id')->toArray()),
+    ->getSearchResultsUsing(fn (string $search): array => Technology::query()
+        ->where('name', 'like', "%{$search}%")
+        ->limit(50)
+        ->pluck('name', 'id')
+        ->all())
+    ->getOptionLabelsUsing(fn (array $values): array => Technology::query()
+        ->whereIn('id', $values)
+        ->pluck('name', 'id')
+        ->all()),
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Option keys;array<mixed>;$options;[<code>getOptionLabelsUsing()</code> only] The option keys to retrieve the labels for.">The `getOptionLabelsUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Grouping options
 
@@ -138,8 +190,6 @@ Select::make('status')
 <AutoScreenshot name="forms/fields/select/grouped" alt="Grouped select" version="4.x" />
 
 ## Integrating with an Eloquent relationship
-
-> If you're building a form inside your Livewire component, make sure you have set up the [form's model](../adding-a-form-to-a-livewire-component#setting-a-form-model). Otherwise, Filament doesn't know which model to use to retrieve the relationship from.
 
 You may employ the `relationship()` method of the `Select` to configure a `BelongsTo` relationship to automatically retrieve options from. The `titleAttribute` is the name of a column that will be used to generate a label for each option:
 
@@ -196,6 +246,19 @@ Select::make('author_id')
     ->preload()
 ```
 
+Optionally, you may pass a boolean value to control if the input should be preloaded or not:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->preload(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `preload()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Excluding the current record
 
 When working with recursive relationships, you will likely want to remove the current record from the set of results.
@@ -225,7 +288,7 @@ Select::make('author_id')
     )
 ```
 
-If you would like to access the current search query in the `modifyQueryUsing` function, you can inject `$search`.
+<UtilityInjection set="formFields" version="4.x" extras="Search;?string;$search;The current search input value, if the field is searchable.">The `modifyQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the relationship option labels
 
@@ -258,6 +321,8 @@ Select::make('author_id')
     ->searchable(['first_name', 'last_name'])
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Eloquent record;Illuminate\Database\Eloquent\Model;$record;The Eloquent record to get the option label for.">The `getOptionLabelFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Saving pivot data to the relationship
 
 If you're using a `multiple()` relationship and your pivot table has additional columns, you can use the `pivotData()` method to specify the data that should be saved in them:
@@ -272,6 +337,8 @@ Select::make('primaryTechnologies')
         'is_primary' => true,
     ])
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `pivotData()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Creating a new option in a modal
 
@@ -290,6 +357,8 @@ Select::make('author_id')
             ->email(),
     ]),
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Schema;Filament\\Schemas\\Schema;$schema;The schema object for the form in the modal.">As well as allowing a static value, the `createOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/select/create-option" alt="Select with create option button" version="4.x" />
 
@@ -314,6 +383,8 @@ Select::make('author_id')
     }),
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Data;array<string, mixed>;$data;The data from the form in the modal.|Schema;Filament\\Schemas\\Schema;$schema;The schema object for the form in the modal.">The `createOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Editing the selected option in a modal
 
 You may define a custom form that can be used to edit the selected record and save it back to the `BelongsTo` relationship:
@@ -332,11 +403,33 @@ Select::make('author_id')
     ]),
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Schema;Filament\\Schemas\\Schema;$schema;The schema object for the form in the modal.">As well as allowing a static value, the `editOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/select/edit-option" alt="Select with edit option button" version="4.x" />
 
 The form opens in a modal, where the user can fill it with data. Upon form submission, the data from the form is saved back to the record.
 
 <AutoScreenshot name="forms/fields/select/edit-option-modal" alt="Select with edit option modal" version="4.x" />
+
+#### Customizing option updates
+
+You can customize the update process of the selected option defined in the form using the `updateOptionUsing()` method. The current Eloquent record being edited can be retrieved using the `getRecord()` method on the schema:
+
+```php
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Schema;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->editOptionForm([
+       // ...
+    ])
+    ->updateOptionUsing(function (array $data, Schema $schema) {
+        $schema->getRecord()?->update($data);
+    }),
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Data;array<string, mixed>;$data;The data from the form in the modal.|Schema;Filament\\Schemas\\Schema;$schema;The schema object for the form in the modal.">The `updateOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Handling `MorphTo` relationships
 
@@ -355,6 +448,8 @@ MorphToSelect::make('commentable')
             ->titleAttribute('title'),
     ])
 ```
+
+<UtilityInjection set="formFields" version="4.x">The `types()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Customizing the option labels for each morphed type
 
@@ -391,6 +486,8 @@ MorphToSelect::make('commentable')
     ])
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Eloquent query builder;Illuminate\\Database\\Eloquent\\Builder;$query;The query builder to modify.">The `modifyOptionsQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 
 ## Allowing HTML in the option labels
@@ -413,9 +510,27 @@ Select::make('technology')
 
 Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 
+Optionally, you may pass a boolean value to control if the input should allow HTML or not:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technology')
+    ->options([
+        'tailwind' => '<span class="text-blue-500">Tailwind</span>',
+        'alpine' => '<span class="text-green-500">Alpine</span>',
+        'laravel' => '<span class="text-red-500">Laravel</span>',
+        'livewire' => '<span class="text-pink-500">Livewire</span>',
+    ])
+    ->searchable()
+    ->allowHtml(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `allowHtml()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Disable placeholder selection
 
-You can prevent the placeholder (null option) from being selected using the `selectablePlaceholder()` method:
+You can prevent the placeholder (null option) from being selected using the `selectablePlaceholder(false)` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -429,6 +544,8 @@ Select::make('status')
     ->default('draft')
     ->selectablePlaceholder(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `selectablePlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disabling specific options
 
@@ -446,6 +563,8 @@ Select::make('status')
     ->default('draft')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Option label;string;$label;The label of the option being disabled.|Option value;string;$value;The value of the option being disabled.">The `disableOptionWhen()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
@@ -475,6 +594,8 @@ Select::make('domain')
     ->suffix('.com')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/select/affix" alt="Select with affixes" version="4.x" />
 
 ### Using icons as affixes
@@ -487,6 +608,8 @@ use Filament\Forms\Components\Select;
 Select::make('domain')
     ->suffixIcon('heroicon-m-globe-alt')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/select/suffix-icon" alt="Select with suffix icon" version="4.x" />
 
@@ -502,6 +625,8 @@ Select::make('domain')
     ->suffixIconColor('success')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Setting a custom loading message
 
 When you're using a searchable select or multi-select, you may want to display a custom message while the options are loading. You can do this using the `loadingMessage()` method:
@@ -514,6 +639,8 @@ Select::make('author_id')
     ->searchable()
     ->loadingMessage('Loading authors...')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `loadingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting a custom no search results message
 
@@ -528,6 +655,8 @@ Select::make('author_id')
     ->noSearchResultsMessage('No authors found.')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Setting a custom search prompt
 
 When you're using a searchable select or multi-select, you may want to display a custom message when the user has not yet entered a search term. You can do this using the `searchPrompt()` method:
@@ -541,6 +670,8 @@ Select::make('author_id')
     ->searchPrompt('Search authors by their name or email address')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchPrompt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Setting a custom searching message
 
 When you're using a searchable select or multi-select, you may want to display a custom message while the search results are being loaded. You can do this using the `searchingMessage()` method:
@@ -553,6 +684,8 @@ Select::make('author_id')
     ->searchable()
     ->searchingMessage('Searching authors...')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Tweaking the search debounce
 
@@ -569,6 +702,8 @@ Select::make('author_id')
 
 Ensure that you are not lowering the debounce too much, as this may cause the select to become slow and unresponsive due to a high number of network requests to retrieve options from server.
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Limiting the number of options
 
 You can limit the number of options that are displayed in a searchable select or multi-select using the `optionsLimit()` method. The default is 50:
@@ -583,6 +718,8 @@ Select::make('author_id')
 ```
 
 Ensure that you are not raising the limit too high, as this may cause the select to become slow and unresponsive due to high in-browser memory usage.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `optionsLimit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Select validation
 
@@ -607,6 +744,8 @@ Select::make('technologies')
     ->maxItems(3)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minItems()` and `maxItems()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Customizing the select action objects
 
 This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button) or [customize its modal](../../actions/modals). The following methods are available to customize the actions:
@@ -627,3 +766,5 @@ Select::make('author_id')
         fn (Action $action) => $action->modalWidth('3xl'),
     )
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Action;Filament\\Actions\\Action;$action;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>

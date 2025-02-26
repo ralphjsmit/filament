@@ -294,6 +294,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $createdOptionKey = $component->evaluate($component->getCreateOptionUsing(), [
                     'data' => $data,
                     'form' => $schema,
+                    'schema' => $schema,
                 ]);
 
                 $state = $component->isMultiple()
@@ -367,7 +368,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function getCreateOptionActionForm(Schema $schema): array | Schema | null
     {
-        return $this->evaluate($this->createOptionActionForm, ['form' => $schema]);
+        return $this->evaluate($this->createOptionActionForm, ['form' => $schema, 'schema' => $schema]);
     }
 
     public function hasCreateOptionActionFormSchema(): bool
@@ -380,7 +381,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function getEditOptionActionForm(Schema $schema): array | Schema | null
     {
-        return $this->evaluate($this->editOptionActionForm, ['form' => $schema]);
+        return $this->evaluate($this->editOptionActionForm, ['form' => $schema, 'schema' => $schema]);
     }
 
     public function hasEditOptionActionFormSchema(): bool
@@ -450,6 +451,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $component->evaluate($component->getUpdateOptionUsing(), [
                     'data' => $data,
                     'form' => $schema,
+                    'schema' => $schema,
                 ]);
 
                 $component->refreshSelectedOptionLabel();

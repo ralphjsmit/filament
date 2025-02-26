@@ -157,7 +157,7 @@ TextInput::make('domain')
     ->suffix('.com')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="4.x" />
 
@@ -173,7 +173,7 @@ TextInput::make('domain')
     ->suffixIcon('heroicon-m-globe-alt')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" version="4.x" />
 
@@ -190,7 +190,7 @@ TextInput::make('domain')
     ->suffixIconColor('success')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Revealable password inputs
 
