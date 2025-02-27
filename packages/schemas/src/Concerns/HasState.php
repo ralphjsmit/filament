@@ -93,8 +93,8 @@ trait HasState
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             $component->callAfterStateHydrated();
 
-            foreach ($component->getChildSchemas(withHidden: true) as $container) {
-                $container->callAfterStateHydrated();
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $childSchema->callAfterStateHydrated();
             }
         }
     }
@@ -113,8 +113,8 @@ trait HasState
                     $component->callAfterStateUpdated();
                 }
 
-                foreach ($component->getChildSchemas() as $container) {
-                    if ($container->callAfterStateUpdated($path)) {
+                foreach ($component->getChildSchemas() as $childSchema) {
+                    if ($childSchema->callAfterStateUpdated($path)) {
                         return true;
                     }
                 }
@@ -139,12 +139,12 @@ trait HasState
 
             $component->callBeforeStateDehydrated();
 
-            foreach ($component->getChildSchemas() as $container) {
-                if ($container->isHidden()) {
+            foreach ($component->getChildSchemas() as $childSchema) {
+                if ($childSchema->isHidden()) {
                     continue;
                 }
 
-                $container->callBeforeStateDehydrated();
+                $childSchema->callBeforeStateDehydrated();
             }
         }
     }
@@ -181,12 +181,12 @@ trait HasState
                 continue;
             }
 
-            foreach ($component->getChildSchemas() as $container) {
-                if ($container->isHidden()) {
+            foreach ($component->getChildSchemas() as $childSchema) {
+                if ($childSchema->isHidden()) {
                     continue;
                 }
 
-                $container->mutateDehydratedState($state);
+                $childSchema->mutateDehydratedState($state);
             }
 
             if (filled($component->getStatePath(isAbsolute: false))) {
@@ -220,12 +220,12 @@ trait HasState
                 continue;
             }
 
-            foreach ($component->getChildSchemas() as $container) {
-                if ($container->isHidden()) {
+            foreach ($component->getChildSchemas() as $childSchema) {
+                if ($childSchema->isHidden()) {
                     continue;
                 }
 
-                $container->mutateStateForValidation($state);
+                $childSchema->mutateStateForValidation($state);
             }
 
             if (filled($component->getStatePath(isAbsolute: false))) {

@@ -286,8 +286,8 @@ trait HasState
             // we need to dehydrate the child component containers while
             // informing them that they are not dehydrated, so that their
             // child components get removed from the state.
-            foreach ($this->getChildSchemas() as $container) {
-                $container->dehydrateState($state, isDehydrated: false);
+            foreach ($this->getChildSchemas() as $childSchema) {
+                $childSchema->dehydrateState($state, isDehydrated: false);
             }
 
             return;
@@ -303,8 +303,8 @@ trait HasState
             return;
         }
 
-        foreach ($this->getChildSchemas(withHidden: true) as $container) {
-            $container->dehydrateState($state, $isDehydrated);
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            $childSchema->dehydrateState($state, $isDehydrated);
         }
     }
 
@@ -336,8 +336,8 @@ trait HasState
             }
         }
 
-        foreach ($this->getChildSchemas(withHidden: true) as $container) {
-            $container->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            $childSchema->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
         }
 
         $rawState = $this->getRawState();
@@ -377,8 +377,8 @@ trait HasState
         }
 
         if (! ($isStatePathMatching ?? false)) {
-            foreach ($this->getChildSchemas(withHidden: true) as $container) {
-                $container->hydrateStatePartially($statePaths, $andCallHydrationHooks);
+            foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+                $childSchema->hydrateStatePartially($statePaths, $andCallHydrationHooks);
             }
 
             return;
@@ -396,8 +396,8 @@ trait HasState
             $this->rawState($rawState);
         }
 
-        foreach ($this->getChildSchemas(withHidden: true) as $container) {
-            $container->hydrateStatePartially($statePaths, $andCallHydrationHooks);
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            $childSchema->hydrateStatePartially($statePaths, $andCallHydrationHooks);
         }
 
         $rawState = $this->getRawState();
@@ -453,8 +453,8 @@ trait HasState
             $this->state(null);
         }
 
-        foreach ($this->getChildSchemas(withHidden: true) as $container) {
-            $container->fillStateWithNull();
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            $childSchema->fillStateWithNull();
         }
     }
 

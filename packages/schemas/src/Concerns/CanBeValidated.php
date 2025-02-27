@@ -23,14 +23,14 @@ trait CanBeValidated
                 $component->dehydrateValidationAttributes($attributes);
             }
 
-            foreach ($component->getChildSchemas() as $container) {
-                if ($container->isHidden()) {
+            foreach ($component->getChildSchemas() as $childSchema) {
+                if ($childSchema->isHidden()) {
                     continue;
                 }
 
                 $attributes = [
                     ...$attributes,
-                    ...$container->getValidationAttributes(),
+                    ...$childSchema->getValidationAttributes(),
                 ];
             }
         }
@@ -54,14 +54,14 @@ trait CanBeValidated
                 $component->dehydrateValidationMessages($messages);
             }
 
-            foreach ($component->getChildSchemas() as $container) {
-                if ($container->isHidden()) {
+            foreach ($component->getChildSchemas() as $childSchema) {
+                if ($childSchema->isHidden()) {
                     continue;
                 }
 
                 $messages = [
                     ...$messages,
-                    ...$container->getValidationMessages(),
+                    ...$childSchema->getValidationMessages(),
                 ];
             }
         }
@@ -85,14 +85,14 @@ trait CanBeValidated
                 $component->dehydrateValidationRules($rules);
             }
 
-            foreach ($component->getChildSchemas() as $container) {
-                if ($container->isHidden()) {
+            foreach ($component->getChildSchemas() as $childSchema) {
+                if ($childSchema->isHidden()) {
                     continue;
                 }
 
                 $rules = [
                     ...$rules,
-                    ...$container->getValidationRules(),
+                    ...$childSchema->getValidationRules(),
                 ];
             }
         }

@@ -7,7 +7,6 @@ use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Component;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
@@ -86,16 +85,6 @@ class SimpleMethodChangesRector extends AbstractRector
                 'changes' => [
                     'getColumns' => function (ClassMethod $node): void {
                         $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
-                    },
-                ],
-            ],
-            [
-                'class' => [
-                    Component::class,
-                ],
-                'changes' => [
-                    'getChildComponents' => function (ClassMethod $node): void {
-                        $node->name = new Identifier('getDefaultChildComponents');
                     },
                 ],
             ],

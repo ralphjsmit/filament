@@ -196,9 +196,7 @@ export default function markdownEditorFormComponent({
             )
 
             if (isLiveOnBlur) {
-                this.editor.codemirror.on('blur', () =>
-                    this.$wire.commit(),
-                )
+                this.editor.codemirror.on('blur', () => this.$wire.commit())
             }
 
             this.$watch('state', () => {

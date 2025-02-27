@@ -5,7 +5,6 @@ namespace Filament\Forms\Components;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
@@ -106,6 +105,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     protected string | Closure | null $labelBetweenItems = null;
 
     protected bool | Closure $isItemLabelTruncated = true;
+
+    protected ?Field $cachedSimpleField = null;
 
     protected function setUp(): void
     {
@@ -800,18 +801,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     }
 
     /**
-     * @return array<Component | Action | ActionGroup>
-     */
-    public function getDefaultChildComponents(): array
-    {
-        if ($simpleField = $this->getSimpleField()) {
-            return [$simpleField];
-        }
-
-        return parent::getDefaultChildComponents();
-    }
-
-    /**
      * @return array<Schema>
      */
     public function getItems(): array
@@ -1177,6 +1166,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function simple(Field | Closure | null $field): static
     {
         $this->simpleField = $field;
+        $this->schema(fn (Repeater $component): array => [$component->getSimpleField()]);
 
         return $this;
     }
@@ -1188,7 +1178,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     public function getSimpleField(): ?Field
     {
-        return $this->evaluate($this->simpleField)?->hiddenLabel();
+        return ($this->cachedSimpleField ??= $this->evaluate($this->simpleField))?->hiddenLabel();
     }
 
     public function clearCachedExistingRecords(): void

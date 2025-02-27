@@ -4,10 +4,9 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Exception;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -52,70 +51,66 @@ class MorphToSelect extends Component
         return $static;
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->schema(function (MorphToSelect $component): array {
+            $relationship = $component->getRelationship();
+            $typeColumn = $relationship->getMorphType();
+            $keyColumn = $relationship->getForeignKeyName();
+
+            $types = $component->getTypes();
+            $isRequired = $component->isRequired();
+
+            return [
+                Select::make($typeColumn)
+                    ->label($component->getLabel())
+                    ->hiddenLabel()
+                    ->options(array_map(
+                        fn (Type $type): string => $type->getLabel(),
+                        $types,
+                    ))
+                    ->native($component->isNative())
+                    ->required($isRequired)
+                    ->live()
+                    ->afterStateUpdated(function (Set $set) use ($component, $keyColumn): void {
+                        $set($keyColumn, null);
+                        $component->callAfterStateUpdated();
+                    }),
+                Select::make($keyColumn)
+                    ->label(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getLabel())
+                    ->hiddenLabel()
+                    ->options(fn (Select $component, Get $get): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionsUsing))
+                    ->getSearchResultsUsing(fn (Select $component, Get $get, $search): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getSearchResultsUsing, ['search' => $search]))
+                    ->getOptionLabelUsing(fn (Select $component, Get $get, $value): ?string => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionLabelUsing, ['value' => $value]))
+                    ->native($component->isNative())
+                    ->required(fn (Get $get): bool => filled(($types[$get($typeColumn)] ?? null)))
+                    ->hidden(fn (Get $get): bool => blank(($types[$get($typeColumn)] ?? null)))
+                    ->dehydratedWhenHidden()
+                    ->searchable($component->isSearchable())
+                    ->searchDebounce($component->getSearchDebounce())
+                    ->searchPrompt($component->getSearchPrompt())
+                    ->searchingMessage($component->getSearchingMessage())
+                    ->noSearchResultsMessage($component->getNoSearchResultsMessage())
+                    ->loadingMessage($component->getLoadingMessage())
+                    ->allowHtml($component->isHtmlAllowed())
+                    ->optionsLimit($component->getOptionsLimit())
+                    ->preload($component->isPreloaded())
+                    ->when(
+                        $component->isLive(),
+                        fn (Select $component) => $component->live(onBlur: $this->isLiveOnBlur()),
+                    )
+                    ->afterStateUpdated(function () use ($component): void {
+                        $component->callAfterStateUpdated();
+                    }),
+            ];
+        });
+    }
+
     public static function getDefaultName(): ?string
     {
         return null;
-    }
-
-    /**
-     * @return array<Component | Action | ActionGroup>
-     */
-    public function getDefaultChildComponents(): array
-    {
-        $relationship = $this->getRelationship();
-        $typeColumn = $relationship->getMorphType();
-        $keyColumn = $relationship->getForeignKeyName();
-
-        $types = $this->getTypes();
-        $isRequired = $this->isRequired();
-
-        $get = $this->makeGetUtility();
-
-        /** @var ?Type $selectedType */
-        $selectedType = $types[$get($typeColumn)] ?? null;
-
-        return [
-            Select::make($typeColumn)
-                ->label($this->getLabel())
-                ->hiddenLabel()
-                ->options(array_map(
-                    fn (Type $type): string => $type->getLabel(),
-                    $types,
-                ))
-                ->native($this->isNative())
-                ->required($isRequired)
-                ->live()
-                ->afterStateUpdated(function (Set $set) use ($keyColumn): void {
-                    $set($keyColumn, null);
-                    $this->callAfterStateUpdated();
-                }),
-            Select::make($keyColumn)
-                ->label($selectedType?->getLabel())
-                ->hiddenLabel()
-                ->options($selectedType?->getOptionsUsing)
-                ->getSearchResultsUsing($selectedType?->getSearchResultsUsing)
-                ->getOptionLabelUsing($selectedType?->getOptionLabelUsing)
-                ->native($this->isNative())
-                ->required(filled($selectedType))
-                ->hidden(blank($selectedType))
-                ->dehydratedWhenHidden()
-                ->searchable($this->isSearchable())
-                ->searchDebounce($this->getSearchDebounce())
-                ->searchPrompt($this->getSearchPrompt())
-                ->searchingMessage($this->getSearchingMessage())
-                ->noSearchResultsMessage($this->getNoSearchResultsMessage())
-                ->loadingMessage($this->getLoadingMessage())
-                ->allowHtml($this->isHtmlAllowed())
-                ->optionsLimit($this->getOptionsLimit())
-                ->preload($this->isPreloaded())
-                ->when(
-                    $this->isLive(),
-                    fn (Select $component) => $component->live(onBlur: $this->isLiveOnBlur()),
-                )
-                ->afterStateUpdated(function (): void {
-                    $this->callAfterStateUpdated();
-                }),
-        ];
     }
 
     public function optionsLimit(int | Closure $limit): static
