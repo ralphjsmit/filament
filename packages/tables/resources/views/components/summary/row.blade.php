@@ -57,7 +57,7 @@
                     continue;
                 }
 
-                if ($column->hasSummary($query)) {
+                if ($column->hasSummary()) {
                     break;
                 }
 
@@ -67,7 +67,7 @@
     @endif
 
     @foreach ($columns as $column)
-        @if (($loop->first || $extraHeadingColumn || $groupsOnly || ($loop->iteration > $headingColumnSpan)) && ($placeholderColumns || $column->hasSummary($query)))
+        @if (($loop->first || $extraHeadingColumn || $groupsOnly || ($loop->iteration > $headingColumnSpan)) && ($placeholderColumns || $column->hasSummary()))
             @php
                 $alignment = $column->getAlignment() ?? Alignment::Start;
 
@@ -96,9 +96,15 @@
                     >
                         {{ $heading }}
                     </span>
-                @elseif ((! $placeholderColumns) || $column->hasSummary($query))
-                    @foreach ($column->getSummarizers($query) as $summarizer)
-                        {{ $summarizer->selectedState($selectedState) }}
+                @elseif ((! $placeholderColumns) || $column->hasSummary())
+                    @foreach ($column->getSummarizers() as $summarizer)
+                        @php
+                            $summarizer->query($query)->selectedState($selectedState);
+                        @endphp
+
+                        @if ($summarizer->isVisible())
+                            {{ $summarizer }}
+                        @endif
                     @endforeach
                 @endif
             </x-filament-tables::cell>
