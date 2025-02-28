@@ -13,14 +13,6 @@
         "filament/actions": "self.version",
         "filament/schemas": "self.version",
         "filament/support": "self.version",
-        "illuminate/console": "^11.15|^12.0",
-        "illuminate/contracts": "^11.15|^12.0",
-        "illuminate/database": "^11.15|^12.0",
-        "illuminate/filesystem": "^11.15|^12.0",
-        "illuminate/support": "^11.15|^12.0",
-        "illuminate/validation": "^11.15|^12.0",
-        "illuminate/view": "^11.15|^12.0",
-        "spatie/laravel-package-tools": "^1.9",
         "ueberdosis/tiptap-php": "^1.4"
     },
     "autoload": {

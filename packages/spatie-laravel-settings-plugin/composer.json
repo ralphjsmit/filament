@@ -10,9 +10,6 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "self.version",
-        "illuminate/console": "^11.15|^12.0",
-        "illuminate/filesystem": "^11.15|^12.0",
-        "illuminate/support": "^11.15|^12.0",
         "spatie/laravel-settings": "^2.2|^3.0"
     },
     "autoload": {

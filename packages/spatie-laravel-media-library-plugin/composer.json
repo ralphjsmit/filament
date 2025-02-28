@@ -9,7 +9,7 @@
     },
     "require": {
         "php": "^8.2",
-        "illuminate/support": "^11.15|^12.0",
+        "filament/support": "self.version",
         "spatie/laravel-medialibrary": "^10.0|^11.0"
     },
     "autoload": {
