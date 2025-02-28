@@ -265,6 +265,8 @@ trait InteractsWithActions
         }
 
         if (store($this)->has('redirect')) {
+            $this->unmountAction();
+
             return $result;
         }
 

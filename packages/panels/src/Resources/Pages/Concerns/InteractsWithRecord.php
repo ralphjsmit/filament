@@ -50,6 +50,11 @@ trait InteractsWithRecord
         return $this->record;
     }
 
+    public function hasRecord(): bool
+    {
+        return filled($this->record);
+    }
+
     public function getRecordTitle(): string | Htmlable
     {
         $resource = static::getResource();
@@ -136,7 +141,7 @@ trait InteractsWithRecord
 
     public function getDefaultActionRecord(Action $action): ?Model
     {
-        return $this->getRecord();
+        return $this->hasRecord() ? $this->getRecord() : null;
     }
 
     public function getDefaultActionRecordTitle(Action $action): ?string

@@ -25,6 +25,10 @@ trait HasRelationManagers
      */
     public function getRelationManagers(): array
     {
+        if (! $this->hasRecord()) {
+            return [];
+        }
+
         $managers = $this->getResource()::getRelations();
 
         return array_filter(
