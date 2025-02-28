@@ -117,7 +117,7 @@ Toggle::make('terms_of_service')
     ->accepted(FeatureFlag::active())
 ```
 
-<UtilityInjection set="validationRules" version="4.x">As well as allowing a static value, the `accepted()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `accepted()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Declined validation
 
@@ -139,5 +139,5 @@ Toggle::make('is_under_18')
     ->declined(FeatureFlag::active())
 ```
 
-<UtilityInjection set="validationRules" version="4.x">As well as allowing a static value, the `declined()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `declined()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
