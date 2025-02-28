@@ -3,7 +3,7 @@ title: Help
 contents: false
 ---
 
-> We offer a variety of support options, mostly free of charge. If you need help, the community is here for you!
+We offer a variety of support options, mostly free of charge. If you need help, the community is here for you!
 
 ## Discord
 
@@ -35,17 +35,6 @@ If you have a feature request, you can create a discussion on GitHub [following 
 ## One-on-one private support & consulting (paid)
 
 If you're looking for dedicated help with your Filament project, we're here for you. Whether you're a solo developer or running a large company, we provide support and development services that fit your needs. More information can be found on our [consulting page](/consulting).
-
-## Laracasts
-
-[Laracasts](https://laracasts.com) has a dedicated [Filament help section](https://laracasts.com/discuss/channels/filament) where you can ask questions and get help from their community.
-
-Additionally, on Laracasts you can find two excellent courses about Filament:
-
-- [Rapid Laravel Apps With Filament](https://laracasts.com/series/rapid-laravel-development-with-filament)
-- [Build Advanced Components for Filament](https://laracasts.com/series/build-advanced-components-for-filament) by one of the creators of Filament.
-
-> An active subscription may be required to access parts of these courses.
 
 ## Google
 

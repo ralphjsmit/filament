@@ -163,7 +163,9 @@ Toggle::make('is_admin')
     ->dehydrated()
 ```
 
-> If you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
+<Aside variant="danger">
+    If you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
+</Aside>
 
 Optionally, you may pass a boolean value to control if the field should be dehydrated or not:
 
@@ -209,7 +211,9 @@ Toggle::make('is_admin')
     ->disabled(fn (string $operation): bool => in_array($operation, ['edit', 'view']))
 ```
 
-> Note: The `disabledOn()` method will overwrite any previous calls to the `disabled()` method, and vice versa.
+<Aside variant="warning">
+    The `disabledOn()` method will overwrite any previous calls to the `disabled()` method, and vice versa.
+</Aside>
 
 ## Hiding a field
 
@@ -244,7 +248,9 @@ TextInput::make('name')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `visible()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-> Note: If both `hidden()` and `visible()` are used, they both need to indicate that the field should be visible for it to be shown.
+<Aside variant="info">
+    If both `hidden()` and `visible()` are used, they both need to indicate that the field should be visible for it to be shown.
+</Aside>
 
 ### Hiding a field using JavaScript
 
@@ -307,7 +313,9 @@ Toggle::make('is_admin')
     JS)
 ```
 
-> Note: If both `hiddenJs()` and `visibleJs()` are used, they both need to indicate that the field should be visible for it to be shown.
+<Aside variant="info">
+    If both `hiddenJs()` and `visibleJs()` are used, they both need to indicate that the field should be visible for it to be shown.
+</Aside>
 
 ### Hiding a field based on the current operation
 
@@ -341,7 +349,9 @@ Toggle::make('is_admin')
     ->hidden(fn (string $operation): bool => in_array($operation, ['edit', 'view']))
 ```
 
-> Note: The `hiddenOn()` method will overwrite any previous calls to the `hidden()` method, and vice versa.
+<Aside variant="warning">
+    The `hiddenOn()` method will overwrite any previous calls to the `hidden()` method, and vice versa.
+</Aside>
 
 Alternatively, you may use the `visibleOn()` method to control if the field should be hidden or not. In some situations, this may help to make your code more readable:
 
@@ -355,7 +365,9 @@ Toggle::make('is_admin')
     ->visibleOn(['create', 'edit'])
 ```
 
-> Note: The `visibleOn()` method will overwrite any previous calls to the `visible()` method, and vice versa.
+<Aside variant="info">
+    The `visibleOn()` method will overwrite any previous calls to the `visible()` method, and vice versa.
+</Aside>
 
 ## Autofocusing a field when the schema is loaded
 
@@ -528,7 +540,9 @@ function (string $operation) {
 }
 ```
 
-> You can manually set a schema's operation using the `$schema->operation()` method.
+<Aside variant="info">
+    You can manually set a schema's operation using the `$schema->operation()` method.
+</Aside>
 
 ### Injecting the current Livewire component instance
 

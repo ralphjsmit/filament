@@ -47,7 +47,9 @@ php artisan filament:install --panels
 
 This will create and register a new [Laravel service provider](https://laravel.com/docs/providers) called `app/Providers/Filament/AdminPanelProvider.php`.
 
-> If you get an error when accessing your panel, check that the service provider is registered in `bootstrap/providers.php`. If it's not registered, you'll need to [add it manually](https://laravel.com/docs/providers#registering-providers).
+<Aside variant="tip">
+    If you get an error when accessing your panel, check that the service provider is registered in `bootstrap/providers.php`. If it's not registered, you'll need to [add it manually](https://laravel.com/docs/providers#registering-providers).
+</Aside>
 
 You can create a new user account using the following command:
 
@@ -106,7 +108,9 @@ If you only want to use the set of [Blade UI components](../components/blade), y
 
 To quickly set up Filament in a new Laravel project, run the following commands to install [Livewire](https://livewire.laravel.com), [Alpine.js](https://alpinejs.dev), and [Tailwind CSS](https://tailwindcss.com):
 
-> Warning: These commands will overwrite existing files in your application. Only run them in a new Laravel project!
+<Aside variant="warning">
+    These commands will overwrite existing files in your application. Only run them in a new Laravel project!
+</Aside>
 
 Run the following command to install the Filament frontend assets:
 
