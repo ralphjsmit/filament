@@ -281,7 +281,7 @@ CheckboxList::make('technologies')
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the relationship option labels
 
