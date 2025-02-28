@@ -94,7 +94,7 @@ Select::make('author_id')
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Option key;mixed;$option;[<code>getOptionLabelUsing()</code> only] The option key to retrieve the label for.|Option keys;array<mixed>;$options;[<code>getOptionLabelsUsing()</code> only] The option keys to retrieve the labels for.|Search;?string;$search;[<code>getSearchResultsUsing()</code> only] The current search input value, if the field is searchable.">You can inject various utilities into these functions as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;[<code>getOptionLabelUsing()</code> only] The option value to retrieve the label for.||Option values;;array<mixed>;;$values;;[<code>getOptionLabelsUsing()</code> only] The option values to retrieve the labels for.||Search;;?string;;$search;;[<code>getSearchResultsUsing()</code> only] The current search input value, if the field is searchable.">You can inject various utilities into these functions as parameters.</UtilityInjection>
 
 ## Multi-select
 
@@ -164,7 +164,7 @@ Select::make('technologies')
         ->all()),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Option keys;array<mixed>;$options;[<code>getOptionLabelsUsing()</code> only] The option keys to retrieve the labels for.">The `getOptionLabelsUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Option values;;array<mixed>;;$values;;[<code>getOptionLabelsUsing()</code> only] The option values to retrieve the labels for.">The `getOptionLabelsUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Grouping options
 
@@ -288,7 +288,7 @@ Select::make('author_id')
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Search;?string;$search;The current search input value, if the field is searchable.">The `modifyQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Search;;?string;;$search;;The current search input value, if the field is searchable.">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the relationship option labels
 
@@ -321,7 +321,7 @@ Select::make('author_id')
     ->searchable(['first_name', 'last_name'])
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Eloquent record;Illuminate\Database\Eloquent\Model;$record;The Eloquent record to get the option label for.">The `getOptionLabelFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option label for.">The `getOptionLabelFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Saving pivot data to the relationship
 
@@ -358,7 +358,7 @@ Select::make('author_id')
     ]),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Schema;Filament\Schemas\Schema;$schema;The schema object for the form in the modal.">As well as allowing a static value, the `createOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">As well as allowing a static value, the `createOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/select/create-option" alt="Select with create option button" version="4.x" />
 
@@ -383,7 +383,7 @@ Select::make('author_id')
     }),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Data;array<string, mixed>;$data;The data from the form in the modal.|Schema;Filament\Schemas\Schema;$schema;The schema object for the form in the modal.">The `createOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data from the form in the modal.||Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">The `createOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Editing the selected option in a modal
 
@@ -403,7 +403,7 @@ Select::make('author_id')
     ]),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Schema;Filament\Schemas\Schema;$schema;The schema object for the form in the modal.">As well as allowing a static value, the `editOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">As well as allowing a static value, the `editOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/select/edit-option" alt="Select with edit option button" version="4.x" />
 
@@ -429,7 +429,7 @@ Select::make('author_id')
     }),
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Data;array<string, mixed>;$data;The data from the form in the modal.|Schema;Filament\Schemas\Schema;$schema;The schema object for the form in the modal.">The `updateOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data from the form in the modal.||Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">The `updateOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Handling `MorphTo` relationships
 
@@ -486,7 +486,7 @@ MorphToSelect::make('commentable')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Eloquent query builder;Illuminate\Database\Eloquent\Builder;$query;The query builder to modify.">The `modifyOptionsQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `modifyOptionsQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 
@@ -564,7 +564,7 @@ Select::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Option label;string;$label;The label of the option being disabled.|Option value;string;$value;The value of the option being disabled.">The `disableOptionWhen()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Option label;;string;;$label;;The label of the option being disabled.||Option value;;string;;$value;;The value of the option being disabled.">The `disableOptionWhen()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
@@ -767,4 +767,4 @@ Select::make('author_id')
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Action;Filament\Actions\Action;$action;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>

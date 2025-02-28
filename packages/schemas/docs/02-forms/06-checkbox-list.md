@@ -2,6 +2,7 @@
 title: Checkbox list
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -19,6 +20,8 @@ CheckboxList::make('technologies')
     ])
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/checkbox-list/simple" alt="Checkbox list" version="4.x" />
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
@@ -35,26 +38,6 @@ class App extends Model
     // ...
 }
 ```
-
-## Allowing HTML in the option labels
-
-By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:
-
-```php
-use Filament\Forms\Components\CheckboxList;
-
-CheckboxList::make('technology')
-    ->options([
-        'tailwind' => '<span class="text-blue-500">Tailwind</span>',
-        'alpine' => '<span class="text-green-500">Alpine</span>',
-        'laravel' => '<span class="text-red-500">Laravel</span>',
-        'livewire' => '<span class="text-pink-500">Livewire</span>',
-    ])
-    ->searchable()
-    ->allowHtml()
-```
-
-Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 
 ## Setting option descriptions
 
@@ -79,6 +62,8 @@ CheckboxList::make('technologies')
     ])
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `descriptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/checkbox-list/option-descriptions" alt="Checkbox list with option descriptions" version="4.x" />
 
 Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
@@ -96,6 +81,8 @@ CheckboxList::make('technologies')
     ])
     ->columns(2)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/checkbox-list/columns" alt="Checkbox list with 2 columns" version="4.x" />
 
@@ -116,7 +103,69 @@ CheckboxList::make('technologies')
     ->gridDirection('row')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `gridDirection()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/checkbox-list/rows" alt="Checkbox list with 2 rows" version="4.x" />
+
+## Searching options
+
+You may enable a search input to allow easier access to many options, using the `searchable()` method:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        // ...
+    ])
+    ->searchable()
+```
+
+<AutoScreenshot name="forms/fields/checkbox-list/searchable" alt="Searchable checkbox list" version="4.x" />
+
+Optionally, you may pass a boolean value to control if the options should be searchable or not:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        // ...
+    ])
+    ->searchable(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Bulk toggling checkboxes
+
+You may allow users to toggle all checkboxes at once using the `bulkToggleable()` method:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        // ...
+    ])
+    ->bulkToggleable()
+```
+
+<AutoScreenshot name="forms/fields/checkbox-list/bulk-toggleable" alt="Bulk toggleable checkbox list" version="4.x" />
+
+Optionally, you may pass a boolean value to control if the checkboxes should be bulk toggleable or not:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        // ...
+    ])
+    ->bulkToggleable(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `bulkToggleable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disabling specific options
 
@@ -135,6 +184,8 @@ CheckboxList::make('technologies')
     ->disableOptionWhen(fn (string $value): bool => $value === 'livewire')
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
+
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
 ```php
@@ -152,37 +203,45 @@ CheckboxList::make('technologies')
     ->in(fn (CheckboxList $component): array => array_keys($component->getEnabledOptions()))
 ```
 
-## Searching options
+For more information about the `in()` function, please see the [Validation documentation](validation#in).
 
-You may enable a search input to allow easier access to many options, using the `searchable()` method:
+## Allowing HTML in the option labels
+
+By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
 
-CheckboxList::make('technologies')
+CheckboxList::make('technology')
     ->options([
-        // ...
+        'tailwind' => '<span class="text-blue-500">Tailwind</span>',
+        'alpine' => '<span class="text-green-500">Alpine</span>',
+        'laravel' => '<span class="text-red-500">Laravel</span>',
+        'livewire' => '<span class="text-pink-500">Livewire</span>',
     ])
     ->searchable()
+    ->allowHtml()
 ```
 
-<AutoScreenshot name="forms/fields/checkbox-list/searchable" alt="Searchable checkbox list" version="4.x" />
+Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 
-## Bulk toggling checkboxes
-
-You may allow users to toggle all checkboxes at once using the `bulkToggleable()` method:
+Optionally, you may pass a boolean value to control if the options should allow HTML or not:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
 
-CheckboxList::make('technologies')
+CheckboxList::make('technology')
     ->options([
-        // ...
+        'tailwind' => '<span class="text-blue-500">Tailwind</span>',
+        'alpine' => '<span class="text-green-500">Alpine</span>',
+        'laravel' => '<span class="text-red-500">Laravel</span>',
+        'livewire' => '<span class="text-pink-500">Livewire</span>',
     ])
-    ->bulkToggleable()
+    ->searchable()
+    ->allowHtml(FeatureFlag::active())
 ```
 
-<AutoScreenshot name="forms/fields/checkbox-list/bulk-toggleable" alt="Bulk toggleable checkbox list" version="4.x" />
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `allowHtml()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Integrating with an Eloquent relationship
 
@@ -222,6 +281,8 @@ CheckboxList::make('technologies')
     )
 ```
 
+<UtilityInjection set="formFields" version="4.x">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Customizing the relationship option labels
 
 If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you could use a virtual column in your database migration:
@@ -251,6 +312,8 @@ CheckboxList::make('authors')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option label for.">The `getOptionLabelFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Saving pivot data to the relationship
 
 If your pivot table has additional columns, you can use the `pivotData()` method to specify the data that should be saved in them:
@@ -264,6 +327,8 @@ CheckboxList::make('primaryTechnologies')
         'is_primary' => true,
     ])
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `pivotData()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting a custom no search results message
 
@@ -280,6 +345,8 @@ CheckboxList::make('technologies')
     ->noSearchResultsMessage('No technologies found.')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Setting a custom search prompt
 
 When you're using a searchable checkbox list, you may want to tweak the search input's placeholder when the user has not yet entered a search term. You can do this using the `searchPrompt()` method:
@@ -295,6 +362,8 @@ CheckboxList::make('technologies')
     ->searchPrompt('Search for a technology')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchPrompt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Tweaking the search debounce
 
 By default, Filament will wait 1000 milliseconds (1 second) before searching for options when the user types in a searchable checkbox list. It will also wait 1000 milliseconds between searches if the user is continuously typing into the search input. You can change this using the `searchDebounce()` method:
@@ -309,6 +378,8 @@ CheckboxList::make('technologies')
     ->searchable()
     ->searchDebounce(500)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the checkbox list action objects
 
@@ -331,3 +402,5 @@ CheckboxList::make('technologies')
         fn (Action $action) => $action->label('Select all technologies'),
     )
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>

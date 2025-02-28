@@ -2,6 +2,7 @@
 title: Checkbox
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -39,7 +40,8 @@ When the checkbox is inline, its label is adjacent to it:
 ```php
 use Filament\Forms\Components\Checkbox;
 
-Checkbox::make('is_admin')->inline()
+Checkbox::make('is_admin')
+    ->inline()
 ```
 
 <AutoScreenshot name="forms/fields/checkbox/inline" alt="Checkbox with its label inline" version="4.x" />
@@ -49,10 +51,13 @@ When the checkbox is stacked, its label is above it:
 ```php
 use Filament\Forms\Components\Checkbox;
 
-Checkbox::make('is_admin')->inline(false)
+Checkbox::make('is_admin')
+    ->inline(false)
 ```
 
 <AutoScreenshot name="forms/fields/checkbox/not-inline" alt="Checkbox with its label above" version="4.x" />
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `inline()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Checkbox validation
 
@@ -69,6 +74,17 @@ Checkbox::make('terms_of_service')
     ->accepted()
 ```
 
+Optionally, you may pass a boolean value to control if the validation rule should be applied or not:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('terms_of_service')
+    ->accepted(FeatureFlag::active())
+```
+
+<UtilityInjection set="validationRules" version="4.x">As well as allowing a static value, the `accepted()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Declined validation
 
 You may ensure that the checkbox is not checked using the `declined()` method:
@@ -79,3 +95,14 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_under_18')
     ->declined()
 ```
+
+Optionally, you may pass a boolean value to control if the validation rule should be applied or not:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('is_under_18')
+    ->declined(FeatureFlag::active())
+```
+
+<UtilityInjection set="validationRules" version="4.x">As well as allowing a static value, the `declined()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
