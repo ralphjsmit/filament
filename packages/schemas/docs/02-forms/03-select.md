@@ -511,7 +511,9 @@ Select::make('technology')
     ->allowHtml()
 ```
 
-Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
+<Aside variant="danger">
+    Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
+</Aside>
 
 Optionally, you may pass a boolean value to control if the input should allow HTML or not:
 

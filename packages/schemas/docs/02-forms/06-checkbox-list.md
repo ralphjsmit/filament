@@ -1,6 +1,7 @@
 ---
 title: Checkbox list
 ---
+use Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -223,7 +224,9 @@ CheckboxList::make('technology')
     ->allowHtml()
 ```
 
-Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
+<Aside variant="danger">
+    Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
+</Aside>
 
 Optionally, you may pass a boolean value to control if the options should allow HTML or not:
 
