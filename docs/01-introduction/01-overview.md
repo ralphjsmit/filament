@@ -2,6 +2,7 @@
 title: What is Filament?
 contents: false
 ---
+import Aside from "@components/Aside.astro"
 
 Filament is a meta-framework for Laravel that provides a set of components and conventions to simplify building frontend interfaces using Livewire, Alpine.js, and Tailwind CSS. It's designed to be flexible and extensible, allowing you to use as much or as little of it as needed while customizing it to fit your requirements.
 
