@@ -1,6 +1,7 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -724,7 +725,9 @@ TextInput::make('password_confirmation')
 
 If your schema auto-saves data to the database, like in a [resource](../../resources), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
 
-> Note: Even when a field is not dehydrated, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-dehydrated) section.
+<Aside variant="info">
+    Even when a field is not dehydrated, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-dehydrated) section.
+</Aside>
 
 ## Reactive forms cookbook
 
