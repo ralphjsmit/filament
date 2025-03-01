@@ -149,14 +149,14 @@ Add Tailwind CSS to your `resources/css/app.css` file:
 
 ```css
 @import 'tailwindcss';
-@import '/vendor/filament/support/resources/css/index.css'; /* Required by all Filament components */
-@import '/vendor/filament/actions/resources/css/index.css'; /* Required by `filament/actions` and `filament/tables` */
-@import '/vendor/filament/forms/resources/css/index.css'; /* Required by `filament/forms`, `filament/tables` and `filament/actions` */
-@import '/vendor/filament/infolists/resources/css/index.css'; /* Required by `filament/infolists` and `filament/actions` */
-@import '/vendor/filament/notifications/resources/css/index.css'; /* Required by `filament/notifications` */
-@import '/vendor/filament/schemas/resources/css/index.css'; /* Required by `filament/schemas`, `filament/forms`, `filament/infolists`, `filament/tables` and `filament/actions` */
-@import '/vendor/filament/tables/resources/css/index.css'; /* Required by `filament/tables` */
-@import '/vendor/filament/widgets/resources/css/index.css'; /* Required by `filament/widgets` */
+@import '../../vendor/filament/support/resources/css/index.css'; /* Required by all Filament components */
+@import '../../vendor/filament/actions/resources/css/index.css'; /* Required by `filament/actions` and `filament/tables` */
+@import '../../vendor/filament/forms/resources/css/index.css'; /* Required by `filament/forms`, `filament/tables` and `filament/actions` */
+@import '../../vendor/filament/infolists/resources/css/index.css'; /* Required by `filament/infolists` and `filament/actions` */
+@import '../../vendor/filament/notifications/resources/css/index.css'; /* Required by `filament/notifications` */
+@import '../../vendor/filament/schemas/resources/css/index.css'; /* Required by `filament/schemas`, `filament/forms`, `filament/infolists`, `filament/tables` and `filament/actions` */
+@import '../../vendor/filament/tables/resources/css/index.css'; /* Required by `filament/tables` */
+@import '../../vendor/filament/widgets/resources/css/index.css'; /* Required by `filament/widgets` */
 
 @variant dark (&:where(.dark, .dark *));
 ```
