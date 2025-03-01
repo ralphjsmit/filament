@@ -161,36 +161,24 @@ Add Tailwind CSS to your `resources/css/app.css` file:
 @variant dark (&:where(.dark, .dark *));
 ```
 
-Create a `postcss.config.js` file in the root of your project and configure Tailwind CSS:
+### Configure the Vite plugin
+
+Add the `@tailwindcss/vite` plugin to your Vite configuration:
 
 ```js
-export default {
-    plugins: {
-        '@tailwindcss/postcss': {},
-    },
-}
-```
-
-### Automatic browser refreshing
-
-Update your `vite.config.js` file to automatically refresh the browser when Livewire and Filament components are modified:
-
-```js
-import { defineConfig } from 'vite'
-import laravel, { refreshPaths } from 'laravel-vite-plugin'
+import {defineConfig} from 'vite';
+import laravel from 'laravel-vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Livewire/**',
-            ],
+            refresh: true,
         }),
+        tailwindcss(),
     ],
-})
+});
 ```
 
 ### Compiling assets
@@ -199,7 +187,13 @@ Compile your new CSS and JavaScript assets using `npm run dev`.
 
 ### Configuring your layout 
 
-Create a new layout file at `resources/views/components/layouts/app.blade.php` for your Livewire components:
+If the file doesn't already exist, create a new layout file at `resources/views/components/layouts/app.blade.php` by running the following command:
+
+```bash
+php artisan livewire:layout
+```
+
+Add the following code to your new layout file:
 
 ```blade
 <!DOCTYPE html>
