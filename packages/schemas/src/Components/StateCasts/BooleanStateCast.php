@@ -2,7 +2,9 @@
 
 namespace Filament\Schemas\Components\StateCasts;
 
-class BooleanStateCast
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+
+class BooleanStateCast implements StateCast
 {
     public function get(mixed $state): bool
     {
