@@ -86,8 +86,6 @@ class MakeThemeCommand extends Command
             $this->createThemeSourceFiles();
 
             $this->abortIfNotVite();
-
-            $this->createPostcssConfig();
         } catch (FailureCommandOutput) {
             return static::FAILURE;
         } catch (SuccessCommandOutput) {
@@ -126,7 +124,7 @@ class MakeThemeCommand extends Command
             default => "{$this->pm} install",
         };
 
-        exec("{$installCommand} tailwindcss@latest @tailwindcss/forms @tailwindcss/postcss @tailwindcss/typography postcss --save-dev");
+        exec("{$installCommand} tailwindcss@latest @tailwindcss/forms @tailwindcss/typography @tailwindcss/vite --save-dev");
 
         $this->components->info('Dependencies installed successfully.');
     }
@@ -174,20 +172,5 @@ class MakeThemeCommand extends Command
         ]);
 
         throw new SuccessCommandOutput;
-    }
-
-    protected function createPostcssConfig(): void
-    {
-        $postcssConfigPath = base_path('postcss.config.js');
-
-        if (file_exists($postcssConfigPath)) {
-            $this->components->warn('A [postcss.config.js] file already exists in your project. Please ensure that it imports the [@tailwindcss/postcss] plugin.');
-
-            return;
-        }
-
-        $this->copyStubToApp('ThemePostcssConfig', $postcssConfigPath);
-
-        $this->components->info('Filament theme [postcss.config.js] created successfully.');
     }
 }

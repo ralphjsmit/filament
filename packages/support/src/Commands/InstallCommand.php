@@ -101,7 +101,6 @@ class InstallCommand extends Command
         static::updateNpmPackages();
 
         $filesystem = app(Filesystem::class);
-        $filesystem->delete(resource_path('js/bootstrap.js'));
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 
         $hasNotifications = false;
@@ -131,12 +130,12 @@ class InstallCommand extends Command
             'widgets',
         ])
             ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))
-            ->implode('/resources/css/index.css\';' . PHP_EOL . '@import \'/vendor/filament/');
+            ->implode('/resources/css/index.css\';' . PHP_EOL . '@import \'../../vendor/filament/');
 
         $css = $filesystem->get(resource_path('css/app.css'));
         $css = (string) str($css)->replace(
-            '@import \'/vendor/filament/support/resources/css/index.css\';',
-            '@import \'/vendor/filament/support/resources/css/index.css\';' . PHP_EOL . "@import '/vendor/filament/{$packagesCssImports}/resources/css/index.css';",
+            '@import \'../../vendor/filament/support/resources/css/index.css\';',
+            '@import \'../../vendor/filament/support/resources/css/index.css\';' . PHP_EOL . "@import '../../vendor/filament/{$packagesCssImports}/resources/css/index.css';",
         );
         $filesystem->put(resource_path('css/app.css'), $css);
 
@@ -174,15 +173,9 @@ class InstallCommand extends Command
     protected static function updateNpmPackageArray(array $packages): array
     {
         return [
-            ...Arr::except($packages, [
-                'axios',
-                'lodash',
-            ]),
+            ...$packages,
             '@tailwindcss/forms' => '^0.5.2',
-            '@tailwindcss/postcss' => '^4.0.0',
             '@tailwindcss/typography' => '^0.5.4',
-            'postcss' => '^8.4.14',
-            'tailwindcss' => '^4.0.0',
         ];
     }
 
