@@ -103,7 +103,7 @@ export default function wizardSchemaComponent({
             const url = new URL(window.location.href)
             url.searchParams.set(stepQueryStringKey, this.step)
 
-            history.pushState(null, document.title, url.toString())
+            history.replaceState(null, document.title, url.toString())
         },
     }
 }

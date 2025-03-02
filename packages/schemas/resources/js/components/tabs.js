@@ -53,7 +53,7 @@ export default function tabsSchemaComponent({
             const url = new URL(window.location.href)
             url.searchParams.set(tabQueryStringKey, this.tab)
 
-            history.pushState(null, document.title, url.toString())
+            history.replaceState(null, document.title, url.toString())
         },
     }
 }
