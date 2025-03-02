@@ -149,46 +149,34 @@ Add Tailwind CSS to your `resources/css/app.css` file:
 
 ```css
 @import 'tailwindcss';
-@import '/vendor/filament/support/resources/css/index.css'; /* Required by all Filament components */
-@import '/vendor/filament/actions/resources/css/index.css'; /* Required by `filament/actions` and `filament/tables` */
-@import '/vendor/filament/forms/resources/css/index.css'; /* Required by `filament/forms`, `filament/tables` and `filament/actions` */
-@import '/vendor/filament/infolists/resources/css/index.css'; /* Required by `filament/infolists` and `filament/actions` */
-@import '/vendor/filament/notifications/resources/css/index.css'; /* Required by `filament/notifications` */
-@import '/vendor/filament/schemas/resources/css/index.css'; /* Required by `filament/schemas`, `filament/forms`, `filament/infolists`, `filament/tables` and `filament/actions` */
-@import '/vendor/filament/tables/resources/css/index.css'; /* Required by `filament/tables` */
-@import '/vendor/filament/widgets/resources/css/index.css'; /* Required by `filament/widgets` */
+@import '../../vendor/filament/support/resources/css/index.css'; /* Required by all Filament components */
+@import '../../vendor/filament/actions/resources/css/index.css'; /* Required by `filament/actions` and `filament/tables` */
+@import '../../vendor/filament/forms/resources/css/index.css'; /* Required by `filament/forms`, `filament/tables` and `filament/actions` */
+@import '../../vendor/filament/infolists/resources/css/index.css'; /* Required by `filament/infolists` and `filament/actions` */
+@import '../../vendor/filament/notifications/resources/css/index.css'; /* Required by `filament/notifications` */
+@import '../../vendor/filament/schemas/resources/css/index.css'; /* Required by `filament/schemas`, `filament/forms`, `filament/infolists`, `filament/tables` and `filament/actions` */
+@import '../../vendor/filament/tables/resources/css/index.css'; /* Required by `filament/tables` */
+@import '../../vendor/filament/widgets/resources/css/index.css'; /* Required by `filament/widgets` */
 
 @variant dark (&:where(.dark, .dark *));
 ```
 
-Create a `postcss.config.js` file in the root of your project and configure Tailwind CSS:
+### Configure the Vite plugin
 
-```js
-export default {
-    plugins: {
-        '@tailwindcss/postcss': {},
-    },
-}
-```
-
-### Automatic browser refreshing
-
-Update your `vite.config.js` file to automatically refresh the browser when Livewire and Filament components are modified:
+Add the `@tailwindcss/vite` plugin to your Vite configuration:
 
 ```js
 import { defineConfig } from 'vite'
-import laravel, { refreshPaths } from 'laravel-vite-plugin'
+import laravel from 'laravel-vite-plugin'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Livewire/**',
-            ],
+            refresh: true,
         }),
+        tailwindcss(),
     ],
 })
 ```
@@ -199,7 +187,13 @@ Compile your new CSS and JavaScript assets using `npm run dev`.
 
 ### Configuring your layout 
 
-Create a new layout file at `resources/views/components/layouts/app.blade.php` for your Livewire components:
+If the file doesn't already exist, create a new layout file at `resources/views/components/layouts/app.blade.php` by running the following command:
+
+```bash
+php artisan livewire:layout
+```
+
+Add the following code to your new layout file:
 
 ```blade
 <!DOCTYPE html>
