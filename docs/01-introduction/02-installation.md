@@ -166,9 +166,9 @@ Add Tailwind CSS to your `resources/css/app.css` file:
 Add the `@tailwindcss/vite` plugin to your Vite configuration:
 
 ```js
-import {defineConfig} from 'vite';
-import laravel from 'laravel-vite-plugin';
-import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
     plugins: [
@@ -178,7 +178,7 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
-});
+})
 ```
 
 ### Compiling assets
