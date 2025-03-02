@@ -1,7 +1,9 @@
 ---
 title: Date-time picker
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -30,6 +32,8 @@ DatePicker::make('date_of_birth')
     ->format('d/m/Y')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `format()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Disabling the seconds input
 
 When using the time picker, you may disable the seconds input using the `seconds(false)` method:
@@ -40,6 +44,8 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('published_at')
     ->seconds(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `seconds()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/date-time-picker/without-seconds" alt="Date time picker without seconds" version="4.x" />
 
@@ -56,6 +62,8 @@ DateTimePicker::make('published_at')
 
 While dates will still be stored using the app's configured timezone, the date will now load in the new timezone, and it will be converted back when the form is saved.
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `timezone()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Enabling the JavaScript date picker
 
 By default, Filament uses the native HTML5 date picker. You may enable a more customizable JavaScript date picker using the `native(false)` method:
@@ -67,9 +75,13 @@ DatePicker::make('date_of_birth')
     ->native(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `native()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/date-time-picker/javascript" alt="JavaScript-based date time picker" version="4.x" />
 
-Please be aware that while being accessible, the JavaScript date picker does not support full keyboard input in the same way that the native date picker does. If you require full keyboard input, you should use the native date picker.
+<Aside variant="note">
+    The JavaScript date picker does not support full keyboard input in the same way that the native date picker does. If you require full keyboard input, you should use the native date picker.
+</Aside>
 
 ### Customizing the display format
 
@@ -83,6 +95,8 @@ DatePicker::make('date_of_birth')
     ->displayFormat('d/m/Y')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `displayFormat()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/date-time-picker/display-format" alt="Date time picker with custom display format" version="4.x" />
 
 You may also configure the locale that is used when rendering the display, if you want to use different locale from your app config. For this, you can use the `locale()` method:
@@ -95,6 +109,8 @@ DatePicker::make('date_of_birth')
     ->displayFormat('d F Y')
     ->locale('fr')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `locale()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Configuring the time input intervals
 
@@ -110,6 +126,8 @@ DateTimePicker::make('published_at')
     ->secondsStep(10)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `hoursStep()`, `minutesStep()`, and `secondsStep()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 ### Configuring the first day of the week
 
 In some countries, the first day of the week is not Monday. To customize the first day of the week in the date picker, use the `firstDayOfWeek()` method on the component. 0 to 7 are accepted values, with Monday as 1 and Sunday as 7 or 0:
@@ -121,6 +139,8 @@ DateTimePicker::make('published_at')
     ->native(false)
     ->firstDayOfWeek(7)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `firstDayOfWeek()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/date-time-picker/week-starts-on-sunday" alt="Date time picker where the week starts on Sunday" version="4.x" />
 
@@ -150,6 +170,8 @@ DateTimePicker::make('date')
     ->disabledDates(['2000-01-03', '2000-01-15', '2000-01-20'])
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `disabledDates()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/date-time-picker/disabled-dates" alt="Date time picker where dates are disabled" version="4.x" />
 
 ### Closing the picker when a date is selected
@@ -163,6 +185,18 @@ DateTimePicker::make('date')
     ->native(false)
     ->closeOnDateSelection()
 ```
+
+Optionally, you may pass a boolean value to control if the input should close when a date is selected or not:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->native(false)
+    ->closeOnDateSelection(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `closeOnDateSelection()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Autocompleting dates with a datalist
 
@@ -185,6 +219,8 @@ TimePicker::make('appointment_at')
 
 Datalists provide autocomplete options to users when they use the picker. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking to strictly limit users to a set of predefined options, check out the [select field](select).
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `datalist()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
@@ -196,6 +232,8 @@ DatePicker::make('date')
     ->prefix('Starts')
     ->suffix('at midnight')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/date-time-picker/affix" alt="Date time picker with affixes" version="4.x" />
 
@@ -210,6 +248,8 @@ TimePicker::make('at')
     ->prefixIcon('heroicon-m-play')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/date-time-picker/prefix-icon" alt="Date time picker with prefix icon" version="4.x" />
 
 #### Setting the affix icon's color
@@ -223,6 +263,8 @@ TimePicker::make('at')
     ->prefixIcon('heroicon-m-check-circle')
     ->prefixIconColor('success')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Making the field read-only
 
@@ -243,6 +285,17 @@ There are a few differences, compared to [`disabled()`](overview#disabling-a-fie
 - There are no styling changes, such as less opacity, when using `readOnly()`.
 - The field is still focusable when using `readOnly()`.
 
+Optionally, you may pass a boolean value to control if the field should be read-only or not:
+
+```php
+use Filament\Forms\Components\DatePicker;
+
+DatePicker::make('date_of_birth')
+    ->readOnly(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `readOnly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Date-time picker validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to date-time pickers.
@@ -259,3 +312,5 @@ DatePicker::make('date_of_birth')
     ->minDate(now()->subYears(150))
     ->maxDate(now())
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minDate()` and `maxDate()` methods also accept functions to dynamically calculate them. If the functions return `null`, the validation rule is not applied. You can inject various utilities into the functions as parameters. </UtilityInjection>

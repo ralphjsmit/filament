@@ -277,6 +277,17 @@ There are a few differences, compared to [`disabled()`](overview#disabling-a-fie
 - There are no styling changes, such as less opacity, when using `readOnly()`.
 - The field is still focusable when using `readOnly()`.
 
+Optionally, you may pass a boolean value to control if the field should be read-only or not:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->readOnly(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `readOnly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Text input validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to text inputs.

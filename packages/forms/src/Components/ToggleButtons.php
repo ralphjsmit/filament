@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
@@ -74,6 +75,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
             1 => FilamentIcon::resolve('forms::components.toggle-buttons.boolean.true') ?? Heroicon::Check,
             0 => FilamentIcon::resolve('forms::components.toggle-buttons.boolean.false') ?? Heroicon::XMark,
         ]);
+
+        $this->stateCast(app(BooleanStateCast::class));
 
         return $this;
     }

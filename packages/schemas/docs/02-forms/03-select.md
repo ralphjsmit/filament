@@ -97,6 +97,83 @@ Select::make('author_id')
 
 <UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;[<code>getOptionLabelUsing()</code> only] The option value to retrieve the label for.||Option values;;array<mixed>;;$values;;[<code>getOptionLabelsUsing()</code> only] The option values to retrieve the labels for.||Search;;?string;;$search;;[<code>getSearchResultsUsing()</code> only] The current search input value, if the field is searchable.">You can inject various utilities into these functions as parameters.</UtilityInjection>
 
+### Setting a custom loading message
+
+When you're using a searchable select or multi-select, you may want to display a custom message while the options are loading. You can do this using the `loadingMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->loadingMessage('Loading authors...')
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `loadingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Setting a custom no search results message
+
+When you're using a searchable select or multi-select, you may want to display a custom message when no search results are found. You can do this using the `noSearchResultsMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->noSearchResultsMessage('No authors found.')
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Setting a custom search prompt
+
+When you're using a searchable select or multi-select, you may want to display a custom message when the user has not yet entered a search term. You can do this using the `searchPrompt()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable(['name', 'email'])
+    ->searchPrompt('Search authors by their name or email address')
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchPrompt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Setting a custom searching message
+
+When you're using a searchable select or multi-select, you may want to display a custom message while the search results are being loaded. You can do this using the `searchingMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->searchingMessage('Searching authors...')
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Tweaking the search debounce
+
+By default, Filament will wait 1000 milliseconds (1 second) before searching for options when the user types in a searchable select or multi-select. It will also wait 1000 milliseconds between searches, if the user is continuously typing into the search input. You can change this using the `searchDebounce()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->searchDebounce(500)
+```
+
+Ensure that you are not lowering the debounce too much, as this may cause the select to become slow and unresponsive due to a high number of network requests to retrieve options from server.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Multi-select
 
 The `multiple()` method on the `Select` component allows you to select multiple values from the list of options:
@@ -569,7 +646,7 @@ Select::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Option label;;string;;$label;;The label of the option being disabled.||Option value;;string;;$value;;The value of the option being disabled.">The `disableOptionWhen()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
@@ -586,6 +663,8 @@ Select::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
     ->in(fn (Select $component): array => array_keys($component->getEnabledOptions()))
 ```
+
+For more information about the `in()` function, please see the [Validation documentation](validation#in).
 
 ## Adding affix text aside the field
 
@@ -632,83 +711,6 @@ Select::make('domain')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-## Setting a custom loading message
-
-When you're using a searchable select or multi-select, you may want to display a custom message while the options are loading. You can do this using the `loadingMessage()` method:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('author_id')
-    ->relationship(name: 'author', titleAttribute: 'name')
-    ->searchable()
-    ->loadingMessage('Loading authors...')
-```
-
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `loadingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
-## Setting a custom no search results message
-
-When you're using a searchable select or multi-select, you may want to display a custom message when no search results are found. You can do this using the `noSearchResultsMessage()` method:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('author_id')
-    ->relationship(name: 'author', titleAttribute: 'name')
-    ->searchable()
-    ->noSearchResultsMessage('No authors found.')
-```
-
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
-## Setting a custom search prompt
-
-When you're using a searchable select or multi-select, you may want to display a custom message when the user has not yet entered a search term. You can do this using the `searchPrompt()` method:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('author_id')
-    ->relationship(name: 'author', titleAttribute: 'name')
-    ->searchable(['name', 'email'])
-    ->searchPrompt('Search authors by their name or email address')
-```
-
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchPrompt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
-## Setting a custom searching message
-
-When you're using a searchable select or multi-select, you may want to display a custom message while the search results are being loaded. You can do this using the `searchingMessage()` method:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('author_id')
-    ->relationship(name: 'author', titleAttribute: 'name')
-    ->searchable()
-    ->searchingMessage('Searching authors...')
-```
-
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
-## Tweaking the search debounce
-
-By default, Filament will wait 1000 milliseconds (1 second) before searching for options when the user types in a searchable select or multi-select. It will also wait 1000 milliseconds between searches, if the user is continuously typing into the search input. You can change this using the `searchDebounce()` method:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('author_id')
-    ->relationship(name: 'author', titleAttribute: 'name')
-    ->searchable()
-    ->searchDebounce(500)
-```
-
-Ensure that you are not lowering the debounce too much, as this may cause the select to become slow and unresponsive due to a high number of network requests to retrieve options from server.
-
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
 ## Limiting the number of options
 
 You can limit the number of options that are displayed in a searchable select or multi-select using the `optionsLimit()` method. The default is 50:
@@ -725,6 +727,48 @@ Select::make('author_id')
 Ensure that you are not raising the limit too high, as this may cause the select to become slow and unresponsive due to high in-browser memory usage.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `optionsLimit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Boolean options
+
+If you want a simple boolean select, with "Yes" and "No" options, you can use the `boolean()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('feedback')
+    ->label('Like this post?')
+    ->boolean()
+```
+
+To customize the "Yes" label, you can use the `trueLabel` argument on the `boolean()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('feedback')
+    ->label('Like this post?')
+    ->boolean(trueLabel: 'Absolutely!')
+```
+
+To customize the "No" label, you can use the `falseLabel` argument on the `boolean()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('feedback')
+    ->label('Like this post?')
+    ->boolean(falseLabel: 'Not at all!')
+```
+
+To customize the placeholder that shows when an option has not yet been selected, you can use the `placeholder` argument on the `boolean()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('feedback')
+    ->label('Like this post?')
+    ->boolean(placeholder: 'Make your mind up...')
+```
 
 ## Select validation
 

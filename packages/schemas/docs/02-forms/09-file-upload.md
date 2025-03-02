@@ -1,7 +1,9 @@
 ---
 title: File upload
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -15,13 +17,17 @@ FileUpload::make('attachment')
 
 <AutoScreenshot name="forms/fields/file-upload/simple" alt="File upload" version="4.x" />
 
-> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/filament-spatie-media-library) for more information.
+<Aside variant="tip">
+    Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/filament-spatie-media-library) for more information.
+</Aside>
 
 ## Configuring the storage disk and directory
 
 By default, files will be uploaded publicly to your storage disk defined in the [configuration file](../installation#publishing-configuration). You can also set the `FILESYSTEM_DISK` environment variable to change this.
 
-> To correctly preview images and other files, FilePond requires files to be served from the same domain as the app, or the appropriate CORS headers need to be present. Ensure that the `APP_URL` environment variable is correct, or modify the [filesystem](https://laravel.com/docs/filesystem) driver to set the correct URL. If you're hosting files on a separate domain like S3, ensure that CORS headers are set up.
+<Aside variant="tip">
+    To correctly preview images and other files, FilePond requires files to be served from the same domain as the app, or the appropriate CORS headers need to be present. Ensure that the `APP_URL` environment variable is correct, or modify the [filesystem](https://laravel.com/docs/filesystem) driver to set the correct URL. If you're hosting files on a separate domain like S3, ensure that CORS headers are set up.
+</Aside>
 
 To change the disk and directory for a specific field, and the visibility of files, use the `disk()`, `directory()` and `visibility()` methods:
 
@@ -34,7 +40,11 @@ FileUpload::make('attachment')
     ->visibility('private')
 ```
 
-> It is the responsibility of the developer to delete these files from the disk if they are removed, as Filament is unaware if they are depended on elsewhere. One way to do this automatically is observing a [model event](https://laravel.com/docs/eloquent#events).
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `disk()`, `directory()` and `visibility()` methods accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters. </UtilityInjection>
+
+<Aside variant="note">
+    It is the responsibility of the developer to delete these files from the disk if they are removed, as Filament is unaware if they are depended on elsewhere. One way to do this automatically is observing a [model event](https://laravel.com/docs/eloquent#events).
+</Aside>
 
 ## Uploading multiple files
 
@@ -46,6 +56,17 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachments')
     ->multiple()
 ```
+
+Optionally, you may pass a boolean value to control if multiple files can be uploaded at once:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you're saving the file URLs using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -76,6 +97,8 @@ FileUpload::make('attachments')
 
 This will limit the number of parallel uploads to `1`. If unset, we'll use the [default FilePond value](https://pqina.nl/filepond/docs/api/instance/properties/#core-properties) which is `2`.
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `maxParallelUploads()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Controlling file names
 
 By default, a random file name will be generated for newly-uploaded files. This is to ensure that there are never any conflicts with existing files.
@@ -94,7 +117,9 @@ On top of this security issue, you should also be aware that allowing users to u
 
 ### Preserving original file names
 
-> Important: Before using this feature, please ensure that you have read the [security implications](#security-implications-of-controlling-file-names).
+<Aside variant="danger">
+    Before using this feature, please ensure that you have read the [security implications](#security-implications-of-controlling-file-names).
+</Aside>
 
 To preserve the original filenames of the uploaded files, use the `preserveFilenames()` method:
 
@@ -105,9 +130,22 @@ FileUpload::make('attachment')
     ->preserveFilenames()
 ```
 
+Optionally, you may pass a boolean value to control if the original file names should be preserved:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->preserveFilenames(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `preserveFilenames()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Generating custom file names
 
-> Important: Before using this feature, please ensure that you have read the [security implications](#security-implications-of-controlling-file-names).
+<Aside variant="danger">
+    Before using this feature, please ensure that you have read the [security implications](#security-implications-of-controlling-file-names).
+</Aside>
 
 You may completely customize how file names are generated using the `getUploadedFileNameForStorageUsing()` method, and returning a string from the closure based on the `$file` that was uploaded:
 
@@ -120,6 +158,8 @@ FileUpload::make('attachment')
             ->prepend('custom-prefix-'),
     )
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="File;;Livewire\Features\SupportFileUploads\TemporaryUploadedFile;;$file;;The temporary file object being uploaded.">You can inject various utilities into the function passed to `getUploadedFileNameForStorageUsing()` as parameters.</UtilityInjection>
 
 ### Storing original file names independently
 
@@ -134,6 +174,8 @@ FileUpload::make('attachments')
 ```
 
 `attachment_file_names` will now store the original file names of your uploaded files, so you can save them to the database when the form is submitted. If you're uploading `multiple()` files, make sure that you add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to this Eloquent model property too.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `storeFileNamesIn()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Avatar mode
 
@@ -163,6 +205,18 @@ FileUpload::make('image')
 ```
 
 You can open the editor once you upload an image by clicking the pencil icon. You can also open the editor by clicking the pencil icon on an existing image, which will remove and re-upload it on save.
+
+Optionally, you may pass a boolean value to control if the image editor is enabled:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageEditor(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `imageEditor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Allowing users to crop images to aspect ratios
 
@@ -197,6 +251,8 @@ FileUpload::make('image')
     ])
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `imageEditorAspectRatios()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Setting the image editor's mode
 
 You can change the mode of the image editor using the `imageEditorMode()` method, which accepts either `1`, `2` or `3`. These options are explained in the [Cropper.js documentation](https://github.com/fengyuanchen/cropperjs#viewmode):
@@ -209,6 +265,8 @@ FileUpload::make('image')
     ->imageEditor()
     ->imageEditorMode(2)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `imageEditorMode()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the image editor's empty fill color
 
@@ -223,6 +281,8 @@ FileUpload::make('image')
     ->imageEditorEmptyFillColor('#000000')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `imageEditorEmptyFillColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Setting the image editor's viewport size
 
 You can change the size of the image editor's viewport using the `imageEditorViewportWidth()` and `imageEditorViewportHeight()` methods, which generate an aspect ratio to use across device sizes:
@@ -236,6 +296,8 @@ FileUpload::make('image')
     ->imageEditorViewportWidth('1920')
     ->imageEditorViewportHeight('1080')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `imageEditorViewportWidth()` and `imageEditorViewportHeight()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Allowing users to crop images as a circle
 
@@ -253,6 +315,20 @@ FileUpload::make('image')
 
 This is perfectly accompanied by the [`avatar()` method](#avatar-mode), which renders the images in a compact circle layout.
 
+Optionally, you may pass a boolean value to control if the circle cropper is enabled:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->avatar()
+    ->imageEditor()
+    ->circleCropper(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `circleCropper()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Cropping and resizing images without the editor
 
 Filepond allows you to crop and resize images before they are uploaded, without the need for a separate editor. You can customize this behavior using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
@@ -267,6 +343,8 @@ FileUpload::make('image')
     ->imageResizeTargetWidth('1920')
     ->imageResizeTargetHeight('1080')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `imageResizeMode()`, `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ## Altering the appearance of the file upload area
 
@@ -285,6 +363,8 @@ FileUpload::make('attachment')
     ->uploadProgressIndicatorPosition('left')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, these methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 ### Displaying files in a grid
 
 You can use the [Filepond `grid` layout](https://pqina.nl/filepond/docs/api/style/#grid-layout) by setting the `panelLayout()`:
@@ -296,6 +376,8 @@ FileUpload::make('attachments')
     ->multiple()
     ->panelLayout('grid')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `panelLayout()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Reordering files
 
@@ -320,6 +402,19 @@ FileUpload::make('attachments')
     ->appendFiles()
 ```
 
+Optionally, the `reorderable()` and `appendFiles()` methods accept a boolean value to control if the files can be reordered and if new files should be appended to the end of the list:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->reorderable(FeatureFlag::active())
+    ->appendFiles(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderable()` and `appendFiles()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 ## Opening files in a new tab
 
 You can add a button to open each file in a new tab with the `openable()` method:
@@ -331,6 +426,18 @@ FileUpload::make('attachments')
     ->multiple()
     ->openable()
 ```
+
+Optionally, you may pass a boolean value to control if the files can be opened in a new tab:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->openable(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `openable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Downloading files
 
@@ -344,6 +451,18 @@ FileUpload::make('attachments')
     ->downloadable()
 ```
 
+Optionally, you may pass a boolean value to control if the files can be downloaded:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->downloadable(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `downloadable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Previewing files
 
 By default, some file types can be previewed in FilePond. If you wish to disable the preview for all files, you can use the `previewable(false)` method:
@@ -356,6 +475,8 @@ FileUpload::make('attachments')
     ->previewable(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `previewable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Moving files instead of copying when the form is submitted
 
 By default, files are initially uploaded to Livewire's temporary storage directory, and then copied to the destination directory when the form is submitted. If you wish to move the files instead, providing that temporary uploads are stored on the same disk as permanent files, you can use the `moveFiles()` method:
@@ -366,6 +487,17 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')
     ->moveFiles()
 ```
+
+Optionally, you may pass a boolean value to control if the files should be moved:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->moveFiles(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `moveFiles()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Preventing files from being stored permanently
 
@@ -380,7 +512,11 @@ FileUpload::make('attachment')
 
 When the form is submitted, a temporary file upload object will be returned instead of a permanently stored file path. This is perfect for temporary files like imported CSVs.
 
-Please be aware that images, video and audio files will not show the stored file name in the form's preview, unless you use [`previewable(false)`](#previewing-files). This is due to a limitation with the FilePond preview plugin.
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `storeFiles()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="warning">
+    Images, video and audio files will not show the stored file name in the form's preview, unless you use [`previewable(false)`](#previewing-files). This is due to a limitation with the FilePond preview plugin.
+</Aside>
 
 ## Orienting images from their EXIF data
 
@@ -393,6 +529,8 @@ FileUpload::make('attachment')
     ->orientImagesFromExif(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `orientImagesFromExif()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Hiding the remove file button
 
 It is also possible to hide the remove uploaded file button by using `deletable(false)`:
@@ -403,6 +541,8 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')
     ->deletable(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `deletable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Prevent file information fetching
 
@@ -415,6 +555,8 @@ FileUpload::make('attachment')
     ->fetchFileInformation(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `fetchFileInformation()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Customizing the uploading message
 
 You may customize the uploading message that is displayed in the form's submit button using the `uploadingMessage()` method:
@@ -425,6 +567,8 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')
     ->uploadingMessage('Uploading attachment...')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `uploadingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## File upload validation
 
@@ -442,6 +586,8 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('document')
     ->acceptedFileTypes(['application/pdf'])
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `acceptedFileTypes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may also use the `image()` method as shorthand to allow all image MIME types.
 
@@ -470,6 +616,8 @@ FileUpload::make('designs')
     ]);
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `mimeTypeMap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### File size validation
 
 You may also restrict the size of uploaded files in kilobytes:
@@ -481,6 +629,8 @@ FileUpload::make('attachment')
     ->minSize(512)
     ->maxSize(1024)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minSize()` and `maxSize()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 #### Uploading large files
 
@@ -521,3 +671,5 @@ FileUpload::make('attachments')
     ->minFiles(2)
     ->maxFiles(5)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minFiles()` and `maxFiles()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>

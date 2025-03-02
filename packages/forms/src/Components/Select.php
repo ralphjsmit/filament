@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
@@ -213,6 +214,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         ]);
 
         $this->placeholder($placeholder ?? '-');
+
+        $this->stateCast(app(BooleanStateCast::class));
 
         return $this;
     }

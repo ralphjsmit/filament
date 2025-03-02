@@ -67,7 +67,9 @@ CheckboxList::make('technologies')
 
 <AutoScreenshot name="forms/fields/checkbox-list/option-descriptions" alt="Checkbox list with option descriptions" version="4.x" />
 
-Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
+<Aside variant="Note">
+    Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
+</Aside>
 
 ## Splitting options into columns
 
