@@ -42,7 +42,7 @@ FileUpload::make('attachment')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `disk()`, `directory()` and `visibility()` methods accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters. </UtilityInjection>
 
-<Aside variant="note">
+<Aside variant="info">
     It is the responsibility of the developer to delete these files from the disk if they are removed, as Filament is unaware if they are depended on elsewhere. One way to do this automatically is observing a [model event](https://laravel.com/docs/eloquent#events).
 </Aside>
 

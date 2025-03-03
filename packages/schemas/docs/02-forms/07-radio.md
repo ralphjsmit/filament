@@ -48,7 +48,7 @@ Radio::make('status')
 
 <AutoScreenshot name="forms/fields/radio/option-descriptions" alt="Radio with option descriptions" version="4.x" />
 
-<Aside variant="Note">
+<Aside variant="info">
     Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
 </Aside>
 

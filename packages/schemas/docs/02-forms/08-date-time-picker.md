@@ -79,7 +79,7 @@ DatePicker::make('date_of_birth')
 
 <AutoScreenshot name="forms/fields/date-time-picker/javascript" alt="JavaScript-based date time picker" version="4.x" />
 
-<Aside variant="note">
+<Aside variant="info">
     The JavaScript date picker does not support full keyboard input in the same way that the native date picker does. If you require full keyboard input, you should use the native date picker.
 </Aside>
 
