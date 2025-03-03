@@ -1,7 +1,9 @@
 ---
 title: Repeater
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -47,7 +49,7 @@ If you wish to define a repeater with multiple schema blocks that can be repeate
 
 ## Setting empty default items
 
-Repeaters may have a certain number of empty items created by default, using the `defaultItems()` method:
+Repeaters may have a certain number of empty items created by default. The default is only used when a schema is loaded with no data. In a standard [panel resource](../../resources), defaults are used on the Create page, not the Edit page. To use default items, pass the number of items to the `defaultItems()` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -59,7 +61,7 @@ Repeater::make('members')
     ->defaultItems(3)
 ```
 
-Note that these default items are only created when the form is loaded without existing data. Inside [panel resources](../../panels/resources#resource-forms) this only works on Create Pages, as Edit Pages will always fill the data from the model.
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `defaultItems()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding items
 
@@ -79,6 +81,8 @@ Repeater::make('members')
     ->addActionLabel('Add member')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addActionLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Aligning the add action button
 
 By default, the add action is aligned in the center. You may adjust this using the `addActionAlignment()` method, passing an `Alignment` option of `Alignment::Start` or `Alignment::End`:
@@ -94,6 +98,8 @@ Repeater::make('members')
     ->addActionAlignment(Alignment::Start)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addActionAlignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Preventing the user from adding items
 
 You may prevent the user from adding items to the repeater using the `addable(false)` method:
@@ -107,6 +113,8 @@ Repeater::make('members')
     ])
     ->addable(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Deleting items
 
@@ -126,6 +134,8 @@ Repeater::make('members')
     ->deletable(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `deletable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Reordering items
 
 A button is displayed on each item to allow the user to drag and drop to reorder it in the list.
@@ -144,6 +154,8 @@ Repeater::make('members')
     ->reorderable(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Reordering items with buttons
 
 You may use the `reorderableWithButtons()` method to enable reordering items with buttons to move the item up and down:
@@ -160,6 +172,20 @@ Repeater::make('members')
 
 <AutoScreenshot name="forms/fields/repeater/reorderable-with-buttons" alt="Repeater that is reorderable with buttons" version="4.x" />
 
+Optionally, you may pass a boolean value to control if the repeater should be ordered with buttons or not:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->reorderableWithButtons(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderableWithButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Preventing reordering with drag and drop
 
 You may use the `reorderableWithDragAndDrop(false)` method to prevent items from being ordered with drag and drop:
@@ -173,6 +199,8 @@ Repeater::make('members')
     ])
     ->reorderableWithDragAndDrop(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderableWithDragAndDrop()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Collapsing items
 
@@ -202,6 +230,21 @@ Repeater::make('qualifications')
 
 <AutoScreenshot name="forms/fields/repeater/collapsed" alt="Collapsed repeater" version="4.x" />
 
+Optionally, the `collaptible()` and `collapsed()` methods accept a boolean value to control if the repeater should be collapsible and collapsed or not:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->collapsible(FeatureFlag::active())
+    ->collapsed(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Cloning items
 
 You may allow repeater items to be duplicated using the `cloneable()` method:
@@ -218,9 +261,21 @@ Repeater::make('qualifications')
 
 <AutoScreenshot name="forms/fields/repeater/cloneable" alt="Cloneable repeater" version="4.x" />
 
-## Integrating with an Eloquent relationship
+Optionally, the `cloneable()` method accepts a boolean value to control if the repeater should be cloneable or not:
 
-> If you're building a form inside your Livewire component, make sure you have set up the [form's model](../adding-a-form-to-a-livewire-component#setting-a-form-model). Otherwise, Filament doesn't know which model to use to retrieve the relationship from.
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->cloneable(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `cloneable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Integrating with an Eloquent relationship
 
 You may employ the `relationship()` method of the `Repeater` to configure a `HasMany` relationship. Filament will load the item data from the relationship, and save it back to the relationship when the form is submitted. If a custom relationship name is not passed to `relationship()`, Filament will use the field name as the relationship name:
 
@@ -234,18 +289,20 @@ Repeater::make('qualifications')
     ])
 ```
 
-When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
-
-```php
-use Filament\Forms\Components\Repeater;
-
-Repeater::make('qualifications')
-    ->disabled()
-    ->relationship()
-    ->schema([
-        // ...
-    ])
-```
+<Aside variant="warning">
+    When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
+    
+    ```php
+    use Filament\Forms\Components\Repeater;
+    
+    Repeater::make('qualifications')
+        ->disabled()
+        ->relationship()
+        ->schema([
+            // ...
+        ])
+    ```
+</Aside>
 
 ### Reordering items in a relationship
 
