@@ -226,6 +226,12 @@ Previously, users were able to display the number of limited images separately t
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">
+<span slot="summary">The `RichEditor` component's `disableGrammarly()` method has been removed</span>
+
+The `disableGrammarly()` method has been removed from the `RichEditor` component. This method was used to disable the Grammarly browser extension acting on the editor. Since moving the underlying implementation of the editor from Trix to TipTap, we have not found a way to disable Grammarly on the editor.
+</Disclosure>
+
+<Disclosure x-show="packages.includes('forms')">
 <span slot="summary">Overriding the `Field::make()`, `MorphToSelect::make()`, `Placeholder::make()`, or `Builder\Block::make()` methods</span>
 
 The signature for the `Field::make()`, `MorphToSelect::make()`, `Placeholder::make()`, and `Builder\Block::make()` methods has changed. Any classes that extend the `Field`, `MorphToSelect`, `Placeholder`, or `Builder\Block` class and override the `make()` method must update the method signature to match the new signature. The new signature is as follows:
