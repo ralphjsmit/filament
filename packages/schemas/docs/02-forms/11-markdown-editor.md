@@ -50,6 +50,8 @@ MarkdownEditor::make('content')
     ])
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 Alternatively, you may disable specific buttons using the `disableToolbarButtons()` method:
 
 ```php
@@ -76,3 +78,5 @@ MarkdownEditor::make('content')
     ->fileAttachmentsDirectory('attachments')
     ->fileAttachmentsVisibility('private')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
