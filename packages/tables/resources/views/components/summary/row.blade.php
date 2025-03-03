@@ -79,7 +79,13 @@
                     {{ $heading }}
                 @elseif ((! $placeholderColumns) || $column->hasSummary())
                     @foreach ($column->getSummarizers() as $summarizer)
-                        {{ $summarizer->query($query)->selectedState($selectedState) }}
+                        @php
+                            $summarizer->query($query)->selectedState($selectedState);
+                        @endphp
+
+                        @if ($summarizer->isVisible())
+                            {{ $summarizer }}
+                        @endif
                     @endforeach
                 @endif
             </td>
