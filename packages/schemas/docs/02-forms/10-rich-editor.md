@@ -83,13 +83,4 @@ RichEditor::make('content')
     ->fileAttachmentsVisibility('private')
 ```
 
-## Disabling Grammarly checks
-
-If the user has Grammarly installed and you would like to prevent it from analyzing the contents of the editor, you can use the `disableGrammarly()` method:
-
-```php
-use Filament\Forms\Components\RichEditor;
-
-RichEditor::make('content')
-    ->disableGrammarly()
-```
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
