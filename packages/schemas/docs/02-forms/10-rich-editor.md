@@ -2,6 +2,7 @@
 title: Rich editor
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -52,6 +53,8 @@ RichEditor::make('content')
         'undo',
     ])
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Alternatively, you may disable specific buttons using the `disableToolbarButtons()` method:
 
