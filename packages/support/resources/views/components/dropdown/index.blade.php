@@ -1,6 +1,7 @@
 @props([
     'availableHeight' => null,
     'availableWidth' => null,
+    'flip' => true,
     'maxHeight' => null,
     'offset' => 8,
     'placement' => null,
@@ -13,7 +14,7 @@
 ])
 
 @php
-    use Filament\Support\Enums\MaxWidth;
+    use Filament\Support\Enums\Width;
 
     $sizeConfig = collect([
         'availableHeight' => $availableHeight,
@@ -21,8 +22,8 @@
         'padding' => $sizePadding,
     ])->filter()->toJson();
 
-    if (! ($width instanceof MaxWidth)) {
-        $width = MaxWidth::tryFrom($width) ?? $width;
+    if (! ($width instanceof Width)) {
+        $width = Width::tryFrom($width) ?? $width;
     }
 @endphp
 
@@ -40,7 +41,7 @@
     @if (! \Filament\Support\is_slot_empty($slot))
         <div
             x-cloak
-            x-float{{ $placement ? ".placement.{$placement}" : '' }}{{ $size ? '.size' : '' }}.flip{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}="{ offset: {{ $offset }}, {{ $size ? ('size: ' . $sizeConfig) : '' }} }"
+            x-float{{ $placement ? ".placement.{$placement}" : '' }}{{ $size ? '.size' : '' }}{{ $flip ? '.flip' : '' }}{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}="{ offset: {{ $offset }}, {{ $size ? ('size: ' . $sizeConfig) : '' }} }"
             x-ref="panel"
             x-transition:enter-start="fi-opacity-0"
             x-transition:leave-end="fi-opacity-0"
@@ -50,7 +51,7 @@
             @endif
             @class([
                 'fi-dropdown-panel',
-                ($width instanceof MaxWidth) ? "fi-width-{$width->value}" : (is_string($width) ? $width : 'fi-width-default'),
+                ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : 'fi-width-default'),
                 'fi-scrollable' => $maxHeight || $size,
             ])
             @style([

@@ -86,8 +86,6 @@ class MakeThemeCommand extends Command
             $this->createThemeSourceFiles();
 
             $this->abortIfNotVite();
-
-            $this->createPostcssConfig();
         } catch (FailureCommandOutput) {
             return static::FAILURE;
         } catch (SuccessCommandOutput) {
@@ -126,7 +124,7 @@ class MakeThemeCommand extends Command
             default => "{$this->pm} install",
         };
 
-        exec("{$installCommand} tailwindcss @tailwindcss/forms @tailwindcss/typography postcss postcss-nesting autoprefixer --save-dev");
+        exec("{$installCommand} tailwindcss@latest @tailwindcss/forms @tailwindcss/typography @tailwindcss/vite --save-dev");
 
         $this->components->info('Dependencies installed successfully.');
     }
@@ -134,33 +132,29 @@ class MakeThemeCommand extends Command
     protected function createThemeSourceFiles(): void
     {
         $cssFilePath = resource_path("css/filament/{$this->panel->getId()}/theme.css");
-        $tailwindConfigFilePath = resource_path("css/filament/{$this->panel->getId()}/tailwind.config.js");
 
         if (! $this->option('force') && $this->checkForCollision([
             $cssFilePath,
-            $tailwindConfigFilePath,
         ])) {
             throw new FailureCommandOutput;
         }
 
-        $classPathPrefix = (string) str(Arr::first($this->panel->getPageDirectories()))
+        $classDirectory = (string) str(Arr::first($this->panel->getPageDirectories()))
             ->afterLast('Filament/')
             ->beforeLast('Pages');
 
-        $viewPathPrefix = str($classPathPrefix)
+        $viewDirectory = str($classDirectory)
             ->explode('/')
             ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('/');
 
         $this->copyStubToApp('ThemeCss', $cssFilePath, [
+            'classDirectory' => filled($classDirectory) ? "/{$classDirectory}" : '',
             'panel' => $this->panel->getId(),
-        ]);
-        $this->copyStubToApp('ThemeTailwindConfig', $tailwindConfigFilePath, [
-            'classPathPrefix' => $classPathPrefix,
-            'viewPathPrefix' => $viewPathPrefix,
+            'viewDirectory' => filled($viewDirectory) ? "/{$viewDirectory}" : '',
         ]);
 
-        $this->components->info("Filament theme [resources/css/filament/{$this->panel->getId()}/theme.css] and [resources/css/filament/{$this->panel->getId()}/tailwind.config.js] created successfully.");
+        $this->components->info("Filament theme [resources/css/filament/{$this->panel->getId()}/theme.css] created successfully.");
     }
 
     protected function abortIfNotVite(): void
@@ -173,23 +167,10 @@ class MakeThemeCommand extends Command
         $this->components->bulletList([
             "It looks like you don't have Vite installed. Please use your asset bundling system of choice to compile `resources/css/filament/{$this->panel->getId()}/theme.css` into `public/css/filament/{$this->panel->getId()}/theme.css`.",
             "If you're not currently using a bundler, we recommend using Vite. Alternatively, you can use the Tailwind CLI with the following command:",
-            "npx tailwindcss --input ./resources/css/filament/{$this->panel->getId()}/theme.css --output ./public/css/filament/{$this->panel->getId()}/theme.css --config ./resources/css/filament/{$this->panel->getId()}/tailwind.config.js --minify",
+            "npx @tailwindcss/cli --input ./resources/css/filament/{$this->panel->getId()}/theme.css --output ./public/css/filament/{$this->panel->getId()}/theme.css --config ./resources/css/filament/{$this->panel->getId()}/tailwind.config.js --minify",
             "Make sure to register the theme in the {$this->panel->getId()} panel provider using `->theme(asset('css/filament/{$this->panel->getId()}/theme.css'))`",
         ]);
 
         throw new SuccessCommandOutput;
-    }
-
-    protected function createPostcssConfig(): void
-    {
-        $postcssConfigPath = base_path('postcss.config.js');
-
-        if (file_exists($postcssConfigPath)) {
-            return;
-        }
-
-        $this->copyStubToApp('ThemePostcssConfig', $postcssConfigPath);
-
-        $this->components->info('Filament theme [postcss.config.js] created successfully.');
     }
 }

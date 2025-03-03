@@ -22,6 +22,10 @@ trait CanGeneratePanels
             placeholder: $placeholderId,
             default: $defaultId,
             required: true,
+            validate: fn (string $value) => match (true) {
+                preg_match('/^[a-zA-Z].*/', $value) !== false => null,
+                default => 'The ID must start with a letter, and not a number or special character.',
+            },
             hint: 'It must be unique to any others you have, and is used to reference the panel in your code.',
         ));
 
@@ -55,15 +59,11 @@ trait CanGeneratePanels
             ]));
         }
 
-        $isLaravel11OrHigherWithBootstrapProvidersFile = version_compare(App::version(), '11.0', '>=') &&
-            /** @phpstan-ignore-next-line */
-            file_exists($bootstrapProvidersPath = App::getBootstrapProvidersPath());
+        $hasBootstrapProvidersFile = file_exists($bootstrapProvidersPath = App::getBootstrapProvidersPath());
 
-        if ($isLaravel11OrHigherWithBootstrapProvidersFile) {
-            /** @phpstan-ignore-next-line */
+        if ($hasBootstrapProvidersFile) {
             ServiceProvider::addProviderToBootstrapFile(
                 $fqn,
-                /** @phpstan-ignore-next-line */
                 $bootstrapProvidersPath,
             );
         } else {
@@ -80,7 +80,7 @@ trait CanGeneratePanels
 
         $this->components->info("Filament panel [{$path}] created successfully.");
 
-        if ($isLaravel11OrHigherWithBootstrapProvidersFile) {
+        if ($hasBootstrapProvidersFile) {
             $this->components->warn("We've attempted to register the {$basename} in your [bootstrap/providers.php] file. If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the array.");
         } else {
             $this->components->warn("We've attempted to register the {$basename} in your [config/app.php] file as a service provider.  If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.");

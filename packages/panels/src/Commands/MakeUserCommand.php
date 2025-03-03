@@ -70,7 +70,7 @@ class MakeUserCommand extends Command
     {
         $this->options = $this->options();
 
-        if (! Filament::getCurrentPanel()) {
+        if (! Filament::getCurrentOrDefaultPanel()) {
             $this->error('Filament has not been installed yet: php artisan filament:install --panels');
 
             return static::FAILURE;

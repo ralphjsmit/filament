@@ -3,15 +3,24 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 trait CanDisableOptions
 {
-    protected bool | Closure | null $isOptionDisabled = null;
+    /**
+     * @var array<bool | Closure>
+     */
+    protected array $isOptionDisabled = [];
 
-    public function disableOptionWhen(bool | Closure $callback): static
+    public function disableOptionWhen(bool | Closure | null $callback, bool $merge = false): static
     {
-        $this->isOptionDisabled = $callback;
+        if ($merge) {
+            $this->isOptionDisabled[] = $callback;
+        } else {
+            $this->isOptionDisabled = Arr::wrap($callback);
+        }
 
         return $this;
     }
@@ -36,20 +45,18 @@ trait CanDisableOptions
     /**
      * @param  array-key  $value
      */
-    public function isOptionDisabled($value, string $label): bool
+    public function isOptionDisabled($value, string | Htmlable $label): bool
     {
-        if ($this->isOptionDisabled === null) {
-            return false;
-        }
-
-        return (bool) $this->evaluate($this->isOptionDisabled, [
-            'label' => $label,
-            'value' => $value,
-        ]);
+        return collect($this->isOptionDisabled)
+            ->contains(fn (bool | Closure $isOptionDisabled): bool => (bool) $this->evaluate($isOptionDisabled, [
+                'label' => $label,
+                'value' => $value,
+            ]));
     }
 
     public function hasDynamicDisabledOptions(): bool
     {
-        return $this->isOptionDisabled instanceof Closure;
+        return collect($this->isOptionDisabled)
+            ->contains(fn (bool | Closure $isOptionDisabled): bool => $isOptionDisabled instanceof Closure);
     }
 }

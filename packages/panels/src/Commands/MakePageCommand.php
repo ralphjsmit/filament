@@ -335,16 +335,21 @@ class MakePageCommand extends Command
             return;
         }
 
+        $keyedNamespaces = array_combine(
+            $namespaces,
+            $namespaces,
+        );
+
         $this->pagesNamespace = search(
             label: 'Which namespace would you like to create this page in?',
-            options: function (?string $search) use ($namespaces): array {
+            options: function (?string $search) use ($keyedNamespaces): array {
                 if (blank($search)) {
-                    return $namespaces;
+                    return $keyedNamespaces;
                 }
 
                 $search = str($search)->trim()->replace(['\\', '/'], '');
 
-                return array_filter($namespaces, fn (string $namespace): bool => str($namespace)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
+                return array_filter($keyedNamespaces, fn (string $namespace): bool => str($namespace)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
             },
         );
         $this->pagesDirectory = $directories[array_search($this->pagesNamespace, $namespaces)];
@@ -544,7 +549,7 @@ class MakePageCommand extends Command
                 if (
                     class_exists($resourceModelFqn) &&
                     method_exists($resourceModelFqn, $relationship) &&
-                    (($relationshipInstance = app($relatedModelFqn)->{$relationship}()) instanceof Relation)
+                    (($relationshipInstance = app($resourceModelFqn)->{$relationship}()) instanceof Relation)
                 ) {
                     return $relatedModelFqn = $relationshipInstance->getRelated()::class;
                 }
@@ -641,7 +646,6 @@ class MakePageCommand extends Command
             'resourceFqn' => $this->resourceFqn,
             'relationship' => $relationship,
             'relatedResourceFqn' => $relatedResourceFqn,
-            'navigationLabel' => Str::headline($relationship),
             'hasViewOperation' => $hasViewOperation,
             'formSchemaFqn' => $formSchemaFqn,
             'infolistSchemaFqn' => $infolistSchemaFqn,

@@ -12,17 +12,17 @@ class Grid extends Component implements HasEmbeddedView
     protected ?array $columns = null;
 
     /**
-     * @param  array<string, int | string | null> | int | string | null  $columns
+     * @param  array<string, ?int> | int | null  $columns
      */
-    final public function __construct(array | int | string | null $columns = 2)
+    final public function __construct(array | int | null $columns = 2)
     {
         $this->columns($columns);
     }
 
     /**
-     * @param  array<string, int | string | null> | int | string | null  $columns
+     * @param  array<string, ?int> | int | null  $columns
      */
-    public static function make(array | int | string | null $columns = 2): static
+    public static function make(array | int | null $columns = 2): static
     {
         $static = app(static::class, ['columns' => $columns]);
         $static->configure();
@@ -31,9 +31,9 @@ class Grid extends Component implements HasEmbeddedView
     }
 
     /**
-     * @param  array<string, int | string | null> | int | string | null  $columns
+     * @param  array<string, ?int> | int | null  $columns
      */
-    public function columns(array | int | string | null $columns = 2): static
+    public function columns(array | int | null $columns = 2): static
     {
         if (! is_array($columns)) {
             $columns = [

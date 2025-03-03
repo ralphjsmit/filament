@@ -18,6 +18,11 @@ trait CanAskForRelatedModel
             fn (string $class): bool => is_subclass_of($class, Model::class),
         );
 
+        $modelFqns = array_combine(
+            $modelFqns,
+            $modelFqns,
+        );
+
         return search(
             label: "Filament couldn't automatically find the related model for the [{$relationship}] relationship. What is the fully qualified class name of the related model?",
             options: function (?string $search) use ($modelFqns): array {

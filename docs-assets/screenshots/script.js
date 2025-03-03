@@ -12,9 +12,7 @@ import puppeteer from 'puppeteer'
 import schema from './schema.js'
 import emitter from 'events'
 import * as process from 'process'
-import path from 'path'
 import sharp from 'sharp'
-import { fileURLToPath } from 'url'
 
 emitter.setMaxListeners(1024)
 
@@ -51,6 +49,15 @@ const processScreenshot = async (file, options, theme) => {
         ])
 
         await new Promise((resolve) => setTimeout(resolve, 500))
+    } else {
+        await page.emulateMediaFeatures([
+            {
+                name: 'prefers-color-scheme',
+                value: 'light'
+            }
+        ])
+
+        await new Promise((resolve) => setTimeout(resolve, 500))
     }
 
     if (options.before) {
@@ -70,8 +77,6 @@ const processScreenshot = async (file, options, theme) => {
             await options.crop(sharp(fs.readFileSync(`images/${theme}/${file}.jpg`))).toBuffer()
         )
     }
-
-    console.log(`✅  Generated ${path.dirname(fileURLToPath(import.meta.url))}/images/${theme}/${file}.jpg`)
 }
 
 const failures = []

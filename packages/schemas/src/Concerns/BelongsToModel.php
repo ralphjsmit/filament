@@ -33,17 +33,17 @@ trait BelongsToModel
 
     public function saveRelationships(): void
     {
-        foreach ($this->getComponents(withHidden: true) as $component) {
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             $component->saveRelationshipsBeforeChildren();
 
             $shouldSaveRelationshipsWhenDisabled = $component->shouldSaveRelationshipsWhenDisabled();
 
-            foreach ($component->getChildComponentContainers(withHidden: $component->shouldSaveRelationshipsWhenHidden()) as $container) {
-                if ((! $shouldSaveRelationshipsWhenDisabled) && $container->isDisabled()) {
+            foreach ($component->getChildSchemas(withHidden: $component->shouldSaveRelationshipsWhenHidden()) as $childSchema) {
+                if ((! $shouldSaveRelationshipsWhenDisabled) && $childSchema->isDisabled()) {
                     continue;
                 }
 
-                $container->saveRelationships();
+                $childSchema->saveRelationships();
             }
 
             $component->saveRelationships();
@@ -52,11 +52,11 @@ trait BelongsToModel
 
     public function loadStateFromRelationships(bool $andHydrate = false): void
     {
-        foreach ($this->getComponents(withHidden: true) as $component) {
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             $component->loadStateFromRelationships($andHydrate);
 
-            foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
-                $container->loadStateFromRelationships($andHydrate);
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $childSchema->loadStateFromRelationships($andHydrate);
             }
         }
     }

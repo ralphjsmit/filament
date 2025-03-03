@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Facades\FilamentView;
+    use Filament\Widgets\View\Components\ChartWidgetComponent;
 
     $color = $this->getColor();
     $heading = $this->getHeading();
@@ -56,24 +57,19 @@
         >
             <div
                 @if (FilamentView::hasSpaMode())
-                    ax-load="visible"
+                    x-load="visible"
                 @else
-                    ax-load
+                    x-load
                 @endif
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 wire:ignore
                 x-data="chart({
                             cachedData: @js($this->getCachedData()),
                             options: @js($this->getOptions()),
                             type: @js($this->getType()),
                         })"
-                x-ignore
                 @class([
-                    match ($color) {
-                        'gray' => null,
-                        default => 'fi-color-custom',
-                    },
-                    is_string($color) ? "fi-color-{$color}" : null,
+                    ...\Filament\Support\get_component_color_classes(ChartWidgetComponent::class, $color),
                 ])
             >
                 <canvas
@@ -86,25 +82,11 @@
                 <span
                     x-ref="backgroundColorElement"
                     class="fi-wi-chart-bg-color"
-                    @style([
-                        \Filament\Support\get_color_css_variables(
-                            $color,
-                            shades: [50, 400],
-                            alias: 'widgets::chart-widget.background',
-                        ) => $color !== 'gray',
-                    ])
                 ></span>
 
                 <span
                     x-ref="borderColorElement"
                     class="fi-wi-chart-border-color"
-                    @style([
-                        \Filament\Support\get_color_css_variables(
-                            $color,
-                            shades: [400, 500],
-                            alias: 'widgets::chart-widget.border',
-                        ) => $color !== 'gray',
-                    ])
                 ></span>
 
                 <span

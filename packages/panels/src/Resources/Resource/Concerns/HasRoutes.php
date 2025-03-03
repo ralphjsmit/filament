@@ -44,7 +44,7 @@ trait HasRoutes
             return $parentResource->getParentResource()::getRouteBaseName($panel) . '.' . $parentResource->getRouteName();
         }
 
-        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
+        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentOrDefaultPanel();
 
         $routeBaseName = (string) str(static::getSlug())
             ->replace('/', '.')
@@ -73,14 +73,14 @@ trait HasRoutes
 
     public static function registerRoutes(Panel $panel, ?Closure $registerPageRoutes = null): void
     {
-        $registerPageRoutes ??= function () use ($panel) {
+        $registerPageRoutes ??= function () use ($panel): void {
             foreach (static::getPages() as $name => $page) {
                 $page->registerRoute($panel)?->name($name);
             }
         };
 
         if ($parentResource = static::getParentResourceRegistration()) {
-            $parentResource->getParentResource()::registerRoutes($panel, function () use ($parentResource, $registerPageRoutes) {
+            $parentResource->getParentResource()::registerRoutes($panel, function () use ($parentResource, $registerPageRoutes): void {
                 Route::name($parentResource->getRouteName() . '.')
                     ->prefix('{' . $parentResource->getParentRouteParameterName() . '}/' . $parentResource->getSlug())
                     ->group($registerPageRoutes);

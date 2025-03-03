@@ -17,6 +17,11 @@ trait HasId
 
     public function getId(): ?string
     {
-        return $this->evaluate($this->id) ?? $this->getKey();
+        return $this->getCustomId() ?? $this->getKey();
+    }
+
+    public function getCustomId(): ?string
+    {
+        return $this->evaluate($this->id);
     }
 }

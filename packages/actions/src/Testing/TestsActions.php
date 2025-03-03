@@ -2,6 +2,7 @@
 
 namespace Filament\Actions\Testing;
 
+use BackedEnum;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
@@ -12,12 +13,13 @@ use Filament\Actions\Testing\Fixtures\TestAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 use function Livewire\store;
 
 /**
- * @method HasActions instance()
+ * @method Component&HasActions instance()
  *
  * @mixin Testable
  */
@@ -45,14 +47,9 @@ class TestsActions
                 return $this;
             }
 
-            $this->assertDispatched('sync-action-modals', id: $this->instance()->getId(), newActionNestingIndex: array_key_last($this->instance()->mountedActions));
-
             if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count($actions))) {
                 return $this;
             }
-
-            /** @phpstan-ignore-next-line */
-            $this->assertActionMounted($actions);
 
             return $this;
         };
@@ -80,9 +77,18 @@ class TestsActions
 
     public function assertActionDataSet(): Closure
     {
-        return function (array $data): static {
-            foreach (Arr::dot($data, prepend: 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.') as $key => $value) {
-                $this->assertSet($key, $value);
+        return function (array | Closure $data): static {
+            $mountedActions = $this->instance()->mountedActions;
+            $mountedActionIndex = array_key_last($mountedActions);
+
+            if ($data instanceof Closure) {
+                $data = $data($mountedActions[$mountedActionIndex]['data'] ?? []);
+            }
+
+            if (is_array($data)) {
+                foreach (Arr::dot($data, prepend: "mountedActions.{$mountedActionIndex}.data.") as $key => $value) {
+                    $this->assertSet($key, $value);
+                }
             }
 
             return $this;
@@ -137,10 +143,6 @@ class TestsActions
                 return $this;
             }
 
-            if (blank($this->instance()->mountedActions)) {
-                $this->assertDispatched('sync-action-modals', id: $this->instance()->getId(), newActionNestingIndex: null);
-            }
-
             return $this;
         };
     }
@@ -163,7 +165,7 @@ class TestsActions
             Assert::assertInstanceOf(
                 Action::class,
                 $action,
-                message: $generateMessageUsing ?
+                $generateMessageUsing ?
                     $generateMessageUsing($prettyName, $livewireClass) :
                     "Failed asserting that an action with name [{$prettyName}] exists on the [{$livewireClass}] component.",
             );
@@ -189,7 +191,7 @@ class TestsActions
             $actions = $this->parseNestedActions($actions);
 
             try {
-                $action = $this->instance()->getAction($actions);
+                $action = $this->instance()->getAction($actions); /** @phpstan-ignore argument.type */
             } catch (ActionNotResolvableException $exception) {
                 Assert::assertNull(null);
 
@@ -214,7 +216,7 @@ class TestsActions
                 Assert::assertNotInstanceOf(
                     Action::class,
                     $action,
-                    message: $generateMessageUsing ?
+                    $generateMessageUsing ?
                         $generateMessageUsing($prettyName, $livewireClass) :
                         "Failed asserting that an action with the name [{$prettyName}] does not exist on the [{$livewireClass}] component.",
                 );
@@ -280,11 +282,14 @@ class TestsActions
 
     public function assertActionHasIcon(): Closure
     {
-        return function (string | TestAction | array $actions, string $icon): static {
+        return function (string | TestAction | array $actions, string | BackedEnum $icon): static {
+
+            $iconValue = $icon instanceof BackedEnum ? $icon->value : $icon;
+
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->getIcon() === $icon,
-                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] has icon [{$icon}] on the [{$livewireClass}] component.",
+                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] has icon [{$iconValue}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -293,11 +298,14 @@ class TestsActions
 
     public function assertActionDoesNotHaveIcon(): Closure
     {
-        return function (string | TestAction | array $actions, string $icon): static {
+        return function (string | TestAction | array $actions, string | BackedEnum $icon): static {
+
+            $iconValue = $icon instanceof BackedEnum ? $icon->value : $icon;
+
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->getIcon() !== $icon,
-                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] does not have icon [{$icon}] on the [{$livewireClass}] component.",
+                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] does not have icon [{$iconValue}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -447,7 +455,7 @@ class TestsActions
                 if (($originalAction = array_shift($originalActions)) instanceof TestAction) {
                     Assert::assertTrue(
                         $originalAction->checkArguments($this->instance()->mountedActions[$actionNestingIndex]['arguments'] ?? []),
-                        message: "Failed asserting that the mounted arguments for the action [{$action['name']}] match the expected arguments.",
+                        "Failed asserting that the mounted arguments for the action [{$action['name']}] match the expected arguments.",
                     );
                 }
 
@@ -506,7 +514,7 @@ class TestsActions
 
             Assert::assertFalse(
                 true,
-                message: 'Failed asserting that the action is not mounted.',
+                'Failed asserting that the action is not mounted.',
             );
 
             return $this;
@@ -612,7 +620,7 @@ class TestsActions
                 Assert::assertInstanceOf(
                     $actionClass,
                     $action,
-                    message: "Failed asserting that a {$actionType} action with name [{$actionName}] exists on the [{$livewireClass}] component.",
+                    "Failed asserting that a {$actionType} action with name [{$actionName}] exists on the [{$livewireClass}] component.",
                 );
 
                 $namesIndex++;
@@ -621,7 +629,7 @@ class TestsActions
             Assert::assertEquals(
                 count($names),
                 $namesIndex,
-                message: "Failed asserting that a {$actionType} actions with names [" . implode(', ', $names) . "] exist in order on the [{$livewireClass}] component.",
+                "Failed asserting that a {$actionType} actions with names [" . implode(', ', $names) . "] exist in order on the [{$livewireClass}] component.",
             );
 
             return $this;

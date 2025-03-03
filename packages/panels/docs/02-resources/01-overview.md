@@ -1,16 +1,7 @@
 ---
 title: Overview
 ---
-import LaracastsBanner from "@components/LaracastsBanner.astro"
-
 ## Overview
-
-<LaracastsBanner
-    title="Introduction to Filament"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you how to get started with the resources."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/2"
-    series="rapid-laravel-development"
-/>
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app - using tables and forms.
 
@@ -114,13 +105,6 @@ This is required for features like [global search](global-search) to work.
 
 ## Resource forms
 
-<LaracastsBanner
-    title="Basic Form Inputs"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a form to your resource."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/3"
-    series="rapid-laravel-development"
-/>
-
 Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
 
 ```php
@@ -169,13 +153,6 @@ Forms\Components\TextInput::make('password')
 ```
 
 ## Resource tables
-
-<LaracastsBanner
-    title="Table Columns"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a table to your resource."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/9"
-    series="rapid-laravel-development"
-/>
 
 Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
 
@@ -303,15 +280,18 @@ public static function getNavigationLabel(): string
 The `$navigationIcon` property supports the name of any Blade component. By default, [Heroicons](https://heroicons.com) are installed. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php
-protected static ?string $navigationIcon = 'heroicon-o-user-group';
+use BackedEnum;
+
+protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 ```
 
 Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
 
 ```php
+use BackedEnum;
 use Illuminate\Contracts\Support\Htmlable;
 
-public static function getNavigationIcon(): string | Htmlable | null
+public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
 {
     return 'heroicon-o-user-group';
 }
@@ -544,4 +524,4 @@ public static function getPages(): array
 }
 ```
 
-Deleting a page will not delete any actions that link to that page. Any actions will open a modal instead of sending the user to the non-existant page. For instance, the `CreateAction` on the List page, the `EditAction` on the table or View page, or the `ViewAction` on the table or Edit page. If you want to remove those buttons, you must delete the actions as well.
+Deleting a page will not delete any actions that link to that page. Any actions will open a modal instead of sending the user to the non-existent page. For instance, the `CreateAction` on the List page, the `EditAction` on the table or View page, or the `ViewAction` on the table or Edit page. If you want to remove those buttons, you must delete the actions as well.

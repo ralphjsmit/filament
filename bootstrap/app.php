@@ -9,7 +9,7 @@ use Filament\Schemas\SchemaServiceProvider;
 use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
-use Filament\Tests\AdminPanelProvider;
+use Filament\Tests\Fixtures\Providers\AdminPanelProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\CreatesApplication;

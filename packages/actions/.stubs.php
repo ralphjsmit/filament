@@ -2,6 +2,7 @@
 
 namespace Livewire\Features\SupportTesting {
 
+    use BackedEnum;
     use Closure;
     use Filament\Actions\Testing\Fixtures\TestAction;
 
@@ -12,7 +13,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function setActionData(array $data): static {}
 
-        public function assertActionDataSet(array $data): static {}
+        public function assertActionDataSet(array | Closure $data): static {}
 
         public function callAction(string | TestAction | array $actions, array $data = [], array $arguments = []): static {}
 
@@ -30,9 +31,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertActionDisabled(string | TestAction | array $actions): static {}
 
-        public function assertActionHasIcon(string | TestAction | array $actions, string $icon): static {}
+        public function assertActionHasIcon(string | TestAction | array $actions, string | BackedEnum $icon): static {}
 
-        public function assertActionDoesNotHaveIcon(string | TestAction | array $actions, string $icon): static {}
+        public function assertActionDoesNotHaveIcon(string | TestAction | array $actions, string | BackedEnum $icon): static {}
 
         public function assertActionHasLabel(string | TestAction | array $actions, string $label): static {}
 

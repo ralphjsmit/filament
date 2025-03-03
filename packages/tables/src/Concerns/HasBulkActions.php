@@ -21,8 +21,6 @@ trait HasBulkActions
 
     protected Collection $cachedSelectedTableRecords;
 
-    protected function configureTableBulkAction(BulkAction $action): void {}
-
     /**
      * @deprecated Use the `callMountedAction()` method instead.
      *
@@ -198,7 +196,7 @@ trait HasBulkActions
         $table = $this->getTable();
 
         if (
-            $shouldFetchSelectedRecords ||
+            (! $shouldFetchSelectedRecords) ||
             (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates()))
         ) {
             if (! $table->hasQuery()) {

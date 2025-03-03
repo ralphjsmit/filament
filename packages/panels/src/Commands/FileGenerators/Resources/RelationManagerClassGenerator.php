@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
@@ -28,6 +29,7 @@ class RelationManagerClassGenerator extends ClassGenerator
     use CanReadModelSchemas;
 
     /**
+     * @param  class-string  $resourceFqn
      * @param  ?class-string  $relatedResourceFqn
      * @param  ?class-string  $formSchemaFqn
      * @param  ?class-string  $infolistSchemaFqn
@@ -37,6 +39,7 @@ class RelationManagerClassGenerator extends ClassGenerator
      */
     final public function __construct(
         protected string $fqn,
+        protected string $resourceFqn,
         protected string $relationship,
         protected ?string $relatedResourceFqn,
         protected bool $hasViewOperation,
@@ -141,7 +144,7 @@ class RelationManagerClassGenerator extends ClassGenerator
             ? <<<PHP
                 return {$this->simplifyFqn($formSchemaFqn)}::configure(\$schema);
                 PHP
-            : $this->generateFormMethodBody($this->getRelatedModelFqn());
+            : $this->generateFormMethodBody($this->getRelatedModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
 
         $method = $class->addMethod('form')
             ->setPublic()
@@ -206,7 +209,7 @@ class RelationManagerClassGenerator extends ClassGenerator
             ? <<<PHP
                 return {$this->simplifyFqn($tableFqn)}::configure(\$table);
                 PHP
-            : $this->generateTableMethodBody($this->getRelatedModelFqn());
+            : $this->generateTableMethodBody($this->getRelatedModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
 
         $method = $class->addMethod('table')
             ->setPublic()
@@ -245,9 +248,38 @@ class RelationManagerClassGenerator extends ClassGenerator
 
     protected function configureTableMethod(Method $method): void {}
 
+    public function getForeignKeyColumnToNotGenerate(): ?string
+    {
+        if (! class_exists($this->getResourceFqn())) {
+            return null;
+        }
+
+        $model = $this->getResourceFqn()::getModel();
+
+        if (! class_exists($model)) {
+            return null;
+        }
+
+        $relationship = app($model)->{$this->getRelationship()}();
+
+        if (! ($relationship instanceof HasMany)) {
+            return null;
+        }
+
+        return $relationship->getForeignKeyName();
+    }
+
     public function getFqn(): string
     {
         return $this->fqn;
+    }
+
+    /**
+     * @return class-string
+     */
+    public function getResourceFqn(): string
+    {
+        return $this->resourceFqn;
     }
 
     public function getRelationship(): string

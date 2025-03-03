@@ -396,6 +396,8 @@ return [
             'ordered_list' => 'Numbered list',
             'redo' => 'Redo',
             'strike' => 'Strikethrough',
+            'subscript' => 'Subscript',
+            'superscript' => 'Superscript',
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],
@@ -407,6 +409,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => 'Create',
 
                 'modal' => [
 
@@ -429,6 +433,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Edit',
 
                 'modal' => [
 

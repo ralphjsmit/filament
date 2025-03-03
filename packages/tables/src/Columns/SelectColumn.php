@@ -21,7 +21,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     use CanDisableOptions;
     use CanSelectPlaceholder;
     use Concerns\CanBeValidated {
-        getRules as baseGetRules;
+        getRules as getBaseRules;
     }
     use Concerns\CanUpdateState;
     use HasEnum;
@@ -43,7 +43,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     public function getRules(): array
     {
         return [
-            ...$this->baseGetRules(),
+            ...$this->getBaseRules(),
             (filled($enum = $this->getEnum()) ?
                 new Enum($enum) :
                 Rule::in(array_keys($this->getEnabledOptions()))),
@@ -57,10 +57,10 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
-                'ax-load' => FilamentView::hasSpaMode()
-                    ? 'visible || event (ax-modal-opened)'
+                'x-load' => FilamentView::hasSpaMode()
+                    ? 'visible || event (x-modal-opened)'
                     : true,
-                'ax-load-src' => FilamentAsset::getAlpineComponentSrc('columns/select', 'filament/tables'),
+                'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/select', 'filament/tables'),
                 'x-data' => 'selectTableColumn({
                     name: ' . Js::from($this->getName()) . ',
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
@@ -92,7 +92,6 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         ob_start(); ?>
 
         <div
-            x-ignore
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
@@ -111,7 +110,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                             theme: $store.theme,
                         }
                 "
-                x-on:click.stop=""
+                x-on:click.stop.prevent=""
                 class="fi-input-wrp"
             >
                 <select

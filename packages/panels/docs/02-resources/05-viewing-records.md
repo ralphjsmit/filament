@@ -1,8 +1,6 @@
 ---
 title: Viewing records
 ---
-import LaracastsBanner from "@components/LaracastsBanner.astro"
-
 ## Creating a resource with a View page
 
 To create a new resource with a View page, you can use the `--view` flag:
@@ -12,13 +10,6 @@ php artisan make:filament-resource User --view
 ```
 
 ## Using an infolist instead of a disabled form
-
-<LaracastsBanner
-    title="Infolists"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding infolists to Filament resources."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/12"
-    series="rapid-laravel-development"
-/>
 
 By default, the View page will display a disabled form with the record's data. If you preferred to display the record's data in an "infolist", you can define an `infolist()` method on the resource class:
 
@@ -191,7 +182,7 @@ public static function getRecordSubNavigation(Page $page): array
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
 
 ```php
-protected static string $view = 'filament.resources.users.pages.view-user';
+protected string $view = 'filament.resources.users.pages.view-user';
 ```
 
 This assumes that you have created a view at `resources/views/filament/resources/users/pages/view-user.blade.php`.

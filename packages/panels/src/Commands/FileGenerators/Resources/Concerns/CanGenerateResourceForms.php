@@ -13,10 +13,11 @@ trait CanGenerateResourceForms
 
     /**
      * @param  ?class-string<Model>  $model
+     * @param  array<string>  $exceptColumns
      */
-    public function outputFormComponents(?string $model = null): string
+    public function outputFormComponents(?string $model = null, array $exceptColumns = []): string
     {
-        $components = $this->getFormComponents($model);
+        $components = $this->getFormComponents($model, $exceptColumns);
 
         if (empty($components)) {
             $recordTitleAttribute = $this->getRecordTitleAttribute();

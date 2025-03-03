@@ -13,12 +13,12 @@ use function PHPUnit\Framework\assertFileExists;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     MakePageCommand::$shouldCheckModelsForSoftDeletes = false;
 })
     ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
 
-it('can generate a page class', function () {
+it('can generate a page class', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-page', [
@@ -32,7 +32,7 @@ it('can generate a page class', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page view', function () {
+it('can generate a page view', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-page', [
@@ -46,7 +46,7 @@ it('can generate a page view', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page class in a nested directory', function () {
+it('can generate a page class in a nested directory', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-page', [
@@ -60,7 +60,7 @@ it('can generate a page class in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page view in a nested directory', function () {
+it('can generate a page view in a nested directory', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-page', [
@@ -74,7 +74,7 @@ it('can generate a page view in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page class in a cluster', function () {
+it('can generate a page class in a cluster', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-cluster', [
@@ -97,7 +97,7 @@ it('can generate a page class in a cluster', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page view in a cluster', function () {
+it('can generate a page view in a cluster', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-cluster', [
@@ -120,7 +120,7 @@ it('can generate a page view in a cluster', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page class in a resource', function () {
+it('can generate a page class in a resource', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-resource', [
@@ -134,8 +134,8 @@ it('can generate a page class in a resource', function () {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentPanel())->resources = [
-        ...invade(Filament::getCurrentPanel())->resources,
+    invade(Filament::getCurrentOrDefaultPanel())->resources = [
+        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
         'App\\Filament\\Resources\\Users\\UserResource',
     ];
 
@@ -152,7 +152,7 @@ it('can generate a page class in a resource', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page view in a resource', function () {
+it('can generate a page view in a resource', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-resource', [
@@ -166,8 +166,8 @@ it('can generate a page view in a resource', function () {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentPanel())->resources = [
-        ...invade(Filament::getCurrentPanel())->resources,
+    invade(Filament::getCurrentOrDefaultPanel())->resources = [
+        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
         'App\\Filament\\Resources\\Users\\UserResource',
     ];
 
@@ -184,7 +184,7 @@ it('can generate a page view in a resource', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a create page class in a resource', function () {
+it('can generate a create page class in a resource', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-resource', [
@@ -198,8 +198,8 @@ it('can generate a create page class in a resource', function () {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentPanel())->resources = [
-        ...invade(Filament::getCurrentPanel())->resources,
+    invade(Filament::getCurrentOrDefaultPanel())->resources = [
+        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
         'App\\Filament\\Resources\\Users\\UserResource',
     ];
 
@@ -218,7 +218,7 @@ it('can generate a create page class in a resource', function () {
     assertFileDoesNotExist(resource_path('views/filament/resources/users/pages/create-user.blade.php'));
 });
 
-it('can generate an edit page class in a resource', function () {
+it('can generate an edit page class in a resource', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-resource', [
@@ -232,8 +232,8 @@ it('can generate an edit page class in a resource', function () {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentPanel())->resources = [
-        ...invade(Filament::getCurrentPanel())->resources,
+    invade(Filament::getCurrentOrDefaultPanel())->resources = [
+        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
         'App\\Filament\\Resources\\Users\\UserResource',
     ];
 
@@ -252,7 +252,7 @@ it('can generate an edit page class in a resource', function () {
     assertFileDoesNotExist(resource_path('views/filament/resources/users/pages/edit-user.blade.php'));
 });
 
-it('can generate a view page class in a resource', function () {
+it('can generate a view page class in a resource', function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-resource', [
@@ -266,8 +266,8 @@ it('can generate a view page class in a resource', function () {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentPanel())->resources = [
-        ...invade(Filament::getCurrentPanel())->resources,
+    invade(Filament::getCurrentOrDefaultPanel())->resources = [
+        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
         'App\\Filament\\Resources\\Users\\UserResource',
     ];
 
@@ -305,7 +305,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
         ->expectsQuestion('Would you like to generate the form schema and table columns based on the attributes of the model?', false)
         ->expectsQuestion('Does the model use soft deletes?', false);
 
-    require_once __DIR__ . '/../../Models/Team.php';
+    require_once __DIR__ . '/../../Fixtures/Models/Team.php';
     require_once app_path('Filament/Resources/Teams/TeamResource.php');
     require_once app_path('Filament/Resources/Teams/Pages/ListTeams.php');
     require_once app_path('Filament/Resources/Teams/Pages/CreateTeam.php');
@@ -316,8 +316,8 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentPanel())->resources = [
-        ...invade(Filament::getCurrentPanel())->resources,
+    invade(Filament::getCurrentOrDefaultPanel())->resources = [
+        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
         'App\\Filament\\Resources\\Teams\\TeamResource',
         'App\\Filament\\Resources\\Users\\UserResource',
     ];
@@ -350,7 +350,7 @@ $generateManageRelatedRecordsPageCommandQuestions = [
     'relationshipType' => 'What type of relationship is this?',
 ];
 
-it('can generate a manage related records page class in a resource', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions) {
+it('can generate a manage related records page class in a resource', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
@@ -371,7 +371,7 @@ it('can generate a manage related records page class in a resource', function ()
     assertFileDoesNotExist(resource_path('views/filament/resources/users/pages/manage-user-teams.blade.php'));
 });
 
-it('can generate a manage related records page class in a resource with a related resource', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions) {
+it('can generate a manage related records page class in a resource with a related resource', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
@@ -385,7 +385,7 @@ it('can generate a manage related records page class in a resource with a relate
         ->toMatchSnapshot();
 });
 
-it('can generate a manage related records page class in a resource with a form schema class', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions) {
+it('can generate a manage related records page class in a resource with a form schema class', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
@@ -405,7 +405,7 @@ it('can generate a manage related records page class in a resource with a form s
         ->toMatchSnapshot();
 });
 
-it('can generate a manage related records page class in a resource with a generated form schema and table columns', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions) {
+it('can generate a manage related records page class in a resource with a generated form schema and table columns', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
@@ -413,8 +413,8 @@ it('can generate a manage related records page class in a resource with a genera
         ->expectsQuestion($questions['hasRelatedResource'], false)
         ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['isGenerated'], true)
-        ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Models\\Team')
-        ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Models\\Team')
+        ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
+        ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
         ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['hasTableClass'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
@@ -426,7 +426,7 @@ it('can generate a manage related records page class in a resource with a genera
         ->toMatchSnapshot();
 });
 
-it('can generate a manage related records page class in a resource with a view operation', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions) {
+it('can generate a manage related records page class in a resource with a view operation', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
@@ -446,7 +446,7 @@ it('can generate a manage related records page class in a resource with a view o
         ->toMatchSnapshot();
 });
 
-it('can generate a manage related records page class in a resource with an infolist schema class', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions) {
+it('can generate a manage related records page class in a resource with an infolist schema class', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
@@ -467,7 +467,7 @@ it('can generate a manage related records page class in a resource with an infol
         ->toMatchSnapshot();
 });
 
-it('can generate a manage related records page class in a resource with a table class', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions) {
+it('can generate a manage related records page class in a resource with a table class', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
@@ -485,7 +485,7 @@ it('can generate a manage related records page class in a resource with a table 
         ->toMatchSnapshot();
 });
 
-it('can generate a manage related records page class in a resource with soft deletes', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions) {
+it('can generate a manage related records page class in a resource with soft deletes', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
@@ -504,7 +504,7 @@ it('can generate a manage related records page class in a resource with soft del
         ->toMatchSnapshot();
 });
 
-it('can generate a manage related records page class in a resource for a `HasMany` relationship', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions) {
+it('can generate a manage related records page class in a resource for a `HasMany` relationship', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)

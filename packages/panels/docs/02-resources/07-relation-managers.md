@@ -1,8 +1,6 @@
 ---
 title: Managing relationships
 ---
-import LaracastsBanner from "@components/LaracastsBanner.astro"
-
 ## Choosing the right tool for the job
 
 Filament provides many ways to manage relationships in the app. Which feature you should use depends on the type of relationship you are managing, and which UI you are looking for.
@@ -33,7 +31,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 > These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
 
-All layout form components ([Grid](../../schemas/layout/grid#grid-component), [Section](../../schemas/layout/section), [Fieldset](../../schemas/layout/fieldset), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../../schemas/layouts/grid#grid-component), [Section](../../schemas/layouts/section), [Fieldset](../../schemas/layouts/fieldset), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -55,13 +53,6 @@ In this example, the `title`, `description` and `image` are automatically loaded
 This feature is explained more in depth in the [Forms documentation](../../forms/advanced#saving-data-to-relationships). Please visit that page for more information about how to use it.
 
 ## Creating a relation manager
-
-<LaracastsBanner
-    title="Relation Managers"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding relation managers to Filament resources."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/13"
-    series="rapid-laravel-development"
-/>
 
 To create a relation manager, you can use the `make:filament-relation-manager` command:
 
@@ -664,7 +655,7 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
 
 ### Customizing the content tab
 
-On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../../schemas/layout/tabs) customization methods:
+On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../../schemas/layouts/tabs) customization methods:
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;
@@ -691,7 +682,7 @@ public function getContentTabPosition(): ?ContentTabPosition
 
 ## Customizing relation manager tabs
 
-To customize the tab for a relation manager, override the `getTabComponent()` method, and use any [Tab](../../schemas/layout/tabs) customization methods:
+To customize the tab for a relation manager, override the `getTabComponent()` method, and use any [Tab](../../schemas/layouts/tabs) customization methods:
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;

@@ -2,9 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Closure;
-use Filament\Actions\Action;
-use Filament\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -46,13 +43,7 @@ trait InteractsWithTable
 
     public function bootedInteractsWithTable(): void
     {
-        $this->table = Action::configureUsing(
-            Closure::fromCallable([$this, 'configureTableAction']),
-            fn (): Table => BulkAction::configureUsing(
-                Closure::fromCallable([$this, 'configureTableBulkAction']),
-                fn (): Table => $this->table($this->makeTable()),
-            ),
-        );
+        $this->table = $this->table($this->makeTable());
 
         $this->cacheSchema('toggleTableColumnForm', $this->getTableColumnToggleForm());
 
@@ -297,8 +288,6 @@ trait InteractsWithTable
 
     public function resetTable(): void
     {
-        $this->cacheForms();
-
         $this->bootedInteractsWithTable();
 
         $this->resetTableFiltersForm();

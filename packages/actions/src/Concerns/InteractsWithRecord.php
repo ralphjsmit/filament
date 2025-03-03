@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -117,6 +118,10 @@ trait InteractsWithRecord
             return $record;
         }
 
+        if ($this instanceof Action && ($record = $this->getHasActionsLivewire()?->getDefaultActionRecord($this))) {
+            return $record;
+        }
+
         return $this->getGroup()?->getRecord();
     }
 
@@ -124,7 +129,19 @@ trait InteractsWithRecord
     {
         $record ??= $this->getRecord();
 
-        return $this->getCustomRecordTitle($record) ?? $this->getTable()?->getRecordTitle($record) ?? $this->getModelLabel();
+        if (filled($title = $this->getCustomRecordTitle($record))) {
+            return $title;
+        }
+
+        if (filled($title = $this->getTable()?->getRecordTitle($record))) {
+            return $title;
+        }
+
+        if ($this instanceof Action && filled($title = $this->getHasActionsLivewire()?->getDefaultActionRecordTitle($this))) {
+            return $title;
+        }
+
+        return $this->getModelLabel();
     }
 
     /**
@@ -179,7 +196,7 @@ trait InteractsWithRecord
 
     public function hasCustomRecordTitle(): bool
     {
-        return $this->recordTitle !== null;
+        return filled($this->recordTitle);
     }
 
     public function hasCustomRecordTitleAttribute(): bool
@@ -189,7 +206,7 @@ trait InteractsWithRecord
 
     public function hasRecord(): bool
     {
-        return $this->record !== null;
+        return filled($this->record);
     }
 
     /**
@@ -214,7 +231,7 @@ trait InteractsWithRecord
         $record = $this->getRecord();
 
         if (! ($record instanceof Model)) {
-            return null;
+            return $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
         }
 
         return $record::class;
@@ -245,10 +262,27 @@ trait InteractsWithRecord
         $model = $this->getModel();
 
         if (! $model) {
-            return null;
+            return $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModelLabel($this) : null;
+        }
+
+        $defaultModel = $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
+
+        if (($this instanceof Action) && ($model === $defaultModel)) {
+            return $this->getHasActionsLivewire()?->getDefaultActionModelLabel($this);
         }
 
         return get_model_label($model);
+    }
+
+    public function getTitleCaseModelLabel(): ?string
+    {
+        $modelLabel = $this->getModelLabel();
+
+        if (blank($modelLabel)) {
+            return null;
+        }
+
+        return Str::ucwords($modelLabel);
     }
 
     public function getCustomModelLabel(): ?string
@@ -281,6 +315,17 @@ trait InteractsWithRecord
         }
 
         return $singularLabel;
+    }
+
+    public function getTitleCasePluralModelLabel(): ?string
+    {
+        $pluralModelLabel = $this->getPluralModelLabel();
+
+        if (blank($pluralModelLabel)) {
+            return null;
+        }
+
+        return Str::ucwords($pluralModelLabel);
     }
 
     public function getCustomPluralModelLabel(): ?string

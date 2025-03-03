@@ -100,6 +100,10 @@ trait CanSearchRecords
                 continue;
             }
 
+            if ($column->isHidden()) {
+                continue;
+            }
+
             return true;
         }
 

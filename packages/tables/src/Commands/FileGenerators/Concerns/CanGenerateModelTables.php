@@ -45,9 +45,10 @@ trait CanGenerateModelTables
 
     /**
      * @param  ?class-string<Model>  $model
+     * @param  array<string>  $exceptColumns
      * @return array<string>
      */
-    public function getTableColumns(?string $model = null): array
+    public function getTableColumns(?string $model = null, array $exceptColumns = []): array
     {
         if (! $this->isGenerated()) {
             return [];
@@ -81,6 +82,10 @@ trait CanGenerateModelTables
             }
 
             $columnName = $column['name'];
+
+            if (in_array($columnName, $exceptColumns)) {
+                continue;
+            }
 
             if (str($columnName)->endsWith([
                 '_token',
@@ -130,10 +135,13 @@ trait CanGenerateModelTables
                     $columnData['searchable'] = [];
                 }
 
-                if (in_array($type['name'], [
-                    'date',
-                ])) {
+                if ($type['name'] === 'date') {
                     $columnData['date'] = [];
+                    $columnData['sortable'] = [];
+                }
+
+                if ($type['name'] === 'time') {
+                    $columnData['time'] = [];
                     $columnData['sortable'] = [];
                 }
 
@@ -193,10 +201,11 @@ trait CanGenerateModelTables
 
     /**
      * @param  ?class-string<Model>  $model
+     * @param  array<string>  $exceptColumns
      */
-    public function outputTableColumns(?string $model = null): string
+    public function outputTableColumns(?string $model = null, array $exceptColumns = []): string
     {
-        $columns = $this->getTableColumns($model);
+        $columns = $this->getTableColumns($model, $exceptColumns);
 
         if (empty($columns)) {
             return '//';

@@ -9,12 +9,12 @@ use function PHPUnit\Framework\assertFileExists;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
 
     $this->artisan('make:filament-resource', [
         'model' => 'Team',
-        '--model-namespace' => 'Filament\\Tests\\Models',
+        '--model-namespace' => 'Filament\\Tests\\Fixtures\\Models',
         '--view' => true,
         '--panel' => 'admin',
         '--no-interaction' => true,
@@ -26,7 +26,7 @@ beforeEach(function () {
         '--no-interaction' => true,
     ]);
 
-    require_once __DIR__ . '/../../Models/Team.php';
+    require_once __DIR__ . '/../../Fixtures/Models/Team.php';
     require_once app_path('Filament/Resources/Teams/TeamResource.php');
     require_once app_path('Filament/Resources/Teams/Pages/ListTeams.php');
     require_once app_path('Filament/Resources/Teams/Pages/CreateTeam.php');
@@ -40,8 +40,8 @@ beforeEach(function () {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentPanel())->resources = [
-        ...invade(Filament::getCurrentPanel())->resources,
+    invade(Filament::getCurrentOrDefaultPanel())->resources = [
+        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
         'App\\Filament\\Resources\\Teams\\TeamResource',
         'App\\Filament\\Resources\\Users\\UserResource',
     ];
@@ -50,7 +50,7 @@ beforeEach(function () {
 })
     ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
 
-it('can generate a relation manager', function () {
+it('can generate a relation manager', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
@@ -65,7 +65,7 @@ it('can generate a relation manager', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a relation manager with a related resource', function () {
+it('can generate a relation manager with a related resource', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
@@ -79,7 +79,7 @@ it('can generate a relation manager with a related resource', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a relation manager with a form schema class', function () {
+it('can generate a relation manager with a form schema class', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
@@ -95,14 +95,14 @@ it('can generate a relation manager with a form schema class', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a relation manager with a generated form schema and table columns', function () {
+it('can generate a relation manager with a generated form schema and table columns', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
         'recordTitleAttribute' => 'name',
         '--attach' => true,
         '--generate' => true,
-        '--related-model' => 'Filament\\Tests\\Models\\Team',
+        '--related-model' => 'Filament\\Tests\\Fixtures\\Models\\Team',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -112,7 +112,7 @@ it('can generate a relation manager with a generated form schema and table colum
         ->toMatchSnapshot();
 });
 
-it('can generate a relation manager with a view operation', function () {
+it('can generate a relation manager with a view operation', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
@@ -128,7 +128,7 @@ it('can generate a relation manager with a view operation', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a relation manager with an infolist schema class', function () {
+it('can generate a relation manager with an infolist schema class', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
@@ -145,7 +145,7 @@ it('can generate a relation manager with an infolist schema class', function () 
         ->toMatchSnapshot();
 });
 
-it('can generate a relation manager with a table class', function () {
+it('can generate a relation manager with a table class', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
@@ -161,7 +161,7 @@ it('can generate a relation manager with a table class', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a relation manager with soft deletes', function () {
+it('can generate a relation manager with soft deletes', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
@@ -177,7 +177,7 @@ it('can generate a relation manager with soft deletes', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a relation manager for a `HasMany` relationship', function () {
+it('can generate a relation manager for a `HasMany` relationship', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',

@@ -180,7 +180,7 @@ Alternatively, if you're editing records in a modal action, check out the [Actio
 
 ## Saving a part of the form independently
 
-You may want to allow the user to save a part of the form independently of the rest of the form. One way to do this is with a [section action in the header or footer](../../schemas/layout/section#adding-actions-to-the-sections-header-or-footer). From the `action()` method, you can call `saveFormComponentOnly()`, passing in the `Section` component that you want to save:
+You may want to allow the user to save a part of the form independently of the rest of the form. One way to do this is with a [section action in the header or footer](../../schemas/layouts/section#adding-actions-to-the-sections-header-or-footer). From the `action()` method, you can call `saveFormComponentOnly()`, passing in the `Section` component that you want to save:
 
 ```php
 use Filament\Actions\Action;
@@ -305,7 +305,7 @@ To view the entire actions API, please visit the [pages section](../pages#adding
 
 ### Adding a save action button to the header
 
-The "Save" button can be moved to the header of the page by overriding the `getHeaderActions()` method and using `getSaveFormAction()`. You need to pass `formId()` to the action, to specify that the action should submit the form with the ID of `form`, which is the `<form>` ID used in the view of the page:
+The "Save" button can be added to the header of the page by overriding the `getHeaderActions()` method and using `getSaveFormAction()`. You need to pass `formId()` to the action, to specify that the action should submit the form with the ID of `form`, which is the `<form>` ID used in the view of the page:
 
 ```php
 protected function getHeaderActions(): array
@@ -387,7 +387,7 @@ public static function getRecordSubNavigation(Page $page): array
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
 
 ```php
-protected static string $view = 'filament.resources.users.pages.edit-user';
+protected string $view = 'filament.resources.users.pages.edit-user';
 ```
 
 This assumes that you have created a view at `resources/views/filament/resources/users/pages/edit-user.blade.php`.

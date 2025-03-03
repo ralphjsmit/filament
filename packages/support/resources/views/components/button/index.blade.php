@@ -1,13 +1,16 @@
 @php
-    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Filament\Support\View\Components\ButtonComponent;
+    use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
-    'badgeSize' => 'xs',
+    'badgeSize' => Size::ExtraSmall,
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -22,7 +25,7 @@
     'labelSrOnly' => false,
     'loadingIndicator' => true,
     'outlined' => false,
-    'size' => ActionSize::Medium,
+    'size' => Size::Medium,
     'spaMode' => null,
     'tag' => 'button',
     'target' => null,
@@ -35,20 +38,22 @@
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
 
-    if (! $size instanceof ActionSize) {
-        $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
+    if (! $size instanceof Size) {
+        $size = filled($size) ? (Size::tryFrom($size) ?? $size) : null;
+    }
+
+    if (! $badgeSize instanceof Size) {
+        $badgeSize = filled($badgeSize) ? (Size::tryFrom($badgeSize) ?? $badgeSize) : null;
+    }
+
+    if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
+        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
     }
 
     $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall, ActionSize::Small => IconSize::Small,
-        default => IconSize::Medium,
+        Size::ExtraSmall, Size::Small => IconSize::Small,
+        default => null,
     };
-
-    if (! $iconSize instanceof IconSize) {
-        $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
-    }
-
-    $iconClasses = ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : (is_string($iconSize) ? $iconSize : '');
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
@@ -58,12 +63,15 @@
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
+
+    $hasTooltip = filled($tooltip);
 @endphp
 
 @if ($labeledFrom)
     <x-filament::icon-button
         :badge="$badge"
         :badge-color="$badgeColor"
+        :badge-size="$badgeSize"
         :color="$color"
         :disabled="$disabled"
         :form="$form"
@@ -74,7 +82,9 @@
         :icon-size="$iconSize"
         :key-bindings="$keyBindings"
         :label="$slot"
+        :loading-indicator="$loadingIndicator"
         :size="$size"
+        :spa-mode="$spaMode"
         :tag="$tag"
         :target="$target"
         :tooltip="$tooltip"
@@ -84,44 +94,29 @@
 @endif
 
 <{{ $tag }}
-    @if ($tag === 'a')
+    @if (($tag === 'a') && (! ($disabled && $hasTooltip)))
         {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
     @endif
     @if ($keyBindings)
         x-bind:id="$id('key-bindings')"
         x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
     @endif
-    @if (filled($tooltip))
+    @if ($hasTooltip)
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
         }"
     @endif
     @if ($hasFormProcessingLoadingIndicator)
-        x-data="{
-            form: null,
-            isProcessing: false,
-            processingMessage: null,
-        }"
-        x-init="
-            formElement = $el.closest('form')
-
-            formElement?.addEventListener('form-processing-started', (event) => {
-                isProcessing = true
-                processingMessage = event.detail.message
-            })
-
-            formElement?.addEventListener('form-processing-finished', () => {
-                isProcessing = false
-            })
-        "
+        x-data="filamentFormButton"
         x-bind:class="{ 'fi-processing': isProcessing }"
     @endif
     {{
         $attributes
             ->merge([
+                'aria-disabled' => $disabled ? 'true' : null,
                 'aria-label' => $labelSrOnly ? trim(strip_tags($slot->toHtml())) : null,
-                'disabled' => $disabled,
+                'disabled' => $disabled && blank($tooltip),
                 'form' => $formId,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
@@ -129,25 +124,20 @@
                 'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
                 'x-bind:aria-label' => ($labelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . \Illuminate\Support\Js::from(trim(strip_tags($slot->toHtml())))) : null,
             ], escape: false)
+            ->when(
+                $disabled && $hasTooltip,
+                fn (ComponentAttributeBag $attributes) => $attributes->filter(
+                    fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
+                ),
+            )
             ->class([
                 'fi-btn',
                 'fi-disabled' => $disabled,
                 'fi-outlined' => $outlined,
-                match ($color) {
-                    'gray' => '',
-                    default => 'fi-color-custom',
-                },
-                is_string($color) ? "fi-color-{$color}" : null,
-                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
+                ($size instanceof Size) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
                 is_string($labeledFrom) ? "fi-labeled-from-{$labeledFrom}" : null,
             ])
-            ->style([
-                \Filament\Support\get_color_css_variables(
-                    $color,
-                    shades: [400, 500, 600],
-                    alias: 'button',
-                ) => $color !== 'gray',
-            ])
+            ->color(app(ButtonComponent::class, ['isOutlined' => $outlined]), $color)
     }}
 >
     @if ($iconPosition === IconPosition::Before)
@@ -156,7 +146,7 @@
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ]))->class([$iconClasses]))
+                ])), size: $iconSize)
             }}
         @endif
 
@@ -165,7 +155,7 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ]))->class([$iconClasses]))
+                ])), size: $iconSize)
             }}
         @endif
 
@@ -174,7 +164,7 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'x-cloak' => 'x-cloak',
                     'x-show' => 'isProcessing',
-                ]))->class([$iconClasses]))
+                ])), size: $iconSize)
             }}
         @endif
     @endif
@@ -203,7 +193,7 @@
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ]))->class([$iconClasses]))
+                ])), size: $iconSize)
             }}
         @endif
 
@@ -212,7 +202,7 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ]))->class([$iconClasses]))
+                ])), size: $iconSize)
             }}
         @endif
 
@@ -221,37 +211,26 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'x-cloak' => 'x-cloak',
                     'x-show' => 'isProcessing',
-                ]))->class([$iconClasses]))
+                ])), size: $iconSize)
             }}
         @endif
     @endif
 
     @if (filled($badge))
         <div class="fi-btn-badge-ctn">
-            <span
-                @class([
-                    'fi-badge',
-                    match ($badgeColor) {
-                        'gray' => '',
-                        default => 'fi-color-custom',
-                    },
-                    is_string($badgeColor) ? "fi-color-{$badgeColor}" : null,
-                    ($badgeSize instanceof ActionSize) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
-                ])
-                @style([
-                    \Filament\Support\get_color_css_variables(
-                        $badgeColor,
-                        shades: [
-                            50,
-                            400,
-                            600,
-                        ],
-                        alias: 'badge',
-                    ) => $badgeColor !== 'gray',
-                ])
-            >
+            @if ($badge instanceof \Illuminate\View\ComponentSlot)
                 {{ $badge }}
-            </span>
+            @else
+                <span
+                    @class([
+                        'fi-badge',
+                        ...\Filament\Support\get_component_color_classes(BadgeComponent::class, $badgeColor),
+                        ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
+                    ])
+                >
+                    {{ $badge }}
+                </span>
+            @endif
         </div>
     @endif
 </{{ $tag }}>

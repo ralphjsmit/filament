@@ -16,7 +16,7 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
     /**
      * @var view-string
      */
-    protected string $view = 'filament-schema::components.fieldset';
+    protected string $view = 'filament-schemas::components.fieldset';
 
     final public function __construct(string | Htmlable | Closure | null $label = null)
     {
@@ -34,8 +34,6 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->columnSpan('full');
 
         $this->columns(2);
     }

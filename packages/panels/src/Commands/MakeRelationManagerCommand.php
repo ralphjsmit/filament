@@ -408,6 +408,10 @@ class MakeRelationManagerCommand extends Command
 
     protected function configureRelatedModelFqnIfNotAlready(): void
     {
+        if (filled($this->relatedModelFqn)) {
+            return;
+        }
+
         $relatedModel = $this->option('related-model');
 
         $this->relatedModelFqn = filled($relatedModel) && class_exists($relatedModel)

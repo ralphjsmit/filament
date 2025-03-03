@@ -2,9 +2,9 @@
 
 namespace Filament\Tests\Database\Factories;
 
-use Filament\MultiFactorAuthentication\EmailCode\EmailCodeAuthentication;
-use Filament\MultiFactorAuthentication\GoogleTwoFactor\GoogleTwoFactorAuthentication;
-use Filament\Tests\Models\User;
+use Filament\Auth\MultiFactor\EmailCode\EmailCodeAuthentication;
+use Filament\Auth\MultiFactor\GoogleTwoFactor\GoogleTwoFactorAuthentication;
+use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;

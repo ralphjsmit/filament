@@ -83,16 +83,6 @@ Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
 ```
 
-Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('edit')
-    ->translateLabel() // Equivalent to `label(__('Edit'))`
-    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
-```
-
 ## Setting a color
 
 Buttons may have a [color](../styling/colors) to indicate their significance:
@@ -108,14 +98,14 @@ Action::make('delete')
 
 ## Setting a size
 
-Buttons come in 3 sizes - `ActionSize::Small`, `ActionSize::Medium` or `ActionSize::Large`. You can change the size of the action's trigger using the `size()` method:
+Buttons come in 3 sizes - `Size::Small`, `Size::Medium` or `Size::Large`. You can change the size of the action's trigger using the `size()` method:
 
 ```php
 use Filament\Actions\Action;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 
 Action::make('create')
-    ->size(ActionSize::Large)
+    ->size(Size::Large)
 ```
 
 <AutoScreenshot name="actions/trigger-button/large" alt="Large trigger" version="4.x" />

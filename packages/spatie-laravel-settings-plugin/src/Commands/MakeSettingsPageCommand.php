@@ -173,8 +173,13 @@ class MakeSettingsPageCommand extends Command
             fn (string $class): bool => is_subclass_of($class, Settings::class),
         );
 
+        $settingsFqns = array_combine(
+            $settingsFqns,
+            $settingsFqns,
+        );
+
         $this->settingsFqn = search(
-            label: 'What is the fully qualified class name of the related model?',
+            label: 'What is the fully qualified class name of the settings class?',
             options: function (?string $search) use ($settingsFqns): array {
                 if (blank($search)) {
                     return $settingsFqns;
@@ -233,16 +238,21 @@ class MakeSettingsPageCommand extends Command
             return;
         }
 
+        $keyedNamespaces = array_combine(
+            $namespaces,
+            $namespaces,
+        );
+
         $this->pagesNamespace = search(
             label: 'Which namespace would you like to create this page in?',
-            options: function (?string $search) use ($namespaces): array {
+            options: function (?string $search) use ($keyedNamespaces): array {
                 if (blank($search)) {
-                    return $namespaces;
+                    return $keyedNamespaces;
                 }
 
                 $search = str($search)->trim()->replace(['\\', '/'], '');
 
-                return array_filter($namespaces, fn (string $namespace): bool => str($namespace)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
+                return array_filter($keyedNamespaces, fn (string $namespace): bool => str($namespace)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
             },
         );
         $this->pagesDirectory = $directories[array_search($this->pagesNamespace, $namespaces)];

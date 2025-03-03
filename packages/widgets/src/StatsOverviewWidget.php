@@ -2,6 +2,7 @@
 
 namespace Filament\Widgets;
 
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -25,39 +26,54 @@ class StatsOverviewWidget extends Widget implements HasSchemas
     protected ?string $description = null;
 
     /**
+     * @var int | array<string, ?int> | null
+     */
+    protected int | array | null $columns = null;
+
+    /**
      * @var view-string
      */
-    protected static string $view = 'filament-widgets::stats-overview-widget';
+    protected string $view = 'filament-widgets::stats-overview-widget';
 
     public function content(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make()
-                    ->heading($this->getHeading())
-                    ->description($this->getDescription())
-                    ->schema($this->getCachedStats())
-                    ->columns($this->getColumns())
-                    ->contained(false),
+                $this->getSectionContentComponent(),
             ]);
     }
 
-    /**
-     * @return array<string, int | string | null> | int | string | null
-     */
-    protected function getColumns(): array | int | string | null
+    public function getSectionContentComponent(): Component
     {
+        return Section::make()
+            ->heading($this->getHeading())
+            ->description($this->getDescription())
+            ->schema($this->getCachedStats())
+            ->columns($this->getColumns())
+            ->contained(false)
+            ->gridContainer();
+    }
+
+    /**
+     * @return int | array<string, ?int> | null
+     */
+    protected function getColumns(): int | array | null
+    {
+        if ($this->columns) {
+            return $this->columns;
+        }
+
         $count = count($this->getCachedStats());
 
         if ($count < 3) {
-            return 3;
+            return ['@xl' => 3, '!@lg' => 3];
         }
 
         if (($count % 3) !== 1) {
-            return 3;
+            return ['@xl' => 3, '!@lg' => 3];
         }
 
-        return 4;
+        return ['@xl' => 4, '!@lg' => 4];
     }
 
     protected function getDescription(): ?string

@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 
 class Radio extends Field implements Contracts\CanDisableOptions
 {
@@ -21,17 +22,14 @@ class Radio extends Field implements Contracts\CanDisableOptions
 
     protected bool | Closure $isInline = false;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
     {
         $this->options([
             1 => $trueLabel ?? __('filament-forms::components.radio.boolean.true'),
             0 => $falseLabel ?? __('filament-forms::components.radio.boolean.false'),
         ]);
+
+        $this->stateCast(app(BooleanStateCast::class));
 
         return $this;
     }

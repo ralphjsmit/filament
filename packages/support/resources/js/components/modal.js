@@ -1,14 +1,22 @@
 export default ({ id }) => ({
     isOpen: false,
 
+    isWindowVisible: false,
+
     livewire: null,
+
+    init: function () {
+        this.$nextTick(() => {
+            this.isWindowVisible = this.isOpen
+
+            this.$watch('isOpen', () => (this.isWindowVisible = this.isOpen))
+        })
+    },
 
     close: function () {
         this.closeQuietly()
 
-        this.$refs.modalContainer.dispatchEvent(
-            new CustomEvent('modal-closed', { id }),
-        )
+        this.$dispatch('modal-closed', { id })
     },
 
     closeQuietly: function () {
@@ -19,7 +27,7 @@ export default ({ id }) => ({
         this.$nextTick(() => {
             this.isOpen = true
 
-            this.$dispatch('ax-modal-opened')
+            this.$dispatch('x-modal-opened')
         })
     },
 })

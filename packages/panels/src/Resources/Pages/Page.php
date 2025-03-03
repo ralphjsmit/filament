@@ -2,7 +2,19 @@
 
 namespace Filament\Resources\Pages;
 
+use Closure;
 use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Clusters\Cluster;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
@@ -10,7 +22,9 @@ use Filament\Pages\Page as BasePage;
 use Filament\Panel;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
 use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 
@@ -32,7 +46,7 @@ abstract class Page extends BasePage
      */
     public function getResourceUrl(?string $name = null, array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = true): string
     {
-        if (method_exists($this, 'getRecord')) {
+        if (filled($name) && ($name !== 'index') && method_exists($this, 'getRecord')) {
             $parameters['record'] ??= $this->getRecord();
         }
 
@@ -253,5 +267,91 @@ abstract class Page extends BasePage
     public function getSubNavigation(): array
     {
         return [];
+    }
+
+    public function getDefaultActionAuthorizationResponse(Action $action): ?Response
+    {
+        return match (true) {
+            $action instanceof CreateAction => static::getResource()::getCreateAuthorizationResponse(),
+            $action instanceof DeleteAction => static::getResource()::getDeleteAuthorizationResponse($action->getRecord()),
+            $action instanceof EditAction => static::getResource()::getEditAuthorizationResponse($action->getRecord()),
+            $action instanceof ForceDeleteAction => static::getResource()::getForceDeleteAuthorizationResponse($action->getRecord()),
+            $action instanceof ReplicateAction => static::getResource()::getReplicateAuthorizationResponse($action->getRecord()),
+            $action instanceof RestoreAction => static::getResource()::getRestoreAuthorizationResponse($action->getRecord()),
+            $action instanceof ViewAction => static::getResource()::getViewAuthorizationResponse($action->getRecord()),
+            $action instanceof DeleteBulkAction => static::getResource()::getDeleteAnyAuthorizationResponse(),
+            $action instanceof ForceDeleteBulkAction => static::getResource()::getForceDeleteAnyAuthorizationResponse(),
+            $action instanceof RestoreBulkAction => static::getResource()::getRestoreAnyAuthorizationResponse(),
+            default => null,
+        };
+    }
+
+    public function getDefaultActionIndividualRecordAuthorizationResponseResolver(Action $action): ?Closure
+    {
+        return match (true) {
+            $action instanceof DeleteBulkAction => fn (Model $record): Response => static::getResource()::getDeleteAuthorizationResponse($record),
+            $action instanceof ForceDeleteBulkAction => fn (Model $record): Response => static::getResource()::getForceDeleteAuthorizationResponse($record),
+            $action instanceof RestoreBulkAction => fn (Model $record): Response => static::getResource()::getRestoreAuthorizationResponse($record),
+            default => null,
+        };
+    }
+
+    /**
+     * @return ?class-string<Model>
+     */
+    public function getDefaultActionModel(Action $action): ?string
+    {
+        return $this->getModel();
+    }
+
+    public function getDefaultActionModelLabel(Action $action): ?string
+    {
+        return $this->getModelLabel() ?? static::getResource()::getModelLabel();
+    }
+
+    public function getDefaultActionRelationship(Action $action): ?Relation
+    {
+        if (
+            ($action instanceof CreateAction) &&
+            ($parentRecord = $this->getParentRecord())
+        ) {
+            return static::getResource()::getParentResourceRegistration()->getRelationship($parentRecord);
+        }
+
+        return null;
+    }
+
+    public function getDefaultActionUrl(Action $action): ?string
+    {
+        if (
+            ($action instanceof CreateAction) &&
+            (static::getResource()::hasPage('create'))
+        ) {
+            return $this->getResourceUrl('create');
+        }
+
+        if (
+            ($action instanceof EditAction) &&
+            (static::getResource()::hasPage('edit'))
+        ) {
+            return $this->getResourceUrl('edit', ['record' => $action->getRecord()]);
+        }
+
+        if (
+            ($action instanceof ViewAction) &&
+            (static::getResource()::hasPage('view'))
+        ) {
+            return $this->getResourceUrl('view', ['record' => $action->getRecord()]);
+        }
+
+        return null;
+    }
+
+    /**
+     * @deprecated Override the resource's `getModelLabel()` method to configure the model label.
+     */
+    public function getModelLabel(): ?string
+    {
+        return null;
     }
 }

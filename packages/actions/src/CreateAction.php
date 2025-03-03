@@ -8,11 +8,11 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Table;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 
@@ -37,7 +37,7 @@ class CreateAction extends Action
 
         $this->label(fn (): string => __('filament-actions::create.single.label', ['label' => $this->getModelLabel()]));
 
-        $this->modalHeading(fn (): string => __('filament-actions::create.single.modal.heading', ['label' => $this->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::create.single.modal.heading', ['label' => $this->getTitleCaseModelLabel()]));
 
         $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
 
@@ -50,21 +50,21 @@ class CreateAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::create.single.notifications.created.title'));
 
-        $this->groupedIcon(FilamentIcon::resolve('actions::create-action.grouped') ?? 'heroicon-m-plus');
+        $this->groupedIcon(FilamentIcon::resolve('actions::create-action.grouped') ?? Heroicon::Plus);
 
         $this->record(null);
 
-        $this->action(function (array $arguments, Schema $form): void {
+        $this->action(function (array $arguments, Schema $schema): void {
             if ($arguments['another'] ?? false) {
                 $preserveRawState = $this->evaluate($this->preserveFormDataWhenCreatingAnotherUsing, [
-                    'data' => $form->getRawState(),
+                    'data' => $schema->getRawState(),
                 ]) ?? [];
             }
 
             $model = $this->getModel();
 
-            $record = $this->process(function (array $data, HasActions & HasSchemas $livewire, ?Table $table) use ($model): Model {
-                $relationship = $table?->getRelationship() ?? $this->getRelationship();
+            $record = $this->process(function (array $data, HasActions & HasSchemas $livewire) use ($model): Model {
+                $relationship = $this->getRelationship();
 
                 $pivotData = [];
 
@@ -84,7 +84,7 @@ class CreateAction extends Action
 
                 if (
                     (! $relationship) ||
-                    $relationship instanceof HasManyThrough
+                    ($relationship instanceof HasOneOrManyThrough)
                 ) {
                     $record->save();
 
@@ -104,7 +104,7 @@ class CreateAction extends Action
             });
 
             $this->record($record);
-            $form->model($record)->saveRelationships();
+            $schema->model($record)->saveRelationships();
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
@@ -113,12 +113,12 @@ class CreateAction extends Action
                 $this->record(null);
 
                 // Ensure that the form record is anonymized so that relationships aren't loaded.
-                $form->model($model);
+                $schema->model($model);
 
-                $form->fill();
+                $schema->fill();
 
-                $form->rawState([
-                    ...$form->getRawState(),
+                $schema->rawState([
+                    ...$schema->getRawState(),
                     ...$preserveRawState ?? [],
                 ]);
 
@@ -179,6 +179,6 @@ class CreateAction extends Action
 
     public function getRelationship(): Relation | Builder | null
     {
-        return $this->evaluate($this->getRelationshipUsing);
+        return $this->evaluate($this->getRelationshipUsing) ?? $this->getTable()?->getRelationship() ?? $this->getHasActionsLivewire()?->getDefaultActionRelationship($this);
     }
 }

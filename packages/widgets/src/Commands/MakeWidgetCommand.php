@@ -328,16 +328,21 @@ class MakeWidgetCommand extends Command
             return;
         }
 
+        $keyedNamespaces = array_combine(
+            $namespaces,
+            $namespaces,
+        );
+
         $this->widgetsNamespace = search(
             label: 'Which namespace would you like to create this widget in?',
-            options: function (?string $search) use ($namespaces): array {
+            options: function (?string $search) use ($keyedNamespaces): array {
                 if (blank($search)) {
-                    return $namespaces;
+                    return $keyedNamespaces;
                 }
 
                 $search = str($search)->trim()->replace(['\\', '/'], '');
 
-                return array_filter($namespaces, fn (string $namespace): bool => str($namespace)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
+                return array_filter($keyedNamespaces, fn (string $namespace): bool => str($namespace)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
             },
         );
         $this->widgetsDirectory = $directories[array_search($this->widgetsNamespace, $namespaces)];

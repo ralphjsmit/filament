@@ -41,19 +41,19 @@ ImageColumn::make('header_image')
 
 ## Customizing the size
 
-You may customize the image size by passing a `width()` and `height()`, or both with `size()`:
+You may customize the image size by passing a `imageWidth()` and `imageHeight()`, or both with `imageSize()`:
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
 
 ImageColumn::make('header_image')
-    ->width(200)
+    ->imageWidth(200)
 
 ImageColumn::make('header_image')
-    ->height(50)
+    ->imageHeight(50)
 
 ImageColumn::make('author.avatar')
-    ->size(40)
+    ->imageSize(40)
 ```
 
 ## Square image

@@ -32,10 +32,10 @@ class CheckboxColumn extends Column implements Editable, HasEmbeddedView
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
-                'ax-load' => FilamentView::hasSpaMode()
-                    ? 'visible || event (ax-modal-opened)'
+                'x-load' => FilamentView::hasSpaMode()
+                    ? 'visible || event (x-modal-opened)'
                     : true,
-                'ax-load-src' => FilamentAsset::getAlpineComponentSrc('columns/checkbox', 'filament/tables'),
+                'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/checkbox', 'filament/tables'),
                 'x-data' => 'checkboxTableColumn({
                     name: ' . Js::from($this->getName()) . ',
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
@@ -67,7 +67,7 @@ class CheckboxColumn extends Column implements Editable, HasEmbeddedView
         ob_start(); ?>
 
         <div
-            x-ignore
+            x-on:click.stop=""
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
@@ -88,7 +88,6 @@ class CheckboxColumn extends Column implements Editable, HasEmbeddedView
                             theme: $store.theme,
                         }
                 "
-                x-on:click.stop=""
                 <?= $inputAttributes->toHtml() ?>
             />
         </div>

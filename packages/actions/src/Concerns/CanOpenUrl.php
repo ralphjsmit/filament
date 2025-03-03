@@ -36,7 +36,7 @@ trait CanOpenUrl
 
     public function getUrl(): ?string
     {
-        return $this->evaluate($this->url);
+        return $this->evaluate($this->url) ?? $this->getHasActionsLivewire()?->getDefaultActionUrl($this);
     }
 
     public function shouldOpenUrlInNewTab(): bool

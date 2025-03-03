@@ -54,6 +54,16 @@ return [
                 'title' => 'Restored',
             ],
 
+            'restored_partial' => [
+                'title' => 'Restored :count of :total',
+                'missing_message' => ':count could not be restored.',
+            ],
+
+            'restored_none' => [
+                'title' => 'Failed to restore',
+                'missing_message' => ':count could not be restored.',
+            ],
+
         ],
 
     ],

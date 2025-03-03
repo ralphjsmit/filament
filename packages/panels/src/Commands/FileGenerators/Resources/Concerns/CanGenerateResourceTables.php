@@ -34,8 +34,9 @@ trait CanGenerateResourceTables
 
     /**
      * @param  ?class-string<Model>  $model
+     * @param  array<string>  $exceptColumns
      */
-    public function generateTableMethodBody(?string $model = null): string
+    public function generateTableMethodBody(?string $model = null, array $exceptColumns = []): string
     {
         $this->importUnlessPartial(BulkActionGroup::class);
 
@@ -75,7 +76,7 @@ trait CanGenerateResourceTables
         return <<<PHP
             return \$table{$recordTitleAttributeOutput}
                 ->columns([
-                    {$this->outputTableColumns($model)}
+                    {$this->outputTableColumns($model, $exceptColumns)}
                 ])
                 ->filters([
                     {$this->outputTableFilters()}
@@ -93,10 +94,11 @@ trait CanGenerateResourceTables
 
     /**
      * @param  ?class-string<Model>  $model
+     * @param  array<string>  $exceptColumns
      */
-    public function outputTableColumns(?string $model = null): string
+    public function outputTableColumns(?string $model = null, array $exceptColumns = []): string
     {
-        $columns = $this->getTableColumns($model);
+        $columns = $this->getTableColumns($model, $exceptColumns);
 
         if (empty($columns)) {
             $recordTitleAttribute = $this->getRecordTitleAttribute();

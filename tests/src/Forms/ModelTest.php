@@ -2,48 +2,48 @@
 
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
-use Filament\Tests\Forms\Fixtures\Livewire;
-use Filament\Tests\Models\Post;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-test('containers can store a record', function () {
-    $container = Schema::make(Livewire::make())
+test('containers can store a record', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->model($record = new Post);
 
-    expect($container)
+    expect($schema)
         ->getRecord()->toBe($record);
 });
 
-test('containers can get their model class', function () {
-    $container = Schema::make(Livewire::make())
+test('containers can get their model class', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->model($model = Post::class);
 
-    expect($container)
+    expect($schema)
         ->getModel()->toBe($model);
 
-    $container->model(new Post);
+    $schema->model(new Post);
 
-    expect($container)
+    expect($schema)
         ->getModel()->toBe($model);
 });
 
-test('containers can get an instance of their model', function () {
-    $container = Schema::make(Livewire::make())
+test('containers can get an instance of their model', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->model($modelInstance = new Post);
 
-    expect($container)
+    expect($schema)
         ->getModelInstance()->toBe($modelInstance);
 
-    $container->model($model = Post::class);
+    $schema->model($model = Post::class);
 
-    expect($container)
+    expect($schema)
         ->getModelInstance()->toBeInstanceOf($model);
 });
 
-test('components can store a record', function () {
+test('components can store a record', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->model($record = new Post);
@@ -52,7 +52,7 @@ test('components can store a record', function () {
         ->getRecord()->toBe($record);
 });
 
-test('components can get their model class', function () {
+test('components can get their model class', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->model($model = Post::class);
@@ -61,7 +61,7 @@ test('components can get their model class', function () {
         ->getModel()->toBe($model);
 });
 
-test('components can get an instance of their model', function () {
+test('components can get an instance of their model', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->model($model = Post::class);
@@ -70,7 +70,7 @@ test('components can get an instance of their model', function () {
         ->getModelInstance()->toBeInstanceOf($model);
 });
 
-test('components can inherit their container record', function () {
+test('components can inherit their container record', function (): void {
     $component = (new Component)
         ->container(
             Schema::make(Livewire::make())
@@ -81,7 +81,7 @@ test('components can inherit their container record', function () {
         ->getRecord()->toBe($record);
 });
 
-test('components can inherit their container model class', function () {
+test('components can inherit their container model class', function (): void {
     $component = (new Component)
         ->container(
             Schema::make(Livewire::make())
@@ -93,7 +93,7 @@ test('components can inherit their container model class', function () {
         ->getModelInstance()->toBeInstanceOf($model);
 });
 
-test('components do not inherit their container record if they have their own model defined', function () {
+test('components do not inherit their container record if they have their own model defined', function (): void {
     $component = (new Component)
         ->container(
             Schema::make(Livewire::make())

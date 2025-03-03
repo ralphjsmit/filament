@@ -74,10 +74,10 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
-                'ax-load' => FilamentView::hasSpaMode()
-                    ? 'visible || event (ax-modal-opened)'
+                'x-load' => FilamentView::hasSpaMode()
+                    ? 'visible || event (x-modal-opened)'
                     : true,
-                'ax-load-src' => FilamentAsset::getAlpineComponentSrc('columns/text-input', 'filament/tables'),
+                'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/text-input', 'filament/tables'),
                 'x-data' => 'textInputTableColumn({
                     name: ' . Js::from($this->getName()) . ',
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
@@ -115,7 +115,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         ob_start(); ?>
 
         <div
-            x-ignore
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
@@ -134,7 +133,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                             theme: $store.theme,
                         }
                 "
-                x-on:click.stop=""
+                x-on:click.stop.prevent=""
                 class="fi-input-wrp"
             >
                 <input

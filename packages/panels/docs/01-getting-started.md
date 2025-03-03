@@ -1,18 +1,9 @@
 ---
 title: Getting started
 ---
-import LaracastsBanner from "@components/LaracastsBanner.astro"
-
 ## Overview
 
 Panels are the top-level container in Filament, allowing you to build feature-rich admin panels that include pages, resources, forms, tables, notifications, actions, infolists, and widgets. All Panels include a default dashboard that can include widgets with statistics, charts, tables, and more.
-
-<LaracastsBanner
-    title="Introduction to Filament"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you how to get started with the panel builder. Alternatively, continue reading this text-based guide."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/2"
-    series="rapid-laravel-development"
-/>
 
 ## Prerequisites
 
@@ -749,7 +740,7 @@ Congratulations! Now that you know how to build a basic Filament application, he
 - [Create custom pages in the panel that don't belong to resources.](pages)
 - [Learn more about adding action buttons to pages and resources, with modals to collect user input or for confirmation.](../actions/overview)
 - [Explore the available fields to collect input from your users.](../forms/fields#available-fields)
-- [Check out the list of form layout components.](../schemas/layout)
+- [Check out the list of form layout components.](../schemas/layouts)
 - [Discover how to build complex, responsive table layouts without touching CSS.](../tables/layout)
 - [Add summaries to your tables](../tables/summaries)
 - [Write automated tests for your panel using our suite of helper methods.](testing)
