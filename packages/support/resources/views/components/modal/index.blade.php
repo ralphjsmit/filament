@@ -93,6 +93,7 @@
     @if ($id)
         x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') close()"
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
+        data-fi-modal-id="{{ $id }}"
     @endif
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     x-bind:class="{
@@ -174,9 +175,6 @@
                         x-transition:enter-end="scale-100 opacity-100"
                         x-transition:leave-start="scale-100 opacity-100"
                         x-transition:leave-end="scale-95 opacity-0"
-                    @endif
-                    @if ($id)
-                        data-fi-modal-id="{{ $id }}"
                     @endif
                     {{
                         ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
