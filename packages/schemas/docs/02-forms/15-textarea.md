@@ -2,6 +2,7 @@
 title: Textarea
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -27,6 +28,8 @@ Textarea::make('description')
     ->cols(20)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `rows()` and `cols()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 ### Autosizing the textarea
 
 You may allow the textarea to automatically resize to fit its content by setting the `autosize()` method:
@@ -37,6 +40,17 @@ use Filament\Forms\Components\Textarea;
 Textarea::make('description')
     ->autosize()
 ```
+
+Optionally, you may pass a boolean value to control if the textarea should be autosizeable or not:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('description')
+    ->autosize(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `autosize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Making the field read-only
 
@@ -54,6 +68,17 @@ There are a few differences, compared to [`disabled()`](overview#disabling-a-fie
 - When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](../overview#preventing-a-field-from-being-dehydrated) to prevent this.
 - There are no styling changes, such as less opacity, when using `readOnly()`.
 - The field is still focusable when using `readOnly()`.
+
+Optionally, you may pass a boolean value to control if the field should be read-only or not:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('description')
+    ->readOnly(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `readOnly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Textarea validation
 
@@ -79,3 +104,5 @@ use Filament\Forms\Components\Textarea;
 Textarea::make('question')
     ->length(100)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minLength()`, `maxLength()` and `length()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
