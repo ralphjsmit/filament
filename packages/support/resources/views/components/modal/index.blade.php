@@ -176,7 +176,7 @@
                         x-transition:leave-end="scale-95 opacity-0"
                     @endif
                     @if ($id)
-                        data-modal-id="{{ $id }}"
+                        data-fi-modal-id="{{ $id }}"
                     @endif
                     {{
                         ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
