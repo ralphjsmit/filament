@@ -73,11 +73,11 @@ class Block extends Component
     /**
      * @param  array<string, mixed> | null  $state
      */
-    public function getLabel(?array $state = null, ?string $uuid = null): string | Htmlable
+    public function getLabel(?array $state = null, ?string $key = null): string | Htmlable
     {
         return $this->evaluate(
             $this->label,
-            ['state' => $state, 'uuid' => $uuid],
+            ['key' => $key, 'state' => $state, 'uuid' => $key],
         ) ?? $this->getDefaultLabel();
     }
 }

@@ -1,6 +1,7 @@
 ---
 title: Builder
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -12,6 +13,7 @@ The primary use of the builder component is to build web page content using pred
 
 ```php
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -19,7 +21,7 @@ use Filament\Forms\Components\TextInput;
 
 Builder::make('content')
     ->blocks([
-        Builder\Block::make('heading')
+        Block::make('heading')
             ->schema([
                 TextInput::make('content')
                     ->label('Heading')
@@ -36,13 +38,13 @@ Builder::make('content')
                     ->required(),
             ])
             ->columns(2),
-        Builder\Block::make('paragraph')
+        Block::make('paragraph')
             ->schema([
                 Textarea::make('content')
                     ->label('Paragraph')
                     ->required(),
             ]),
-        Builder\Block::make('image')
+        Block::make('image')
             ->schema([
                 FileUpload::make('url')
                     ->label('Image')
@@ -63,11 +65,12 @@ As evident in the above example, blocks can be defined within the `blocks()` met
 
 ```php
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\TextInput;
 
 Builder::make('content')
     ->blocks([
-        Builder\Block::make('heading')
+        Block::make('heading')
             ->schema([
                 TextInput::make('content')->required(),
                 // ...
@@ -81,9 +84,9 @@ Builder::make('content')
 By default, the label of the block will be automatically determined based on its name. To override the block's label, you may use the `label()` method. Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
 ```php
-use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 
-Builder\Block::make('heading')
+Block::make('heading')
     ->label(__('blocks.heading'))
 ```
 
@@ -92,10 +95,10 @@ Builder\Block::make('heading')
 You may add a label for a builder item using the same `label()` method. This method accepts a closure that receives the item's data in a `$state` variable. If `$state` is null, you should return the block label that should be displayed in the block picker. Otherwise, you should return a string to be used as the item label:
 
 ```php
-use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\TextInput;
 
-Builder\Block::make('heading')
+Block::make('heading')
     ->schema([
         TextInput::make('content')
             ->live(onBlur: true)
@@ -113,6 +116,8 @@ Builder\Block::make('heading')
 
 Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
 
+<UtilityInjection set="formFields" version="4.x" extras="Key;;string;;$key;;The key for the current block.||State;;array<string, mixed>;;$state;;The raw unvalidated data for the current block.">You can inject various utilities into the function passed to `label()` as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/builder/labelled" alt="Builder with labelled blocks based on the content" version="4.x" />
 
 ### Numbering builder items
@@ -129,16 +134,20 @@ Builder::make('content')
     ->blockNumbers(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `blockNumbers()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Setting a block's icon
 
 Blocks may also have an [icon](../../styling/icons), which is displayed next to the label. You can add an icon by passing its name to the `icon()` method:
 
 ```php
-use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 
-Builder\Block::make('paragraph')
+Block::make('paragraph')
     ->icon('heroicon-m-bars-3-bottom-left')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/builder/icons" alt="Builder with block icons in the dropdown" version="4.x" />
 
@@ -155,6 +164,79 @@ Builder::make('content')
     ])
     ->blockIcons()
 ```
+
+Optionally, you may pass a boolean value to the `blockIcons()` method to control if the icons are displayed in the block headers:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->blockIcons(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `blockIcons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Previewing blocks
+
+If you prefer to render read-only previews in the builder instead of the blocks' forms, you can use the `blockPreviews()` method. This will render each block's `preview()` instead of the form. Block data will be passed to the preview Blade view in a variable with the same name:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\TextInput;
+
+Builder::make('content')
+    ->blockPreviews()
+    ->blocks([
+        Block::make('heading')
+            ->schema([
+                TextInput::make('text')
+                    ->placeholder('Default heading'),
+            ])
+            ->preview('filament.content.block-previews.heading'),
+    ])
+```
+
+In `/resources/views/filament/content/block-previews/heading.blade.php`, you can access the block data like so:
+
+```blade
+<h1>
+    {{ $text ?? 'Default heading' }}
+</h1>
+```
+
+Optionally, the `blockPreviews()` method accepts a boolean value to control if the builder should render block previews or not:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->blockPreviews(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `blockPreviews()` and `preview()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Interactive block previews
+
+By default, preview content is not interactive, and clicking it will open the Edit modal for that block to manage its settings. If you have links and buttons that you'd like to remain interactive in the block previews, you can use the `areInteractive: true` argument of the `blockPreviews()` method:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blockPreviews(areInteractive: true)
+    ->blocks([
+        //
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `areInteractive` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding items
 
@@ -174,6 +256,8 @@ Builder::make('content')
     ->addActionLabel('Add a new block')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addActionLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Aligning the add action button
 
 By default, the add action is aligned in the center. You may adjust this using the `addActionAlignment()` method, passing an `Alignment` option of `Alignment::Start` or `Alignment::End`:
@@ -189,6 +273,8 @@ Builder::make('content')
     ->addActionAlignment(Alignment::Start)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addActionAlignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Preventing the user from adding items
 
 You may prevent the user from adding items to the builder using the `addable(false)` method:
@@ -202,6 +288,8 @@ Builder::make('content')
     ])
     ->addable(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Deleting items
 
@@ -221,6 +309,8 @@ Builder::make('content')
     ->deletable(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `deletable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Reordering items
 
 A button is displayed on each item to allow the user to drag and drop to reorder it in the list.
@@ -239,6 +329,8 @@ Builder::make('content')
     ->reorderable(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Reordering items with buttons
 
 You may use the `reorderableWithButtons()` method to enable reordering items with buttons to move the item up and down:
@@ -255,6 +347,20 @@ Builder::make('content')
 
 <AutoScreenshot name="forms/fields/builder/reorderable-with-buttons" alt="Builder that is reorderable with buttons" version="4.x" />
 
+Optionally, you may pass a boolean value to control if the builder should be ordered with buttons or not:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->reorderableWithButtons(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderableWithButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Preventing reordering with drag and drop
 
 You may use the `reorderableWithDragAndDrop(false)` method to prevent items from being ordered with drag and drop:
@@ -268,6 +374,8 @@ Builder::make('content')
     ])
     ->reorderableWithDragAndDrop(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderableWithDragAndDrop()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Collapsing items
 
@@ -297,6 +405,21 @@ Builder::make('content')
 
 <AutoScreenshot name="forms/fields/builder/collapsed" alt="Collapsed builder" version="4.x" />
 
+Optionally, the `collaptible()` and `collapsed()` methods accept a boolean value to control if the builder should be collapsible and collapsed or not:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->collapsible(FeatureFlag::active())
+    ->collapsed(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Cloning items
 
 You may allow builder items to be duplicated using the `cloneable()` method:
@@ -311,7 +434,7 @@ Builder::make('content')
     ->cloneable()
 ```
 
-<AutoScreenshot name="forms/fields/builder/cloneable" alt="Builder repeater" version="4.x" />
+<AutoScreenshot name="forms/fields/builder/cloneable" alt="Cloneable repeater" version="4.x" />
 
 ## Customizing the block picker
 
@@ -336,6 +459,8 @@ This method can be used in a couple of different ways:
 
 Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be found in the [Tailwind documentation](https://tailwindcss.com/docs/responsive-design#overview).
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `blockPickerColumns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Increasing the width of the block picker
 
 When you [increase the number of columns](#changing-the-number-of-columns-in-the-block-picker), the width of the dropdown should increase incrementally to handle the additional columns. If you'd like more control, you can manually set a maximum width for the dropdown using the `blockPickerWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`:
@@ -351,42 +476,27 @@ Builder::make()
     ])
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `blockPickerWidth()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Limiting the number of times a block can be used
 
 By default, each block can be used in the builder an unlimited number of times. You may limit this using the `maxItems()` method on a block:
 
 ```php
-use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 
-Builder\Block::make('heading')
+Block::make('heading')
     ->schema([
         // ...
     ])
     ->maxItems(1)
 ```
 
-## Builder validation
-
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to builders.
-
-### Number of items validation
-
-You can validate the minimum and maximum number of items that you can have in a builder by setting the `minItems()` and `maxItems()` methods:
-
-```php
-use Filament\Forms\Components\Builder;
-
-Builder::make('content')
-    ->blocks([
-        // ...
-    ])
-    ->minItems(1)
-    ->maxItems(5)
-```
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `maxItems()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Using `$get()` to access parent field values
 
-All form components are able to [use `$get()` and `$set()`](../advanced) to access another field's value. However, you might experience unexpected behavior when using this inside the builder's schema.
+All form components are able to [use `$get()` and `$set()`](overview#injecting-the-state-of-another-field) to access another field's value. However, you might experience unexpected behavior when using this inside the builder's schema.
 
 This is because `$get()` and `$set()`, by default, are scoped to the current builder item. This means that you are able to interact with another field inside that builder item easily without knowing which builder item the current form component belongs to.
 
@@ -413,6 +523,27 @@ You are trying to retrieve the value of `client_id` from inside the builder item
 You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
 The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current builder item.
+
+## Builder validation
+
+As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to builders.
+
+### Number of items validation
+
+You can validate the minimum and maximum number of items that you can have in a builder by setting the `minItems()` and `maxItems()` methods:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->minItems(1)
+    ->maxItems(5)
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minItems()` and `maxItems()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the builder item actions
 
@@ -445,6 +576,8 @@ Builder::make('content')
     )
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Confirming builder actions with a modal
 
 You can confirm actions with a modal by using the `requiresConfirmation()` method on the action object. You may use any [modal customization method](../../actions/modals) to change its content and behavior:
@@ -462,21 +595,24 @@ Builder::make('content')
     )
 ```
 
-> The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+<Aside variant="info">
+    The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+</Aside>
 
 ### Adding extra item actions to a builder
 
-You may add new [action buttons](../../schemas/actions) to the header of each builder item by passing `Action` objects into `extraItemActions()`:
+You may add new [action buttons](../primes/actions-in-schemas) to the header of each builder item by passing `Action` objects into `extraItemActions()`:
 
 ```php
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\Mail;
 
 Builder::make('content')
     ->blocks([
-        Builder\Block::make('contactDetails')
+        Block::make('contactDetails')
             ->schema([
                 TextInput::make('email')
                     ->label('Email address')
@@ -522,49 +658,6 @@ $state[Str::uuid()] = [
 
 // Set the new data for the builder
 $component->state($state);
-```
-
-## Previewing blocks
-
-If you prefer to render read-only previews in the builder instead of the blocks' forms, you can use the `blockPreviews()` method. This will render each block's `preview()` instead of the form. Block data will be passed to the preview Blade view in a variable with the same name:
-
-```php
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\TextInput;
-
-Builder::make('content')
-    ->blockPreviews()
-    ->blocks([
-        Block::make('heading')
-            ->schema([
-                TextInput::make('text')
-                    ->placeholder('Default heading'),
-            ])
-            ->preview('filament.content.block-previews.heading'),
-    ])
-```
-
-In `/resources/views/filament/content/block-previews/heading.blade.php`, you can access the block data like so:
-
-```blade
-<h1>
-    {{ $text ?? 'Default heading' }}
-</h1>
-```
-
-### Interactive block previews
-
-By default, preview content is not interactive, and clicking it will open the Edit modal for that block to manage its settings. If you have links and buttons that you'd like to remain interactive in the block previews, you can use the `areInteractive: true` argument of the `blockPreviews()` method:
-
-```php
-use Filament\Forms\Components\Builder;
-
-Builder::make('content')
-    ->blockPreviews(areInteractive: true)
-    ->blocks([
-        //
-    ])
 ```
 
 ## Testing builders

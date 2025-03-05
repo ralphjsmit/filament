@@ -86,20 +86,20 @@
                         ->class(['fi-fo-repeater-items'])
                 }}
             >
-                @foreach ($items as $uuid => $item)
+                @foreach ($items as $itemKey => $item)
                     @php
-                        $itemLabel = $getItemLabel($uuid);
+                        $itemLabel = $getItemLabel($itemKey);
                         $visibleExtraItemActions = array_filter(
                             $extraItemActions,
-                            fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
+                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
                         );
-                        $cloneAction = $cloneAction(['item' => $uuid]);
+                        $cloneAction = $cloneAction(['item' => $itemKey]);
                         $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
-                        $deleteAction = $deleteAction(['item' => $uuid]);
+                        $deleteAction = $deleteAction(['item' => $itemKey]);
                         $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
-                        $moveDownAction = $moveDownAction(['item' => $uuid])->disabled($loop->last);
+                        $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
                         $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
-                        $moveUpAction = $moveUpAction(['item' => $uuid])->disabled($loop->first);
+                        $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
                         $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                     @endphp
@@ -112,7 +112,7 @@
                         x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand="isCollapsed = false"
-                        x-sortable-item="{{ $uuid }}"
+                        x-sortable-item="{{ $itemKey }}"
                         class="fi-fo-repeater-item"
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
@@ -165,7 +165,7 @@
                                     >
                                         @foreach ($visibleExtraItemActions as $extraItemAction)
                                             <li x-on:click.stop>
-                                                {{ $extraItemAction(['item' => $uuid]) }}
+                                                {{ $extraItemAction(['item' => $itemKey]) }}
                                             </li>
                                         @endforeach
 
@@ -213,10 +213,10 @@
                     </li>
 
                     @if (! $loop->last)
-                        @if ($isAddable && $addBetweenAction(['afterItem' => $uuid])->isVisible())
+                        @if ($isAddable && $addBetweenAction(['afterItem' => $itemKey])->isVisible())
                             <li class="fi-fo-repeater-add-between-items-ctn">
                                 <div class="fi-fo-repeater-add-between-items">
-                                    {{ $addBetweenAction(['afterItem' => $uuid]) }}
+                                    {{ $addBetweenAction(['afterItem' => $itemKey]) }}
                                 </div>
                             </li>
                         @elseif (filled($labelBetweenItems))

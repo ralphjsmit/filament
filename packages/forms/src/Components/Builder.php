@@ -106,8 +106,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
             $items = [];
 
             foreach ($state ?? [] as $itemData) {
-                if ($uuid = $component->generateUuid()) {
-                    $items[$uuid] = $itemData;
+                if ($key = $component->generateUuid()) {
+                    $items[$key] = $itemData;
                 } else {
                     $items[] = $itemData;
                 }
@@ -1123,17 +1123,17 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     /**
      * @return array<string, mixed>
      */
-    public function getItemState(string $uuid): array
+    public function getItemState(string $key): array
     {
-        return $this->getChildSchema($uuid)->getState(shouldCallHooksBefore: false);
+        return $this->getChildSchema($key)->getState(shouldCallHooksBefore: false);
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function getRawItemState(string $uuid): array
+    public function getRawItemState(string $key): array
     {
-        return $this->getChildSchema($uuid)->getRawState();
+        return $this->getChildSchema($key)->getRawState();
     }
 
     public function getHeadingsCount(): int

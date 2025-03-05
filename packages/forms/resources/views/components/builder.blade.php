@@ -90,21 +90,21 @@
                     $hasBlockNumbers = $hasBlockNumbers();
                 @endphp
 
-                @foreach ($items as $uuid => $item)
+                @foreach ($items as $itemKey => $item)
                     @php
                         $visibleExtraItemActions = array_filter(
                             $extraItemActions,
-                            fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
+                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
                         );
-                        $cloneAction = $cloneAction(['item' => $uuid]);
+                        $cloneAction = $cloneAction(['item' => $itemKey]);
                         $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
-                        $deleteAction = $deleteAction(['item' => $uuid]);
+                        $deleteAction = $deleteAction(['item' => $itemKey]);
                         $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
-                        $editAction = $editAction(['item' => $uuid]);
+                        $editAction = $editAction(['item' => $itemKey]);
                         $editActionIsVisible = $hasBlockPreviews && $editAction->isVisible();
-                        $moveDownAction = $moveDownAction(['item' => $uuid])->disabled($loop->last);
+                        $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
                         $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
-                        $moveUpAction = $moveUpAction(['item' => $uuid])->disabled($loop->first);
+                        $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
                         $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                     @endphp
@@ -117,7 +117,7 @@
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand="isCollapsed = false"
-                        x-sortable-item="{{ $uuid }}"
+                        x-sortable-item="{{ $itemKey }}"
                         class="fi-fo-builder-item"
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
@@ -154,7 +154,7 @@
                                 @endif
 
                                 @php
-                                    $blockIcon = $item->getParentComponent()->getIcon($item->getRawState(), $uuid);
+                                    $blockIcon = $item->getParentComponent()->getIcon($item->getRawState(), $itemKey);
                                 @endphp
 
                                 @if ($hasBlockIcons && filled($blockIcon))
@@ -168,7 +168,7 @@
                                             'fi-truncated' => $isBlockLabelTruncated,
                                         ])
                                     >
-                                        {{ $item->getParentComponent()->getLabel($item->getRawState(), $uuid) }}
+                                        {{ $item->getParentComponent()->getLabel($item->getRawState(), $itemKey) }}
 
                                         @if ($hasBlockNumbers)
                                             {{ $loop->iteration }}
@@ -182,7 +182,7 @@
                                     >
                                         @foreach ($visibleExtraItemActions as $extraItemAction)
                                             <li x-on:click.stop>
-                                                {{ $extraItemAction(['item' => $uuid]) }}
+                                                {{ $extraItemAction(['item' => $itemKey]) }}
                                             </li>
                                         @endforeach
 
@@ -248,7 +248,7 @@
                                     <div
                                         class="fi-fo-builder-item-preview-edit-overlay"
                                         role="button"
-                                        x-on:click.stop="{{ '$wire.mountFormComponentAction(\'' . $statePath . '\', \'edit\', { item: \'' . $uuid . '\' })' }}"
+                                        x-on:click.stop="{{ '$wire.mountFormComponentAction(\'' . $statePath . '\', \'edit\', { item: \'' . $itemKey . '\' })' }}"
                                     ></div>
                                 @endif
                             @else
@@ -258,20 +258,20 @@
                     </li>
 
                     @if (! $loop->last)
-                        @if ($isAddable && $addBetweenAction(['afterItem' => $uuid])->isVisible())
+                        @if ($isAddable && $addBetweenAction(['afterItem' => $itemKey])->isVisible())
                             <li class="fi-fo-builder-add-between-items-ctn">
                                 <div class="fi-fo-builder-add-between-items">
                                     <div class="fi-fo-builder-block-picker-ctn">
                                         <x-filament-forms::builder.block-picker
                                             :action="$addBetweenAction"
-                                            :after-item="$uuid"
+                                            :after-item="$itemKey"
                                             :columns="$blockPickerColumns"
                                             :blocks="$blockPickerBlocks"
                                             :key="$key"
                                             :width="$blockPickerWidth"
                                         >
                                             <x-slot name="trigger">
-                                                {{ $addBetweenAction(['afterItem' => $uuid]) }}
+                                                {{ $addBetweenAction(['afterItem' => $itemKey]) }}
                                             </x-slot>
                                         </x-filament-forms::builder.block-picker>
                                     </div>

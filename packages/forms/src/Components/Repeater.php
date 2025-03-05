@@ -135,8 +135,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                     $itemData = [$simpleField->getName() => $itemData];
                 }
 
-                if ($uuid = $component->generateUuid()) {
-                    $items[$uuid] = $itemData;
+                if ($key = $component->generateUuid()) {
+                    $items[$key] = $itemData;
                 } else {
                     $items[] = $itemData;
                 }
@@ -710,8 +710,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                     $itemData = [$simpleField->getName() => $itemData];
                 }
 
-                if ($uuid = $component->generateUuid()) {
-                    $items[$uuid] = $itemData;
+                if ($key = $component->generateUuid()) {
+                    $items[$key] = $itemData;
                 } else {
                     $items[] = $itemData;
                 }
@@ -1146,15 +1146,17 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         );
     }
 
-    public function getItemLabel(string $uuid): string | Htmlable | null
+    public function getItemLabel(string $key): string | Htmlable | null
     {
-        $container = $this->getChildSchema($uuid);
+        $container = $this->getChildSchema($key);
 
         return $this->evaluate($this->itemLabel, [
             'container' => $container,
             'item' => $container,
+            'key' => $key,
+            'schema' => $container,
             'state' => $container->getRawState(),
-            'uuid' => $uuid,
+            'uuid' => $key,
         ]);
     }
 
@@ -1303,17 +1305,17 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @return array<string, mixed>
      */
-    public function getItemState(string $uuid): array
+    public function getItemState(string $key): array
     {
-        return $this->getChildSchema($uuid)->getState(shouldCallHooksBefore: false);
+        return $this->getChildSchema($key)->getState(shouldCallHooksBefore: false);
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function getRawItemState(string $uuid): array
+    public function getRawItemState(string $key): array
     {
-        return $this->getChildSchema($uuid)->getRawState();
+        return $this->getChildSchema($key)->getRawState();
     }
 
     public function getHeadingsCount(): int

@@ -332,6 +332,8 @@ Repeater::make('qualifications')
     ->orderColumn('order_column')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `orderColumn()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Integrating with a `BelongsToMany` Eloquent relationship
 
 There is a common misconception that using a `BelongsToMany` relationship with a repeater is as simple as using a `HasMany` relationship. This is not the case, as a `BelongsToMany` relationship requires a pivot table to store the relationship data. The repeater saves its data to the related model, not the pivot table. Therefore, if you want to map each repeater item to a row in the pivot table, you must use a `HasMany` relationship with a pivot model to use a repeater with a `BelongsToMany` relationship.
@@ -369,7 +371,9 @@ class OrderProduct extends Pivot
 }
 ```
 
-> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted. To make sure that Filament keeps track of the primary key, the pivot model needs to have the `$incrementing` property set to `true`.
+<Aside variant="info">
+    Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted. To make sure that Filament keeps track of the primary key, the pivot model needs to have the `$incrementing` property set to `true`.
+</Aside>
 
 Now you can use the `orderProducts` relationship with the repeater, and it will save the data to the `order_product` pivot table:
 
@@ -406,6 +410,8 @@ Repeater::make('qualifications')
     })
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Data;;array<array<string, mixed>>;;$data;;The data that is being filled into the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeFillUsing()` as parameters.</UtilityInjection>
+
 ### Mutating related item data before creating
 
 You may mutate the data for a new related item before it is created in the database using the `mutateRelationshipDataBeforeCreateUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You can choose to return either the modified array of data, or `null` to prevent the item from being created:
@@ -424,6 +430,8 @@ Repeater::make('qualifications')
         return $data;
     })
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that is being saved by the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeCreateUsing()` as parameters.</UtilityInjection>
 
 ### Mutating related item data before saving
 
@@ -444,6 +452,8 @@ Repeater::make('qualifications')
     })
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that is being saved by the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeSaveUsing()` as parameters.</UtilityInjection>
+
 ## Grid layout
 
 You may organize repeater items into columns by using the `grid()` method:
@@ -460,7 +470,9 @@ Repeater::make('qualifications')
 
 <AutoScreenshot name="forms/fields/repeater/grid" alt="Repeater with a 2 column grid of items" version="4.x" />
 
-This method accepts the same options as the `columns()` method of the [grid](../../schemas/layouts/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../layouts/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `grid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding a label to repeater items based on their content
 
@@ -488,7 +500,11 @@ Repeater::make('members')
     ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
 ```
 
-Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
+<Aside variant="tip">
+    Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
+</Aside>
+
+<UtilityInjection set="formFields" version="4.x" extras="Item;;Filament\Schemas\Schema;;$item;;The schema object for the current repeater item.||Key;;string;;$key;;The key for the current repeater item.||State;;array<string, mixed>;;$state;;The raw unvalidated data for the current repeater item.">You can inject various utilities into the function passed to `itemLabel()` as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="4.x" />
 
@@ -508,6 +524,8 @@ Repeater::make('invitations')
     )
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `simple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/repeater/simple-one-field" alt="Simple repeater design with only one field" version="4.x" />
 
 Instead of using a nested array to store data, simple repeaters use a flat array of values. This means that the data structure for the above example could look like this:
@@ -523,7 +541,7 @@ Instead of using a nested array to store data, simple repeaters use a flat array
 
 ## Using `$get()` to access parent field values
 
-All form components are able to [use `$get()` and `$set()`](../advanced) to access another field's value. However, you might experience unexpected behavior when using this inside the repeater's schema.
+All form components are able to [use `$get()` and `$set()`](overview#injecting-the-state-of-another-field) to access another field's value. However, you might experience unexpected behavior when using this inside the repeater's schema.
 
 This is because `$get()` and `$set()`, by default, are scoped to the current repeater item. This means that you are able to interact with another field inside that repeater item easily without knowing which repeater item the current form component belongs to.
 
@@ -570,6 +588,8 @@ Repeater::make('members')
     ->maxItems(5)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minItems()` and `maxItems()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Distinct state validation
 
 In many cases, you will want to ensure some sort of uniqueness between repeater items. A couple of common examples could be:
@@ -596,6 +616,17 @@ The behavior of the `distinct()` validation depends on the data type that the fi
 - If the field returns a boolean, like a [checkbox](checkbox) or [toggle](toggle), the validation will ensure that only one item has a value of `true`. There may be many fields in the repeater that have a value of `false`.
 - Otherwise, for fields like a [select](select), [radio](radio), [checkbox list](checkbox-list), or [toggle buttons](toggle-buttons), the validation will ensure that each option may only be selected once across all items in the repeater.
 
+Optionally, you may pass a boolean value to the `distinct()` method to control if the field should be distinct or not:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('is_correct')
+    ->distinct(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `distinct()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 #### Automatically fixing indistinct state
 
 If you'd like to automatically fix indistinct state, you can use the `fixIndistinctState()` method:
@@ -619,6 +650,17 @@ Depending on the data type that the field handles, the behavior of the `fixIndis
 - If the field returns a boolean, like a [checkbox](checkbox) or [toggle](toggle), and one of the fields is enabled, Filament will automatically disable all other enabled fields on behalf of the user.
 - Otherwise, for fields like a [select](select), [radio](radio), [checkbox list](checkbox-list), or [toggle buttons](toggle-buttons), when a user selects an option, Filament will automatically deselect all other usages of that option on behalf of the user.
 
+Optionally, you may pass a boolean value to the `fixIndistinctState()` method to control if the field should fix indistinct state or not:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('is_correct')
+    ->fixIndistinctState(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `fixIndistinctState()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 #### Disabling options when they are already selected in another item
 
 If you'd like to disable options in a [select](select), [radio](radio), [checkbox list](checkbox-list), or [toggle buttons](toggle-buttons) when they are already selected in another item, you can use the `disableOptionsWhenSelectedInSiblingRepeaterItems()` method:
@@ -639,22 +681,24 @@ Repeater::make('members')
 
 This method will automatically enable the `distinct()` and `live()` methods on the field.
 
-In case you want to add another condition to [disable options](../select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
-
-```php
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-
-Repeater::make('members')
-    ->schema([
-        Select::make('role')
-            ->options([
-                // ...
-            ])
-            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-            ->disableOptionWhen(fn (string $value): bool => $value === 'super_admin', merge: true),
-    ])
-```
+<Aside variant="warning">
+    In case you want to add another condition to [disable options](../select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
+    
+    ```php
+    use Filament\Forms\Components\Repeater;
+    use Filament\Forms\Components\Select;
+    
+    Repeater::make('members')
+        ->schema([
+            Select::make('role')
+                ->options([
+                    // ...
+                ])
+                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                ->disableOptionWhen(fn (string $value): bool => $value === 'super_admin', merge: true),
+        ])
+    ```
+</Aside>
 
 ## Customizing the repeater item actions
 
@@ -686,6 +730,8 @@ Repeater::make('members')
     )
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Confirming repeater actions with a modal
 
 You can confirm actions with a modal by using the `requiresConfirmation()` method on the action object. You may use any [modal customization method](../../actions/modals) to change its content and behavior:
@@ -703,11 +749,13 @@ Repeater::make('members')
     )
 ```
 
-> The `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+<Aside variant="info">
+    The `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+</Aside>
 
 ### Adding extra item actions to a repeater
 
-You may add new [action buttons](../../schemas/actions) to the header of each repeater item by passing `Action` objects into `extraItemActions()`:
+You may add new [action buttons](../primes/actions-in-schemas) to the header of each repeater item by passing `Action` objects into `extraItemActions()`:
 
 ```php
 use Filament\Actions\Action;
