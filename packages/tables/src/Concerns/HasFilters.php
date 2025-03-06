@@ -178,7 +178,7 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = hash('sha256', $this::class);
 
         return "tables.{$table}_filters";
     }
