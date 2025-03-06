@@ -2,6 +2,7 @@
 title: Key-value
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -45,6 +46,8 @@ KeyValue::make('meta')
     ->addActionLabel('Add property')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addActionLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Preventing the user from adding rows
 
 You may prevent the user from adding rows using the `addable(false)` method:
@@ -55,6 +58,8 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
     ->addable(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Deleting rows
 
@@ -71,6 +76,8 @@ KeyValue::make('meta')
     ->deletable(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `deletable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Editing keys
 
 ### Customizing the key fields' label
@@ -84,6 +91,8 @@ KeyValue::make('meta')
     ->keyLabel('Property name')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `keyLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Adding key field placeholders
 
 You may also add placeholders for the key fields using the `keyPlaceholder()` method:
@@ -95,6 +104,8 @@ KeyValue::make('meta')
     ->keyPlaceholder('Property name')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `keyPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Preventing the user from editing keys
 
 You may prevent the user from editing keys using the `editableKeys(false)` method:
@@ -105,6 +116,8 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
     ->editableKeys(false)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `editableKeys()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Editing values
 
@@ -119,6 +132,8 @@ KeyValue::make('meta')
     ->valueLabel('Property value')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `valueLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Adding value field placeholders
 
 You may also add placeholders for the value fields using the `valuePlaceholder()` method:
@@ -129,6 +144,8 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
     ->valuePlaceholder('Property value')
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `valuePlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Preventing the user from editing values
 
@@ -141,6 +158,8 @@ KeyValue::make('meta')
     ->editableValues(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `editableValues()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Reordering rows
 
 You can allow the user to reorder rows within the table using the `reorderable()` method:
@@ -151,6 +170,8 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
     ->reorderable()
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/key-value/reorderable" alt="Key-value with reorderable rows" version="4.x" />
 
@@ -173,3 +194,5 @@ KeyValue::make('meta')
         fn (Action $action) => $action->icon('heroicon-m-x-mark'),
     )
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>

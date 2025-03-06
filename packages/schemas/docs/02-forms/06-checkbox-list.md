@@ -93,17 +93,18 @@ This method accepts the same options as the `columns()` method of the [grid](../
 
 ### Setting the grid direction
 
-By default, when you arrange checkboxes into columns, they will be listed in order vertically. If you'd like to list them horizontally, you may use the `gridDirection('row')` method:
+By default, when you arrange checkboxes into columns, they will be listed in order vertically. If you'd like to list them horizontally, you may use the `gridDirection(GridDirection::Row)` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
+use Filament\Support\Enums\GridDirection;
 
 CheckboxList::make('technologies')
     ->options([
         // ...
     ])
     ->columns(2)
-    ->gridDirection('row')
+    ->gridDirection(GridDirection::Row)
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `gridDirection()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

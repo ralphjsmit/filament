@@ -134,9 +134,9 @@ DeleteAction::make()
     )
 ```
 
-### Customizing the rate limit behaviour
+### Customizing the rate limit behavior
 
-If you wish to customize the rate limit behaviour, you can use Laravel's [rate limiting](https://laravel.com/docs/rate-limiting#basic-usage) features and Filament's [flash notifications](../notifications/sending-notifications) together in the action.
+If you wish to customize the rate limit behavior, you can use Laravel's [rate limiting](https://laravel.com/docs/rate-limiting#basic-usage) features and Filament's [flash notifications](../notifications/sending-notifications) together in the action.
 
 If you want to rate limit immediately when an action modal is opened, you can do so in the `mountUsing()` method:
 

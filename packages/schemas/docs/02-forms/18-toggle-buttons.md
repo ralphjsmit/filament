@@ -2,6 +2,7 @@
 title: Toggle buttons
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -17,6 +18,8 @@ ToggleButtons::make('status')
         'published' => 'Published'
     ])
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/toggle-buttons/simple" alt="Toggle buttons" version="4.x" />
 
@@ -42,6 +45,8 @@ ToggleButtons::make('status')
 
 If you are using an enum for the options, you can use the [`HasColor` interface](../../support/enums#enum-colors) to define colors instead.
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `colors()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/toggle-buttons/colors" alt="Toggle buttons with different colors" version="4.x" />
 
 ## Adding icons to option buttons
@@ -63,6 +68,8 @@ ToggleButtons::make('status')
         'published' => 'heroicon-o-check-circle',
     ])
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `icons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you are using an enum for the options, you can use the [`HasIcon` interface](../../support/enums#enum-icons) to define icons instead.
 
@@ -86,9 +93,29 @@ The options will have [colors](#changing-the-color-of-option-buttons) and [icons
 
 <AutoScreenshot name="forms/fields/toggle-buttons/boolean" alt="Boolean toggle buttons" version="4.x" />
 
+To customize the "Yes" label, you can use the `trueLabel` argument on the `boolean()` method:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('feedback')
+    ->label('Like this post?')
+    ->boolean(trueLabel: 'Absolutely!')
+```
+
+To customize the "No" label, you can use the `falseLabel` argument on the `boolean()` method:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('feedback')
+    ->label('Like this post?')
+    ->boolean(falseLabel: 'Not at all!')
+```
+
 ## Positioning the options inline with each other
 
-You may wish to display the options `inline()` with each other:
+You may wish to display the buttons `inline()` with each other:
 
 ```php
 use Filament\Forms\Components\ToggleButtons;
@@ -100,6 +127,19 @@ ToggleButtons::make('feedback')
 ```
 
 <AutoScreenshot name="forms/fields/toggle-buttons/inline" alt="Inline toggle buttons" version="4.x" />
+
+Optionally, you may pass a boolean value to control if the buttons should be inline or not:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('feedback')
+    ->label('Like this post?')
+    ->boolean()
+    ->inline(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `inline()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Grouping option buttons
 
@@ -115,6 +155,19 @@ ToggleButtons::make('feedback')
 ```
 
 <AutoScreenshot name="forms/fields/toggle-buttons/grouped" alt="Grouped toggle buttons" version="4.x" />
+
+Optionally, you may pass a boolean value to control if the buttons should be grouped or not:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('feedback')
+    ->label('Like this post?')
+    ->boolean()
+    ->grouped(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `grouped()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Selecting multiple buttons
 
@@ -150,6 +203,23 @@ class App extends Model
 }
 ```
 
+Optionally, you may pass a boolean value to control if the buttons should allow multiple selections or not:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('technologies')
+    ->multiple(FeatureFlag::active())
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Splitting options into columns
 
 You may split options into columns by using the `columns()` method:
@@ -164,24 +234,29 @@ ToggleButtons::make('technologies')
     ->columns(2)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/toggle-buttons/columns" alt="Toggle buttons with 2 columns" version="4.x" />
 
 This method accepts the same options as the `columns()` method of the [grid](../../schemas/layouts/grid). This allows you to responsively customize the number of columns at various breakpoints.
 
 ### Setting the grid direction
 
-By default, when you arrange buttons into columns, they will be listed in order vertically. If you'd like to list them horizontally, you may use the `gridDirection('row')` method:
+By default, when you arrange buttons into columns, they will be listed in order vertically. If you'd like to list them horizontally, you may use the `gridDirection(GridDirection::Row)` method:
 
 ```php
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Support\Enums\GridDirection;
 
 ToggleButtons::make('technologies')
     ->options([
         // ...
     ])
     ->columns(2)
-    ->gridDirection('row')
+    ->gridDirection(GridDirection::Row)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `gridDirection()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/toggle-buttons/rows" alt="Toggle buttons with 2 rows" version="4.x" />
 
@@ -201,6 +276,8 @@ ToggleButtons::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
+<UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="forms/fields/toggle-buttons/disabled-option" alt="Toggle buttons with disabled option" version="4.x" />
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
@@ -217,3 +294,5 @@ ToggleButtons::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
     ->in(fn (ToggleButtons $component): array => array_keys($component->getEnabledOptions()))
 ```
+
+For more information about the `in()` function, please see the [Validation documentation](validation#in).

@@ -226,6 +226,16 @@ Previously, users were able to display the number of limited images separately t
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">
+<span slot="summary">The `unique()` validation rule behavior for ignoring Eloquent records</span>
+
+In v3, the `unique()` method did not ignore the current form's Eloquent record when validating by default. This behavior was enabled by the `ignoreRecord: true` parameter, or by passing a custom `ignorable` record.
+
+In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
+
+If you were previously using `unqiue()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
+</Disclosure>
+
+<Disclosure x-show="packages.includes('forms')">
 <span slot="summary">The `RichEditor` component's `disableGrammarly()` method has been removed</span>
 
 The `disableGrammarly()` method has been removed from the `RichEditor` component. This method was used to disable the Grammarly browser extension acting on the editor. Since moving the underlying implementation of the editor from Trix to TipTap, we have not found a way to disable Grammarly on the editor.
