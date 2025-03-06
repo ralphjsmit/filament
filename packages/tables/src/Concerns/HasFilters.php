@@ -187,7 +187,7 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = hash('md5', $this::class);
 
         return "tables.{$table}_filters";
     }
