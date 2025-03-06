@@ -1,5 +1,5 @@
 ---
-title: Pages
+title: Custom pages
 ---
 
 ## Overview
