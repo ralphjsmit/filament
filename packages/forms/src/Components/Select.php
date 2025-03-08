@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use BackedEnum;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
@@ -154,6 +155,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 }
 
                 return $groupedOptions[$value];
+            }
+
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
             }
 
             if (! array_key_exists($value, $options)) {
