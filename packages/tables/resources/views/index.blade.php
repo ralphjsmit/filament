@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
+    use Filament\Support\Enums\Width;
     use Filament\Support\Facades\FilamentView;
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
@@ -448,7 +449,7 @@
                                         :max-height="$filtersFormMaxHeight"
                                         placement="bottom-end"
                                         shift
-                                        :width="$filtersFormWidth"
+                                        :width="$filtersFormWidth ?? Width::ExtraSmall"
                                         :wire:key="$this->getId() . '.table.filters'"
                                         class="fi-ta-filters-dropdown"
                                     >
