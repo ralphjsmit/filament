@@ -21,6 +21,8 @@ class Checkbox extends Field
     {
         parent::setUp();
 
+        $this->default(false);
+
         $this->rule('boolean');
     }
 
@@ -30,7 +32,7 @@ class Checkbox extends Field
     public function getDefaultStateCasts(): array
     {
         return [
-            app(BooleanStateCast::class),
+            app(BooleanStateCast::class, ['isNullable' => false]),
         ];
     }
 }

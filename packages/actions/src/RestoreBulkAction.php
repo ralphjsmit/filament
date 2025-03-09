@@ -7,8 +7,10 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
+use Throwable;
 
 class RestoreBulkAction extends BulkAction
 {
@@ -45,13 +47,23 @@ class RestoreBulkAction extends BulkAction
             ]);
         });
 
-        $this->failureNotificationMissingMessage(function (int $missingMessageCount, int $successCount): string {
+        $this->missingAuthorizationFailureNotificationMessage(function (int $count, bool $isAll): string {
             return trans_choice(
-                $successCount
-                    ? 'filament-actions::restore.multiple.notifications.restored_partial.missing_message'
-                    : 'filament-actions::restore.multiple.notifications.restored_none.missing_message',
-                $missingMessageCount,
-                ['count' => Number::format($missingMessageCount)],
+                $isAll
+                    ? 'filament-actions::restore.multiple.notifications.restored_none.missing_authorization_failure_message'
+                    : 'filament-actions::restore.multiple.notifications.restored_partial.missing_authorization_failure_message',
+                $count,
+                ['count' => Number::format($count)],
+            );
+        });
+
+        $this->missingProcessingFailureNotificationMessage(function (int $count, bool $isAll): string {
+            return trans_choice(
+                $isAll
+                    ? 'filament-actions::restore.multiple.notifications.restored_none.missing_processing_failure_message'
+                    : 'filament-actions::restore.multiple.notifications.restored_partial.missing_processing_failure_message',
+                $count,
+                ['count' => Number::format($count)],
             );
         });
 
@@ -63,15 +75,23 @@ class RestoreBulkAction extends BulkAction
 
         $this->modalIcon(FilamentIcon::resolve('actions::restore-action.modal') ?? Heroicon::OutlinedArrowUturnLeft);
 
-        $this->action(fn () => $this->processIndividualRecords(
-            static function (Model $record): void {
-                if (! method_exists($record, 'restore')) {
-                    return;
-                }
+        $this->action(function (): void {
+            $this->process(static function (RestoreBulkAction $action, Collection $records) {
+                return $records->each(static function (Model $record) use ($action): void {
+                    if (! method_exists($record, 'restore')) {
+                        return;
+                    }
 
-                $record->restore();
-            },
-        ));
+                    try {
+                        $record->restore() || $action->reportRecordProcessingFailure();
+                    } catch (Throwable $exception) {
+                        $action->reportRecordProcessingFailure();
+
+                        report($exception);
+                    }
+                });
+            });
+        });
 
         $this->deselectRecordsAfterCompletion();
 

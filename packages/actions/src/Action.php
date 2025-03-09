@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\HasTooltip;
+use Filament\Actions\Enums\ActionStatus;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
@@ -39,7 +40,6 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\BelongsToLivewire;
     use Concerns\BelongsToSchemaComponent;
     use Concerns\BelongsToTable;
-    use Concerns\CanAccessSelectedRecords;
     use Concerns\CanBeAuthorized;
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
@@ -77,6 +77,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\HasTableIcon;
     use Concerns\HasWizard;
     use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithSelectedRecords;
     use HasBadge;
     use HasColor;
     use HasExtraAttributes;
@@ -108,6 +109,8 @@ class Action extends ViewComponent implements Arrayable
     protected bool | Closure $shouldMarkAsUnread = false;
 
     protected ?int $nestingIndex = null;
+
+    protected ?ActionStatus $status = null;
 
     final public function __construct(?string $name)
     {
@@ -540,17 +543,29 @@ class Action extends ViewComponent implements Arrayable
 
     public function success(): void
     {
-        $this->sendSuccessNotification();
-        $this->dispatchSuccessRedirect();
+        $this->status = ActionStatus::Success;
     }
 
-    /**
-     * @param  array<string>  $messages
-     */
-    public function failure(int $successCount = 0, int $totalCount = 0, int $missingMessageCount = 0, array $messages = []): void
+    public function failure(): void
     {
-        $this->sendFailureNotification($successCount, $totalCount, $missingMessageCount, $messages);
-        $this->dispatchFailureRedirect();
+        $this->status = ActionStatus::Failure;
+    }
+
+    public function getStatus(): ActionStatus
+    {
+        if ($this->status) {
+            return $this->status;
+        }
+
+        if (! $this->canAccessSelectedRecords()) {
+            return ActionStatus::Success;
+        }
+
+        if ($this->successfulSelectedRecordsCount === $this->totalSelectedRecordsCount) {
+            return ActionStatus::Success;
+        }
+
+        return ActionStatus::Failure;
     }
 
     public function bulk(bool | Closure $condition = true): static

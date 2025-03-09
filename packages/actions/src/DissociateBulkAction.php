@@ -9,6 +9,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Throwable;
 
 class DissociateBulkAction extends BulkAction
 {
@@ -40,17 +41,21 @@ class DissociateBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::dissociate-action.modal') ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
-            $this->process(function (Collection $records, Table $table): void {
-                $records->each(function (Model $record) use ($table): void {
-                    /** @var BelongsTo $inverseRelationship */
-                    $inverseRelationship = $table->getInverseRelationshipFor($record);
+            $this->process(function (DissociateBulkAction $action, Collection $records, Table $table): void {
+                $records->each(function (Model $record) use ($action, $table): void {
+                    try {
+                        /** @var BelongsTo $inverseRelationship */
+                        $inverseRelationship = $table->getInverseRelationshipFor($record);
 
-                    $inverseRelationship->dissociate();
-                    $record->save();
+                        $inverseRelationship->dissociate();
+                        $record->save();
+                    } catch (Throwable $exception) {
+                        $action->reportRecordProcessingFailure();
+
+                        report($exception);
+                    }
                 });
             });
-
-            $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();
