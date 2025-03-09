@@ -76,8 +76,10 @@ class RestoreBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::restore-action.modal') ?? Heroicon::OutlinedArrowUturnLeft);
 
         $this->action(function (): void {
-            $this->process(static function (RestoreBulkAction $action, Collection $records) {
-                return $records->each(static function (Model $record) use ($action): void {
+            $this->process(static function (RestoreBulkAction $action, Collection $records): void {
+                $isFirstException = true;
+
+                $records->each(static function (Model $record) use ($action, &$isFirstException): void {
                     if (! method_exists($record, 'restore')) {
                         return;
                     }
@@ -87,7 +89,14 @@ class RestoreBulkAction extends BulkAction
                     } catch (Throwable $exception) {
                         $action->reportRecordProcessingFailure();
 
-                        report($exception);
+                        if ($isFirstException) {
+                            // Only report the first exception so as to not flood error logs. Even
+                            // if Filament did not catch exceptions like this, only the first
+                            // would be reported as the rest of the process would be halted.
+                            report($exception);
+
+                            $isFirstException = false;
+                        }
                     }
                 });
             });

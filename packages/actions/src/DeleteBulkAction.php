@@ -76,14 +76,23 @@ class DeleteBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::delete-action.modal') ?? Heroicon::OutlinedTrash);
 
         $this->action(function (): void {
-            $this->process(static function (DeleteBulkAction $action, Collection $records) {
-                return $records->each(static function (Model $record) use ($action): void {
+            $this->process(static function (DeleteBulkAction $action, Collection $records): void {
+                $isFirstException = true;
+
+                $records->each(static function (Model $record) use ($action, &$isFirstException): void {
                     try {
                         $record->delete() || $action->reportRecordProcessingFailure();
                     } catch (Throwable $exception) {
                         $action->reportRecordProcessingFailure();
 
-                        report($exception);
+                        if ($isFirstException) {
+                            // Only report the first exception so as to not flood error logs. Even
+                            // if Filament did not catch exceptions like this, only the first
+                            // would be reported as the rest of the process would be halted.
+                            report($exception);
+
+                            $isFirstException = false;
+                        }
                     }
                 });
             });

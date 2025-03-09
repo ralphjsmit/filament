@@ -42,7 +42,9 @@ class DissociateBulkAction extends BulkAction
 
         $this->action(function (): void {
             $this->process(function (DissociateBulkAction $action, Collection $records, Table $table): void {
-                $records->each(function (Model $record) use ($action, $table): void {
+                $isFirstException = true;
+
+                $records->each(function (Model $record) use ($action, &$isFirstException, $table): void {
                     try {
                         /** @var BelongsTo $inverseRelationship */
                         $inverseRelationship = $table->getInverseRelationshipFor($record);
@@ -52,7 +54,14 @@ class DissociateBulkAction extends BulkAction
                     } catch (Throwable $exception) {
                         $action->reportRecordProcessingFailure();
 
-                        report($exception);
+                        if ($isFirstException) {
+                            // Only report the first exception so as to not flood error logs. Even
+                            // if Filament did not catch exceptions like this, only the first
+                            // would be reported as the rest of the process would be halted.
+                            report($exception);
+
+                            $isFirstException = false;
+                        }
                     }
                 });
             });

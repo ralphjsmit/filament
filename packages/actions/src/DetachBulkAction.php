@@ -44,22 +44,28 @@ class DetachBulkAction extends BulkAction
             $this->process(function (DetachBulkAction $action, Collection $records, Table $table): void {
                 /** @var BelongsToMany $relationship */
                 $relationship = $table->getRelationship();
+                $relationshipPivotAccessor = $relationship->getPivotAccessor();
 
-                if ($table->allowsDuplicates()) {
-                    $records->each(
-                        function (Model $record) use ($action, $relationship) {
-                            try {
-                                $record->{$relationship->getPivotAccessor()}->delete();
-                            } catch (Throwable $exception) {
-                                $action->reportRecordProcessingFailure();
+                $isFirstException = true;
 
+                $records->each(
+                    function (Model $record) use ($action, &$isFirstException, $relationshipPivotAccessor): void {
+                        try {
+                            $record->{$relationshipPivotAccessor}->delete();
+                        } catch (Throwable $exception) {
+                            $action->reportRecordProcessingFailure();
+
+                            if ($isFirstException) {
+                                // Only report the first exception so as to not flood error logs. Even
+                                // if Filament did not catch exceptions like this, only the first
+                                // would be reported as the rest of the process would be halted.
                                 report($exception);
+
+                                $isFirstException = false;
                             }
-                        },
-                    );
-                } else {
-                    $relationship->detach($records);
-                }
+                        }
+                    },
+                );
             });
         });
 
