@@ -16,19 +16,19 @@ trait InteractsWithSelectedRecords
 
     protected int $successfulSelectedRecordsCount = 0;
 
-    protected int $authorizationFailureWithoutMessageSelectedRecordsCount = 0;
+    protected int $bulkAuthorizationFailureWithoutMessageCount = 0;
 
-    protected int $processingFailureWithoutMessageSelectedRecordsCount = 0;
+    protected int $bulkProcessingFailureWithoutMessageCount = 0;
 
     /**
      * @var array<string>
      */
-    protected array $selectedRecordsAuthorizationFailureMessages = [];
+    protected array $bulkAuthorizationFailureMessages = [];
 
     /**
      * @var array<string, array{message: string | Closure, count: int}>
      */
-    protected array $selectedRecordsProcessingFailureMessages = [];
+    protected array $bulkProcessingFailureMessages = [];
 
     public function accessSelectedRecords(bool | Closure $condition = true): static
     {
@@ -104,8 +104,8 @@ trait InteractsWithSelectedRecords
             }
         }
 
-        $this->authorizationFailureWithoutMessageSelectedRecordsCount = $failureCountWithoutAuthorizationResponse;
-        $this->selectedRecordsAuthorizationFailureMessages = $failureMessages;
+        $this->bulkAuthorizationFailureWithoutMessageCount = $failureCountWithoutAuthorizationResponse;
+        $this->bulkAuthorizationFailureMessages = $failureMessages;
 
         return $records;
     }
@@ -113,12 +113,12 @@ trait InteractsWithSelectedRecords
     public function reportBulkProcessingFailure(?string $key = null, string | Closure | null $message = null): void
     {
         if (filled($key)) {
-            $this->selectedRecordsProcessingFailureMessages[$key] = [
+            $this->bulkProcessingFailureMessages[$key] = [
                 'message' => $message,
-                'count' => $this->selectedRecordsProcessingFailureMessages[$key]['count'] ?? 0,
+                'count' => $this->bulkProcessingFailureMessages[$key]['count'] ?? 0,
             ];
         } else {
-            $this->processingFailureWithoutMessageSelectedRecordsCount++;
+            $this->bulkProcessingFailureWithoutMessageCount++;
         }
 
         $this->successfulSelectedRecordsCount--;
@@ -127,10 +127,10 @@ trait InteractsWithSelectedRecords
     /**
      * @return array<string>
      */
-    public function getSelectedRecordsProcessingFailureMessages(): array
+    public function getBulkProcessingFailureMessages(): array
     {
         return array_reduce(
-            $this->selectedRecordsProcessingFailureMessages,
+            $this->bulkProcessingFailureMessages,
             function (array $carry, array $failure): array {
                 if (blank($failure['message'])) {
                     return $carry;

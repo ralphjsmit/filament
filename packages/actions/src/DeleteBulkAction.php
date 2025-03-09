@@ -47,7 +47,7 @@ class DeleteBulkAction extends BulkAction
             ]);
         });
 
-        $this->missingAuthorizationFailureNotificationMessage(function (int $count, bool $isAll): string {
+        $this->missingBulkAuthorizationFailureNotificationMessage(function (int $count, bool $isAll): string {
             return trans_choice(
                 $isAll
                     ? 'filament-actions::delete.multiple.notifications.deleted_none.missing_authorization_failure_message'
@@ -57,7 +57,7 @@ class DeleteBulkAction extends BulkAction
             );
         });
 
-        $this->missingProcessingFailureNotificationMessage(function (int $count, bool $isAll): string {
+        $this->missingBulkProcessingFailureNotificationMessage(function (int $count, bool $isAll): string {
             return trans_choice(
                 $isAll
                     ? 'filament-actions::delete.multiple.notifications.deleted_none.missing_processing_failure_message'
