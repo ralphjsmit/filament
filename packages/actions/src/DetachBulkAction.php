@@ -9,6 +9,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Throwable;
 
 class DetachBulkAction extends BulkAction
 {
@@ -40,13 +41,21 @@ class DetachBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::detach-action.modal') ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
-            $this->process(function (Collection $records, Table $table): void {
+            $this->process(function (DetachBulkAction $action, Collection $records, Table $table): void {
                 /** @var BelongsToMany $relationship */
                 $relationship = $table->getRelationship();
 
                 if ($table->allowsDuplicates()) {
                     $records->each(
-                        fn (Model $record) => $record->{$relationship->getPivotAccessor()}->delete(),
+                        function (Model $record) use ($action, $relationship) {
+                            try {
+                                $record->{$relationship->getPivotAccessor()}->delete();
+                            } catch (Throwable $exception) {
+                                $action->reportRecordProcessingFailure();
+
+                                report($exception);
+                            }
+                        },
                     );
                 } else {
                     $relationship->detach($records);

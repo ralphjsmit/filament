@@ -10,6 +10,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
+use Throwable;
 
 class RestoreBulkAction extends BulkAction
 {
@@ -75,13 +76,21 @@ class RestoreBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::restore-action.modal') ?? Heroicon::OutlinedArrowUturnLeft);
 
         $this->action(function (): void {
-            $this->process(static fn (RestoreBulkAction $action, Collection $records) => $records->each(static function (Model $record) use ($action): void {
-                if (! method_exists($record, 'restore')) {
-                    return;
-                }
+            $this->process(static function (RestoreBulkAction $action, Collection $records) {
+                return $records->each(static function (Model $record) use ($action): void {
+                    if (! method_exists($record, 'restore')) {
+                        return;
+                    }
 
-                $record->restore() || $action->reportRecordProcessingFailure();
-            }));
+                    try {
+                        $record->restore() || $action->reportRecordProcessingFailure();
+                    } catch (Throwable $exception) {
+                        $action->reportRecordProcessingFailure();
+
+                        report($exception);
+                    }
+                });
+            });
         });
 
         $this->deselectRecordsAfterCompletion();

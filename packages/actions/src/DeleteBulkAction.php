@@ -10,6 +10,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
+use Throwable;
 
 class DeleteBulkAction extends BulkAction
 {
@@ -75,9 +76,17 @@ class DeleteBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::delete-action.modal') ?? Heroicon::OutlinedTrash);
 
         $this->action(function (): void {
-            $this->process(static fn (DeleteBulkAction $action, Collection $records) => $records->each(static function (Model $record) use ($action): void {
-                $record->delete() || $action->reportRecordProcessingFailure();
-            }));
+            $this->process(static function (DeleteBulkAction $action, Collection $records) {
+                return $records->each(static function (Model $record) use ($action): void {
+                    try {
+                        $record->delete() || $action->reportRecordProcessingFailure();
+                    } catch (Throwable $exception) {
+                        $action->reportRecordProcessingFailure();
+
+                        report($exception);
+                    }
+                });
+            });
         });
 
         $this->deselectRecordsAfterCompletion();
