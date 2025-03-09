@@ -220,7 +220,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->placeholder($placeholder ?? '-');
 
-        $this->stateCast(app(BooleanStateCast::class));
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
 
         return $this;
     }
