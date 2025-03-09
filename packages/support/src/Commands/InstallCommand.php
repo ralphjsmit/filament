@@ -15,7 +15,9 @@ use Symfony\Component\Console\Input\InputOption;
 
 use function Laravel\Prompts\confirm;
 
-#[AsCommand(name: 'filament:install')]
+#[AsCommand(name: 'filament:install', aliases: [
+    'install:filament',
+])]
 class InstallCommand extends Command
 {
     use CanGeneratePanels;
@@ -25,6 +27,13 @@ class InstallCommand extends Command
     protected $description = 'Install Filament';
 
     protected $name = 'filament:install';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'install:filament',
+    ];
 
     /**
      * @return array<InputOption>
