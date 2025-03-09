@@ -6,6 +6,7 @@ use Closure;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
+use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -235,6 +236,17 @@ trait InteractsWithActions
             $result = $action->callAfter() ?? $result;
 
             $this->afterActionCalled();
+
+            match ($action->getStatus()) {
+                ActionStatus::Success => function () use ($action): void {
+                    $action->sendSuccessNotification();
+                    $action->dispatchSuccessRedirect();
+                },
+                ActionStatus::Failure => function () use ($action): void {
+                    $action->sendFailureNotification();
+                    $action->dispatchFailureRedirect();
+                },
+            };
 
             $action->commitDatabaseTransaction();
         } catch (Halt $exception) {

@@ -56,12 +56,14 @@ return [
 
             'restored_partial' => [
                 'title' => 'Restored :count of :total',
-                'missing_message' => ':count could not be restored.',
+                'missing_authorization_failure_message' => 'You don\'t have permission to restore :count.',
+                'missing_processing_failure_message' => ':count could not be restored.',
             ],
 
             'restored_none' => [
                 'title' => 'Failed to restore',
-                'missing_message' => ':count could not be restored.',
+                'missing_authorization_failure_message' => 'You don\'t have permission to restore :count.',
+                'missing_processing_failure_message' => ':count could not be restored.',
             ],
 
         ],

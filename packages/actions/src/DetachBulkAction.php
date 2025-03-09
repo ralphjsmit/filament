@@ -52,8 +52,6 @@ class DetachBulkAction extends BulkAction
                     $relationship->detach($records);
                 }
             });
-
-            $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();

@@ -49,8 +49,6 @@ class DissociateBulkAction extends BulkAction
                     $record->save();
                 });
             });
-
-            $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();
