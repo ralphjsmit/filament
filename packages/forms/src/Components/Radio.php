@@ -70,4 +70,9 @@ class Radio extends Field implements Contracts\CanDisableOptions
 
         return array_keys($this->getEnabledOptions());
     }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return true;
+    }
 }

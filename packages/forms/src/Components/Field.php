@@ -246,4 +246,9 @@ class Field extends Component implements Contracts\HasValidationRules
 
         return $schema;
     }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return false;
+    }
 }

@@ -160,4 +160,9 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     {
         return $this->isMultiple();
     }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return true;
+    }
 }

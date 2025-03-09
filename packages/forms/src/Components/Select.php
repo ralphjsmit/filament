@@ -1365,4 +1365,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         return $this->isMultiple();
     }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return true;
+    }
 }
