@@ -9,11 +9,12 @@
         }
     }
 
-    & .fi-fo-field-label-ctn {
+    & .fi-fo-field-label-ctn,
+    & .fi-fo-field-label {
         @apply flex items-center gap-x-3;
     }
 
-    & .fi-fo-field-label {
+    & .fi-fo-field-label-content {
         @apply text-sm leading-6 font-medium text-gray-950 dark:text-white;
 
         & .fi-fo-field-label-required-mark {

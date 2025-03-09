@@ -75,19 +75,23 @@
             >
                 {{ $beforeLabelContainer }}
 
-                {{ $labelPrefix }}
+                <label class="fi-fo-field-label">
+                    {{ $labelPrefix }}
 
-                @if ($label && (! $labelSrOnly))
-                    <label class="fi-fo-field-label">
-                        {{ $label }}
+                    @if ($label && (! $labelSrOnly))
+                        <span class="fi-fo-field-label-content">
+                            {{ $label }}
 
-                        @if ($required && (! $isDisabled))
-                            <sup class="fi-fo-field-label-required-mark">*</sup>
-                        @endif
-                    </label>
-                @endif
+                            @if ($required && (! $isDisabled))
+                                <sup class="fi-fo-field-label-required-mark">
+                                    *
+                                </sup>
+                            @endif
+                        </span>
+                    @endif
 
-                {{ $labelSuffix }}
+                    {{ $labelSuffix }}
+                </label>
 
                 {{ $afterLabelContainer }}
             </div>
