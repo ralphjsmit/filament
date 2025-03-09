@@ -244,7 +244,7 @@ trait CanNotify
                         'isAll' => $this->authorizationFailureWithoutMessageSelectedRecordsCount === $this->totalSelectedRecordsCount,
                         'total' => $this->totalSelectedRecordsCount,
                     ],
-                )) ? $message : []),
+                )) ? [$message] : []),
                 ...$this->getSelectedRecordsProcessingFailureMessages(),
                 ...($this->processingFailureWithoutMessageSelectedRecordsCount && filled($message = $this->evaluate(
                     $this->missingProcessingFailureNotificationMessage,
@@ -253,7 +253,7 @@ trait CanNotify
                         'isAll' => $this->processingFailureWithoutMessageSelectedRecordsCount === $this->totalSelectedRecordsCount,
                         'total' => $this->totalSelectedRecordsCount,
                     ],
-                )) ? $message : []),
+                )) ? [$message] : []),
             ],
         );
     }

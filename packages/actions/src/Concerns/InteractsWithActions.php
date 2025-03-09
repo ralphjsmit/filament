@@ -237,7 +237,7 @@ trait InteractsWithActions
 
             $this->afterActionCalled();
 
-            match ($action->getStatus()) {
+            (match ($action->getStatus()) {
                 ActionStatus::Success => function () use ($action): void {
                     $action->sendSuccessNotification();
                     $action->dispatchSuccessRedirect();
@@ -246,7 +246,7 @@ trait InteractsWithActions
                     $action->sendFailureNotification();
                     $action->dispatchFailureRedirect();
                 },
-            };
+            })();
 
             $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
