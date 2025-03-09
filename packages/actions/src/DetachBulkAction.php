@@ -53,7 +53,7 @@ class DetachBulkAction extends BulkAction
                         try {
                             $record->{$relationshipPivotAccessor}->delete();
                         } catch (Throwable $exception) {
-                            $action->reportRecordProcessingFailure();
+                            $action->reportBulkProcessingFailure();
 
                             if ($isFirstException) {
                                 // Only report the first exception so as to not flood error logs. Even

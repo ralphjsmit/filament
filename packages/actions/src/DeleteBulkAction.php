@@ -81,9 +81,9 @@ class DeleteBulkAction extends BulkAction
 
                 $records->each(static function (Model $record) use ($action, &$isFirstException): void {
                     try {
-                        $record->delete() || $action->reportRecordProcessingFailure();
+                        $record->delete() || $action->reportBulkProcessingFailure();
                     } catch (Throwable $exception) {
-                        $action->reportRecordProcessingFailure();
+                        $action->reportBulkProcessingFailure();
 
                         if ($isFirstException) {
                             // Only report the first exception so as to not flood error logs. Even

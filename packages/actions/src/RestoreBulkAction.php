@@ -85,9 +85,9 @@ class RestoreBulkAction extends BulkAction
                     }
 
                     try {
-                        $record->restore() || $action->reportRecordProcessingFailure();
+                        $record->restore() || $action->reportBulkProcessingFailure();
                     } catch (Throwable $exception) {
-                        $action->reportRecordProcessingFailure();
+                        $action->reportBulkProcessingFailure();
 
                         if ($isFirstException) {
                             // Only report the first exception so as to not flood error logs. Even

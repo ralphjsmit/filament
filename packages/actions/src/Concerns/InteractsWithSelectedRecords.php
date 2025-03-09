@@ -110,7 +110,7 @@ trait InteractsWithSelectedRecords
         return $records;
     }
 
-    public function reportRecordProcessingFailure(?string $key = null, string | Closure | null $message = null): void
+    public function reportBulkProcessingFailure(?string $key = null, string | Closure | null $message = null): void
     {
         if (filled($key)) {
             $this->selectedRecordsProcessingFailureMessages[$key] = [
