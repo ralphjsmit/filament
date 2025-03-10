@@ -23,7 +23,7 @@
     }
 
     &.fi-size-xs {
-        @apply min-w-[theme(spacing.4)] px-0.5 tracking-tighter;
+        @apply min-w-[theme(spacing.4)] px-0.5 py-0 tracking-tighter;
     }
 
     &.fi-size-sm {
