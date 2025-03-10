@@ -3,7 +3,7 @@
 }
 
 .fi-topbar {
-    @apply flex h-16 items-center bg-white px-4 ring-1 shadow-xs ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+    @apply flex h-16 items-center bg-white px-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
     & .fi-tenant-menu {
         @apply hidden lg:block;

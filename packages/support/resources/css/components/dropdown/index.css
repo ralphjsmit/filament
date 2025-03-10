@@ -4,7 +4,7 @@
     }
 
     & .fi-dropdown-panel {
-        @apply absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white ring-1 shadow-lg ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10;
 
         &.fi-opacity-0 {
             @apply opacity-0;

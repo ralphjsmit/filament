@@ -9,7 +9,7 @@
 
     &.fi-contained {
         & .fi-in-repeatable-item {
-            @apply rounded-xl bg-white p-4 ring-1 shadow-xs ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
+            @apply rounded-xl bg-white p-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
         }
     }
 }

@@ -137,10 +137,10 @@ php artisan filament:install
 
 ### Installing Tailwind CSS
 
-Run the following command to install Tailwind CSS and its Vite plugin, along with the Tailwind Forms and Typography plugins:
+Run the following command to install Tailwind CSS and its Vite plugin, if you don't have those installed already:
 
 ```bash
-npm install tailwindcss @tailwindcss/vite @tailwindcss/forms @tailwindcss/typography --save-dev
+npm install tailwindcss @tailwindcss/vite --save-dev
 ```
 
 ### Configuring styles

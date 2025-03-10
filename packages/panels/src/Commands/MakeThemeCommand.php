@@ -124,7 +124,7 @@ class MakeThemeCommand extends Command
             default => "{$this->pm} install",
         };
 
-        exec("{$installCommand} tailwindcss@latest @tailwindcss/forms @tailwindcss/typography @tailwindcss/vite --save-dev");
+        exec("{$installCommand} tailwindcss@latest @tailwindcss/vite --save-dev");
 
         $this->components->info('Dependencies installed successfully.');
     }

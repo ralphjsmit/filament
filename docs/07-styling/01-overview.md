@@ -107,9 +107,7 @@ $panel->font(
 
 ## Creating a custom theme
 
-Filament allows you to change the CSS used to render the UI by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
-
-Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin.
+Filament allows you to change the CSS used to render the UI by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme". Themes use [Tailwind CSS](https://tailwindcss.com).
 
 To create a custom theme for a panel, you can use the `php artisan make:filament-theme` command:
 

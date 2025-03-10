@@ -121,18 +121,6 @@
         @apply hover:underline focus-visible:underline;
     }
 
-    &.fi-in-text-item-prose {
-        @apply prose dark:prose-invert max-w-none;
-
-        & > *:first-child {
-            @apply mt-0;
-        }
-
-        & > *:last-child {
-            @apply mb-0;
-        }
-    }
-
     &:not(.fi-bulleted li.fi-in-text-item) {
         /* Line clamping sets the `display` property of the list item to `-webkit-box` instead of `list-item`, which hides the bullet point. */
         @apply line-clamp-(--line-clamp,none);

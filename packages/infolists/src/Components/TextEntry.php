@@ -307,7 +307,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                     ], escape: false)
                     ->class([
                         'fi-in-text-item',
-                        'fi-in-text-item-prose' => $isProse || $isMarkdown,
+                        'fi-prose' => $isProse || $isMarkdown,
                         (($fontFamily = $this->getFontFamily($stateItem)) instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : (is_string($fontFamily) ? $fontFamily : ''),
                         'fi-copyable' => $isCopyable,
                     ])

@@ -6,7 +6,7 @@
     }
 
     &:not(.fi-contained) {
-        @apply mx-auto rounded-xl bg-white p-2 ring-1 shadow-sm ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply mx-auto rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
     }
 }
 

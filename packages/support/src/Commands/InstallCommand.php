@@ -106,8 +106,6 @@ class InstallCommand extends Command
             return;
         }
 
-        static::updateNpmPackages();
-
         $filesystem = app(Filesystem::class);
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 
@@ -149,42 +147,7 @@ class InstallCommand extends Command
 
         $this->components->info('Scaffolding installed successfully.');
 
-        $this->components->info('Please run `npm install && npm run dev` to compile your new assets.');
-    }
-
-    protected static function updateNpmPackages(bool $dev = true): void
-    {
-        if (! file_exists(base_path('package.json'))) {
-            return;
-        }
-
-        $configurationKey = $dev ? 'devDependencies' : 'dependencies';
-
-        $packages = json_decode(file_get_contents(base_path('package.json')), associative: true);
-
-        $packages[$configurationKey] = static::updateNpmPackageArray(
-            array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : []
-        );
-
-        ksort($packages[$configurationKey]);
-
-        file_put_contents(
-            base_path('package.json'),
-            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
-        );
-    }
-
-    /**
-     * @param  array<string, string>  $packages
-     * @return array<string, string>
-     */
-    protected static function updateNpmPackageArray(array $packages): array
-    {
-        return [
-            ...$packages,
-            '@tailwindcss/forms' => '^0.5.2',
-            '@tailwindcss/typography' => '^0.5.4',
-        ];
+        $this->components->info('Please run `npm run build` to compile your new assets.');
     }
 
     protected function installUpgradeCommand(): void

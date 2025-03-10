@@ -276,7 +276,7 @@
             @endif
 
             <div
-                class="fi-fo-rich-editor-content"
+                class="fi-fo-rich-editor-content fi-prose"
                 x-ref="editor"
                 wire:ignore
             ></div>

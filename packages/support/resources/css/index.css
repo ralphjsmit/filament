@@ -29,9 +29,6 @@
 @import './components/toggle.css' layer(components);
 @import './sortable.css' layer(components);
 
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
-
 @theme inline {
     --color-color-50: var(--color-50);
     --color-color-100: var(--color-100);

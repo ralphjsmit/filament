@@ -14,7 +14,7 @@
     }
 
     &.fi-contained {
-        @apply rounded-xl bg-white ring-1 shadow-xs ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
         & .fi-sc-tabs-tab {
             &.fi-active {

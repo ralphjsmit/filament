@@ -9,7 +9,7 @@
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     @if ($isDisabled())
-        <div class="fi-fo-markdown-editor fi-disabled">
+        <div class="fi-fo-markdown-editor fi-disabled fi-prose">
             {!! str($getState())->sanitizeHtml()->markdown($getCommonMarkOptions(), $getCommonMarkExtensions()) !!}
         </div>
     @else
