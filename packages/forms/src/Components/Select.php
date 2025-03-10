@@ -1016,7 +1016,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                         }
 
                         $query->update([
-                            $relationship->getForeignKeyName() => $record->getKey(),
+                            $relationship->getForeignKeyName() => $record->getAttribute($relationship->getLocalKeyName()),
                         ]);
                     });
                 }
