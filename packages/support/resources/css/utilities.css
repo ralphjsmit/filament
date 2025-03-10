@@ -503,7 +503,7 @@
 
     *:where(:not(.fi-not-prose, .fi-not-prose *))
         + *:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        margin-top: calc(var(--spacing) * 6);
+        margin-top: calc(var(--spacing) * 4);
     }
 
     h1:where(:not(.fi-not-prose, .fi-not-prose *)) {
