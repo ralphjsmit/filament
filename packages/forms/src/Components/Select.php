@@ -1026,7 +1026,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ]);
 
                 if (! empty($state)) {
-                    $relationship::noConstraints(function () use ($component, $record, $state, $modifyQueryUsing) {
+                    $relationship::noConstraints(function () use ($component, $record, $state, $modifyQueryUsing): void {
                         $relationship = $component->getRelationship();
 
                         $query = $relationship->getQuery()->whereIn($relationship->getLocalKeyName(), Arr::wrap($state));
