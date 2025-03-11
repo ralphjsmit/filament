@@ -40,6 +40,10 @@
                 display: none !important;
             }
 
+            [x-cloak='inline-flex'] {
+                display: inline-flex !important;
+            }
+
             @media (max-width: 1023px) {
                 [x-cloak='-lg'] {
                     display: none !important;

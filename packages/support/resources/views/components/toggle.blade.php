@@ -24,6 +24,9 @@
                             ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $offColor),
                         ]))
     "
+    @if ($state)
+        x-cloak
+    @endif
     {{
         $attributes
             ->merge([
@@ -39,13 +42,26 @@
         </div>
 
         <div aria-hidden="true">
-            {{
-                \Filament\Support\generate_icon_html(
-                    $onIcon,
-                    attributes: (new \Illuminate\View\ComponentattributeBag)->merge(['x-cloak' => 'x-cloak'], escape: false),
-                    size: \Filament\Support\Enums\IconSize::ExtraSmall,
-                )
-            }}
+            {{ \Filament\Support\generate_icon_html($onIcon, size: \Filament\Support\Enums\IconSize::ExtraSmall) }}
         </div>
     </div>
 </button>
+
+@if ($state)
+    <div
+        x-cloak="inline-flex"
+        wire:ignore
+        @class([
+            'fi-toggle fi-toggle-on fi-hidden',
+            ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $onColor),
+        ])
+    >
+        <div>
+            <div aria-hidden="true"></div>
+
+            <div aria-hidden="true">
+                {{ \Filament\Support\generate_icon_html($onIcon, size: \Filament\Support\Enums\IconSize::ExtraSmall) }}
+            </div>
+        </div>
+    </div>
+@endif

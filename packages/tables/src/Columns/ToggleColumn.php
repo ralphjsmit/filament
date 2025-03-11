@@ -92,6 +92,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                     'fi-toggle-off',
                     ...get_component_color_classes(ToggleComponent::class, $offColor),
                 ]) ?>'"
+                <?php if ($state) { ?> x-cloak <?php } ?>
                 x-tooltip="
                     error === undefined
                         ? false
@@ -109,14 +110,29 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                     </div>
 
                     <div aria-hidden="true">
-                        <?= generate_icon_html(
-                            $onIcon,
-                            attributes: (new ComponentAttributeBag)->merge(['x-cloak' => 'x-cloak'], escape: false),
-                            size: IconSize::ExtraSmall,
-                        )?->toHtml() ?>
+                        <?= generate_icon_html($onIcon, size: IconSize::ExtraSmall)?->toHtml() ?>
                     </div>
                 </div>
             </div>
+
+            <?php if ($state) { ?>
+                <div
+                    x-cloak="inline-flex"
+                    wire:ignore
+                    class="<?= Arr::toCssClasses([
+                        'fi-toggle fi-toggle-on fi-hidden',
+                        ...get_component_color_classes(ToggleComponent::class, $onColor),
+                    ]) ?>"
+                >
+                    <div>
+                        <div aria-hidden="true"></div>
+
+                        <div aria-hidden="true">
+                            <?= generate_icon_html($onIcon, size: IconSize::ExtraSmall)?->toHtml() ?>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
         </div>
 
         <?php return ob_get_clean();
