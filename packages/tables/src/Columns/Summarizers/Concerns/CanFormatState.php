@@ -48,9 +48,9 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
     {
-        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy, $locale): ?string {
+        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy, $locale, $decimalPlaces): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -61,12 +61,13 @@ trait CanFormatState
 
             $currency = $summarizer->evaluate($currency) ?? Table::$defaultCurrency;
             $locale = $summarizer->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+            $decimalPlaces = $summarizer->evaluate($decimalPlaces);
 
             if ($divideBy) {
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $locale);
+            return Number::currency($state, $currency, $locale, $decimalPlaces);
         });
 
         return $this;

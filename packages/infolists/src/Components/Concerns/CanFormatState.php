@@ -217,11 +217,11 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
     {
         $this->isMoney = true;
 
-        $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy, $locale): ?string {
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy, $locale, $decimalPlaces): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -232,12 +232,13 @@ trait CanFormatState
 
             $currency = $component->evaluate($currency) ?? Schema::$defaultCurrency;
             $locale = $component->evaluate($locale) ?? Schema::$defaultNumberLocale ?? config('app.locale');
+            $decimalPlaces = $component->evaluate($decimalPlaces);
 
             if ($divideBy) {
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $locale);
+            return Number::currency($state, $currency, $locale, $decimalPlaces);
         });
 
         return $this;
