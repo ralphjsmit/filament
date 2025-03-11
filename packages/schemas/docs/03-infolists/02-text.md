@@ -281,7 +281,7 @@ Infolist::$defaultNumberLocale = 'nl';
 If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
 
 ```php
-use Filament\Tables\Columns\TextColumn;
+use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('price')
     ->money('EUR', decimalPlaces: 3)
