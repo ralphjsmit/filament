@@ -145,18 +145,49 @@ npm install tailwindcss @tailwindcss/vite --save-dev
 
 ### Configuring styles
 
-Add Tailwind CSS to your `resources/css/app.css` file:
+When adding styles, import only the CSS files for the Filament packages you installed in the in the [First step](#installing-the-individual-components). Since the `composer require` command allows you to install multiple packages at once, and you can also add more packages later, make sure to include only the necessary imports. Missing imports may cause issues.
+
+For example, if you installed `filament/forms`, you need to include its related styles:
 
 ```css
 @import 'tailwindcss';
-@import '../../vendor/filament/support/resources/css/index.css'; /* Required by all Filament components */
-@import '../../vendor/filament/actions/resources/css/index.css'; /* Required by `filament/actions` and `filament/tables` */
-@import '../../vendor/filament/forms/resources/css/index.css'; /* Required by `filament/forms`, `filament/tables` and `filament/actions` */
-@import '../../vendor/filament/infolists/resources/css/index.css'; /* Required by `filament/infolists` and `filament/actions` */
-@import '../../vendor/filament/notifications/resources/css/index.css'; /* Required by `filament/notifications` */
-@import '../../vendor/filament/schemas/resources/css/index.css'; /* Required by `filament/schemas`, `filament/forms`, `filament/infolists`, `filament/tables` and `filament/actions` */
-@import '../../vendor/filament/tables/resources/css/index.css'; /* Required by `filament/tables` */
-@import '../../vendor/filament/widgets/resources/css/index.css'; /* Required by `filament/widgets` */
+@import '../../vendor/filament/support/resources/css/index.css';
+@import '../../vendor/filament/forms/resources/css/index.css';
+@import '../../vendor/filament/schemas/resources/css/index.css';
+
+@variant dark (&:where(.dark, .dark *));
+```
+
+Another example is `filament/actions`, which depends on `filament/forms` if you use [Modal forms](../actions/modals#modal-forms). This is because actions in modals can include [Form components](../schemas/forms/overview). However, if you're not using Modal forms, you don't need to import the CSS for Forms.
+
+Below is a reference for the imports you need to add to your `resources/css/app.css` file based on the packages installed:
+
+```css
+@import 'tailwindcss';
+
+/* Required by all Filament components */
+@import '../../vendor/filament/support/resources/css/index.css';
+
+/* Required by Filament actions and tables */
+@import '../../vendor/filament/actions/resources/css/index.css';
+
+/* Required by Filament actions, forms and tables */
+@import '../../vendor/filament/forms/resources/css/index.css';
+
+/* Required by Filament actions and infolists */
+@import '../../vendor/filament/infolists/resources/css/index.css';
+
+/* Required by Filament notifications */
+@import '../../vendor/filament/notifications/resources/css/index.css';
+
+/* Required by Filament actions, infolists, forms, schemas and tables */
+@import '../../vendor/filament/schemas/resources/css/index.css';
+
+/* Required by Filament tables */
+@import '../../vendor/filament/tables/resources/css/index.css';
+
+/* Required by Filament widgets */
+@import '../../vendor/filament/widgets/resources/css/index.css';
 
 @variant dark (&:where(.dark, .dark *));
 ```
@@ -228,7 +259,9 @@ Add the following code to your new layout file:
 </html>
 ```
 
-Please note the `@livewire('notifications')` line above - this is only required if you have the [Notifications](../notifications) package installed and wish to send flash notifications to your users through Filament.
+<Aside variant="warning">
+    The `@livewire('notifications')` line is required in the layout only if you have the [Notifications](../notifications) package installed and want to send flash notifications to users through Filament.
+</Aside>
 
 </div>
 
