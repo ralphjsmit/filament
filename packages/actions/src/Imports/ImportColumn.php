@@ -365,7 +365,9 @@ class ImportColumn extends Component
             return;
         }
 
-        $this->getRecord()->{$this->getName()} = $state;
+        $record = $this->getRecord();
+
+        data_set($record, $this->getName(), $state);
     }
 
     public function saveRelationships(mixed $state): void
