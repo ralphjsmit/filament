@@ -32,7 +32,7 @@ TextEntry::make('author.name')
 
 You may also [create your own custom entries](custom) to display data however you wish.
 
-## Content (state) of an entry
+## Entry content (state)
 
 Entries may feel a bit magic at first, but they are designed to be simple to use and optimized to display data from an Eloquent record. Despite this, they are flexible and you can display data from any source, not just an Eloquent record.
 

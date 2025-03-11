@@ -1,7 +1,9 @@
 ---
 title: Text entry
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -36,25 +38,103 @@ TextEntry::make('status')
 
 You may add other things to the badge, like an [icon](#adding-an-icon).
 
-## Date formatting
-
-You may use the `date()` and `dateTime()` methods to format the entry's state using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
+Optionally, you may pass a boolean value to control if the text should be in a badge or not:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('status')
+    ->badge(FeatureFlag::active())
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Formatting
+
+When using a text entry, you may want the actual outputted text in the UI to differ from the raw [state](overview#entry-content-state) of the entry, which is often automatically retrieved from an Eloquent model. Formatting the state allows you to preserve the integrity of the raw data while also allowing it to be presented in a more user-friendly way.
+
+To format the state of a text entry without changing the state itself, you can use the `formatStateUsing()` method. This method accepts a function that takes the state as an argument and returns the formatted state:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('status')
+    ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
+```
+
+In this case, the `status` column in the database might contain values like `draft`, `reviewing`, `published`, or `rejected`, but the formatted state will be the translated version of these values.
+
+<UtilityInjection set="infolistEntries" version="4.x">The function passed to `formatStateUsing()` can inject various utilities as parameters.</UtilityInjection>
+
+### Date formatting
+
+Instead of passing a function to `formatStateUsing()`, you may use the `date()`, `dateTime()`, and `time()` methods to format the entry's state using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('created_at')
+    ->date()
 
 TextEntry::make('created_at')
     ->dateTime()
+
+TextEntry::make('created_at')
+    ->time()
 ```
 
-You may use also the `isoDate()` and `isoDateTime()` methods to format the entry's state using [PHP date formatting macro-formats](https://carbon.nesbot.com/docs/#available-macro-formats):
+You may customize the date format by passing a custom format string to the `date()`, `dateTime()`, or `time()` method. You may use any [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('created_at')
-    ->isoDateTime()
+    ->date('M j, Y')
+    
+TextEntry::make('created_at')
+    ->dateTime('M j, Y H:i:s')
+    
+TextEntry::make('created_at')
+    ->time('H:i:s')
 ```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `date()`, `dateTime()`, and `time()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+#### Date formatting using Carbon macro formats
+
+You may use also the `isoDate()`, `isoDateTime()`, and `isoTime()` methods to format the entry's state using [Carbon's macro-formats](https://carbon.nesbot.com/docs/#available-macro-formats):
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('created_at')
+    ->isoDate()
+
+TextEntry::make('created_at')
+    ->isoDateTime()
+
+TextEntry::make('created_at')
+    ->isoTime()
+```
+
+You may customize the date format by passing a custom macro format string to the `isoDate()`, `isoDateTime()`, or `isoTime()` method. You may use any [Carbon's macro-formats](https://carbon.nesbot.com/docs/#available-macro-formats):
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('created_at')
+    ->isoDate('L')
+
+TextEntry::make('created_at')
+    ->isoDateTime('LLL')
+
+TextEntry::make('created_at')
+    ->isoTime('LT')
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `isoDate()`, `isoDateTime()`, and `isoTime()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+#### Relative date formatting
 
 You may use the `since()` method to format the entry's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/docs/#api-humandiff):
 
@@ -65,15 +145,64 @@ TextEntry::make('created_at')
     ->since()
 ```
 
-Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip()`, `isoDateTooltip()`, `isoDateTimeTooltip()`, `isoTime()` or `isoTimeTooltip()` method to display a formatted date in a tooltip, often to provide extra information:
+#### Displaying a formatting date in a tooltip
+
+Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip()`, `isoDateTooltip()`, `isoDateTimeTooltip()`, `isoTime()`, `isoTimeTooltip()`, or `sinceTooltip()` method to display a formatted date in a [tooltip](overview#adding-a-tooltip-to-an-entry), often to provide extra information:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('created_at')
     ->since()
-    ->dateTimeTooltip()
+    ->dateTooltip() // Accepts a custom PHP date formatting string
+
+TextEntry::make('created_at')
+    ->since()
+    ->dateTimeTooltip() // Accepts a custom PHP date formatting string
+
+TextEntry::make('created_at')
+    ->since()
+    ->timeTooltip() // Accepts a custom PHP date formatting string
+
+TextEntry::make('created_at')
+    ->since()
+    ->isoDateTooltip() // Accepts a custom Carbon macro format string
+
+TextEntry::make('created_at')
+    ->since()
+    ->isoDateTimeTooltip() // Accepts a custom Carbon macro format string
+
+TextEntry::make('created_at')
+    ->since()
+    ->isoTimeTooltip() // Accepts a custom Carbon macro format string
+
+TextEntry::make('created_at')
+    ->dateTime()
+    ->sinceTooltip()
 ```
+
+#### Setting the timezone for date formatting
+
+Each of the date formatting methods listed above also accepts a `timezone` argument, which allows you to convert the time set in the state to a different timezone:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('created_at')
+    ->dateTime(timezone: 'America/New_York')
+```
+
+You can also pass a timezone to the `timezone()` method of the entry to apply a timezone to all date-time formatting methods at once:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('created_at')
+    ->timezone('America/New_York')
+    ->dateTime()
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `timezone()` method also accepts a function to dynamically calculate the timezone. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Number formatting
 
