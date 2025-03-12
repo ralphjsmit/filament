@@ -145,48 +145,35 @@ npm install tailwindcss @tailwindcss/vite --save-dev
 
 ### Configuring styles
 
-When adding styles, import only the CSS files for the Filament packages you installed in the in the [First step](#installing-the-individual-components). Since the `composer require` command allows you to install multiple packages at once, and you can also add more packages later, make sure to include only the necessary imports. Missing imports may cause issues.
+To configure Filament's styles, you need to import the CSS files for the Filament packages you installed, usually in `resources/css/app.css`.
 
-For example, if you installed `filament/forms`, you need to include its related styles:
-
-```css
-@import 'tailwindcss';
-@import '../../vendor/filament/support/resources/css/index.css';
-@import '../../vendor/filament/forms/resources/css/index.css';
-@import '../../vendor/filament/schemas/resources/css/index.css';
-
-@variant dark (&:where(.dark, .dark *));
-```
-
-Another example is `filament/actions`, which depends on `filament/forms` if you use [Modal forms](../actions/modals#modal-forms). This is because actions in modals can include [Form components](../schemas/forms/overview). However, if you're not using Modal forms, you don't need to import the CSS for Forms.
-
-Below is a reference for the imports you need to add to your `resources/css/app.css` file based on the packages installed:
+Depending on which combination of packages you installed, you can import only the necessary CSS files, to keep your app's CSS bundle size small:
 
 ```css
 @import 'tailwindcss';
 
-/* Required by all Filament components */
+/* Required by all components */
 @import '../../vendor/filament/support/resources/css/index.css';
 
-/* Required by Filament actions and tables */
+/* Required by actions and tables */
 @import '../../vendor/filament/actions/resources/css/index.css';
 
-/* Required by Filament actions, forms and tables */
+/* Required by actions, forms and tables */
 @import '../../vendor/filament/forms/resources/css/index.css';
 
-/* Required by Filament actions and infolists */
+/* Required by actions and infolists */
 @import '../../vendor/filament/infolists/resources/css/index.css';
 
-/* Required by Filament notifications */
+/* Required by notifications */
 @import '../../vendor/filament/notifications/resources/css/index.css';
 
-/* Required by Filament actions, infolists, forms, schemas and tables */
+/* Required by actions, infolists, forms, schemas and tables */
 @import '../../vendor/filament/schemas/resources/css/index.css';
 
-/* Required by Filament tables */
+/* Required by tables */
 @import '../../vendor/filament/tables/resources/css/index.css';
 
-/* Required by Filament widgets */
+/* Required by widgets */
 @import '../../vendor/filament/widgets/resources/css/index.css';
 
 @variant dark (&:where(.dark, .dark *));
@@ -194,7 +181,7 @@ Below is a reference for the imports you need to add to your `resources/css/app.
 
 ### Configure the Vite plugin
 
-Add the `@tailwindcss/vite` plugin to your Vite configuration:
+If it isn't already set up, add the `@tailwindcss/vite` plugin to your Vite configuration (`vite.config,js`):
 
 ```js
 import { defineConfig } from 'vite'
@@ -218,7 +205,7 @@ Compile your new CSS and JavaScript assets using `npm run dev`.
 
 ### Configuring your layout 
 
-If the file doesn't already exist, create a new layout file at `resources/views/components/layouts/app.blade.php` by running the following command:
+If you don't have a Blade layout file yet, create it at `resources/views/components/layouts/app.blade.php` by running the following command:
 
 ```bash
 php artisan livewire:layout
@@ -258,6 +245,8 @@ Add the following code to your new layout file:
     </body>
 </html>
 ```
+
+The important parts of this are the `@filamentStyles` in the `<head>` of the layout, and the `@filamentScripts` at the end of the `<body>`. Make sure to also include your app's compiled CSS and JavaScript files from Vite!
 
 <Aside variant="info">
     The `@livewire('notifications')` line is required in the layout only if you have the [Notifications](../notifications) package installed and want to send flash notifications to users through Filament.
