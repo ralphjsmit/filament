@@ -175,6 +175,15 @@ use Filament\Tables\Table;
 Table::$defaultNumberLocale = 'nl';
 ```
 
+If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->money('EUR', decimalPlaces: 3)
+```
+
 ## Limiting text length
 
 You may `limit()` the length of the cell's value:

@@ -278,6 +278,15 @@ use Filament\Infolists\Infolist;
 Infolist::$defaultNumberLocale = 'nl';
 ```
 
+If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('price')
+    ->money('EUR', decimalPlaces: 3)
+```
+
 ## Limiting text length
 
 You may `limit()` the length of the entry's value:
