@@ -55,7 +55,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function date(string | Closure | null $format = null, ?string $timezone = null): static
+    public function date(string | Closure | null $format = null, string | closure | null $timezone = null): static
     {
         $this->isDate = true;
 
@@ -67,14 +67,14 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
                 ->translatedFormat($component->evaluate($format));
         });
 
         return $this;
     }
 
-    public function dateTime(string | Closure | null $format = null, ?string $timezone = null): static
+    public function dateTime(string | Closure | null $format = null, string | closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -85,7 +85,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDate(?string $format = null, ?string $timezone = null): static
+    public function isoDate(string | closure | null $format, string | closure | null $timezone = null): static
     {
         $this->isDate = true;
 
@@ -97,14 +97,14 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
-                ->isoFormat($format);
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
+                ->isoFormat($component->evaluate($format));
         });
 
         return $this;
     }
 
-    public function isoDateTime(?string $format = null, ?string $timezone = null): static
+    public function isoDateTime(string | closure | null $format, string | closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -115,7 +115,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function since(?string $timezone = null): static
+    public function since(string | closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -125,14 +125,14 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
                 ->diffForHumans();
         });
 
         return $this;
     }
 
-    public function dateTooltip(string | Closure | null $format = null, ?string $timezone = null): static
+    public function dateTooltip(string | Closure | null $format = null, string | closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultDateDisplayFormat;
 
@@ -142,14 +142,14 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
                 ->translatedFormat($component->evaluate($format));
         });
 
         return $this;
     }
 
-    public function dateTimeTooltip(string | Closure | null $format = null, ?string $timezone = null): static
+    public function dateTimeTooltip(string | Closure | null $format = null, string | closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultDateTimeDisplayFormat;
 
@@ -158,7 +158,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function timeTooltip(string | Closure | null $format = null, ?string $timezone = null): static
+    public function timeTooltip(string | Closure | null $format = null, string | closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultTimeDisplayFormat;
 
@@ -167,7 +167,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function sinceTooltip(?string $timezone = null): static
+    public function sinceTooltip(string | closure | null $timezone = null): static
     {
         $this->tooltip(static function (TextEntry $component, mixed $state) use ($timezone): ?string {
             if (blank($state)) {
@@ -175,14 +175,14 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
                 ->diffForHumans();
         });
 
         return $this;
     }
 
-    public function isoDateTooltip(?string $format = null, ?string $timezone = null): static
+    public function isoDateTooltip(string | closure | null $format, string | closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultIsoDateDisplayFormat;
 
@@ -192,14 +192,14 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
-                ->isoFormat($format);
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
+                ->isoFormat($component->evaluate($format));
         });
 
         return $this;
     }
 
-    public function isoDateTimeTooltip(?string $format = null, ?string $timezone = null): static
+    public function isoDateTimeTooltip(string | closure | null $format, string | closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultIsoDateTimeDisplayFormat;
 
@@ -208,7 +208,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoTimeTooltip(?string $format = null, ?string $timezone = null): static
+    public function isoTimeTooltip(string | closure | null $format, string | closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultIsoTimeDisplayFormat;
 
@@ -217,7 +217,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
+    public function money(string | Closure | null $currency = null, int | Closure $divideBy = 0, string | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
     {
         $this->isMoney = true;
 
@@ -234,7 +234,7 @@ trait CanFormatState
             $locale = $component->evaluate($locale) ?? Schema::$defaultNumberLocale ?? config('app.locale');
             $decimalPlaces = $component->evaluate($decimalPlaces);
 
-            if ($divideBy) {
+            if ($divideBy = $component->evaluate($divideBy)) {
                 $state /= $divideBy;
             }
 
@@ -281,7 +281,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function time(string | Closure | null $format = null, ?string $timezone = null): static
+    public function time(string | Closure | null $format = null, string | closure | null $timezone = null): static
     {
         $this->isTime = true;
 
@@ -292,13 +292,13 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoTime(?string $format = null): static
+    public function isoTime(string | Closure | null $format = null, string | closure | null $timezone = null): static
     {
         $this->isTime = true;
 
         $format ??= Schema::$defaultIsoTimeDisplayFormat;
 
-        $this->isoDate($format);
+        $this->isoDate($format, $timezone);
 
         return $this;
     }
