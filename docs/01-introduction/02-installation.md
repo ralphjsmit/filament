@@ -259,7 +259,7 @@ Add the following code to your new layout file:
 </html>
 ```
 
-<Aside variant="warning">
+<Aside variant="info">
     The `@livewire('notifications')` line is required in the layout only if you have the [Notifications](../notifications) package installed and want to send flash notifications to users through Filament.
 </Aside>
 
