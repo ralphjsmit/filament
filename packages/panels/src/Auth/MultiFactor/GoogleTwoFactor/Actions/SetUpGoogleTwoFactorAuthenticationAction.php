@@ -60,7 +60,7 @@ class SetUpGoogleTwoFactorAuthenticationAction
                         Text::make(__('filament-panels::auth/multi-factor/google-two-factor/actions/set-up.modal.content.qr_code.instruction'))
                             ->color('neutral'),
                         Image::make(
-                            url: fn (): string => $googleTwoFactorAuthentication->generateQRCodeDataUri(decrypt($action->getArguments()['encrypted'])['secret']),
+                            url: fn (): string => $googleTwoFactorAuthentication->generateQrCodeDataUri(decrypt($action->getArguments()['encrypted'])['secret']),
                             alt: __('filament-panels::auth/multi-factor/google-two-factor/actions/set-up.modal.content.qr_code.alt'),
                         )
                             ->imageHeight('12rem')

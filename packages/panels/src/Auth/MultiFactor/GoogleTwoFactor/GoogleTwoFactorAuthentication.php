@@ -119,7 +119,7 @@ class GoogleTwoFactorAuthentication implements MultiFactorAuthenticationProvider
         return $this->google2FA->getCurrentOtp($secret ?? $this->getSecret($user));
     }
 
-    public function generateQRCodeDataUri(string $secret): string
+    public function generateQrCodeDataUri(string $secret): string
     {
         /** @var HasGoogleTwoFactorAuthentication $user */
         $user = Filament::auth()->user();
