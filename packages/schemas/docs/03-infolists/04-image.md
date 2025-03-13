@@ -73,7 +73,7 @@ You may display the image using a 1:1 aspect ratio:
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('author.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->square()
 ```
 
@@ -85,7 +85,7 @@ Optionally, you may pass a boolean value to control if the image should be squar
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('author.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->square(FeatureFlag::active())
 ```
 
@@ -99,7 +99,7 @@ You may make the image fully rounded, which is useful for rendering avatars:
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('author.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular()
 ```
 
@@ -111,7 +111,7 @@ Optionally, you may pass a boolean value to control if the image should be circu
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('author.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular(FeatureFlag::active())
 ```
 
@@ -138,7 +138,7 @@ You may display multiple images as a stack of overlapping images by using `stack
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('colleagues.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular()
     ->stacked()
 ```
@@ -151,7 +151,7 @@ Optionally, you may pass a boolean value to control if the images should be stac
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('colleagues.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular()
     ->stacked(FeatureFlag::active())
 ```
@@ -166,7 +166,7 @@ The default ring width is `3`, but you may customize it to be from `0` to `8`:
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('colleagues.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular()
     ->stacked()
     ->ring(5)
@@ -182,7 +182,7 @@ The default overlap is `4`, but you may customize it to be from `0` to `8`:
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('colleagues.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular()
     ->stacked()
     ->overlap(2)
@@ -198,7 +198,7 @@ You may limit the maximum number of images you want to display by passing `limit
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('colleagues.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular()
     ->stacked()
     ->limit(3)
@@ -216,7 +216,7 @@ When you set a limit you may also display the count of remaining images by passi
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('colleagues.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular()
     ->stacked()
     ->limit(3)
@@ -231,7 +231,7 @@ Optionally, you may pass a boolean value to control if the remaining text should
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('colleagues.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular()
     ->stacked()
     ->limit(3)
@@ -249,7 +249,7 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Support\Enums\TextSize;
 
 ImageEntry::make('colleagues.avatar')
-    ->height(40)
+    ->imageHeight(40)
     ->circular()
     ->stacked()
     ->limit(3)
