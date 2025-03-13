@@ -1,7 +1,9 @@
 ---
 title: Wizard
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -9,17 +11,18 @@ Similar to [tabs](tabs), you may want to use a multistep wizard to reduce the nu
 
 ```php
 use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 
 Wizard::make([
-    Wizard\Step::make('Order')
+    Step::make('Order')
         ->schema([
             // ...
         ]),
-    Wizard\Step::make('Delivery')
+    Step::make('Delivery')
         ->schema([
             // ...
         ]),
-    Wizard\Step::make('Billing')
+    Step::make('Billing')
         ->schema([
             // ...
         ]),
@@ -28,7 +31,9 @@ Wizard::make([
 
 <AutoScreenshot name="schemas/layout/wizard/simple" alt="Wizard" version="4.x" />
 
-> We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../../panels/resources/creating-records#using-a-wizard) or an [action modal](../../actions/modals#using-a-wizard-as-a-modal-form). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
+<Aside variant="tip">
+    We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../../resources/creating-records#using-a-wizard) or an [action modal](../../actions/modals#using-a-wizard-as-a-modal-form). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
+</Aside>
 
 ## Rendering a submit button on the last step
 
@@ -73,14 +78,17 @@ You could use this component in a separate Blade view if you want.
 Steps may also have an [icon](../../styling/icons), set using the `icon()` method:
 
 ```php
-use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Support\Icons\Heroicon;
 
-Wizard\Step::make('Order')
-    ->icon('heroicon-m-shopping-bag')
+Step::make('Order')
+    ->icon(Heroicon::ShoppingBag)
     ->schema([
         // ...
     ]),
 ```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/wizard/icons" alt="Wizard with step icons" version="4.x" />
 
@@ -89,14 +97,17 @@ Wizard\Step::make('Order')
 You may customize the [icon](#setting-up-step-icons) of a completed step using the `completedIcon()` method:
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Support\Icons\Heroicon;
 
-Wizard\Step::make('Order')
-    ->completedIcon('heroicon-m-hand-thumb-up')
+Step::make('Order')
+    ->completedIcon(Heroicon::HandThumbUp)
     ->schema([
         // ...
     ]),
 ```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `completedIcon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/wizard/completed-icons" alt="Wizard with completed step icons" version="4.x" />
 
@@ -105,14 +116,16 @@ Wizard\Step::make('Order')
 You may add a short description after the title of each step using the `description()` method:
 
 ```php
-use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 
-Wizard\Step::make('Order')
+Step::make('Order')
     ->description('Review your basket')
     ->schema([
         // ...
     ]),
 ```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `description()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/wizard/descriptions" alt="Wizard with step descriptions" version="4.x" />
 
@@ -128,6 +141,8 @@ Wizard::make([
 ])->startOnStep(2)
 ```
 
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `startOnStep()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Allowing steps to be skipped
 
 If you'd like to allow free navigation, so all steps are skippable, use the `skippable()` method:
@@ -139,6 +154,20 @@ Wizard::make([
     // ...
 ])->skippable()
 ```
+
+Optionally, the `skippable()` method accepts a boolean value to control if the step is skippable or not:
+
+```php
+use Filament\Schemas\Components\Wizard\Step;
+
+Step::make('Order')
+    ->skippable(FeatureFlag::active())
+    ->schema([
+        // ...
+    ]),
+```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `skippable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Persisting the current step in the URL's query string
 
@@ -162,14 +191,16 @@ Wizard::make([
 ])->persistStepInQueryString('wizard-step')
 ```
 
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `persistStepInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Step lifecycle hooks
 
 You may use the `afterValidation()` and `beforeValidation()` methods to run code before and after validation occurs on the step:
 
 ```php
-use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 
-Wizard\Step::make('Order')
+Step::make('Order')
     ->afterValidation(function () {
         // ...
     })
@@ -181,15 +212,17 @@ Wizard\Step::make('Order')
     ]),
 ```
 
+<UtilityInjection set="layoutComponents" version="4.x">You can inject various utilities into the `afterValidation()` and `beforeValidation()` functions as parameters.</UtilityInjection>
+
 ### Preventing the next step from being loaded
 
 Inside `afterValidation()` or `beforeValidation()`, you may throw `Filament\Support\Exceptions\Halt`, which will prevent the wizard from loading the next step:
 
 ```php
-use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Exceptions\Halt;
 
-Wizard\Step::make('Order')
+Step::make('Order')
     ->afterValidation(function () {
         // ...
 
@@ -208,9 +241,10 @@ You may use the `columns()` method to customize the [grid](grid) within the step
 
 ```php
 use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 
 Wizard::make([
-    Wizard\Step::make('Order')
+    Step::make('Order')
         ->columns(2)
         ->schema([
             // ...
@@ -218,6 +252,8 @@ Wizard::make([
     // ...
 ])
 ```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the wizard action objects
 
@@ -239,3 +275,5 @@ Wizard::make([
         fn (Action $action) => $action->label('Next step'),
     )
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>

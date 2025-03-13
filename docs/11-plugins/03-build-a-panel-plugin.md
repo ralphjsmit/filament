@@ -1,6 +1,7 @@
 ---
 title: Build a panel plugin
 ---
+
 ## Preface
 
 Please read the docs on [panel plugin development](../panels/plugins) and the [getting started guide](getting-started) before continuing.

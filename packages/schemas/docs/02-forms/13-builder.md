@@ -406,7 +406,7 @@ Builder::make('content')
 
 <AutoScreenshot name="forms/fields/builder/collapsed" alt="Collapsed builder" version="4.x" />
 
-Optionally, the `collaptible()` and `collapsed()` methods accept a boolean value to control if the builder should be collapsible and collapsed or not:
+Optionally, the `collapsible()` and `collapsed()` methods accept a boolean value to control if the builder should be collapsible and collapsed or not:
 
 ```php
 use Filament\Forms\Components\Builder;

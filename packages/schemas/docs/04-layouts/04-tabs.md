@@ -2,6 +2,7 @@
 title: Tabs
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -9,23 +10,26 @@ Some schemas can be long and complex. You may want to use tabs to reduce the num
 
 ```php
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 1')
+        Tab::make('Tab 1')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 2')
+        Tab::make('Tab 2')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 3')
+        Tab::make('Tab 3')
             ->schema([
                 // ...
             ]),
     ])
 ```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/tabs/simple" alt="Tabs" version="4.x" />
 
@@ -35,18 +39,19 @@ The first tab will be open by default. You can change the default open tab using
 
 ```php
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 1')
+        Tab::make('Tab 1')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 2')
+        Tab::make('Tab 2')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 3')
+        Tab::make('Tab 3')
             ->schema([
                 // ...
             ]),
@@ -54,23 +59,29 @@ Tabs::make('Tabs')
     ->activeTab(2)
 ```
 
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `activeTab()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Setting a tab icon
 
 Tabs may have an [icon](../../styling/icons), which you can set using the `icon()` method:
 
 ```php
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Support\Icons\Heroicon;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Notifications')
-            ->icon('heroicon-m-bell')
+        Tab::make('Notifications')
+            ->icon(Heroicon::Bell)
             ->schema([
                 // ...
             ]),
         // ...
     ])
 ```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/tabs/icons" alt="Tabs with icons" version="4.x" />
 
@@ -80,12 +91,14 @@ The icon of the tab may be positioned before or after the label using the `iconP
 
 ```php
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Icons\Heroicon;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Notifications')
-            ->icon('heroicon-m-bell')
+        Tab::make('Notifications')
+            ->icon(Heroicon::Bell)
             ->iconPosition(IconPosition::After)
             ->schema([
                 // ...
@@ -93,6 +106,8 @@ Tabs::make('Tabs')
         // ...
     ])
 ```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `iconPosition()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/tabs/icons-after" alt="Tabs with icons after their labels" version="4.x" />
 
@@ -102,10 +117,11 @@ Tabs may have a badge, which you can set using the `badge()` method:
 
 ```php
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Notifications')
+        Tab::make('Notifications')
             ->badge(5)
             ->schema([
                 // ...
@@ -114,16 +130,19 @@ Tabs::make('Tabs')
     ])
 ```
 
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="schemas/layout/tabs/badges" alt="Tabs with badges" version="4.x" />
 
-If you'd like to change the color for a badge, you can use the `badgeColor()` method:
+If you'd like to change the [color](../../styling/colors) for a badge, you can use the `badgeColor()` method:
 
 ```php
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Notifications')
+        Tab::make('Notifications')
             ->badge(5)
             ->badgeColor('success')
             ->schema([
@@ -133,16 +152,19 @@ Tabs::make('Tabs')
     ])
 ```
 
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Using grid columns within a tab
 
 You may use the `columns()` method to customize the [grid](grid) within the tab:
 
 ```php
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 1')
+        Tab::make('Tab 1')
             ->schema([
                 // ...
             ])
@@ -151,30 +173,35 @@ Tabs::make('Tabs')
     ])
 ```
 
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Removing the styled container
 
 By default, tabs and their content are wrapped in a container styled as a card. You may remove the styled container using `contained()`:
 
 ```php
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 1')
+        Tab::make('Tab 1')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 2')
+        Tab::make('Tab 2')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 3')
+        Tab::make('Tab 3')
             ->schema([
                 // ...
             ]),
     ])
     ->contained(false)
 ```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Persisting the current tab
 
@@ -191,24 +218,40 @@ Tabs::make('Tabs')
     ->id('order-tabs')
 ```
 
-### Persisting the current tab in the URL's query string
-
-By default, the current tab is not persisted in the URL's query string. You can change this behavior using the `persistTabInQueryString()` method:
+Optionally, the `persistTab()` method accepts a boolean value to control if the active tab should persist or not:
 
 ```php
 use Filament\Schemas\Components\Tabs;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 1')
+        // ...
+    ])
+    ->persistTab(FeatureFlag::active())
+    ->id('order-tabs')
+```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing static values, the `persistTab()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Persisting the current tab in the URL's query string
+
+By default, the current tab is not persisted in the URL's query string. You can change this behavior using the `persistTabInQueryString()` method:
+
+```php
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+
+Tabs::make('Tabs')
+    ->tabs([
+        Tab::make('Tab 1')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 2')
+        Tab::make('Tab 2')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 3')
+        Tab::make('Tab 3')
             ->schema([
                 // ...
             ]),
@@ -220,18 +263,19 @@ By default, the current tab is persisted in the URL's query string using the `ta
 
 ```php
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 
 Tabs::make('Tabs')
     ->tabs([
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 1')
+        Tab::make('Tab 1')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 2')
+        Tab::make('Tab 2')
             ->schema([
                 // ...
             ]),
-        \Filament\Schemas\Components\Tabs\Tab::make('Tab 3')
+        Tab::make('Tab 3')
             ->schema([
                 // ...
             ]),
@@ -239,3 +283,4 @@ Tabs::make('Tabs')
     ->persistTabInQueryString('settings-tab')
 ```
 
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `persistTabInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

@@ -1,6 +1,7 @@
 ---
 title: Custom columns
 ---
+
 ## View columns
 
 You may render a custom view for a cell using the `view()` method:

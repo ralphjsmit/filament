@@ -1,6 +1,7 @@
 ---
 title: Custom fields
 ---
+
 ## View fields
 
 Aside from [building custom fields](#custom-field-classes), you may create "view" fields which allow you to create custom fields without extra PHP classes.

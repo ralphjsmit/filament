@@ -1,6 +1,7 @@
 ---
 title: Getting started
 ---
+
 ## Overview
 
 While Filament comes with virtually any tool you'll need to build great apps, sometimes you'll need to add your own functionality either for just your app or as redistributable packages that other developers can include in their own apps. This is why Filament offers a plugin system that allows you to extend its functionality.

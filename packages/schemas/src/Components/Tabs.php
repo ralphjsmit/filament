@@ -7,6 +7,7 @@ use Filament\Schemas\Components\Concerns\CanPersistTab;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Support\Concerns;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
 class Tabs extends Component
@@ -36,12 +37,12 @@ class Tabs extends Component
 
     protected string | Closure | null $livewireProperty = null;
 
-    final public function __construct(?string $label = null)
+    final public function __construct(string | Htmlable | Closure | null $label = null)
     {
         $this->label($label);
     }
 
-    public static function make(?string $label = null): static
+    public static function make(string | Htmlable | Closure | null $label = null): static
     {
         $static = app(static::class, ['label' => $label]);
         $static->configure();

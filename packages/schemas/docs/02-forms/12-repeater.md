@@ -230,7 +230,7 @@ Repeater::make('qualifications')
 
 <AutoScreenshot name="forms/fields/repeater/collapsed" alt="Collapsed repeater" version="4.x" />
 
-Optionally, the `collaptible()` and `collapsed()` methods accept a boolean value to control if the repeater should be collapsible and collapsed or not:
+Optionally, the `collapsible()` and `collapsed()` methods accept a boolean value to control if the repeater should be collapsible and collapsed or not:
 
 ```php
 use Filament\Forms\Components\Repeater;

@@ -1,6 +1,7 @@
 ---
 title: Custom entries
 ---
+
 ## View entries
 
 You may render a custom view for an entry using the `view()` method:

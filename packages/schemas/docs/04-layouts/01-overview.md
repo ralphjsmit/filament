@@ -2,6 +2,7 @@
 title: Overview
 ---
 import UtilityInjection from "@components/UtilityInjection.astro"
+
 ## Overview
 
 Filament schemas are not limited to just displaying [form fields](../forms) and [infolist entries](../infolists). You can also use "layout components" to organize them into an infinitely nestable structure.
@@ -24,10 +25,10 @@ Grid::make(2)
 Filament ships with some layout components, suitable for arranging your components depending on your needs:
 
 - [Grid](grid)
-- [Fieldset](fieldset)
+- [Section](section)
 - [Tabs](tabs)
 - [Wizard](wizard)
-- [Section](section)
+- [Fieldset](fieldset)
 - [Split](split)
 
 You may also [create your own custom layout components](custom) to organize schemas however you wish.

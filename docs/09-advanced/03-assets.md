@@ -1,6 +1,7 @@
 ---
 title: Registering assets
 ---
+
 ## Overview
 
 All packages in the Filament ecosystem share an asset management system. This allows both official plugins and third-party plugins to register CSS and JavaScript files that can then be consumed by Blade views.
