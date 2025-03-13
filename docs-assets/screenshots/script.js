@@ -119,7 +119,7 @@ function configure(php = null) {
 
 use Filament\\Panel;
 
-return function (Panel $panel) {
+return function (Panel $panel): void {
     ${php ?? '//'}
 };
 `,
