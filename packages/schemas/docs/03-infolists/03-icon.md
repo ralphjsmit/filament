@@ -2,29 +2,40 @@
 title: Icon entry
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
-Icon entries render an [icon](../../styling/icons) representing their contents:
+Icon entries render an [icon](../../styling/icons) representing the state of the entry:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
+use Filament\Support\Icons\Heroicon;
 
 IconEntry::make('status')
     ->icon(fn (string $state): string => match ($state) {
-        'draft' => 'heroicon-o-pencil',
-        'reviewing' => 'heroicon-o-clock',
-        'published' => 'heroicon-o-check-circle',
+        'draft' => Heroicon::OutlinedPencil,
+        'reviewing' => Heroicon::OutlinedClock,
+        'published' => Heroicon::OutlinedCheckCircle,
     })
 ```
 
-In the function, `$state` is the value of the entry, and `$record` can be used to access the underlying Eloquent record.
+<UtilityInjection set="infolistEntries" version="4.x">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/icon/simple" alt="Icon entry" version="4.x" />
 
 ## Customizing the color
 
-Icon entries may also have a set of icon [colors](../../styling/colors), using the same syntax:
+You may change the [color](../../styling/colors) of the icon, using the `color()` method:
+
+```php
+use Filament\Infolists\Components\IconEntry;
+
+IconEntry::make('status')
+    ->color('success')
+```
+
+By passing a function to `color()`, you can customize the color based on the state of the entry:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
@@ -38,26 +49,29 @@ IconEntry::make('status')
     })
 ```
 
-In the function, `$state` is the value of the entry, and `$record` can be used to access the underlying Eloquent record.
+<UtilityInjection set="infolistEntries" version="4.x">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/icon/color" alt="Icon entry with color" version="4.x" />
 
 ## Customizing the size
 
-The default icon size is `IconEntrySize::Large`, but you may customize the size to be either `IconEntrySize::ExtraSmall`, `IconEntrySize::Small`, `IconEntrySize::Medium`, `IconEntrySize::ExtraLarge` or `IconEntrySize::TwoExtraLarge`:
+The default icon size is `IconSize::Large`, but you may customize the size to be either `IconSize::ExtraSmall`, `IconSize::Small`, `IconSize::Medium`, `IconSize::ExtraLarge` or `IconSize::TwoExtraLarge`:
 
 ```php
+use Filament\Infolists\Components\IconEntry;
 use Filament\Support\Enums\IconSize;
 
 IconEntry::make('status')
     ->size(IconSize::Medium)
 ```
 
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" version="4.x" />
 
 ## Handling booleans
 
-Icon entries can display a check or cross icon based on the contents of the database entry, either true or false, using the `boolean()` method:
+Icon entries can display a check or "X" icon based on the state of the entry, either true or false, using the `boolean()` method:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
@@ -70,18 +84,32 @@ IconEntry::make('is_featured')
 
 <AutoScreenshot name="infolists/entries/icon/boolean" alt="Icon entry to display a boolean" version="4.x" />
 
-### Customizing the boolean icons
-
-You may customize the icon representing each state. Icons are the name of a Blade component present. By default, [Heroicons](https://heroicons.com) are installed:
+Optionally, you may pass a boolean value to control if the icon should be boolean or not:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
 
 IconEntry::make('is_featured')
-    ->boolean()
-    ->trueIcon('heroicon-o-check-badge')
-    ->falseIcon('heroicon-o-x-mark')
+    ->boolean(FeatureFlag::active())
 ```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Customizing the boolean icons
+
+You may customize the [icon](../../styling/icons) representing each state:
+
+```php
+use Filament\Infolists\Components\IconEntry;
+use Filament\Support\Icons\Heroicon;
+
+IconEntry::make('is_featured')
+    ->boolean()
+    ->trueIcon(Heroicon::OutlinedCheckBadge)
+    ->falseIcon(Heroicon::OutlinedXMark)
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/icon/boolean-icon" alt="Icon entry to display a boolean with custom icons" version="4.x" />
 
@@ -97,5 +125,7 @@ IconEntry::make('is_featured')
     ->trueColor('info')
     ->falseColor('warning')
 ```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/icon/boolean-color" alt="Icon entry to display a boolean with custom colors" version="4.x" />

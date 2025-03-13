@@ -243,9 +243,10 @@ You may place an [icon](../../styling/icons) before and after the input using th
 
 ```php
 use Filament\Forms\Components\TimePicker;
+use Filament\Support\Icons\Heroicon;
 
 TimePicker::make('at')
-    ->prefixIcon('heroicon-m-play')
+    ->prefixIcon(Heroicon::Play)
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -258,9 +259,10 @@ Affix icons are gray by default, but you may set a different color using the `pr
 
 ```php
 use Filament\Forms\Components\TimePicker;
+use Filament\Support\Icons\Heroicon;
 
 TimePicker::make('at')
-    ->prefixIcon('heroicon-m-check-circle')
+    ->prefixIcon(Heroicon::CheckCircle)
     ->prefixIconColor('success')
 ```
 

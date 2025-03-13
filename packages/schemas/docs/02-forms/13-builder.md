@@ -142,9 +142,10 @@ Blocks may also have an [icon](../../styling/icons), which is displayed next to 
 
 ```php
 use Filament\Forms\Components\Builder\Block;
+use Filament\Support\Icons\Heroicon;
 
 Block::make('paragraph')
-    ->icon('heroicon-m-bars-3-bottom-left')
+    ->icon(Heroicon::Bars3BottomLeft)
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -608,6 +609,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Mail;
 
 Builder::make('content')
@@ -624,7 +626,7 @@ Builder::make('content')
     ])
     ->extraItemActions([
         Action::make('sendEmail')
-            ->icon('heroicon-m-square-2-stack')
+            ->icon(Heroicon::Square2Stack)
             ->action(function (array $arguments, Builder $component): void {
                 $itemData = $component->getItemState($arguments['item']);
                 

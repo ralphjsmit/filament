@@ -69,7 +69,8 @@ TextEntry::make('status')
 Text entries may also have an [icon](../../styling/icons):
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Support\Icons\Heroicon;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Icons\Heroicon;
 
 TextEntry::make('email')
     ->icon(Heroicon::Envelope)
@@ -84,9 +85,10 @@ You may set the position of an icon using `iconPosition()`:
 ```php
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Icons\Heroicon;
 
 TextEntry::make('email')
-    ->icon('heroicon-m-envelope')
+    ->icon(Heroicon::Envelope)
     ->iconPosition(IconPosition::After) // `IconPosition::Before` or `IconPosition::After`
 ```
 
@@ -98,9 +100,10 @@ The icon color defaults to the text color, but you may customize the icon [color
 
 ```php
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Icons\Heroicon;
 
 TextEntry::make('email')
-    ->icon('heroicon-m-envelope')
+    ->icon(Heroicon::Envelope)
     ->iconColor('primary')
 ```
 

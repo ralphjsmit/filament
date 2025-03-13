@@ -51,10 +51,11 @@ If you are using an enum for the options, you can use the [`HasColor` interface]
 
 ## Adding icons to option buttons
 
-You can add [icon](../../styling/icons) to the option buttons using the `icons()` method. Each key in the array should correspond to an option value, and the value may be any valid [Blade icon](https://blade-ui-kit.com/blade-icons?set=1#search):
+You can add [icon](../../styling/icons) to the option buttons using the `icons()` method. Each key in the array should correspond to an option value, and the value may be any valid [icon](../../styling/icons):
 
 ```php
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Support\Icons\Heroicon;
 
 ToggleButtons::make('status')
     ->options([
@@ -63,9 +64,9 @@ ToggleButtons::make('status')
         'published' => 'Published'
     ])
     ->icons([
-        'draft' => 'heroicon-o-pencil',
-        'scheduled' => 'heroicon-o-clock',
-        'published' => 'heroicon-o-check-circle',
+        'draft' => Heroicon::OutlinedPencil,
+        'scheduled' => Heroicon::OutlinedClock,
+        'published' => Heroicon::OutlinedCheckCircle,
     ])
 ```
 

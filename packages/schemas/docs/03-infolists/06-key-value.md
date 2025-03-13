@@ -2,6 +2,7 @@
 title: Key-value entry
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
@@ -11,6 +12,16 @@ The key-value entry allows you to render key-value pairs of data, from a one-dim
 use Filament\Infolists\Components\KeyValueEntry;
 
 KeyValueEntry::make('meta')
+```
+
+For example, the state of this entry might be represented as:
+
+```php
+[
+    'description' => 'Filament is a collection of Laravel packages',
+    'og:type' => 'website',
+    'og:site_name' => 'Filament',
+]
 ```
 
 <AutoScreenshot name="infolists/entries/key-value/simple" alt="Key-value entry" version="4.x" />
@@ -41,6 +52,8 @@ KeyValueEntry::make('meta')
     ->keyLabel('Property name')
 ```
 
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `keyLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Customizing the value column's label
 
 You may customize the label for the value column using the `valueLabel()` method:
@@ -51,3 +64,5 @@ use Filament\Infolists\Components\KeyValueEntry;
 KeyValueEntry::make('meta')
     ->valueLabel('Property value')
 ```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `valueLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

@@ -406,29 +406,7 @@ TextEntry::make('title')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `alignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-## Custom attributes
-
-The HTML of entries can be customized, by passing an array of `extraAttributes()`:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('slug')
-    ->extraAttributes(['class' => 'bg-gray-200'])
-```
-
-These get merged onto the outer `<div>` element of each entry in that entry.
-
-You can also pass extra HTML attributes to the entry wrapper which surrounds the label, entry, and any other text:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('slug')
-    ->extraEntryWrapperAttributes(['class' => 'entry-locked'])
-```
-
-### Adding extra HTML attributes to an entry
+## Adding extra HTML attributes to an entry
 
 You can pass extra HTML attributes to the entry via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
 
@@ -443,7 +421,7 @@ TextEntry::make('slug')
 
 By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
-#### Adding extra HTML attributes to the entry wrapper
+### Adding extra HTML attributes to the entry wrapper
 
 You can also pass extra HTML attributes to the very outer element of the "entry wrapper" which surrounds the label and content of the entry. This is useful if you want to style the label or spacing of the entry via CSS, since you could target elements as children of the wrapper:
 

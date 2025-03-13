@@ -325,7 +325,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
         return $this->evaluate($this->limit);
     }
 
-    public function limitedRemainingText(bool | Closure $condition = true, bool | Closure $isSeparate = false, string | Closure | null $size = null): static
+    public function limitedRemainingText(bool | Closure $condition = true, bool | Closure $isSeparate = false, TextSize | string | Closure | null $size = null): static
     {
         $this->hasLimitedRemainingText = $condition;
         $this->limitedRemainingTextSeparate($isSeparate);
@@ -443,7 +443,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
         $isStacked = $this->isStacked();
         $hasLimitedRemainingText = $stateOverLimitCount && $this->hasLimitedRemainingText();
         $limitedRemainingTextSize = $this->getLimitedRemainingTextSize();
-        $height = $this->getImageHeight() ?? ($isStacked ? '2rem' : '2.5rem');
+        $height = $this->getImageHeight() ?? ($isStacked ? '2.5rem' : '8rem');
         $width = $this->getImageWidth() ?? (($isCircular || $isSquare) ? $height : null);
 
         $defaultImageUrl = $this->getDefaultImageUrl();

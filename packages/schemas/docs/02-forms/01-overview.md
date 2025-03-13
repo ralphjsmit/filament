@@ -406,7 +406,7 @@ TextInput::make('name')
 
 <AutoScreenshot name="forms/fields/placeholder" alt="Form field with placeholder" version="4.x" />
 
-### Adding extra HTML attributes to a field
+## Adding extra HTML attributes to a field
 
 You can pass extra HTML attributes to the field via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
 
@@ -421,7 +421,7 @@ TextInput::make('name')
 
 By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
-#### Adding extra HTML attributes to the input element of a field
+### Adding extra HTML attributes to the input element of a field
 
 Some fields use an underlying `<input>` or `<select>` DOM element, but this is often not the outer element in the field, so the `extraAttributes()` method may not work as you wish. In this case, you may use the `extraInputAttributes()` method, which will merge the attributes onto the `<input>` or `<select>` element in the field's HTML:
 
@@ -436,7 +436,7 @@ TextInput::make('categories')
 
 By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
-#### Adding extra HTML attributes to the field wrapper
+### Adding extra HTML attributes to the field wrapper
 
 You can also pass extra HTML attributes to the very outer element of the "field wrapper" which surrounds the label and content of the field. This is useful if you want to style the label or spacing of the field via CSS, since you could target elements as children of the wrapper:
 

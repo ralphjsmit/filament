@@ -761,6 +761,7 @@ You may add new [action buttons](../primes/actions-in-schemas) to the header of 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Mail;
 
 Repeater::make('members')
@@ -772,7 +773,7 @@ Repeater::make('members')
     ])
     ->extraItemActions([
         Action::make('sendEmail')
-            ->icon('heroicon-m-envelope')
+            ->icon(Heroicon::Envelope)
             ->action(function (array $arguments, Repeater $component): void {
                 $itemData = $component->getItemState($arguments['item']);
 

@@ -188,10 +188,11 @@ Here is an example of how you might customize an action:
 ```php
 use Filament\Actions\Action;
 use Filament\Forms\Components\KeyValue;
+use Filament\Support\Icons\Heroicon;
 
 KeyValue::make('meta')
     ->deleteAction(
-        fn (Action $action) => $action->icon('heroicon-m-x-mark'),
+        fn (Action $action) => $action->icon(Heroicon::XMark),
     )
 ```
 

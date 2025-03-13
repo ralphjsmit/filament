@@ -37,10 +37,11 @@ Toggles may also use an [icon](../../styling/icons) to represent the "on" and "o
 
 ```php
 use Filament\Forms\Components\Toggle;
+use Filament\Support\Icons\Heroicon;
 
 Toggle::make('is_admin')
-    ->onIcon('heroicon-m-bolt')
-    ->offIcon('heroicon-m-user')
+    ->onIcon(Heroicon::Bolt)
+    ->offIcon(Heroicon::User)
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `onIcon()` and `offIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
