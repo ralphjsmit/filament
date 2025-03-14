@@ -6,10 +6,13 @@ use Illuminate\Support\Facades\Route;
 
 $prefix = config('filament.utility_route_prefix', 'filament');
 
-Route::get("/{$prefix}/exports/{export}/download", DownloadExport::class)
-    ->name('filament.exports.download')
-    ->middleware('filament.actions');
+Route::middleware('filament.actions')
+    ->name('filament.')
+    ->prefix($prefix)
+    ->group(function () {
+        Route::get("/exports/{export}/download", DownloadExport::class)
+            ->name('exports.download');
 
-Route::get("/{$prefix}/imports/{import}/failed-rows/download", DownloadImportFailureCsv::class)
-    ->name('filament.imports.failed-rows.download')
-    ->middleware('filament.actions');
+        Route::get("/imports/{import}/failed-rows/download", DownloadImportFailureCsv::class)
+            ->name('imports.failed-rows.download');
+    });
