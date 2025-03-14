@@ -7,7 +7,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
-Form field classes can be found in the `Filament\Form\Components` namespace.
+Form field classes can be found in the `Filament\Form\Components` namespace. They reside within the schema array of components.
 
 Fields may be created using the static `make()` method, passing its unique name. Usually, the name of a field corresponds to the name of an attribute on an Eloquent model:
 

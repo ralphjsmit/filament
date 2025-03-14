@@ -1820,6 +1820,15 @@ export default {
             return image.extract({ width: 650, height: 550, left: 0, top: 0 })
         },
     },
+    'primes/overview/example': {
+        url: 'primes',
+        selector: '#example',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/example': {
         url: 'tables?table=example',
         selector: 'body',

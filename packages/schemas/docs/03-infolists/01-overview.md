@@ -7,7 +7,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
-Entry classes can be found in the `Filament\Infolists\Components` namespace.
+Entry classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema array of components.
 
 Entries may be created using the static `make()` method, passing its unique name. Usually, the name of an entry corresponds to the name of an attribute on an Eloquent model. You may use "dot notation" to access attributes within relationships:
 

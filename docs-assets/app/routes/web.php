@@ -19,6 +19,7 @@ use App\Livewire\Panels\Navigation\SidebarFullyCollapsibleOnDesktop;
 use App\Livewire\Panels\Navigation\SortItems;
 use App\Livewire\Panels\Navigation\TopNavigation;
 use App\Livewire\Panels\Navigation\UserMenuCustomization;
+use App\Livewire\PrimesDemo;
 use App\Livewire\Schemas\LayoutDemo;
 use App\Livewire\Schemas\OverviewDemo;
 use App\Livewire\TablesDemo;
@@ -44,6 +45,8 @@ Route::prefix('forms')->group(function (): void {
 Route::prefix('infolists')->group(function (): void {
     Route::get('entries', EntriesDemo::class);
 });
+
+Route::get('primes', PrimesDemo::class);
 
 Route::get('/notifications', NotificationsDemo::class);
 
