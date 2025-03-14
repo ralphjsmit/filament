@@ -9,13 +9,48 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 Within Filament schemas, prime components are the most basic building blocks that can be used to insert arbitrary content into a schema, such as text and images. As the name suggests, prime components are not divisible and cannot be made simpler.
 
-Some examples of what prime components can be used for include:
+<AutoScreenshot name="primes/overview/example" alt="An example of using prime components to set up two-factor authentication." version="4.x" />
 
-- Displaying instructions to the user.
-- Displaying an image like a QR code that the user can scan.
-- Displaying a button that the user can click to perform an action.
+In this example, prime components are being used to display instructions to the user, a QR code that the user can scan, and a button that the user can click to complete two-factor authentication setup.
 
-<AutoScreenshot name="primes/overview/example" alt="An example of using prime components to set up two factor authentication." version="4.x" />
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Image;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\UnorderedList;
+
+$schema
+    ->components([
+        Text::make('Scan this QR code with your authenticator app:')
+            ->color('neutral'),
+        Image::make(
+            url: asset('images/qr.jpg'),
+            alt: 'QR code to scan with an authenticator app',
+        )
+            ->imageHeight('12rem')
+            ->alignCenter(),
+        Section::make()
+            ->schema([
+                Text::make('Please save the following recovery codes in a safe place. They will only be shown once, but you\'ll need them if you lose access to your authenticator app:')
+                    ->weight(FontWeight::Bold)
+                    ->color('neutral'),
+                UnorderedList::make(fn (): array => array_map(
+                    fn (string $recoveryCode): Text => Text::make($recoveryCode)
+                        ->copyable()
+                        ->fontFamily(FontFamily::Mono)
+                        ->size('xs')
+                        ->color('neutral'),
+                    ['tYRnCqNLUx-3QOLNKyDiV', 'cKok2eImKc-oWHHH4VhNe', 'C0ZstEcSSB-nrbyk2pv8z', '49EXLRQ8MI-FpWywpSDHE', 'TXjHnvkUrr-KuiVJENPmJ', 'BB574ookll-uI20yxP6oa', 'BbgScF2egu-VOfHrMtsCl', 'cO0dJYqmee-S9ubJHpRFR'],
+                ))
+                    ->size('xs'),
+            ])
+            ->compact()
+            ->secondary(),
+        Action::make('complete')
+            ->label('Complete authenticator setup'),
+    ])
+```
 
 In these examples, the prime components are not associated with any other components in the schema, they are standalone. 
 
