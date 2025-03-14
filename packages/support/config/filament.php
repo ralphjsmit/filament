@@ -86,4 +86,16 @@ return [
 
     'livewire_loading_delay' => 'default',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Utility Route Prefix
+    |--------------------------------------------------------------------------
+    |
+    | This is the prefix used for the utility routes that Filament registers,
+    | such as the routes for downloading exports and failed import rows.
+    |
+    */
+
+    'utility_route_prefix' => 'filament',
+
 ];
