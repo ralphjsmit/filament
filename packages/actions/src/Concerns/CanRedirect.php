@@ -35,11 +35,15 @@ trait CanRedirect
         return $this;
     }
 
-    public function redirect(string | Closure $url): void
+    public function redirect(string | Closure $url, ?bool $navigate = null): void
     {
         $url = $this->evaluate($url);
 
-        $this->getLivewire()->redirect($url, navigate: FilamentView::hasSpaMode() && is_app_url($url));
+        $useSpaNavigation = FilamentView::hasSpaMode()
+            ? ($navigate ?? is_app_url($url))
+            : false;
+
+        $this->getLivewire()->redirect($url, navigate: $useSpaNavigation);
     }
 
     public function failureRedirectUrl(string | Closure | null $url): static
