@@ -14,6 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
@@ -104,6 +105,17 @@ class PrimesDemo extends Component implements HasSchemas
                         Text::make('Warning')
                             ->color('warning')
                             ->badge(),
+                    ]),
+                Group::make()
+                    ->id('textBadgeIcon')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make('Warning')
+                            ->color('warning')
+                            ->badge()
+                            ->icon(Heroicon::ExclamationTriangle),
                     ]),
             ]);
     }

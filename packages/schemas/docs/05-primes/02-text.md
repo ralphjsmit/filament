@@ -5,6 +5,8 @@ import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
+## Overview
+
 Text can be inserted into a schema using the `Text` component. Text content is passed to the `make()` method:
 
 ```php
@@ -73,8 +75,6 @@ Text::make('Warning')
 
 <AutoScreenshot name="primes/text/badge" alt="Text as badge" version="4.x" />
 
-You may add other things to the badge, like an [icon](../../styling/icons).
-
 Optionally, you may pass a boolean value to control if the text should be in a badge or not:
 
 ```php
@@ -86,3 +86,19 @@ Text::make('Warning')
 ```
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Adding an icon to a badge
+
+You may add other things to the badge, like an [icon](../../styling/icons):
+
+```php
+use Filament\Schemas\Components\Text;
+use Filament\Support\Icons\Heroicon;
+
+Text::make('Warning')
+    ->color('warning')
+    ->badge()
+    ->icon(Heroicon::ExclamationTriangle)
+```
+
+<AutoScreenshot name="primes/text/badge-icon" alt="Text as badge with an icon" version="4.x" />

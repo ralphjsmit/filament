@@ -1865,6 +1865,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'primes/text/badge-icon': {
+        url: 'primes',
+        selector: '#textBadgeIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/example': {
         url: 'tables?table=example',
         selector: 'body',
