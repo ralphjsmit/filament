@@ -82,6 +82,22 @@ class PrimesDemo extends Component implements HasSchemas
                         Action::make('complete')
                             ->label('Complete authenticator setup'),
                     ]),
+                Group::make()
+                    ->id('text')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make('Modifying these permissions may give users access to sensitive information.'),
+                    ]),
+                Group::make()
+                    ->id('textHtml')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make(new HtmlString('<strong>Warning:</strong> Modifying these permissions may give users access to sensitive information.')),
+                    ]),
             ]);
     }
 

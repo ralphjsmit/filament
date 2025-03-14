@@ -1829,6 +1829,24 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'primes/text/simple': {
+        url: 'primes',
+        selector: '#text',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/html': {
+        url: 'primes',
+        selector: '#textHtml',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/example': {
         url: 'tables?table=example',
         selector: 'body',
