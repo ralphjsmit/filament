@@ -27,7 +27,6 @@ Text::make(new HtmlString('<strong>Warning:</strong> Modifying these permissions
 <Aside variant="danger">
     Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 </Aside>
-```
 
 <AutoScreenshot name="primes/text/html" alt="Text with HTML" version="4.x" />
 
