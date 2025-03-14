@@ -3,16 +3,9 @@
 namespace App\Livewire;
 
 use Filament\Actions\Action;
-use Filament\Infolists\Components\ColorEntry;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\KeyValueEntry;
-use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Split;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -20,13 +13,8 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\IconPosition;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
-use Filament\Support\Icons\Heroicon;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Js;
 use Livewire\Component;
 
 class PrimesDemo extends Component implements HasSchemas
@@ -97,6 +85,25 @@ class PrimesDemo extends Component implements HasSchemas
                     ])
                     ->schema([
                         Text::make(new HtmlString('<strong>Warning:</strong> Modifying these permissions may give users access to sensitive information.')),
+                    ]),
+                Group::make()
+                    ->id('textColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make('Information')
+                            ->color('info'),
+                    ]),
+                Group::make()
+                    ->id('textBadge')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make('Warning')
+                            ->color('warning')
+                            ->badge(),
                     ]),
             ]);
     }

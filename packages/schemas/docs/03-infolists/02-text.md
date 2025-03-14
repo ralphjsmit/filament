@@ -17,38 +17,6 @@ TextEntry::make('title')
 
 <AutoScreenshot name="infolists/entries/text/simple" alt="Text entry" version="4.x" />
 
-## Displaying as a "badge"
-
-By default, text is quite plain and has no background color. You can make it appear as a "badge" instead using the `badge()` method. A great use case for this is with statuses, where may want to display a badge with a [color](#customizing-the-color) that matches the status:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('status')
-    ->badge()
-    ->color(fn (string $state): string => match ($state) {
-        'draft' => 'gray',
-        'reviewing' => 'warning',
-        'published' => 'success',
-        'rejected' => 'danger',
-    })
-```
-
-<AutoScreenshot name="infolists/entries/text/badge" alt="Text entry as badge" version="4.x" />
-
-You may add other things to the badge, like an [icon](#adding-an-icon).
-
-Optionally, you may pass a boolean value to control if the text should be in a badge or not:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('status')
-    ->badge(FeatureFlag::active())
-```
-
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
 ## Customizing the color
 
 You may set a [color](../../styling/colors) for the text:
@@ -110,6 +78,38 @@ TextEntry::make('email')
 <UtilityInjection set="infolistEntries" version="4.x">The `iconColor()` method also accepts a function to dynamically calculate the icon color. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/text/icon-color" alt="Text entry with icon in the primary color" version="4.x" />
+
+## Displaying as a "badge"
+
+By default, text is quite plain and has no background color. You can make it appear as a "badge" instead using the `badge()` method. A great use case for this is with statuses, where may want to display a badge with a [color](#customizing-the-color) that matches the status:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('status')
+    ->badge()
+    ->color(fn (string $state): string => match ($state) {
+        'draft' => 'gray',
+        'reviewing' => 'warning',
+        'published' => 'success',
+        'rejected' => 'danger',
+    })
+```
+
+<AutoScreenshot name="infolists/entries/text/badge" alt="Text entry as badge" version="4.x" />
+
+You may add other things to the badge, like an [icon](#adding-an-icon).
+
+Optionally, you may pass a boolean value to control if the text should be in a badge or not:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('status')
+    ->badge(FeatureFlag::active())
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Formatting
 

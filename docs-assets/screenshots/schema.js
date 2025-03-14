@@ -1847,6 +1847,24 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'primes/text/color': {
+        url: 'primes',
+        selector: '#textColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/badge': {
+        url: 'primes',
+        selector: '#textBadge',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/example': {
         url: 'tables?table=example',
         selector: 'body',
