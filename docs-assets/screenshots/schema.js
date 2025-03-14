@@ -1856,6 +1856,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'primes/text/neutral': {
+        url: 'primes',
+        selector: '#textNeutral',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'primes/text/badge': {
         url: 'primes',
         selector: '#textBadge',
@@ -1868,6 +1877,33 @@ export default {
     'primes/text/badge-icon': {
         url: 'primes',
         selector: '#textBadgeIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/large': {
+        url: 'primes',
+        selector: '#textLarge',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/bold': {
+        url: 'primes',
+        selector: '#textBold',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/mono': {
+        url: 'primes',
+        selector: '#textMono',
         viewport: {
             width: 1920,
             height: 640,

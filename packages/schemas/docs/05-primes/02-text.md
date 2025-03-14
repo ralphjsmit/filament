@@ -57,9 +57,24 @@ Text::make('Information')
     ->color('info')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="primeComponents" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/text/color" alt="Text in the info color" version="4.x" />
+
+### Using a neutral color
+
+By default, the text color is set to `gray`, which is typically fairly dim against its background. You can darken it using the `color('neutral')` method:
+
+```php
+use Filament\Schemas\Components\Text;
+
+Text::make('Modifying these permissions may give users access to sensitive information.')
+
+Text::make('Modifying these permissions may give users access to sensitive information.')
+    ->color('neutral')
+```
+
+<AutoScreenshot name="primes/text/neutral" alt="Text in the neutral color" version="4.x" />
 
 ## Displaying as a "badge"
 
@@ -85,9 +100,9 @@ Text::make('Warning')
     ->badge(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="primeComponents" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-### Adding an icon to a badge
+### Adding an icon to the badge
 
 You may add other things to the badge, like an [icon](../../styling/icons):
 
@@ -102,3 +117,55 @@ Text::make('Warning')
 ```
 
 <AutoScreenshot name="primes/text/badge-icon" alt="Text as badge with an icon" version="4.x" />
+
+## Customizing the text size
+
+Text columns have small font size by default, but you may change this to `TextSize::ExtraSmall`, `TextSize::Medium`, or `TextSize::Large`.
+
+For instance, you may make the text larger using `size(TextSize::Large)`:
+
+```php
+use Filament\Schemas\Components\Text;
+use Filament\Support\Enums\TextSize;
+
+Text::make('Modifying these permissions may give users access to sensitive information.')
+    ->size(TextSize::Large)
+```
+
+<AutoScreenshot name="primes/text/large" alt="Text entry in a large font size" version="4.x" />
+
+## Customizing the font weight
+
+Text entries have regular font weight by default, but you may change this to any of the following options: `FontWeight::Thin`, `FontWeight::ExtraLight`, `FontWeight::Light`, `FontWeight::Medium`, `FontWeight::SemiBold`, `FontWeight::Bold`, `FontWeight::ExtraBold` or `FontWeight::Black`.
+
+For instance, you may make the font bold using `weight(FontWeight::Bold)`:
+
+```php
+use Filament\Schemas\Components\Text;
+use Filament\Support\Enums\FontWeight;
+
+Text::make('Modifying these permissions may give users access to sensitive information.')
+    ->weight(FontWeight::Bold)
+```
+
+<UtilityInjection set="primeComponents" version="4.x">As well as allowing a static value, the `weight()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/text/bold" alt="Text entry in a bold font" version="4.x" />
+
+## Customizing the font family
+
+You can change the text font family to any of the following options: `FontFamily::Sans`, `FontFamily::Serif` or `FontFamily::Mono`.
+
+For instance, you may make the font monospaced using `fontFamily(FontFamily::Mono)`:
+
+```php
+use Filament\Support\Enums\FontFamily;
+use Filament\Schemas\Components\Text;
+
+Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
+    ->fontFamily(FontFamily::Mono)
+```
+
+<UtilityInjection set="primeComponents" version="4.x">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/text/mono" alt="Text entry in a monospaced font" version="4.x" />

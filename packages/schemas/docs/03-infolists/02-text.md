@@ -524,7 +524,7 @@ TextEntry::make('tags')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `separator()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-### Customizing the text size
+## Customizing the text size
 
 Text columns have small font size by default, but you may change this to `TextSize::ExtraSmall`, `TextSize::Medium`, or `TextSize::Large`.
 
@@ -540,7 +540,7 @@ TextEntry::make('title')
 
 <AutoScreenshot name="infolists/entries/text/large" alt="Text entry in a large font size" version="4.x" />
 
-### Customizing the font weight
+## Customizing the font weight
 
 Text entries have regular font weight by default, but you may change this to any of the following options: `FontWeight::Thin`, `FontWeight::ExtraLight`, `FontWeight::Light`, `FontWeight::Medium`, `FontWeight::SemiBold`, `FontWeight::Bold`, `FontWeight::ExtraBold` or `FontWeight::Black`.
 

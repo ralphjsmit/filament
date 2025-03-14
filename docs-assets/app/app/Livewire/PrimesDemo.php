@@ -97,6 +97,16 @@ class PrimesDemo extends Component implements HasSchemas
                             ->color('info'),
                     ]),
                 Group::make()
+                    ->id('textNeutral')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make('Modifying these permissions may give users access to sensitive information.'),
+                        Text::make('Modifying these permissions may give users access to sensitive information.')
+                            ->color('neutral'),
+                    ]),
+                Group::make()
                     ->id('textBadge')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -116,6 +126,33 @@ class PrimesDemo extends Component implements HasSchemas
                             ->color('warning')
                             ->badge()
                             ->icon(Heroicon::ExclamationTriangle),
+                    ]),
+                Group::make()
+                    ->id('textLarge')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make('Modifying these permissions may give users access to sensitive information.')
+                            ->size(TextSize::Large),
+                    ]),
+                Group::make()
+                    ->id('textBold')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make('Modifying these permissions may give users access to sensitive information.')
+                            ->weight(FontWeight::Bold),
+                    ]),
+                Group::make()
+                    ->id('textMono')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
+                            ->fontFamily(FontFamily::Mono),
                     ]),
             ]);
     }
