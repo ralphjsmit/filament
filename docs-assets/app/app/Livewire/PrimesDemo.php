@@ -40,7 +40,7 @@ class PrimesDemo extends Component implements HasSchemas
                 Group::make()
                     ->id('example')
                     ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
+                        'class' => 'py-16 px-[18rem] max-w-5xl',
                     ])
                     ->dense()
                     ->schema([
