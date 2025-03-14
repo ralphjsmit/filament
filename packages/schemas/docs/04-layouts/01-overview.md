@@ -54,7 +54,6 @@ By default, calling `extraAttributes()` multiple times will overwrite the previo
 The vast majority of methods used to configure entries accept functions as parameters instead of hardcoded values:
 
 ```php
-use App\Models\User;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 

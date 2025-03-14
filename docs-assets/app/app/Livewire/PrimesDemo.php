@@ -62,7 +62,7 @@ class PrimesDemo extends Component implements HasSchemas
                                         ->copyable()
                                         ->copyMessage('Copied')
                                         ->fontFamily(FontFamily::Mono)
-                                        ->size('xs')
+                                        ->size(TextSize::ExtraSmall)
                                         ->color('neutral'),
                                     [
                                         'tYRnCqNLUx-3QOLNKyDiV',
@@ -75,7 +75,7 @@ class PrimesDemo extends Component implements HasSchemas
                                         'cO0dJYqmee-S9ubJHpRFR',
                                     ],
                                 ))
-                                    ->size('xs'),
+                                    ->size(TextSize::ExtraSmall),
                             ])
                             ->compact()
                             ->secondary(),

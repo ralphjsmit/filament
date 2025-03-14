@@ -17,12 +17,15 @@
     @if (filled($tooltip))
         x-tooltip="{ content: @js($tooltip), theme: $store.theme }"
     @endif
-    @class([
-        'fi-sc-icon',
-        ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
-    ])
-    @style([
-        "height: {$height}" => $height,
-        "width: {$width}" => $width,
-    ])
+    {{
+        $getExtraAttributeBag()
+            ->class([
+                'fi-sc-icon',
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
+            ])
+            ->style([
+                "height: {$height}" => $height,
+                "width: {$width}" => $width,
+            ])
+    }}
 />

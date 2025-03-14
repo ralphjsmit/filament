@@ -19,6 +19,8 @@ use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\TextSize;
 
 $schema
     ->components([
@@ -39,11 +41,11 @@ $schema
                     fn (string $recoveryCode): Text => Text::make($recoveryCode)
                         ->copyable()
                         ->fontFamily(FontFamily::Mono)
-                        ->size('xs')
+                        ->size(TextSize::ExtraSmall)
                         ->color('neutral'),
                     ['tYRnCqNLUx-3QOLNKyDiV', 'cKok2eImKc-oWHHH4VhNe', 'C0ZstEcSSB-nrbyk2pv8z', '49EXLRQ8MI-FpWywpSDHE', 'TXjHnvkUrr-KuiVJENPmJ', 'BB574ookll-uI20yxP6oa', 'BbgScF2egu-VOfHrMtsCl', 'cO0dJYqmee-S9ubJHpRFR'],
                 ))
-                    ->size('xs'),
+                    ->size(TextSize::ExtraSmall),
             ])
             ->compact()
             ->secondary(),
@@ -52,40 +54,31 @@ $schema
     ])
 ```
 
-In these examples, the prime components are not associated with any other components in the schema, they are standalone. 
+Although text can be rendered in a schema using an [infolist text entry](../infolists/text), entries are intended to render a label-value detail about an entity (like an Eloquent model), and not to render arbitrary text. Prime components are more suitable for this purpose. Infolists can be considered more similar to [description lists](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dl) in HTML.
 
 Prime component classes can be found in the `Filament\Schemas\Components` namespace. They reside within the schema array of components.
-
-Components may be created using the static `make()` method. Usually, you will then define the child component `schema()` to display inside:
-
-```php
-use Filament\Schemas\Components\Text;
-
-Text::make()
-```
 
 ## Available prime components
 
 Filament ships with some prime components, suitable for arranging your components depending on your needs:
 
-- [Grid](grid)
-- [Section](section)
-- [Tabs](tabs)
-- [Wizard](wizard)
-- [Fieldset](fieldset)
-- [Split](split)
+- [Text](text)
+- [Icon](icon)
+- [Image](image)
+- [Unordered list](unordered-list)
+- [Action](action)
 
-You may also [create your own custom prime components](custom) to organize schemas however you wish.
+You may also [create your own custom prime components](custom) to add your own arbitrary content to a schema.
 
 ## Adding extra HTML attributes to a prime component
 
 You can pass extra HTML attributes to the component via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
 
 ```php
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
 
-Section::make()
-    ->extraAttributes(['class' => 'custom-section-style'])
+Text::make()
+    ->extraAttributes(['class' => 'custom-text-style'])
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -97,21 +90,18 @@ By default, calling `extraAttributes()` multiple times will overwrite the previo
 The vast majority of methods used to configure entries accept functions as parameters instead of hardcoded values:
 
 ```php
-use App\Models\User;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Image;
+use Filament\Schemas\Components\Text;
 
-Grid::make(fn (): array => [
-    'lg' => auth()->user()->isAdmin() ? 4 : 6,
-])->schema([
-    // ...
-])
+Text::make(fn (): string => auth()->user()->isAdmin()
+    ? 'Admin users modify the settings'
+    : 'Non-admin users view but not change the settings.')
 
-Section::make()
-    ->heading(fn (): string => auth()->user()->isAdmin() ? 'Admin Dashboard' : 'User Dashboard')
-    ->schema([
-        // ...
-    ])
+Image::make(
+    url: fn (): string => auth()->user()->isAdmin() ? asset('images/admin.jpg') : asset('images/non-admin.jpg'),
+    alt: fn (): string => auth()->user()->isAdmin() ? 'Admin user' : 'Non-admin user',
+)
+    ->imageHeight(fn (): string => auth()->user()->isAdmin() ? '12rem' : '8rem')
 ```
 
 This alone unlocks many customization possibilities.
@@ -212,22 +202,22 @@ function (Request $request, Set $set) {
 
 ## Global settings
 
-If you wish to change the default behavior of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all section components have [2 columns](grid) by default, you can do it like so:
+If you wish to change the default behavior of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all images have a height of 12rem by default:
 
 ```php
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Image;
 
-Section::configureUsing(function (Section $section): void {
-    $section
-        ->columns(2);
+Image::configureUsing(function (Image $image): void {
+    $image
+        ->imageHeight('12rem');
 });
 ```
 
 Of course, you are still able to overwrite this on each component individually:
 
 ```php
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Image;
 
-Section::make()
-    ->columns(1)
+Image::make()
+    ->imageHeight('8rem')
 ```

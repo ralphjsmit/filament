@@ -36,6 +36,7 @@
             ' : null
         "
         :tag="$isCopyable ? 'button' : 'span'"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         {{ $content }}
     </x-filament::badge>
@@ -60,6 +61,7 @@
                     ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : $weight,
                     ($fontFamily instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : $fontFamily,
                 ])
+                ->merge($getExtraAttributes(), escape: false)
         }}
     >
         {{ $content }}

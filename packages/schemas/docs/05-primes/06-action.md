@@ -1,5 +1,5 @@
 ---
-title: Actions
+title: Action
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 

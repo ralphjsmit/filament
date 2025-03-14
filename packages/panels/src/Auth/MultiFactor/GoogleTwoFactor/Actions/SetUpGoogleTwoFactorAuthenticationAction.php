@@ -20,6 +20,7 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -86,11 +87,11 @@ class SetUpGoogleTwoFactorAuthenticationAction
                                         ->copyable()
                                         ->copyMessage(__('filament-panels::auth/multi-factor/recovery-codes-modal-content.messages.copied'))
                                         ->fontFamily(FontFamily::Mono)
-                                        ->size('xs')
+                                        ->size(TextSize::ExtraSmall)
                                         ->color('neutral'),
                                     decrypt($action->getArguments()['encrypted'] ?? encrypt([]))['recoveryCodes'] ?? [],
                                 ))
-                                    ->size('xs'),
+                                    ->size(TextSize::ExtraSmall),
                                 Text::make(function () use ($action): Htmlable {
                                     $recoveryCodes = decrypt($action->getArguments()['encrypted'])['recoveryCodes'];
 
