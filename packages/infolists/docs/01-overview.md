@@ -7,7 +7,16 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
-Entry classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema array of components.
+Entry classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema array of components. Filament includes a number of entries built-in:
+
+- [Text entry](text)
+- [Icon entry](icon)
+- [Image entry](image)
+- [Color entry](color)
+- [Key-value entry](key-value)
+- [Repeatable entry](repeatable)
+
+You may also [create your own custom entries](custom-entries) to display data however you wish.
 
 Entries may be created using the static `make()` method, passing its unique name. Usually, the name of an entry corresponds to the name of an attribute on an Eloquent model. You may use "dot notation" to access attributes within relationships:
 
@@ -20,17 +29,6 @@ TextEntry::make('author.name')
 ```
 
 <AutoScreenshot name="infolists/entries/simple" alt="Entries in an infolist" version="4.x" />
-
-## Available entries
-
-- [Text entry](text)
-- [Icon entry](icon)
-- [Image entry](image)
-- [Color entry](color)
-- [Key-value entry](key-value)
-- [Repeatable entry](repeatable)
-
-You may also [create your own custom entries](custom) to display data however you wish.
 
 ## Entry content (state)
 

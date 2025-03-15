@@ -68,8 +68,6 @@ class PrimesDemo extends Component implements HasSchemas
                             ])
                             ->compact()
                             ->secondary(),
-                        Action::make('complete')
-                            ->label('Complete authenticator setup'),
                     ]),
                 Group::make()
                     ->id('text')

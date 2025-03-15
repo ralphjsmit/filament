@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: Prime components
 ---
 import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
@@ -7,11 +7,18 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
-Within Filament schemas, prime components are the most basic building blocks that can be used to insert arbitrary content into a schema, such as text and images. As the name suggests, prime components are not divisible and cannot be made simpler.
+Within Filament schemas, prime components are the most basic building blocks that can be used to insert arbitrary content into a schema, such as text and images. As the name suggests, prime components are not divisible and cannot be made simpler. Filament provides a set of built-in prime components:
+
+- [Text](#text-component)
+- [Icon](#icon-component)
+- [Image](#image-component)
+- [Unordered list](#unordered-list-component)
+
+You may also [create your own custom components](custom-components) to add your own arbitrary content to a schema.
 
 <AutoScreenshot name="primes/overview/example" alt="An example of using prime components to set up two-factor authentication." version="4.x" />
 
-In this example, prime components are being used to display instructions to the user, a QR code that the user can scan, and a button that the user can click to complete two-factor authentication setup.
+In this example, prime components are being used to display instructions to the user, a QR code that the user can scan, and list of recovery codes that the user can save:
 
 ```php
 use Filament\Actions\Action;
@@ -49,8 +56,6 @@ $schema
             ])
             ->compact()
             ->secondary(),
-        Action::make('complete')
-            ->label('Complete authenticator setup'),
     ])
 ```
 
@@ -58,19 +63,7 @@ Although text can be rendered in a schema using an [infolist text entry](../info
 
 Prime component classes can be found in the `Filament\Schemas\Components` namespace. They reside within the schema array of components.
 
-## Available prime components
-
-Filament ships with some prime components, suitable for arranging your components depending on your needs:
-
-- [Text](text)
-- [Icon](icon)
-- [Image](image)
-- [Unordered list](unordered-list)
-- [Action](action)
-
-You may also [create your own custom prime components](custom) to add your own arbitrary content to a schema.
-
-## Text
+## Text component
 
 Text can be inserted into a schema using the `Text` component. Text content is passed to the `make()` method:
 
@@ -109,7 +102,7 @@ Text::make(
 )
 ```
 
-<UtilityInjection set="primeComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the text color
 
@@ -122,7 +115,7 @@ Text::make('Information')
     ->color('info')
 ```
 
-<UtilityInjection set="primeComponents" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/text/color" alt="Text in the info color" version="4.x" />
 
@@ -165,7 +158,7 @@ Text::make('Warning')
     ->badge(FeatureFlag::active())
 ```
 
-<UtilityInjection set="primeComponents" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Adding an icon to the badge
 
@@ -213,7 +206,7 @@ Text::make('Modifying these permissions may give users access to sensitive infor
     ->weight(FontWeight::Bold)
 ```
 
-<UtilityInjection set="primeComponents" version="4.x">As well as allowing a static value, the `weight()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `weight()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/text/bold" alt="Text entry in a bold font" version="4.x" />
 
@@ -231,6 +224,6 @@ Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
     ->fontFamily(FontFamily::Mono)
 ```
 
-<UtilityInjection set="primeComponents" version="4.x">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/text/mono" alt="Text entry in a monospaced font" version="4.x" />

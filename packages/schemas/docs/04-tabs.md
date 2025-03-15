@@ -29,7 +29,7 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/tabs/simple" alt="Tabs" version="4.x" />
 
@@ -59,7 +59,7 @@ Tabs::make('Tabs')
     ->activeTab(2)
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `activeTab()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `activeTab()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting a tab icon
 
@@ -81,7 +81,7 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/tabs/icons" alt="Tabs with icons" version="4.x" />
 
@@ -107,7 +107,7 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `iconPosition()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `iconPosition()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/tabs/icons-after" alt="Tabs with icons after their labels" version="4.x" />
 
@@ -130,7 +130,7 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/tabs/badges" alt="Tabs with badges" version="4.x" />
 
@@ -152,11 +152,11 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Using grid columns within a tab
 
-You may use the `columns()` method to customize the [grid](grid) within the tab:
+You may use the `columns()` method to customize the [grid](layouts#grid) within the tab:
 
 ```php
 use Filament\Schemas\Components\Tabs;
@@ -173,7 +173,7 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Removing the styled container
 
@@ -201,7 +201,7 @@ Tabs::make('Tabs')
     ->contained(false)
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Persisting the current tab
 
@@ -231,7 +231,7 @@ Tabs::make('Tabs')
     ->id('order-tabs')
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing static values, the `persistTab()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `persistTab()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Persisting the current tab in the URL's query string
 
@@ -283,4 +283,4 @@ Tabs::make('Tabs')
     ->persistTabInQueryString('settings-tab')
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `persistTabInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `persistTabInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

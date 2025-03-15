@@ -18,7 +18,7 @@ Section::make('Rate limiting')
     ])
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing static values, the `make()` and `description()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `make()` and `description()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/section/simple" alt="Section" version="4.x" />
 
@@ -51,7 +51,7 @@ Section::make('Cart')
     ])
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/section/icons" alt="Section with icon" version="4.x" />
 
@@ -85,7 +85,7 @@ Section::make('Rate limiting')
     ])
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `aside()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `aside()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Collapsing sections
 
@@ -131,7 +131,7 @@ Section::make('Cart')
     ->collapsed(FeatureFlag::active())
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Persisting collapsed sections
 
@@ -178,7 +178,7 @@ Section::make('Cart')
     ->persistCollapsed(FeatureFlag::active())
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing static values, the `persistCollapsed()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `persistCollapsed()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Compact section styling
 
@@ -210,11 +210,11 @@ Section::make('Rate limiting')
     ->compact(FeatureFlag::active())
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Using grid columns within a section
 
-You may use the `columns()` method to easily create a [grid](grid) within the section:
+You may use the `columns()` method to easily create a [grid](layouts#grid) within the section:
 
 ```php
 use Filament\Schemas\Components\Section;
@@ -226,4 +226,4 @@ Section::make('Heading')
     ->columns(2)
 ```
 
-<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

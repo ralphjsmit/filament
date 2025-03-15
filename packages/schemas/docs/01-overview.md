@@ -5,10 +5,10 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## What is a schema?
 
-Schemas allow you to build UIs using an array of "component" PHP objects as configuration. They are used throughout Filament to render UI. Filament packages provide you with various components:
+Schemas allow you to build UIs using an array of "component" PHP objects as configuration. They are used throughout Filament to render UI. Filament packages provide you with various components. You can find a full list in the [available components section](#available-components):
 
-- [Form fields](forms) accept input from the user, for example, a text input, a select, or a checkbox. They come with integrated validation.
-- [Infolist entries](infolists) are components for rendering "description lists." Entries are key-value UI elements that can present read-only information like text, icons, and images. The data for an infolist can be sourced from anywhere but commonly comes from an individual Eloquent record.
+- [Form fields](../forms) accept input from the user, for example, a text input, a select, or a checkbox. They come with integrated validation.
+- [Infolist entries](../infolists) are components for rendering "description lists." Entries are key-value UI elements that can present read-only information like text, icons, and images. The data for an infolist can be sourced from anywhere but commonly comes from an individual Eloquent record.
 - [Layout components](layouts) are used to structure the components. For example, a grid, tabs, or a multi-step form wizard.
 - [Prime components](primes) are simple components that are used to render basic stand-alone static content, such as text, images, and buttons (actions).
 
@@ -64,3 +64,197 @@ $schema
 "TextEntry" is an infolist component that displays read-only information. In this example, it is used to display the created and updated timestamps of the record. The `dateTime()` method is used to format the timestamps as dates and times.
 
 The schema object is the container for the components and can now be rendered. Rendering the schema will render all the components within it in the correct layout.
+
+## Available components
+
+For building [forms](../forms), Filament includes a set of fields for different data types:
+
+- [Text input](../forms/text-input)
+- [Select](../forms/select)
+- [Checkbox](../forms/checkbox)
+- [Toggle](../forms/toggle)
+- [Checkbox list](../forms/checkbox-list)
+- [Radio](../forms/radio)
+- [Date-time picker](../forms/date-time-picker)
+- [File upload](../forms/file-upload)
+- [Rich editor](../forms/rich-editor)
+- [Markdown editor](../forms/markdown-editor)
+- [Repeater](../forms/repeater)
+- [Builder](../forms/builder)
+- [Tags input](../forms/tags-input)
+- [Textarea](../forms/textarea)
+- [Key-value](../forms/key-value)
+- [Color picker](../forms/color-picker)
+- [Toggle buttons](../forms/toggle-buttons)
+- [Hidden](../forms/hidden)
+- Or, build your own [custom form field](../forms/custom-fields)
+
+For displaying data in a label-value "description list" format, Filament includes [infolist](../infolists) entry components:
+
+- [Text entry](../infolists/text)
+- [Icon entry](../infolists/icon)
+- [Image entry](../infolists/image)
+- [Color entry](../infolists/color)
+- [Key-value entry](../infolists/key-value)
+- [Repeatable entry](../infolists/repeatable)
+- Or, build your own [custom infolist entry](../infolists/custom-entries)
+
+To arrange components into a [layout](layouts), Filament includes layout components:
+
+- [Grid](layouts#grid-component)
+- [Fieldset](layouts#fieldset-component)
+- [Split](layouts#split-component)
+- [Section](sections)
+- [Tabs](tabs)
+- [Wizard](wizards)
+- Or, build your own [custom layout component](custom-components#custom-layout-components)
+
+For displaying arbitrary content, Filament includes [prime](primes) components:
+
+- [Text](primes#text)
+- [Icon](primes#icon)
+- [Image](primes#image)
+- [Unordered list](primes#unordered-list)
+
+You can also insert "action" buttons into schemas. These can run PHP functions, and even open modals. For more information, see the [actions documentation](../actions).
+
+You can learn more about building custom components to render your own Blade views in the [custom components documentation](custom-components).
+
+## Component utility injection
+
+The vast majority of methods used to configure entries accept functions as parameters instead of hardcoded values:
+
+```php
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+
+Grid::make(fn (): array => [
+    'lg' => auth()->user()->isAdmin() ? 4 : 6,
+])->schema([
+    // ...
+])
+
+Section::make()
+    ->heading(fn (): string => auth()->user()->isAdmin() ? 'Admin Dashboard' : 'User Dashboard')
+    ->schema([
+        // ...
+    ])
+```
+
+This alone unlocks many customization possibilities.
+
+The package is also able to inject many utilities to use inside these functions, as parameters. All customization methods that accept functions as arguments can inject utilities.
+
+These injected utilities require specific parameter names to be used. Otherwise, Filament doesn't know what to inject.
+
+### Injecting the state of another component
+
+You may also retrieve the state (value) of a form field or infolist entry from within a callback, using a `$get` parameter:
+
+```php
+use Filament\Schemas\Components\Utilities\Get;
+
+function (Get $get) {
+    $email = $get('email'); // Store the value of the `email` entry in the `$email` variable.
+    //...
+}
+```
+
+### Injecting the current Eloquent record
+
+You may retrieve the Eloquent record for the current schema using a `$record` parameter:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+function (?Model $record) {
+    // ...
+}
+```
+
+### Injecting the current operation
+
+If you're writing a schema for a panel resource or relation manager, and you wish to check if a schema is `create`, `edit` or `view`, use the `$operation` parameter:
+
+```php
+function (string $operation) {
+    // ...
+}
+```
+
+<Aside variant="info">
+    You can manually set a schema's operation using the `$schema->operation()` method.
+</Aside>
+
+### Injecting the current Livewire component instance
+
+If you wish to access the current Livewire component instance, define a `$livewire` parameter:
+
+```php
+use Livewire\Component;
+
+function (Component $livewire) {
+    // ...
+}
+```
+
+### Injecting the current component instance
+
+If you wish to access the current component instance, define a `$component` parameter:
+
+```php
+use Filament\Schemas\Components\Component;
+
+function (Component $component) {
+    // ...
+}
+```
+
+### Injecting multiple utilities
+
+The parameters are injected dynamically using reflection, so you are able to combine multiple parameters in any order:
+
+```php
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Livewire\Component as Livewire;
+
+function (Livewire $livewire, Get $get, Set $set) {
+    // ...
+}
+```
+
+### Injecting dependencies from Laravel's container
+
+You may inject anything from Laravel's container like normal, alongside utilities:
+
+```php
+use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Http\Request;
+
+function (Request $request, Set $set) {
+    // ...
+}
+```
+
+## Global settings
+
+If you wish to change the default behavior of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all section components have [2 columns](grid) by default, you can do it like so:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::configureUsing(function (Section $section): void {
+    $section
+        ->columns(2);
+});
+```
+
+Of course, you are still able to overwrite this on each component individually:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::make()
+    ->columns(1)
+```

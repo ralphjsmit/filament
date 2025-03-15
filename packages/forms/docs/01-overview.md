@@ -7,29 +7,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
-Form field classes can be found in the `Filament\Form\Components` namespace. They reside within the schema array of components.
-
-Fields may be created using the static `make()` method, passing its unique name. Usually, the name of a field corresponds to the name of an attribute on an Eloquent model:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')
-```
-
-<AutoScreenshot name="forms/fields/simple" alt="Form field" version="4.x" />
-
-You may use "dot notation" to bind fields to keys in arrays:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('socials.github_url')
-```
-
-## Available fields
-
-Filament ships with many types of field, suitable for editing different types of data:
+Form field classes can be found in the `Filament\Form\Components` namespace. They reside within the schema array of components. Filament ships with many types of field, suitable for editing different types of data:
 
 - [Text input](text-input)
 - [Select](select)
@@ -50,7 +28,25 @@ Filament ships with many types of field, suitable for editing different types of
 - [Toggle buttons](toggle-buttons)
 - [Hidden](hidden)
 
-You may also [create your own custom fields](custom) to edit data however you wish.
+You may also [create your own custom fields](custom-fields) to edit data however you wish.
+
+Fields may be created using the static `make()` method, passing its unique name. Usually, the name of a field corresponds to the name of an attribute on an Eloquent model:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+```
+
+<AutoScreenshot name="forms/fields/simple" alt="Form field" version="4.x" />
+
+You may use "dot notation" to bind fields to keys in arrays:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('socials.github_url')
+```
 
 ## Validating fields
 
