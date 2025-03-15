@@ -49,7 +49,7 @@ If you wish to define a repeater with multiple schema blocks that can be repeate
 
 ## Setting empty default items
 
-Repeaters may have a certain number of empty items created by default. The default is only used when a schema is loaded with no data. In a standard [panel resource](../../resources), defaults are used on the Create page, not the Edit page. To use default items, pass the number of items to the `defaultItems()` method:
+Repeaters may have a certain number of empty items created by default. The default is only used when a schema is loaded with no data. In a standard [panel resource](../resources), defaults are used on the Create page, not the Edit page. To use default items, pass the number of items to the `defaultItems()` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -470,7 +470,7 @@ Repeater::make('qualifications')
 
 <AutoScreenshot name="forms/fields/repeater/grid" alt="Repeater with a 2 column grid of items" version="4.x" />
 
-This method accepts the same options as the `columns()` method of the [grid](../layouts/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid). This allows you to responsively customize the number of grid columns at various breakpoints.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `grid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -545,7 +545,7 @@ All form components are able to [use `$get()` and `$set()`](overview#injecting-t
 
 This is because `$get()` and `$set()`, by default, are scoped to the current repeater item. This means that you are able to interact with another field inside that repeater item easily without knowing which repeater item the current form component belongs to.
 
-The consequence of this is that you may be confused when you are unable to interact with a field outside the repeater. We use `../` syntax to solve this problem - `$get('../../parent_field_name')`.
+The consequence of this is that you may be confused when you are unable to interact with a field outside the repeater. We use `../` syntax to solve this problem - `$get('../parent_field_name')`.
 
 Consider your form has this data structure:
 
@@ -565,7 +565,7 @@ You are trying to retrieve the value of `client_id` from inside the repeater ite
 
 `$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`.
 
-You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../client_id')` is `$get('client_id')`.
 
 The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current repeater item.
 
@@ -702,7 +702,7 @@ This method will automatically enable the `distinct()` and `live()` methods on t
 
 ## Customizing the repeater item actions
 
-This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/trigger-button). The following methods are available to customize the actions:
 
 - `addAction()`
 - `cloneAction()`
@@ -734,7 +734,7 @@ Repeater::make('members')
 
 ### Confirming repeater actions with a modal
 
-You can confirm actions with a modal by using the `requiresConfirmation()` method on the action object. You may use any [modal customization method](../../actions/modals) to change its content and behavior:
+You can confirm actions with a modal by using the `requiresConfirmation()` method on the action object. You may use any [modal customization method](../actions/modals) to change its content and behavior:
 
 ```php
 use Filament\Actions\Action;
@@ -755,7 +755,7 @@ Repeater::make('members')
 
 ### Adding extra item actions to a repeater
 
-You may add new [action buttons](../primes/actions-in-schemas) to the header of each repeater item by passing `Action` objects into `extraItemActions()`:
+You may add new [action buttons](../actions) to the header of each repeater item by passing `Action` objects into `extraItemActions()`:
 
 ```php
 use Filament\Actions\Action;

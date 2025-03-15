@@ -6,7 +6,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Overview
 
-Icon entries render an [icon](../../styling/icons) representing the state of the entry:
+Icon entries render an [icon](../styling/icons) representing the state of the entry:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
@@ -26,7 +26,7 @@ IconEntry::make('status')
 
 ## Customizing the color
 
-You may change the [color](../../styling/colors) of the icon, using the `color()` method:
+You may change the [color](../styling/colors) of the icon, using the `color()` method:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
@@ -97,7 +97,7 @@ IconEntry::make('is_featured')
 
 ### Customizing the boolean icons
 
-You may customize the [icon](../../styling/icons) representing each state:
+You may customize the [icon](../styling/icons) representing each state:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
@@ -115,7 +115,7 @@ IconEntry::make('is_featured')
 
 ### Customizing the boolean colors
 
-You may customize the icon [color](../../styling/colors) representing each state:
+You may customize the icon [color](../styling/colors) representing each state:
 
 ```php
 use Filament\Infolists\Components\IconEntry;

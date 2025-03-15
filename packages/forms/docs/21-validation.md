@@ -468,7 +468,7 @@ The field value must not exist in the database. [See the Laravel documentation.]
 Field::make('email')->unique()
 ```
 
-If your Filament form already has an Eloquent model associated with it, such as in a [panel resource](../../resources), Filament will use that. You may also specify a custom table name or model to search:
+If your Filament form already has an Eloquent model associated with it, such as in a [panel resource](../resources), Filament will use that. You may also specify a custom table name or model to search:
 
 ```php
 use App\Models\User;
@@ -482,7 +482,7 @@ By default, the field name will be used as the column to search. You may specify
 Field::make('email')->unique(column: 'email_address')
 ```
 
-Usually, you wish to ignore a given model during unique validation. For example, consider an "update profile" form that includes the user's name, email address, and location. You will probably want to verify that the email address is unique. However, if the user only changes the name field and not the email field, you do not want a validation error to be thrown because the user is already the owner of the email address in question. If your Filament form already has an Eloquent model associated with it, such as in a [panel resource](../../resources), Filament will ignore it.
+Usually, you wish to ignore a given model during unique validation. For example, consider an "update profile" form that includes the user's name, email address, and location. You will probably want to verify that the email address is unique. However, if the user only changes the name field and not the email field, you do not want a validation error to be thrown because the user is already the owner of the email address in question. If your Filament form already has an Eloquent model associated with it, such as in a [panel resource](../resources), Filament will ignore it.
 
 To prevent Filament from ignoring the current Eloquent record, you can pass `false` to the `ignoreRecord` parameter:
 

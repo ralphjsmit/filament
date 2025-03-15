@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: Components
 ---
 import Aside from "@components/Aside.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"

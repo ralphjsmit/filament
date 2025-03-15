@@ -89,7 +89,7 @@ CheckboxList::make('technologies')
 
 <AutoScreenshot name="forms/fields/checkbox-list/columns" alt="Checkbox list with 2 columns" version="4.x" />
 
-This method accepts the same options as the `columns()` method of the [grid](../../schemas/layouts/grid). This allows you to responsively customize the number of columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
 ### Setting the grid direction
 
@@ -391,7 +391,7 @@ CheckboxList::make('technologies')
 
 ## Customizing the checkbox list action objects
 
-This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/trigger-button). The following methods are available to customize the actions:
 
 - `selectAllAction()`
 - `deselectAllAction()`

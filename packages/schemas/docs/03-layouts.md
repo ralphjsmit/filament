@@ -108,3 +108,67 @@ Grid::make()
 In this example, the grid has 3 columns on small devices, 6 columns on extra large devices, and 8 columns on extra extra large devices. The text input will start at column 2 on small devices, column 3 on extra large devices, and column 4 on extra extra large devices. This is essentially producing a layout whereby the text input always starts halfway through the grid, regardless of how many columns the grid has.
 
 <UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `columnStart()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Fieldsets
+
+You may want to group fields into a Fieldset. Each fieldset has a label, a border, and a two-column grid by default:
+
+```php
+use Filament\Schemas\Components\Fieldset;
+
+Fieldset::make('Label')
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/fieldset/simple" alt="Fieldset" version="4.x" />
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static label, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Using grid columns within a fieldset
+
+You may use the `columns()` method to customize the [grid](grid) within the fieldset:
+
+```php
+use Filament\Schemas\Components\Fieldset;
+
+Fieldset::make('Label')
+    ->schema([
+        // ...
+    ])
+    ->columns(3)
+```
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Splits
+
+The `Split` component allows you to define layouts with flexible widths, using flexbox.
+
+```php
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Split;
+
+Split::make([
+    Section::make([
+        TextInput::make('title'),
+        Textarea::make('content'),
+    ]),
+    Section::make([
+        Toggle::make('is_published'),
+        Toggle::make('is_featured'),
+    ])->grow(false),
+])->from('md')
+```
+
+In this example, the first section will `grow()` to consume available horizontal space, without affecting the amount of space needed to render the second section. This creates a sidebar effect.
+
+The `from()` method is used to control the [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview) (`sm`, `md`, `lg`, `xl`, `2xl`) at which the split layout should be used. In this example, the split layout will be used on medium devices and larger. On smaller devices, the sections will stack on top of each other.
+
+<UtilityInjection set="layoutComponents" version="4.x">As well as allowing static values, the `grow()` and `from()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+<AutoScreenshot name="schemas/layout/split/simple" alt="Split" version="4.x" />

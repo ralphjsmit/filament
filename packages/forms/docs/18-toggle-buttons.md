@@ -25,7 +25,7 @@ ToggleButtons::make('status')
 
 ## Changing the color of option buttons
 
-You can change the [color](../../styling/colors) of the option buttons using the `colors()` method. Each key in the array should correspond to an option value:
+You can change the [color](../styling/colors) of the option buttons using the `colors()` method. Each key in the array should correspond to an option value:
 
 ```php
 use Filament\Forms\Components\ToggleButtons;
@@ -43,7 +43,7 @@ ToggleButtons::make('status')
     ])
 ```
 
-If you are using an enum for the options, you can use the [`HasColor` interface](../../support/enums#enum-colors) to define colors instead.
+If you are using an enum for the options, you can use the [`HasColor` interface](../support/enums#enum-colors) to define colors instead.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `colors()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -51,7 +51,7 @@ If you are using an enum for the options, you can use the [`HasColor` interface]
 
 ## Adding icons to option buttons
 
-You can add [icon](../../styling/icons) to the option buttons using the `icons()` method. Each key in the array should correspond to an option value, and the value may be any valid [icon](../../styling/icons):
+You can add [icon](../styling/icons) to the option buttons using the `icons()` method. Each key in the array should correspond to an option value, and the value may be any valid [icon](../styling/icons):
 
 ```php
 use Filament\Forms\Components\ToggleButtons;
@@ -72,7 +72,7 @@ ToggleButtons::make('status')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `icons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-If you are using an enum for the options, you can use the [`HasIcon` interface](../../support/enums#enum-icons) to define icons instead.
+If you are using an enum for the options, you can use the [`HasIcon` interface](../support/enums#enum-icons) to define icons instead.
 
 <AutoScreenshot name="forms/fields/toggle-buttons/icons" alt="Toggle buttons with icons" version="4.x" />
 
@@ -239,7 +239,7 @@ ToggleButtons::make('technologies')
 
 <AutoScreenshot name="forms/fields/toggle-buttons/columns" alt="Toggle buttons with 2 columns" version="4.x" />
 
-This method accepts the same options as the `columns()` method of the [grid](../../schemas/layouts/grid). This allows you to responsively customize the number of columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
 ### Setting the grid direction
 

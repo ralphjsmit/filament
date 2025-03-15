@@ -19,7 +19,7 @@ TextEntry::make('title')
 
 ## Customizing the color
 
-You may set a [color](../../styling/colors) for the text:
+You may set a [color](../styling/colors) for the text:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -34,7 +34,7 @@ TextEntry::make('status')
 
 ## Adding an icon
 
-Text entries may also have an [icon](../../styling/icons):
+Text entries may also have an [icon](../styling/icons):
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -64,7 +64,7 @@ TextEntry::make('email')
 
 <AutoScreenshot name="infolists/entries/text/icon-after" alt="Text entry with icon after" version="4.x" />
 
-The icon color defaults to the text color, but you may customize the icon [color](../../styling/colors) separately using `iconColor()`:
+The icon color defaults to the text color, but you may customize the icon [color](../styling/colors) separately using `iconColor()`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;

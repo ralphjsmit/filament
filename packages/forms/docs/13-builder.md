@@ -138,7 +138,7 @@ Builder::make('content')
 
 ## Setting a block's icon
 
-Blocks may also have an [icon](../../styling/icons), which is displayed next to the label. You can add an icon by passing its name to the `icon()` method:
+Blocks may also have an [icon](../styling/icons), which is displayed next to the label. You can add an icon by passing its name to the `icon()` method:
 
 ```php
 use Filament\Forms\Components\Builder\Block;
@@ -501,7 +501,7 @@ All form components are able to [use `$get()` and `$set()`](overview#injecting-t
 
 This is because `$get()` and `$set()`, by default, are scoped to the current builder item. This means that you are able to interact with another field inside that builder item easily without knowing which builder item the current form component belongs to.
 
-The consequence of this is that you may be confused when you are unable to interact with a field outside the builder. We use `../` syntax to solve this problem - `$get('../../parent_field_name')`.
+The consequence of this is that you may be confused when you are unable to interact with a field outside the builder. We use `../` syntax to solve this problem - `$get('../parent_field_name')`.
 
 Consider your form has this data structure:
 
@@ -521,7 +521,7 @@ You are trying to retrieve the value of `client_id` from inside the builder item
 
 `$get()` is relative to the current builder item, so `$get('client_id')` is looking for `$get('builder.item1.client_id')`.
 
-You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../client_id')` is `$get('client_id')`.
 
 The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current builder item.
 
@@ -548,7 +548,7 @@ Builder::make('content')
 
 ## Customizing the builder item actions
 
-This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/trigger-button). The following methods are available to customize the actions:
 
 - `addAction()`
 - `addBetweenAction()`
@@ -581,7 +581,7 @@ Builder::make('content')
 
 ### Confirming builder actions with a modal
 
-You can confirm actions with a modal by using the `requiresConfirmation()` method on the action object. You may use any [modal customization method](../../actions/modals) to change its content and behavior:
+You can confirm actions with a modal by using the `requiresConfirmation()` method on the action object. You may use any [modal customization method](../actions/modals) to change its content and behavior:
 
 ```php
 use Filament\Actions\Action;
@@ -602,7 +602,7 @@ Builder::make('content')
 
 ### Adding extra item actions to a builder
 
-You may add new [action buttons](../primes/actions-in-schemas) to the header of each builder item by passing `Action` objects into `extraItemActions()`:
+You may add new [action buttons](../actions) to the header of each builder item by passing `Action` objects into `extraItemActions()`:
 
 ```php
 use Filament\Actions\Action;

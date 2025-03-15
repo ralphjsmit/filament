@@ -686,7 +686,7 @@ Select::make('domain')
 
 ### Using icons as affixes
 
-You may place an [icon](../../styling/icons) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+You may place an [icon](../styling/icons) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -801,7 +801,7 @@ Select::make('technologies')
 
 ## Customizing the select action objects
 
-This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button) or [customize its modal](../../actions/modals). The following methods are available to customize the actions:
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/trigger-button) or [customize its modal](../actions/modals). The following methods are available to customize the actions:
 
 - `createOptionAction()`
 - `editOptionAction()`

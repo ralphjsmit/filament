@@ -118,7 +118,7 @@ TextInput::make('name')
 
 ## Setting a default value of a field
 
-Fields may have a default value. The default is only used when a schema is loaded with no data. In a standard [panel resource](../../resources), defaults are used on the Create page, not the Edit page. To define a default value, use the `default()` method:
+Fields may have a default value. The default is only used when a schema is loaded with no data. In a standard [panel resource](../resources), defaults are used on the Create page, not the Edit page. To define a default value, use the `default()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -181,7 +181,7 @@ Toggle::make('is_admin')
 
 ### Disabling a field based on the current operation
 
-The "operation" of a schema is the current action being performed on it. Usually, this is either `create`, `edit` or `view`, if you are using the [panel resource](../../resources).
+The "operation" of a schema is the current action being performed on it. Usually, this is either `create`, `edit` or `view`, if you are using the [panel resource](../resources).
 
 You can disable a field based on the current operation by passing an operation to the `disabledOn()` method:
 
@@ -319,7 +319,7 @@ Toggle::make('is_admin')
 
 ### Hiding a field based on the current operation
 
-The "operation" of a schema is the current action being performed on it. Usually, this is either `create`, `edit` or `view`, if you are using the [panel resource](../../resources).
+The "operation" of a schema is the current action being performed on it. Usually, this is either `create`, `edit` or `view`, if you are using the [panel resource](../resources).
 
 You can hide a field based on the current operation by passing an operation to the `hiddenOn()` method:
 
@@ -737,7 +737,7 @@ TextInput::make('password_confirmation')
     ->dehydrated(false)
 ```
 
-If your schema auto-saves data to the database, like in a [resource](../../resources), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
+If your schema auto-saves data to the database, like in a [resource](../resources), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
 
 <Aside variant="info">
     Even when a field is not dehydrated, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-dehydrated) section.
@@ -892,7 +892,7 @@ Select::make('sub_category')
 
 ### Dynamic fields based on a select option
 
-You may wish to render a different set of fields based on the value of a field, like a select. To do this, you can pass a function to the `schema()` method of any [layout component](../layouts), which checks the value of the field and returns a different schema based on that value. Also, you will need a way to initialise the new fields in the dynamic schema when they are first loaded.
+You may wish to render a different set of fields based on the value of a field, like a select. To do this, you can pass a function to the `schema()` method of any [layout component](../schemas/layouts), which checks the value of the field and returns a different schema based on that value. Also, you will need a way to initialise the new fields in the dynamic schema when they are first loaded.
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -986,7 +986,7 @@ TextInput::make('password')
 
 ## Saving data to relationships
 
-As well as being able to give structure to fields, [layout components](../layouts) are also able to "teleport" their nested fields into a relationship. Filament will handle loading data from a `HasOne`, `BelongsTo` or `MorphOne` Eloquent relationship, and then it will save the data back to the same relationship. To set this behavior up, you can use the `relationship()` method on any layout component:
+As well as being able to give structure to fields, [layout components](../schemas/layouts) are also able to "teleport" their nested fields into a relationship. Filament will handle loading data from a `HasOne`, `BelongsTo` or `MorphOne` Eloquent relationship, and then it will save the data back to the same relationship. To set this behavior up, you can use the `relationship()` method on any layout component:
 
 ```php
 use Filament\Forms\Components\FileUpload;

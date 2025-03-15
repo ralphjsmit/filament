@@ -36,7 +36,7 @@ You may also [create your own custom entries](custom) to display data however yo
 
 Entries may feel a bit magic at first, but they are designed to be simple to use and optimized to display data from an Eloquent record. Despite this, they are flexible and you can display data from any source, not just an Eloquent record.
 
-The data that an entry displays is called its "state". When using a [panel resource](../../resources), the infolist is aware of the record it is displaying. This means that the state of the entry is set based on the value of the attribute on the record. For example, if the entry is used in the infolist of a `PostResource`, then the `title` attribute value of the current post will be displayed.
+The data that an entry displays is called its "state". When using a [panel resource](../resources), the infolist is aware of the record it is displaying. This means that the state of the entry is set based on the value of the attribute on the record. For example, if the entry is used in the infolist of a `PostResource`, then the `title` attribute value of the current post will be displayed.
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -165,7 +165,7 @@ TextEntry::make('title')
     ->url(fn (Post $record): string => route('posts.edit', ['post' => $record]))
 ```
 
-If you're using a [panel resource](../../resources), you can generate a link to a page for the record using the `getUrl()` method:
+If you're using a [panel resource](../resources), you can generate a link to a page for the record using the `getUrl()` method:
 
 ```php
 use App\Filament\Posts\PostResource;
@@ -306,7 +306,7 @@ IconEntry::make('is_admin')
 
 ### Hiding an entry based on the current operation
 
-The "operation" of a schema is the current action being performed on it. Usually, this is either `create`, `edit` or `view`, if you are using the [panel resource](../../resources).
+The "operation" of a schema is the current action being performed on it. Usually, this is either `create`, `edit` or `view`, if you are using the [panel resource](../resources).
 
 You can hide an entry based on the current operation by passing an operation to the `hiddenOn()` method:
 

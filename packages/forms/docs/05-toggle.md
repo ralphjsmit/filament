@@ -33,7 +33,7 @@ class User extends Model
 
 ## Adding icons to the toggle button
 
-Toggles may also use an [icon](../../styling/icons) to represent the "on" and "off" state of the button. To add an icon to the "on" state, use the `onIcon()` method. To add an icon to the "off" state, use the `offIcon()` method:
+Toggles may also use an [icon](../styling/icons) to represent the "on" and "off" state of the button. To add an icon to the "on" state, use the `onIcon()` method. To add an icon to the "off" state, use the `offIcon()` method:
 
 ```php
 use Filament\Forms\Components\Toggle;
@@ -50,7 +50,7 @@ Toggle::make('is_admin')
 
 ## Customizing the color of the toggle button
 
-You may also customize the [color](../../styling/colors) representing the "on" or "off" state of the toggle. To add a color to the "on" state, use the `onColor()` method. To add a color to the "off" state, use the `offColor()` method:
+You may also customize the [color](../styling/colors) representing the "on" or "off" state of the toggle. To add a color to the "on" state, use the `onColor()` method. To add a color to the "off" state, use the `offColor()` method:
 
 ```php
 use Filament\Forms\Components\Toggle;

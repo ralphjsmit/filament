@@ -121,7 +121,7 @@ TagsInput::make('tags')
 
 ## Changing the color of tags
 
-You can change the color of the tags by passing a [color](../../styling/colors) to the `color()` method:
+You can change the color of the tags by passing a [color](../styling/colors) to the `color()` method:
 
 ```php
 use Filament\Forms\Components\TagsInput;
