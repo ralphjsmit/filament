@@ -29,7 +29,7 @@ Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be 
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-## Grid column spans
+### Grid column spans
 
 In addition to specifying how many columns a layout component should have, you may also specify how many columns a component should fill within the parent grid, using the `columnSpan()` method. This method accepts an integer or an array of breakpoints and column spans:
 
@@ -39,7 +39,7 @@ In addition to specifying how many columns a layout component should have, you m
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columnSpan()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-## An example of a responsive grid layout
+### An example of a responsive grid layout
 
 In this example, we have a schema with a [section](sections) layout component. Since all layout components support the `columns()` method, we can use it to create a responsive grid layout within the section itself.
 
@@ -68,7 +68,7 @@ Section::make()
     ])
 ```
 
-## Grid column starts
+### Grid column starts
 
 If you want to start a component in a grid at a specific column, you can use the `columnStart()` method. This method accepts an integer, or an array of breakpoints and which column the component should start at:
 
@@ -138,9 +138,9 @@ Fieldset::make('Label')
     ])
 ```
 
-<AutoScreenshot name="schemas/layout/fieldset/simple" alt="Fieldset" version="4.x" />
-
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static label, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="schemas/layout/fieldset/simple" alt="Fieldset" version="4.x" />
 
 ## Split component
 

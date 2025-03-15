@@ -56,13 +56,13 @@ $schema
 
 <AutoScreenshot name="schemas/overview/example" alt="Example schema" version="4.x" />
 
-"Grid" is a layout component that renders multiple components together in a responsive grid. The number of columns in the grid is specified in the `make()` method. The `schema()` method is used to nest components within the grid.
+[Grid](layouts#grid-component) is a layout component that renders multiple components together in a responsive grid. The number of columns in the grid is specified in the `make()` method. The `schema()` method is used to nest components within the grid.
 
-"Section" is another layout component that renders multiple components together in a card, with a heading at the top.
+[Section](sections) is another layout component that renders multiple components together in a card, with a heading at the top.
 
-"TextInput", "Select", and "Checkbox" are form components that accept input from the user.
+[TextInput](../forms/text-input), [Select](../forms/select), and [Checkbox](../forms/checkbox) are form components that accept input from the user.
 
-"TextEntry" is an infolist component that displays read-only information. In this example, it is used to display the created and updated timestamps of the record. The `dateTime()` method is used to format the timestamps as dates and times.
+[TextEntry](../infolists/text) is an infolist component that displays read-only information. In this example, it is used to display the created and updated timestamps of the record. The `dateTime()` method is used to format the timestamps as dates and times.
 
 The schema object is the container for the components and can now be rendered. Rendering the schema will render all the components within it in the correct layout.
 
