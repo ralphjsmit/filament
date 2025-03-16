@@ -141,4 +141,16 @@ class Component extends ViewComponent
             return $html;
         }
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtraViewData(): array
+    {
+        return [
+            'get' => $this->makeGetUtility(),
+            'operation' => $this->getContainer()->getOperation(),
+            'record' => $this->getRecord(),
+        ];
+    }
 }

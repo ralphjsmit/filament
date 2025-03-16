@@ -8,7 +8,7 @@ use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\Property;
 
-class LayoutComponentClassGenerator extends ClassGenerator
+class ComponentClassGenerator extends ClassGenerator
 {
     final public function __construct(
         protected string $fqn,

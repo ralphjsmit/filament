@@ -15,7 +15,7 @@ return static function (RectorConfig $rectorConfig): void {
         RenameClassRector::class,
         // @todo Alphabetical
         [
-            'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeLayoutComponentCommand',
+            'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeComponentCommand',
             'Filament\\Pages\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Forms\\Components\\BelongsToManyCheckboxList' => 'Filament\\Forms\\Components\\CheckboxList',
             'Filament\\Forms\\Components\\BelongsToManyMultiSelect' => 'Filament\\Forms\\Components\\MultiSelect',
@@ -138,7 +138,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Infolists\\Components\\Contracts\\HasAffixActions' => 'Filament\\Schemas\\Components\\Contracts\\HasAffixActions',
             'Filament\\Forms\\Components\\Contracts\\HasAffixActions' => 'Filament\\Schemas\\Components\\Contracts\\HasAffixActions',
             'Filament\\Forms\\Components\\Contracts\\HasExtraItemActions' => 'Filament\\Schemas\\Components\\Contracts\\HasExtraItemActions',
-            'Filament\\Infolists\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeLayoutComponentCommand',
+            'Filament\\Infolists\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeComponentCommand',
             'Filament\\Infolists\\Components\\Actions' => 'Filament\\Schemas\\Components\\Actions',
             'Filament\\Infolists\\Components\\Tabs' => 'Filament\\Schemas\\Components\\Tabs',
             'Filament\\Infolists\\Components\\Tabs\\Tab' => 'Filament\\Schemas\\Components\\Tabs\\Tab',

@@ -2,7 +2,7 @@
 
 namespace Filament\Schemas\Commands;
 
-use Filament\Schemas\Commands\FileGenerators\LayoutComponentClassGenerator;
+use Filament\Schemas\Commands\FileGenerators\ComponentClassGenerator;
 use Filament\Support\Commands\Concerns\CanAskForComponentLocation;
 use Filament\Support\Commands\Concerns\CanAskForViewLocation;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
@@ -15,28 +15,31 @@ use Symfony\Component\Console\Input\InputOption;
 
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-schema-layout', aliases: [
+#[AsCommand(name: 'make:filament-schema-component', aliases: [
+    'filament:component',
     'filament:layout',
     'filament:form-layout',
     'filament:infolist-layout',
+    'filament:schema-component',
     'filament:schema-layout',
     'forms:layout',
     'forms:make-layout',
     'infolists:layout',
     'infolists:make-layout',
     'make:filament-layout',
+    'make:filament-schema-layout',
     'make:infolist-layout',
     'make:form-layout',
 ])]
-class MakeLayoutComponentCommand extends Command
+class MakeComponentCommand extends Command
 {
     use CanAskForComponentLocation;
     use CanAskForViewLocation;
     use CanManipulateFiles;
 
-    protected $description = 'Create a new schema layout component class and view';
+    protected $description = 'Create a new schema component class and view';
 
-    protected $name = 'make:filament-schema-layout';
+    protected $name = 'make:filament-schema-component';
 
     protected string $fqnEnd;
 
@@ -52,15 +55,18 @@ class MakeLayoutComponentCommand extends Command
      * @var array<string>
      */
     protected $aliases = [
+        'filament:component',
         'filament:layout',
         'filament:form-layout',
         'filament:infolist-layout',
+        'filament:schema-component',
         'filament:schema-layout',
         'forms:layout',
         'forms:make-layout',
         'infolists:layout',
         'infolists:make-layout',
         'make:filament-layout',
+        'make:filament-schema-layout',
         'make:infolist-layout',
         'make:form-layout',
     ];
@@ -74,7 +80,7 @@ class MakeLayoutComponentCommand extends Command
             new InputArgument(
                 name: 'name',
                 mode: InputArgument::OPTIONAL,
-                description: 'The name of the layout component to generate, optionally prefixed with directories',
+                description: 'The name of the component to generate, optionally prefixed with directories',
             ),
         ];
     }
@@ -101,13 +107,13 @@ class MakeLayoutComponentCommand extends Command
 
             $this->configureLocation();
 
-            $this->createLayoutComponent();
+            $this->createComponent();
             $this->createView();
         } catch (FailureCommandOutput) {
             return static::FAILURE;
         }
 
-        $this->components->info("Filament layout component [{$this->fqn}] created successfully.");
+        $this->components->info("Filament component [{$this->fqn}] created successfully.");
 
         return static::SUCCESS;
     }
@@ -115,7 +121,7 @@ class MakeLayoutComponentCommand extends Command
     protected function configureFqnEnd(): void
     {
         $this->fqnEnd = (string) str($this->argument('name') ?? text(
-            label: 'What is the layout component name?',
+            label: 'What is the component name?',
             placeholder: 'InlineSection',
             required: true,
         ))
@@ -157,13 +163,13 @@ class MakeLayoutComponentCommand extends Command
         );
     }
 
-    protected function createLayoutComponent(): void
+    protected function createComponent(): void
     {
         if (! $this->option('force') && $this->checkForCollision($this->path)) {
             throw new FailureCommandOutput;
         }
 
-        $this->writeFile($this->path, app(LayoutComponentClassGenerator::class, [
+        $this->writeFile($this->path, app(ComponentClassGenerator::class, [
             'fqn' => $this->fqn,
             'view' => $this->view,
         ]));
@@ -179,6 +185,6 @@ class MakeLayoutComponentCommand extends Command
             throw new FailureCommandOutput;
         }
 
-        $this->copyStubToApp('LayoutComponentView', $this->viewPath);
+        $this->copyStubToApp('ComponentView', $this->viewPath);
     }
 }

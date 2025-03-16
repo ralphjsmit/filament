@@ -479,6 +479,10 @@ function (Get $get) {
 }
 ```
 
+<Aside variant="tip">
+    Unless a form field is (reactive)[../forms/overview#the-basics-of-reactivity], the schema will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
+</Aside>
+
 ### Injecting the current Eloquent record
 
 You may retrieve the Eloquent record for the current schema using a `$record` parameter:
