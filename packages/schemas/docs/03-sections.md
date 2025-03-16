@@ -231,7 +231,7 @@ Section::make('Rate limiting')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `afterHeader()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/section/header-actions" alt="Section with actions in the header" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/header/actions" alt="Section with actions in the header" version="4.x" />
 
 ## Inserting actions and other components in the footer of a section
 
@@ -252,7 +252,7 @@ Section::make('Rate limiting')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `footer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/section/footer-actions" alt="Section with actions in the footer" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/footer/actions" alt="Section with actions in the footer" version="4.x" />
 
 ## Using grid columns within a section
 
