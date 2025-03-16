@@ -355,7 +355,7 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Section::make('Rate limiting')
                             ->description('Prevent abuse by limiting the number of requests per period')
-                            ->headerActions([
+                            ->afterHeader([
                                 Action::make('test'),
                             ])
                             ->statePath('section')
@@ -382,7 +382,7 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Section::make('Rate limiting')
                             ->description('Prevent abuse by limiting the number of requests per period')
-                            ->footerActions([
+                            ->footer([
                                 Action::make('test'),
                             ])
                             ->statePath('section')

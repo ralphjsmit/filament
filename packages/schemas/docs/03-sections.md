@@ -212,6 +212,48 @@ Section::make('Rate limiting')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Inserting actions and other components in the header of a section
+
+You may insert [actions](../actions) and any other schema component (usually [prime components](primes)) into the header of a section by passing an array of components to the `afterHeader()` method:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::make('Rate limiting')
+    ->description('Prevent abuse by limiting the number of requests per period')
+    ->afterHeader([
+        Action::make('test'),
+    ])
+    ->schema([
+        // ...
+    ])
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `afterHeader()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="schemas/layout/section/header-actions" alt="Section with actions in the header" version="4.x" />
+
+## Inserting actions and other components in the footer of a section
+
+You may insert [actions](../actions) and any other schema component (usually [prime components](primes)) into the footer of a section by passing an array of components to the `footer()` method:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::make('Rate limiting')
+    ->description('Prevent abuse by limiting the number of requests per period')
+    ->schema([
+        // ...
+    ])
+    ->footer([
+        Action::make('test'),
+    ])
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `footer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="schemas/layout/section/footer-actions" alt="Section with actions in the footer" version="4.x" />
+
 ## Using grid columns within a section
 
 You may use the `columns()` method to easily create a [grid](layouts#grid-system) within the section:

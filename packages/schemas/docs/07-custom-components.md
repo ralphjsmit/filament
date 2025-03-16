@@ -244,6 +244,10 @@ It will also create a view file at `resources/views/filament/schemas/components/
 
 You may use the same utilities as you would when [inserting a Blade view into a schema](#inserting-a-blade-view-into-a-schema) to [render the component's child schema](#rendering-the-components-child-schema), [access another component's live state](#accessing-the-state-of-another-component-in-a-blade-view), [access the current Eloquent record](#accessing-the-eloquent-record-in-a-blade-view), [access the current operation](#accessing-the-current-operation-in-a-blade-view), [access the current Livewire component instance](#accessing-the-current-livewire-component-instance-in-a-blade-view), and [access the current component instance](#accessing-the-current-component-instance-in-a-blade-view).
 
+<Aside variant="info">
+    Filament schema components are **not** Livewire components. Defining public properties and methods on a schema component class will not make them accessible in the Blade view.
+</Aside>
+
 ### Adding a configuration method to a custom component class
 
 You may add a public method to the custom component class that accepts a configuration value, stores it in a protected property, and returns it again from another public method:
