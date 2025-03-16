@@ -1910,6 +1910,52 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'primes/text/tooltip': {
+        url: 'primes',
+        selector: '#textTooltip',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('#textTooltip .fi-sc-text')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'primes/icon/simple': {
+        url: 'primes',
+        selector: '#icon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/icon/color': {
+        url: 'primes',
+        selector: '#iconColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/icon/tooltip': {
+        url: 'primes',
+        selector: '#iconTooltip',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('#iconTooltip .fi-sc-icon')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'tables/example': {
         url: 'tables?table=example',
         selector: 'body',

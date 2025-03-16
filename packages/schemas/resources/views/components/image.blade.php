@@ -20,7 +20,7 @@
     {{
         $getExtraAttributeBag()
             ->class([
-                'fi-sc-icon',
+                'fi-sc-image',
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
             ])
             ->style([

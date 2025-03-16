@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Icon;
 use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
@@ -151,6 +152,41 @@ class PrimesDemo extends Component implements HasSchemas
                     ->schema([
                         Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
                             ->fontFamily(FontFamily::Mono),
+                    ]),
+                Group::make()
+                    ->id('textTooltip')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
+                            ->tooltip('Your secret recovery code'),
+                    ]),
+                Group::make()
+                    ->id('icon')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Icon::make(Heroicon::Star),
+                    ]),
+                Group::make()
+                    ->id('iconColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Icon::make(Heroicon::ExclamationCircle)
+                            ->color('danger'),
+                    ]),
+                Group::make()
+                    ->id('iconTooltip')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Icon::make(Heroicon::ExclamationTriangle)
+                            ->tooltip('Warning'),
                     ]),
             ]);
     }

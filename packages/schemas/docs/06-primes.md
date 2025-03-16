@@ -227,3 +227,65 @@ Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/text/mono" alt="Text entry in a monospaced font" version="4.x" />
+
+### Adding a tooltip to the text
+
+You may add a tooltip to the text using the `tooltip()` method:
+
+```php
+use Filament\Schemas\Components\Text;
+
+Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
+    ->tooltip('Your secret recovery code')
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/text/tooltip" alt="Text with a tooltip" version="4.x" />
+
+## Icon component
+
+Icons can be inserted into a schema using the `Icon` component. [Icons](../styling/icons) are passed to the `make()` method:
+
+```php
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+Icon::make(Heroicon::Star)
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/icon/simple" alt="Icon" version="4.x" />
+
+### Customizing the icon color
+
+You may set a [color](../../styling/colors) for the icon:
+
+```php
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+Icon::make(Heroicon::ExclamationCircle)
+    ->color('danger')
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/icon/color" alt="Icon in the danger color" version="4.x" />
+
+## Adding a tooltip to the icon
+
+You may add a tooltip to the icon using the `tooltip()` method:
+
+```php
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+Icon::make(Heroicon::ExclamationTriangle)
+    ->tooltip('Warning')
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/icon/tooltip" alt="Icon with a tooltip" version="4.x" />

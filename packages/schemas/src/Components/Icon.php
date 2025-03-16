@@ -49,6 +49,6 @@ class Icon extends Component implements HasEmbeddedView
     {
         return generate_icon_html($this->getIcon(), attributes: (new ComponentAttributeBag([
             'x-tooltip' => filled($tooltip = $this->getTooltip()) ? '{ content: ' . Js::from($tooltip) . ', theme: $store.theme }' : null,
-        ]))->color(IconComponent::class, 'primary')->class(['fi-sc-icon']))->toHtml();
+        ]))->color(IconComponent::class, $this->getColor() ?? 'primary')->class(['fi-sc-icon']))->toHtml();
     }
 }
