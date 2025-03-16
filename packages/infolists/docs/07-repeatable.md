@@ -59,7 +59,7 @@ RepeatableEntry::make('comments')
     ->grid(2)
 ```
 
-This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid-system). This allows you to responsively customize the number of grid columns at various breakpoints.
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `grid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

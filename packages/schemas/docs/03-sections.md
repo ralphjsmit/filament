@@ -214,7 +214,7 @@ Section::make('Rate limiting')
 
 ## Using grid columns within a section
 
-You may use the `columns()` method to easily create a [grid](layouts#grid) within the section:
+You may use the `columns()` method to easily create a [grid](layouts#grid-system) within the section:
 
 ```php
 use Filament\Schemas\Components\Section;

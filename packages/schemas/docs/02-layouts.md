@@ -18,7 +18,7 @@ Filament's grid system allows you to create responsive, multi-column layouts usi
 
 You may also [create your own custom layout components](custom-components#custom-layout-components) to display components however you wish.
 
-## Grid
+## Grid system
 
 All layout components have a `columns()` method that you can use in a couple of different ways:
 
@@ -124,7 +124,7 @@ Grid::make([
 
 ### Flex component
 
-The `Flex` component allows you to define layouts with flexible widths, using flexbox. This component does not use Filament's [grid system](#grid).
+The `Flex` component allows you to define layouts with flexible widths, using flexbox. This component does not use Filament's [grid system](#grid-system).
 
 ```php
 use Filament\Forms\Components\Textarea;

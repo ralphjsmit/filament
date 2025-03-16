@@ -237,7 +237,7 @@ Step::make('Order')
 
 ## Using grid columns within a step
 
-You may use the `columns()` method to customize the [grid](layouts#grid) within the step:
+You may use the `columns()` method to customize the [grid](layouts#grid-system) within the step:
 
 ```php
 use Filament\Schemas\Components\Wizard;

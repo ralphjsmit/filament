@@ -470,7 +470,7 @@ Repeater::make('qualifications')
 
 <AutoScreenshot name="forms/fields/repeater/grid" alt="Repeater with a 2 column grid of items" version="4.x" />
 
-This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid-system). This allows you to responsively customize the number of grid columns at various breakpoints.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `grid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

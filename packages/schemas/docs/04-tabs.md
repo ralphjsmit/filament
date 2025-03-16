@@ -156,7 +156,7 @@ Tabs::make('Tabs')
 
 ## Using grid columns within a tab
 
-You may use the `columns()` method to customize the [grid](layouts#grid) within the tab:
+You may use the `columns()` method to customize the [grid](layouts#grid-system) within the tab:
 
 ```php
 use Filament\Schemas\Components\Tabs;
