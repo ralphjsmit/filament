@@ -441,3 +441,18 @@ UnorderedList::make([
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/unordered-list/large" alt="Unordered list with large bullets" version="4.x" />
+
+## Adding extra HTML attributes to a prime component
+
+You can pass extra HTML attributes to the component via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
+
+```php
+use Filament\Schemas\Components\Text;
+
+Text::make('Modifying these permissions may give users access to sensitive information.')
+    ->extraAttributes(['class' => 'custom-text-style'])
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
