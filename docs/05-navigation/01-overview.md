@@ -3,8 +3,6 @@ title: Overview
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
-
 By default, Filament will register navigation items for each of your [resources](resources), [custom pages](pages), and [clusters](clusters). These classes contain static properties and methods that you can override, to configure that navigation item.
 
 If you're looking to add a second layer of navigation to your app, you can use [clusters](clusters). These are useful for grouping resources and pages together.

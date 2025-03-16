@@ -3,8 +3,6 @@ title: Overview
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
-
 Filters allow you to define certain constraints on your data, and allow users to scope it to find the information they need. You put them in the `$table->filters()` method:
 
 ```php
