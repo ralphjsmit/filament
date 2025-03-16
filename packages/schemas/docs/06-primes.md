@@ -178,7 +178,7 @@ Text::make('Warning')
 
 ### Customizing the text size
 
-Text columns have small font size by default, but you may change this to `TextSize::ExtraSmall`, `TextSize::Medium`, or `TextSize::Large`.
+Text has a small font size by default, but you may change this to `TextSize::ExtraSmall`, `TextSize::Medium`, or `TextSize::Large`.
 
 For instance, you may make the text larger using `size(TextSize::Large)`:
 
@@ -398,3 +398,46 @@ Image::make(
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/image/tooltip" alt="Image with a tooltip" version="4.x" />
+
+## Unordered list component
+
+Unordered lists can be inserted into a schema using the `UnorderedList` component. The list items, comprised of [text components](#text-component), are passed to the `make()` method:
+
+```php
+use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\UnorderedList;
+
+UnorderedList::make([
+    Text::make('Tables'),
+    Text::make('Schemas'),
+    Text::make('Actions'),
+    Text::make('Notifications'),
+])
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/unordered-list/simple" alt="Unordered list" version="4.x" />
+
+## Customizing the bullet size
+
+If you are modifying the text size of the list content, you will probably want to adjust the size of the bullets to match. To do this, you can use the `size()` method. Bullets have small font size by default, but you may change this to `TextSize::ExtraSmall`, `TextSize::Medium`, or `TextSize::Large`.
+
+For instance, you may make the bullets larger using `size(TextSize::Large)`:
+
+```php
+use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\UnorderedList;
+
+UnorderedList::make([
+    Text::make('Tables')->size(TextSize::Large),
+    Text::make('Schemas')->size(TextSize::Large),
+    Text::make('Actions')->size(TextSize::Large),
+    Text::make('Notifications')->size(TextSize::Large),
+])
+    ->size(TextSize::Large)
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/unordered-list/large" alt="Unordered list with large bullets" version="4.x" />

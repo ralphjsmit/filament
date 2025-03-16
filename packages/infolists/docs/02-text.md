@@ -526,7 +526,7 @@ TextEntry::make('tags')
 
 ## Customizing the text size
 
-Text columns have small font size by default, but you may change this to `TextSize::ExtraSmall`, `TextSize::Medium`, or `TextSize::Large`.
+Text entries have small font size by default, but you may change this to `TextSize::ExtraSmall`, `TextSize::Medium`, or `TextSize::Large`.
 
 For instance, you may make the text larger using `size(TextSize::Large)`:
 

@@ -236,6 +236,33 @@ class PrimesDemo extends Component implements HasSchemas
                             ->tooltip('Scan this QR code with your authenticator app')
                             ->alignCenter(),
                     ]),
+                Group::make()
+                    ->id('unorderedList')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        UnorderedList::make([
+                            Text::make('Tables'),
+                            Text::make('Schemas'),
+                            Text::make('Actions'),
+                            Text::make('Notifications'),
+                        ]),
+                    ]),
+                Group::make()
+                    ->id('unorderedListLarge')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        UnorderedList::make([
+                            Text::make('Tables')->size(TextSize::Large),
+                            Text::make('Schemas')->size(TextSize::Large),
+                            Text::make('Actions')->size(TextSize::Large),
+                            Text::make('Notifications')->size(TextSize::Large),
+                        ])
+                            ->size(TextSize::Large),
+                    ]),
             ]);
     }
 

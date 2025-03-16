@@ -1997,6 +1997,24 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'primes/unordered-list/simple': {
+        url: 'primes',
+        selector: '#unorderedList',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/unordered-list/large': {
+        url: 'primes',
+        selector: '#unorderedListLarge',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/example': {
         url: 'tables?table=example',
         selector: 'body',
