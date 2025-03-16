@@ -1,4 +1,4 @@
-.fi-sc-split {
+.fi-sc-flex {
     @apply flex gap-6;
 
     &.fi-dense {

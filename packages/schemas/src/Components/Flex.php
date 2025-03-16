@@ -9,7 +9,7 @@ use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Support\Concerns\HasFromBreakpoint;
 use Filament\Support\Concerns\HasVerticalAlignment;
 
-class Split extends Component
+class Flex extends Component
 {
     use EntanglesStateWithSingularRelationship;
     use HasFromBreakpoint;
@@ -18,7 +18,7 @@ class Split extends Component
     /**
      * @var view-string
      */
-    protected string $view = 'filament-schemas::components.split';
+    protected string $view = 'filament-schemas::components.flex';
 
     /**
      * @param  array<Component | Action | ActionGroup> | Closure  $schema

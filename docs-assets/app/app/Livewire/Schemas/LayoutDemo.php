@@ -16,7 +16,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Split;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Wizard;
@@ -520,7 +520,7 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Split::make([
+                        Flex::make([
                             Section::make([
                                 TextInput::make('title')
                                     ->default('Lorem ipsum dolor sit amet'),

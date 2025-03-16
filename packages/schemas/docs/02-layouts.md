@@ -10,8 +10,8 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 Filament's grid system allows you to create responsive, multi-column layouts using any layout component. Filament provides a set of built-in layout components to help you build these:
 
 - [Grid](#grid-component)
-- [Fieldset](#fieldset-component)
 - [Split](#split-component)
+- [Fieldset](#fieldset-component)
 - [Section](sections)
 - [Tabs](tabs)
 - [Wizard](wizards)
@@ -38,35 +38,6 @@ In addition to specifying how many columns a layout component should have, you m
 - `columnSpan('full')` or `columnSpanFull()` or `columnSpan(['default' => 'full'])` will make the component fill the full width of the parent grid, regardless of how many columns it has.
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columnSpan()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
-### An example of a responsive grid layout
-
-In this example, we have a schema with a [section](sections) layout component. Since all layout components support the `columns()` method, we can use it to create a responsive grid layout within the section itself.
-
-We pass an array to `columns()` as we want to specify different numbers of columns for different breakpoints. On devices smaller than the `sm` [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview), we want to have 1 column, which is default. On devices larger than the `sm` breakpoint, we want to have 3 columns. On devices larger than the `xl` breakpoint, we want to have 6 columns. On devices larger than the `2xl` breakpoint, we want to have 8 columns.
-
-Inside the section, we have a [text input](../forms/text-input). Since text inputs are form fields and all components have a `columnSpan()` method, we can use it to specify how many columns the text input should fill. On devices smaller than the `sm` breakpoint, we want the text input to fill 1 column, which is default. On devices larger than the `sm` breakpoint, we want the text input to fill 2 columns. On devices larger than the `xl` breakpoint, we want the text input to fill 3 columns. On devices larger than the `2xl` breakpoint, we want the text input to fill 4 columns.
-
-```php
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
-
-Section::make()
-    ->columns([
-        'sm' => 3,
-        'xl' => 6,
-        '2xl' => 8,
-    ])
-    ->schema([
-        TextInput::make('name')
-            ->columnSpan([
-                'sm' => 2,
-                'xl' => 3,
-                '2xl' => 4,
-            ]),
-        // ...
-    ])
-```
 
 ### Grid column starts
 
@@ -100,7 +71,38 @@ In this example, the grid has 3 columns on small devices, 6 columns on extra lar
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columnStart()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-## Grid component
+### An example of a responsive grid layout
+
+In this example, we have a schema with a [section](sections) layout component. Since all layout components support the `columns()` method, we can use it to create a responsive grid layout within the section itself.
+
+We pass an array to `columns()` as we want to specify different numbers of columns for different breakpoints. On devices smaller than the `sm` [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview), we want to have 1 column, which is default. On devices larger than the `sm` breakpoint, we want to have 3 columns. On devices larger than the `xl` breakpoint, we want to have 6 columns. On devices larger than the `2xl` breakpoint, we want to have 8 columns.
+
+Inside the section, we have a [text input](../forms/text-input). Since text inputs are form fields and all components have a `columnSpan()` method, we can use it to specify how many columns the text input should fill. On devices smaller than the `sm` breakpoint, we want the text input to fill 1 column, which is default. On devices larger than the `sm` breakpoint, we want the text input to fill 2 columns. On devices larger than the `xl` breakpoint, we want the text input to fill 3 columns. On devices larger than the `2xl` breakpoint, we want the text input to fill 4 columns.
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make()
+    ->columns([
+        'sm' => 3,
+        'xl' => 6,
+        '2xl' => 8,
+    ])
+    ->schema([
+        TextInput::make('name')
+            ->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+        // ...
+    ])
+```
+
+## Basic layout components
+
+### Grid component
 
 All layout components support the `columns()` method, but you also have access to an additional `Grid` component. If you feel that your schema would benefit from an explicit grid syntax with no extra styling, it may be useful to you. Instead of using the `columns()` method, you can pass your column configuration directly to `Grid::make()`:
 
@@ -120,7 +122,38 @@ Grid::make([
     ])
 ```
 
-## Fieldset component
+### Flex component
+
+The `Flex` component allows you to define layouts with flexible widths, using flexbox. This component does not use Filament's [grid system](#grid).
+
+```php
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Flex;
+
+Flex::make([
+    Section::make([
+        TextInput::make('title'),
+        Textarea::make('content'),
+    ]),
+    Section::make([
+        Toggle::make('is_published'),
+        Toggle::make('is_featured'),
+    ])->grow(false),
+])->from('md')
+```
+
+In this example, the first section will `grow()` to consume available horizontal space, without affecting the amount of space needed to render the second section. This creates a flexible width sidebar effect.
+
+The `from()` method is used to control the [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview) (`sm`, `md`, `lg`, `xl`, `2xl`) at which the horizontally-split layout should be used. In this example, the horizontally-split layout will be used on medium devices and larger. On smaller devices, the sections will stack on top of each other.
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `grow()` and `from()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+<AutoScreenshot name="schemas/layout/flex/simple" alt="Flex" version="4.x" />
+
+### Fieldset component
 
 You may want to group fields into a Fieldset. Each fieldset has a label, a border, and a two-column grid by default:
 
@@ -141,37 +174,6 @@ Fieldset::make('Label')
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static label, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/fieldset/simple" alt="Fieldset" version="4.x" />
-
-## Split component
-
-The `Split` component allows you to define layouts with flexible widths, using flexbox.
-
-```php
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Split;
-
-Split::make([
-    Section::make([
-        TextInput::make('title'),
-        Textarea::make('content'),
-    ]),
-    Section::make([
-        Toggle::make('is_published'),
-        Toggle::make('is_featured'),
-    ])->grow(false),
-])->from('md')
-```
-
-In this example, the first section will `grow()` to consume available horizontal space, without affecting the amount of space needed to render the second section. This creates a sidebar effect.
-
-The `from()` method is used to control the [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview) (`sm`, `md`, `lg`, `xl`, `2xl`) at which the split layout should be used. In this example, the split layout will be used on medium devices and larger. On smaller devices, the sections will stack on top of each other.
-
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `grow()` and `from()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
-
-<AutoScreenshot name="schemas/layout/split/simple" alt="Split" version="4.x" />
 
 ## Adding extra HTML attributes to a layout component
 

@@ -1195,9 +1195,9 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schemas/layout/split/simple': {
+    'schemas/layout/flex/simple': {
         url: 'schemas/layout',
-        selector: '#split',
+        selector: '#flex',
         viewport: {
             width: 1920,
             height: 320,

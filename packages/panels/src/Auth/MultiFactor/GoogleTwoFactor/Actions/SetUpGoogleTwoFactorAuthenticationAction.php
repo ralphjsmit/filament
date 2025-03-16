@@ -15,7 +15,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Split;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 use Filament\Support\Enums\FontFamily;
@@ -66,7 +66,7 @@ class SetUpGoogleTwoFactorAuthenticationAction
                         )
                             ->imageHeight('12rem')
                             ->alignCenter(),
-                        Split::make([
+                        Flex::make([
                             Text::make(__('filament-panels::auth/multi-factor/google-two-factor/actions/set-up.modal.content.text_code.instruction'))
                                 ->color('neutral')
                                 ->grow(false),

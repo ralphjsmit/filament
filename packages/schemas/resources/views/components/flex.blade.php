@@ -14,7 +14,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-sc-split',
+                'fi-sc-flex',
                 'fi-dense' => $isDense(),
                 'fi-from-' . ($fromBreakpoint ?? 'default'),
                 ($verticalAlignment instanceof VerticalAlignment) ? "fi-vertical-align-{$verticalAlignment->value}" : $verticalAlignment,
