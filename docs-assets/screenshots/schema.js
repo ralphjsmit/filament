@@ -1956,6 +1956,47 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'primes/image/simple': {
+        url: 'primes',
+        selector: '#image',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/image/size': {
+        url: 'primes',
+        selector: '#imageSize',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/image/alignment': {
+        url: 'primes',
+        selector: '#imageAlignment',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/image/tooltip': {
+        url: 'primes',
+        selector: '#imageTooltip',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('#imageTooltip .fi-sc-image')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'tables/example': {
         url: 'tables?table=example',
         selector: 'body',

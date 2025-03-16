@@ -274,7 +274,7 @@ Icon::make(Heroicon::ExclamationCircle)
 
 <AutoScreenshot name="primes/icon/color" alt="Icon in the danger color" version="4.x" />
 
-## Adding a tooltip to the icon
+### Adding a tooltip to the icon
 
 You may add a tooltip to the icon using the `tooltip()` method:
 
@@ -289,3 +289,112 @@ Icon::make(Heroicon::ExclamationTriangle)
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/icon/tooltip" alt="Icon with a tooltip" version="4.x" />
+
+## Image component
+
+Images can be inserted into a schema using the `Image` component. The image URL and alt text are passed to the `make()` method:
+
+```php
+use Filament\Schemas\Components\Image;
+
+Image::make(
+    url: asset('images/qr.jpg'),
+    alt: 'QR code to scan with an authenticator app',
+)
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static values, the arguments of the `make()` method also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/image/simple" alt="Image" version="4.x" />
+
+### Customizing the image size
+
+You may customize the image size by passing a `imageWidth()` and `imageHeight()`, or both with `imageSize()`:
+
+```php
+use Filament\Schemas\Components\Image;
+
+Image::make(
+    url: asset('images/qr.jpg'),
+    alt: 'QR code to scan with an authenticator app',
+)
+    ->imageWidth('12rem')
+
+Image::make(
+    url: asset('images/qr.jpg'),
+    alt: 'QR code to scan with an authenticator app',
+)
+    ->imageHeight('12rem')
+
+Image::make(
+    url: asset('images/qr.jpg'),
+    alt: 'QR code to scan with an authenticator app',
+)
+    ->imageSize('12rem')
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static values, the `imageWidth()`, `imageHeight()` and `imageSize()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/image/size" alt="Image with a custom size" version="4.x" />
+
+## Aligning the image
+
+You may align the image to the start (left in left-to-right interfaces, right in right-to-left interfaces), center, or end (right in left-to-right interfaces, left in right-to-left interfaces) using the `alignStart()`, `alignCenter()` or `alignEnd()` methods:
+
+```php
+use Filament\Schemas\Components\Image;
+
+Image::make(
+    url: asset('images/qr.jpg'),
+    alt: 'QR code to scan with an authenticator app',
+)
+    ->alignStart() // This is the default alignment.
+
+Image::make(
+    url: asset('images/qr.jpg'),
+    alt: 'QR code to scan with an authenticator app',
+)
+    ->alignCenter()
+
+Image::make(
+    url: asset('images/qr.jpg'),
+    alt: 'QR code to scan with an authenticator app',
+)
+    ->alignEnd()
+```
+
+Alternatively, you may pass an `Alignment` enum to the `alignment()` method:
+
+```php
+use Filament\Schemas\Components\Image;
+use Filament\Support\Enums\Alignment;
+
+Image::make(
+    url: asset('images/qr.jpg'),
+    alt: 'QR code to scan with an authenticator app',
+)
+    ->alignment(Alignment::Center)
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `alignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/image/alignment" alt="Image with a custom alignment" version="4.x" />
+
+### Adding a tooltip to the image
+
+You may add a tooltip to the image using the `tooltip()` method:
+
+```php
+use Filament\Schemas\Components\Image;
+
+Image::make(
+    url: asset('images/qr.jpg'),
+    alt: 'QR code to scan with an authenticator app',
+)
+    ->tooltip('Scan this QR code with your authenticator app')
+    ->alignCenter()
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/image/tooltip" alt="Image with a tooltip" version="4.x" />
