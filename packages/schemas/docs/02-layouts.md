@@ -10,7 +10,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 Filament's grid system allows you to create responsive, multi-column layouts using any layout component. Filament provides a set of built-in layout components to help you build these:
 
 - [Grid](#grid-component)
-- [Split](#split-component)
+- [Flex](#flex-component)
 - [Fieldset](#fieldset-component)
 - [Section](sections)
 - [Tabs](tabs)

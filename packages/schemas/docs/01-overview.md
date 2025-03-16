@@ -54,7 +54,7 @@ For displaying data in a label-value "description list" format, Filament include
 To arrange components into a [layout](layouts), Filament includes layout components:
 
 - [Grid](layouts#grid-component)
-- [Split](layouts#split-component)
+- [Flex](layouts#flex-component)
 - [Fieldset](layouts#fieldset-component)
 - [Section](sections)
 - [Tabs](tabs)
