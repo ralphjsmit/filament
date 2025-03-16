@@ -337,7 +337,7 @@ Image::make(
 
 <AutoScreenshot name="primes/image/size" alt="Image with a custom size" version="4.x" />
 
-## Aligning the image
+### Aligning the image
 
 You may align the image to the start (left in left-to-right interfaces, right in right-to-left interfaces), center, or end (right in left-to-right interfaces, left in right-to-left interfaces) using the `alignStart()`, `alignCenter()` or `alignEnd()` methods:
 
@@ -419,7 +419,7 @@ UnorderedList::make([
 
 <AutoScreenshot name="primes/unordered-list/simple" alt="Unordered list" version="4.x" />
 
-## Customizing the bullet size
+### Customizing the bullet size
 
 If you are modifying the text size of the list content, you will probably want to adjust the size of the bullets to match. To do this, you can use the `size()` method. Bullets have small font size by default, but you may change this to `TextSize::ExtraSmall`, `TextSize::Medium`, or `TextSize::Large`.
 
