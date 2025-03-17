@@ -243,10 +243,10 @@ class PrimesDemo extends Component implements HasSchemas
                     ])
                     ->schema([
                         UnorderedList::make([
-                            Text::make('Tables'),
-                            Text::make('Schemas'),
-                            Text::make('Actions'),
-                            Text::make('Notifications'),
+                            'Tables',
+                            'Schemas',
+                            'Actions',
+                            'Notifications',
                         ]),
                     ]),
                 Group::make()

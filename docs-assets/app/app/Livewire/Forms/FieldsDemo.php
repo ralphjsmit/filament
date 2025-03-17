@@ -24,10 +24,14 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Icon;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
@@ -79,6 +83,74 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         TextInput::make('placeholder')
                             ->label('Name')
                             ->placeholder('Dan Harrin'),
+                    ]),
+                Group::make()
+                    ->id('textBelowContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent('This is the user\'s full name.'),
+                    ]),
+                Group::make()
+                    ->id('componentBelowContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold))
+                    ]),
+                Group::make()
+                    ->id('actionBelowContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent(Action::make('generate'))
+                    ]),
+                Group::make()
+                    ->id('belowContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent([
+                                Icon::make(Heroicon::InformationCircle),
+                                'This is the user\'s full name.',
+                                Action::make('generate'),
+                            ])
+                    ]),
+                Group::make()
+                    ->id('belowContentAlignment')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent(Schema::end([
+                                Icon::make(Heroicon::InformationCircle),
+                                'This is the user\'s full name.',
+                                Action::make('generate'),
+                            ])),
+                        TextInput::make('name')
+                            ->belowContent(Schema::between([
+                                Icon::make(Heroicon::InformationCircle),
+                                'This is the user\'s full name.',
+                                Action::make('generate'),
+                            ])),
+                        TextInput::make('name')
+                            ->belowContent(Schema::between([
+                                Flex::make([
+                                    Icon::make(Heroicon::InformationCircle)
+                                        ->grow(false),
+                                    'This is the user\'s full name.',
+                                ]),
+                                Action::make('generate'),
+                            ])),
                     ]),
                 Group::make()
                     ->id('textInput')

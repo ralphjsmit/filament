@@ -296,6 +296,51 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/below-content/text': {
+        url: 'forms/fields',
+        selector: '#textBelowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-content/component': {
+        url: 'forms/fields',
+        selector: '#componentBelowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-content/action': {
+        url: 'forms/fields',
+        selector: '#actionBelowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-content': {
+        url: 'forms/fields',
+        selector: '#belowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-content/alignment': {
+        url: 'forms/fields',
+        selector: '#belowContentAlignment',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/text-input/simple': {
         url: 'forms/fields',
         selector: '#textInput',

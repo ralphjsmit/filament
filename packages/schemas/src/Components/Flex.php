@@ -21,7 +21,7 @@ class Flex extends Component
     protected string $view = 'filament-schemas::components.flex';
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Closure  $schema
+     * @param  array<Component | Action | ActionGroup | string> | Closure  $schema
      */
     final public function __construct(array | Closure $schema)
     {
@@ -29,7 +29,7 @@ class Flex extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Closure  $schema
+     * @param  array<Component | Action | ActionGroup | string> | Closure  $schema
      */
     public static function make(array | Closure $schema): static
     {

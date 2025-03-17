@@ -1,4 +1,6 @@
 .fi-sc {
+    @apply text-sm;
+
     &.fi-inline {
         @apply flex grow flex-wrap items-center;
     }

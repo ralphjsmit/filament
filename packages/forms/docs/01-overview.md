@@ -400,6 +400,120 @@ TextInput::make('name')
 
 <AutoScreenshot name="forms/fields/placeholder" alt="Form field with placeholder" version="4.x" />
 
+## Adding extra content to a field
+
+Fields contain many "slots" where content can be inserted in a child schema. Slots can accept text, [any schema component](../schemas/overview), [actions](../actions) and [action groups](../actions/grouping-actions). Usually, [prime components](../schemas/primes) are used for content.
+
+The following slots are available for all fields:
+
+- `aboveLabel()`
+- `belowLabel()`
+- `beforeLabel()`
+- `afterLabel()`
+- `aboveContent()`
+- `belowContent()`
+- `beforeContent()`
+- `afterContent()`
+- `aboveErrorMessage()`
+- `belowErrorMessage()`
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the slot methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+To insert plain text, you can pass a string to these methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->belowContent('This is the user\'s full name.')
+```
+
+<AutoScreenshot name="forms/fields/below-content/text" alt="Form field with text below content" version="4.x" />
+
+To insert a schema component, often a [prime component](../schemas/primes), you can pass the component to the method:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Text;
+use Filament\Support\Enums\FontWeight;
+
+TextInput::make('name')
+    ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold))
+```
+
+<AutoScreenshot name="forms/fields/below-content/component" alt="Form field with component below content" version="4.x" />
+
+To insert an [action](../actions) or [action group](../actions/grouping-actions), you can pass the action or action group to the method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->belowContent(Action::make('generate'))
+```
+
+<AutoScreenshot name="forms/fields/below-content/action" alt="Form field with action below content" version="4.x" />
+
+You can insert any combination of content into the slots by passing an array of content to the method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->belowContent([
+        Icon::make(Heroicon::InformationCircle),
+        'This is the user\'s full name.',
+        Action::make('generate'),
+    ])
+```
+
+<AutoScreenshot name="forms/fields/below-content" alt="Form field with multiple components below content" version="4.x" />
+
+You can also align the content in the slots by passing the array of content to either `Schema::start()` (default), `Schema::end()` or `Schema::between()`:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Icon;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->belowContent(Schema::end([
+        Icon::make(Heroicon::InformationCircle),
+        'This is the user\'s full name.',
+        Action::make('generate'),
+    ]))
+
+TextInput::make('name')
+    ->belowContent(Schema::between([
+        Icon::make(Heroicon::InformationCircle),
+        'This is the user\'s full name.',
+        Action::make('generate'),
+    ]))
+
+TextInput::make('name')
+    ->belowContent(Schema::between([
+        Flex::make([
+            Icon::make(Heroicon::InformationCircle)
+                ->grow(false),
+            'This is the user\'s full name.',
+        ]),
+        Action::make('generate'),
+    ]))
+```
+
+<AutoScreenshot name="forms/fields/below-content/alignment" alt="Form field with aligned components below content" version="4.x" />
+
+<Aside variant="tip">
+    As you can see in the above example for `Schema::between()`, a [`Flex` component](../schemas/layouts#flex-component) is used to group the icon and text together so they do not have space between them. The icon uses `grow(false)` to prevent it from taking up half of the horizontal space, allowing the text to consume the remaining space.
+</Aside>
+
 ## Adding extra HTML attributes to a field
 
 You can pass extra HTML attributes to the field via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:

@@ -401,23 +401,37 @@ Image::make(
 
 ## Unordered list component
 
-Unordered lists can be inserted into a schema using the `UnorderedList` component. The list items, comprised of [text components](#text-component), are passed to the `make()` method:
+Unordered lists can be inserted into a schema using the `UnorderedList` component. The list items, comprising plain text or [text components](#text-component), are passed to the `make()` method:
 
 ```php
-use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 
 UnorderedList::make([
-    Text::make('Tables'),
-    Text::make('Schemas'),
-    Text::make('Actions'),
-    Text::make('Notifications'),
+    'Tables',
+    'Schemas',
+    'Actions',
+    'Notifications',
 ])
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/unordered-list/simple" alt="Unordered list" version="4.x" />
+
+Text components can be used as list items, which allows you to customize the formatting of each item:
+
+```php
+use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\UnorderedList;
+use Filament\Support\Enums\FontFamily;
+
+UnorderedList::make([
+    Text::make('Tables')->fontFamily(FontFamily::Mono),
+    Text::make('Schemas')->fontFamily(FontFamily::Mono),
+    Text::make('Actions')->fontFamily(FontFamily::Mono),
+    Text::make('Notifications')->fontFamily(FontFamily::Mono),
+])
+```
 
 ### Customizing the bullet size
 
