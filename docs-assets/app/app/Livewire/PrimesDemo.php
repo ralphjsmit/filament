@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use Filament\Actions\Action;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Icon;
 use Filament\Schemas\Components\Image;

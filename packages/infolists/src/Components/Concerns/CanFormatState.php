@@ -55,7 +55,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function date(string | Closure | null $format = null, string | closure | null $timezone = null): static
+    public function date(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDate = true;
 
@@ -74,7 +74,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function dateTime(string | Closure | null $format = null, string | closure | null $timezone = null): static
+    public function dateTime(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -85,7 +85,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDate(string | closure | null $format, string | closure | null $timezone = null): static
+    public function isoDate(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
         $this->isDate = true;
 
@@ -104,7 +104,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTime(string | closure | null $format, string | closure | null $timezone = null): static
+    public function isoDateTime(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -115,7 +115,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function since(string | closure | null $timezone = null): static
+    public function since(string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -132,7 +132,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function dateTooltip(string | Closure | null $format = null, string | closure | null $timezone = null): static
+    public function dateTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultDateDisplayFormat;
 
@@ -149,7 +149,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function dateTimeTooltip(string | Closure | null $format = null, string | closure | null $timezone = null): static
+    public function dateTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultDateTimeDisplayFormat;
 
@@ -158,7 +158,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function timeTooltip(string | Closure | null $format = null, string | closure | null $timezone = null): static
+    public function timeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultTimeDisplayFormat;
 
@@ -167,7 +167,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function sinceTooltip(string | closure | null $timezone = null): static
+    public function sinceTooltip(string | Closure | null $timezone = null): static
     {
         $this->tooltip(static function (TextEntry $component, mixed $state) use ($timezone): ?string {
             if (blank($state)) {
@@ -182,7 +182,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTooltip(string | closure | null $format, string | closure | null $timezone = null): static
+    public function isoDateTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultIsoDateDisplayFormat;
 
@@ -199,7 +199,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTimeTooltip(string | closure | null $format, string | closure | null $timezone = null): static
+    public function isoDateTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultIsoDateTimeDisplayFormat;
 
@@ -208,7 +208,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoTimeTooltip(string | closure | null $format, string | closure | null $timezone = null): static
+    public function isoTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
         $format ??= Schema::$defaultIsoTimeDisplayFormat;
 
@@ -281,7 +281,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function time(string | Closure | null $format = null, string | closure | null $timezone = null): static
+    public function time(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isTime = true;
 
@@ -292,7 +292,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoTime(string | Closure | null $format = null, string | closure | null $timezone = null): static
+    public function isoTime(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isTime = true;
 
