@@ -32,7 +32,7 @@ Wizard::make([
 <AutoScreenshot name="schemas/layout/wizard/simple" alt="Wizard" version="4.x" />
 
 <Aside variant="tip">
-    We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../../resources/creating-records#using-a-wizard) or an [action modal](../../actions/modals#using-a-wizard-as-a-modal-form). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
+    We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../resources/creating-records#using-a-wizard) or an [action modal](../../actions/modals#using-a-wizard-as-a-modal-form). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
 </Aside>
 
 ## Rendering a submit button on the last step
@@ -75,7 +75,7 @@ You could use this component in a separate Blade view if you want.
 
 ## Setting up step icons
 
-Steps may also have an [icon](../../styling/icons), set using the `icon()` method:
+Steps may also have an [icon](../styling/icons), set using the `icon()` method:
 
 ```php
 use Filament\Schemas\Components\Wizard\Step;

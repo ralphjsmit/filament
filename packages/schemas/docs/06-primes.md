@@ -106,7 +106,7 @@ Text::make(
 
 ### Customizing the text color
 
-You may set a [color](../../styling/colors) for the text:
+You may set a [color](../styling/colors) for the text:
 
 ```php
 use Filament\Schemas\Components\Text;
@@ -162,7 +162,7 @@ Text::make('Warning')
 
 #### Adding an icon to the badge
 
-You may add other things to the badge, like an [icon](../../styling/icons):
+You may add other things to the badge, like an [icon](../styling/icons):
 
 ```php
 use Filament\Schemas\Components\Text;
@@ -260,7 +260,7 @@ Icon::make(Heroicon::Star)
 
 ### Customizing the icon color
 
-You may set a [color](../../styling/colors) for the icon:
+You may set a [color](../styling/colors) for the icon:
 
 ```php
 use Filament\Schemas\Components\Icon;

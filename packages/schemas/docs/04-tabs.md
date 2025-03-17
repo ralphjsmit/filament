@@ -63,7 +63,7 @@ Tabs::make('Tabs')
 
 ## Setting a tab icon
 
-Tabs may have an [icon](../../styling/icons), which you can set using the `icon()` method:
+Tabs may have an [icon](../styling/icons), which you can set using the `icon()` method:
 
 ```php
 use Filament\Schemas\Components\Tabs;
@@ -134,7 +134,7 @@ Tabs::make('Tabs')
 
 <AutoScreenshot name="schemas/layout/tabs/badges" alt="Tabs with badges" version="4.x" />
 
-If you'd like to change the [color](../../styling/colors) for a badge, you can use the `badgeColor()` method:
+If you'd like to change the [color](../styling/colors) for a badge, you can use the `badgeColor()` method:
 
 ```php
 use Filament\Schemas\Components\Tabs;
