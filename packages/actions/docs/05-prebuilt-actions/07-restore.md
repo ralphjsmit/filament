@@ -2,7 +2,7 @@
 title: Restore action
 ---
 
-## Overview
+## Introduction
 
 Filament includes a prebuilt action that is able to restore [soft deleted](https://laravel.com/docs/eloquent#soft-deleting) Eloquent records. When the trigger button is clicked, a modal asks the user for confirmation. You may use it like so:
 

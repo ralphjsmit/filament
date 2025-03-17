@@ -2,7 +2,7 @@
 title: Dashboard
 ---
 
-## Overview
+## Introduction
 
 Filament allows you to build dynamic dashboards, comprised of "widgets", very easily.
 

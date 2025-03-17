@@ -2,7 +2,7 @@
 title: Icon button Blade component
 ---
 
-## Overview
+## Introduction
 
 The button component is used to render a clickable button that can perform an action:
 

@@ -2,7 +2,7 @@
 title: Avatar Blade component
 ---
 
-## Overview
+## Introduction
 
 The avatar component is used to render a circular or square image, often used to represent a user or entity as their "profile picture":
 

@@ -2,7 +2,7 @@
 title: Hidden
 ---
 
-## Overview
+## Introduction
 
 The hidden component allows you to create a hidden field in your form that holds a value.
 

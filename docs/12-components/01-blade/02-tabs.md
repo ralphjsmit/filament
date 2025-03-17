@@ -2,7 +2,7 @@
 title: Tabs Blade component
 ---
 
-## Overview
+## Introduction
 
 The tabs component allows you to render a set of tabs, which can be used to toggle between multiple sections of content:
 

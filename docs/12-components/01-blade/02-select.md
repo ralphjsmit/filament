@@ -2,7 +2,7 @@
 title: Select Blade component
 ---
 
-## Overview
+## Introduction
 
 The select component is a wrapper around the native `<select>` element. It provides a simple interface for selecting a single value from a list of options:
 

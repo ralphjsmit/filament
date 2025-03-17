@@ -2,7 +2,7 @@
 title: Link Blade component
 ---
 
-## Overview
+## Introduction
 
 The link component is used to render a clickable link that can perform an action:
 

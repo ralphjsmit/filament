@@ -2,7 +2,7 @@
 title: Custom pages
 ---
 
-## Overview
+## Introduction
 
 Filament allows you to create completely custom pages for resources. To create a new page, you can use:
 

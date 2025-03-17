@@ -2,7 +2,7 @@
 title: Ternary filters
 ---
 
-## Overview
+## Introduction
 
 Ternary filters allow you to easily create a select filter which has three states - usually true, false and blank. To filter a column named `is_admin` to be `true` or `false`, you may use the ternary filter:
 

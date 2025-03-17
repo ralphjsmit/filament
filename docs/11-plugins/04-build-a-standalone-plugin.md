@@ -6,7 +6,7 @@ title: Build a standalone plugin
 
 Please read the docs on [panel plugin development](../panels/plugins/) and the [getting started guide](getting-started) before continuing.
 
-## Overview
+## Introduction
 
 In this walkthrough, we'll build a simple plugin that adds a new form component that can be used in forms. This also means it will be available to users in their panels.
 

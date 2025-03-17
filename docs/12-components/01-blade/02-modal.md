@@ -2,7 +2,7 @@
 title: Modal Blade component
 ---
 
-## Overview
+## Introduction
 
 The modal component is able to open a dialog window or slide-over with any content:
 

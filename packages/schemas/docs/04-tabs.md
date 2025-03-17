@@ -4,7 +4,7 @@ title: Tabs
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 Some schemas can be long and complex. You may want to use tabs to reduce the number of components that are visible at once:
 

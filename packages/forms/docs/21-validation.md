@@ -3,7 +3,7 @@ title: Validation
 ---
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 Validation rules may be added to any [field](overview#available-fields).
 

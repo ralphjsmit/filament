@@ -2,7 +2,7 @@
 title: Adding a widget to a Blade view
 ---
 
-## Overview
+## Introduction
 
 Since widgets are Livewire components, you can easily render a widget in any Blade view using the `@livewire` directive:
 

@@ -4,7 +4,7 @@ title: Icon entry
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 Icon entries render an [icon](../styling/icons) representing the state of the entry:
 

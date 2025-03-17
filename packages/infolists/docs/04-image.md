@@ -4,7 +4,7 @@ title: Image entry
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 Infolists can render images, based on the path in the state of the entry:
 

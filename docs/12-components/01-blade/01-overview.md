@@ -2,6 +2,8 @@
 title: Overview
 ---
 
+## Introduction
+
 Filament packages consume a set of core Blade components that aim to provide a consistent and maintainable foundation for all interfaces. Some of these components are also available for use in your own applications and Filament plugins.
 
 ## Available UI components

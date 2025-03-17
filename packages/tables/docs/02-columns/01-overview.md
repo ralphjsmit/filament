@@ -3,6 +3,8 @@ title: Overview
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
+## Introduction
+
 Column classes can be found in the `Filament\Tables\Columns` namespace. You can put them inside the `$table->columns()` method:
 
 ```php

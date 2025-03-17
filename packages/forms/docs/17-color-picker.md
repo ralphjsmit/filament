@@ -3,7 +3,7 @@ title: Color picker
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 The color picker component allows you to pick a color in a range of formats.
 

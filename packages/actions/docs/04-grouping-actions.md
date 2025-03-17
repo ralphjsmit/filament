@@ -3,7 +3,7 @@ title: Grouping actions
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 You may group actions together into a dropdown menu by using an `ActionGroup` object. Groups may contain many actions, or other groups:
 

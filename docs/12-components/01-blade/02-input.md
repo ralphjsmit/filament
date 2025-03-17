@@ -2,7 +2,7 @@
 title: Input Blade component
 ---
 
-## Overview
+## Introduction
 
 The input component is a wrapper around the native `<input>` element. It provides a simple interface for entering a single line of text.
 

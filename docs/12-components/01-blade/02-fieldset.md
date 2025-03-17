@@ -2,7 +2,7 @@
 title: Fieldset Blade component
 ---
 
-## Overview
+## Introduction
 
 You can use a fieldset to group multiple form fields together, optionally with a label:
 

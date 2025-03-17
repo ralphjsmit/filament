@@ -4,7 +4,7 @@ title: Sections
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 You may want to separate your fields into sections, each with a heading and description. To do this, you can use a section component:
 

@@ -2,7 +2,7 @@
 title: Plugin development
 ---
 
-## Overview
+## Introduction
 
 The basis of Filament plugins are Laravel packages. They are installed into your Filament project via Composer, and follow all the standard techniques, like using service providers to register routes, views, and translations. If you're new to Laravel package development, here are some resources that can help you grasp the core concepts:
 

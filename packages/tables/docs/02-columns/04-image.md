@@ -3,7 +3,7 @@ title: Image column
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 Images can be easily displayed within your table:
 

@@ -4,7 +4,7 @@ title: Repeatable entry
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 The repeatable entry allows you to repeat a set of entries and layout components for items in an array or relationship.
 

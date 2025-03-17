@@ -2,7 +2,7 @@
 title: View action
 ---
 
-## Overview
+## Introduction
 
 Filament includes a prebuilt action that is able to view Eloquent records. When the trigger button is clicked, a modal will open with information inside. Filament uses form fields to structure this information. All form fields are disabled, so they are not editable by the user. You may use it like so:
 

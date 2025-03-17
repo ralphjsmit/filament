@@ -2,7 +2,7 @@
 title: Dropdown Blade component
 ---
 
-## Overview
+## Introduction
 
 The dropdown component allows you to render a dropdown menu with a button that triggers it:
 

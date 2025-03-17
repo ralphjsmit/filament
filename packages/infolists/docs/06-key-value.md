@@ -4,7 +4,7 @@ title: Key-value entry
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 The key-value entry allows you to render key-value pairs of data, from a one-dimensional JSON object / PHP array.
 

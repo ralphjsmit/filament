@@ -2,7 +2,7 @@
 title: Breadcrumbs Blade component
 ---
 
-## Overview
+## Introduction
 
 The breadcrumbs component is used to render a simple, linear navigation that informs the user of their current location within the application:
 

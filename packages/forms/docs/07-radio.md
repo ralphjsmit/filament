@@ -5,7 +5,7 @@ import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 The radio input provides a radio button group for selecting a single value from a list of predefined options:
 

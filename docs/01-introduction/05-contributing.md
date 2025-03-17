@@ -82,7 +82,7 @@ php artisan filament:check-translations es --source=app
 
 ## Security vulnerabilities
 
-If you discover a security vulnerability within Filament, please email Dan Harrin via [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be promptly addressed. Please see our [version support policy](version-support-policy#overview) to understand which versions are currently under maintenance.
+If you discover a security vulnerability within Filament, please email Dan Harrin via [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be promptly addressed. Please see our [version support policy](version-support-policy) to understand which versions are currently under maintenance.
 
 ## Code of Conduct
 

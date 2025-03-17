@@ -2,7 +2,7 @@
 title: Query builder
 ---
 
-## Overview
+## Introduction
 
 The query builder allows you to define a complex set of conditions to filter the data in your table. It is able to handle unlimited nesting of conditions, which you can group together with "and" and "or" operations.
 

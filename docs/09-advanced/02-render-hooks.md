@@ -2,7 +2,7 @@
 title: Render hooks
 ---
 
-## Overview
+## Introduction
 
 Filament allows you to render Blade content at various points in the frameworks views. It's useful for plugins to be able to inject HTML into the framework. Also, since Filament does not recommend publishing the views due to an increased risk of breaking changes, it's also useful for users.
 

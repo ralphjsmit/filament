@@ -2,7 +2,7 @@
 title: Icons
 ---
 
-## Overview
+## Introduction
 
 Icons are used throughout the entire Filament UI to visually communicate core parts of the user experience. To render icons, we use the [Blade Icons](https://github.com/blade-ui-kit/blade-icons) package from Blade UI Kit.
 

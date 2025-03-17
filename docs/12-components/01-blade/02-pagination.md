@@ -2,7 +2,7 @@
 title: Pagination Blade component
 ---
 
-## Overview
+## Introduction
 
 The pagination component can be used in a Livewire Blade view only. It can render a list of paginated links:
 

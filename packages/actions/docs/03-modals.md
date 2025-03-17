@@ -3,7 +3,7 @@ title: Modals
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 Actions may require additional confirmation or input from the user before they run. You may open a modal before an action is executed to do this.
 

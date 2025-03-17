@@ -2,7 +2,7 @@
 title: Customizing notifications
 ---
 
-## Overview
+## Introduction
 
 Notifications come fully styled out of the box. However, if you want to apply your own styling or use a custom view to render notifications, there are multiple options.
 

@@ -2,7 +2,7 @@
 title: Chart widgets
 ---
 
-## Overview
+## Introduction
 
 Filament comes with many "chart" widget templates, which you can use to display real-time, interactive charts.
 

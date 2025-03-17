@@ -2,7 +2,7 @@
 title: Broadcast notifications
 ---
 
-## Overview
+## Introduction
 
 > To start, make sure the package is [installed](installation) - `@livewire('notifications')` should be in your Blade layout somewhere.
 

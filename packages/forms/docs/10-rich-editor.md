@@ -4,7 +4,7 @@ title: Rich editor
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 The rich editor allows you to edit and preview HTML content, as well as upload images.
 

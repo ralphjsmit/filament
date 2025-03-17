@@ -4,6 +4,8 @@ title: Overview
 import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
+## Introduction
+
 Schemas allow you to build UIs using an array of "component" PHP objects as configuration. They are used throughout Filament to render UI. Filament packages provide you with various components. You can find a full list in the [available components section](#available-components):
 
 - [Form fields](../forms) accept input from the user, for example, a text input, a select, or a checkbox. They come with integrated validation.

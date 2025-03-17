@@ -3,7 +3,7 @@ title: Version Support Policy
 contents: false
 ---
 
-## Overview
+## Introduction
 
 | Version | New features | Bug fixes | Security fixes     |
 |---------|--------------|-----------|--------------------|

@@ -2,7 +2,7 @@
 title: Input wrapper Blade component
 ---
 
-## Overview
+## Introduction
 
 The input wrapper component should be used as a wrapper around the [input](input) or [select](select) components. It provides a border and other elements such as a prefix or suffix.
 

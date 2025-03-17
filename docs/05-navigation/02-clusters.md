@@ -2,7 +2,7 @@
 title: Clusters
 ---
 
-## Overview
+## Introduction
 
 Clusters are a hierarchical structure in panels that allow you to group [resources](resources) and [custom pages](pages) together. They are useful for organizing your panel into logical sections, and can help reduce the size of your panel's sidebar.
 

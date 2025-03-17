@@ -4,7 +4,7 @@ title: Toggle
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 The toggle component, similar to a [checkbox](checkbox), allows you to interact a boolean value.
 

@@ -3,7 +3,7 @@ title: Text column
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 Text columns display simple text from your database:
 

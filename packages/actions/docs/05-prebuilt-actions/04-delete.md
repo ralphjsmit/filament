@@ -2,7 +2,7 @@
 title: Delete action
 ---
 
-## Overview
+## Introduction
 
 Filament includes a prebuilt action that is able to delete Eloquent records. When the trigger button is clicked, a modal asks the user for confirmation. You may use it like so:
 

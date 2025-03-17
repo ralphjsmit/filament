@@ -2,7 +2,7 @@
 title: Enum tricks
 ---
 
-## Overview
+## Introduction
 
 Enums are special PHP classes that represent a fixed set of constants. They are useful for modeling concepts that have a limited number of possible values, like days of the week, months in a year, or the suits in a deck of cards.
 

@@ -2,7 +2,7 @@
 title: Badge Blade component
 ---
 
-## Overview
+## Introduction
 
 The badge component is used to render a small box with some text inside:
 

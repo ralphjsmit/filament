@@ -2,7 +2,7 @@
 title: CSS hooks
 ---
 
-## Overview
+## Introduction
 
 Filament uses CSS "hook" classes to allow various HTML elements to be customized using CSS.
 

@@ -2,7 +2,7 @@
 title: Section Blade component
 ---
 
-## Overview
+## Introduction
 
 A section can be used to group content together, with an optional heading:
 

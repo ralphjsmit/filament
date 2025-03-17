@@ -4,7 +4,7 @@ title: Toggle buttons
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 The toggle buttons input provides a group of buttons for selecting a single value, or multiple values, from a list of predefined options:
 

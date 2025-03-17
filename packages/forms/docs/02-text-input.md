@@ -4,7 +4,7 @@ title: Text input
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 The text input allows you to interact with a string:
 

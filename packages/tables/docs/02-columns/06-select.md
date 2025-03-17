@@ -3,7 +3,7 @@ title: Select column
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 The select column allows you to render a select field inside the table, which can be used to update that database record without needing to open a new page or a modal.
 

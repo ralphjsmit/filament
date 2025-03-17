@@ -3,7 +3,7 @@ title: Grouping rows
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 You may allow users to group table rows together using a common attribute. This is useful for displaying lots of data in a more organized way.
 

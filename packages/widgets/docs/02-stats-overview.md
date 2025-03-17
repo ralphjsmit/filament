@@ -2,7 +2,7 @@
 title: Stats overview widgets
 ---
 
-## Overview
+## Introduction
 
 Filament comes with a "stats overview" widget template, which you can use to display a number of different stats in a single widget, without needing to write a custom view.
 

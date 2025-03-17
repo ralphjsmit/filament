@@ -3,7 +3,7 @@ title: Icon column
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 Icon columns render an [icon](../../styling/icons) representing their contents:
 

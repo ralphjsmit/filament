@@ -4,7 +4,7 @@ title: Textarea
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 The textarea allows you to interact with a multi-line string:
 
