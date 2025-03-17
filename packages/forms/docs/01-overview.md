@@ -800,6 +800,10 @@ TextInput::make('name')
     ])
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `belowErrorMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/below-error-message" alt="Form field with extra content below error message" version="4.x" />
+
 ## Adding extra HTML attributes to a field
 
 You can pass extra HTML attributes to the field via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
