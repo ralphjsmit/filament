@@ -61,10 +61,10 @@ To arrange components into a [layout](layouts), Filament includes layout compone
 
 For displaying arbitrary content, Filament includes [prime](primes) components:
 
-- [Text](primes#text)
-- [Icon](primes#icon)
-- [Image](primes#image)
-- [Unordered list](primes#unordered-list)
+- [Text](primes#text-component)
+- [Icon](primes#icon-component)
+- [Image](primes#image-component)
+- [Unordered list](primes#unordered-list-component)
 
 You can also insert "action" buttons into schemas. These can run PHP functions, and even open modals. For more information, see the [actions documentation](../actions).
 
@@ -242,7 +242,7 @@ function (Request $request, Set $set) {
 
 ## Global settings
 
-If you wish to change the default behavior of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all section components have [2 columns](grid) by default, you can do it like so:
+If you wish to change the default behavior of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all section components have [2 columns](sections#using-grid-columns-within-a-section) by default, you can do it like so:
 
 ```php
 use Filament\Schemas\Components\Section;
