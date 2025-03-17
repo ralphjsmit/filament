@@ -764,7 +764,7 @@ TextInput::make('name')
 
 ### Adding extra content above a field's error message
 
-You can insert extra content above a field's error message using the `aboveErrorMessage()` method. It will not be visible unless an error message is displayed. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content above a field's [error message](validation) using the `aboveErrorMessage()` method. It will not be visible unless an error message is displayed. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -785,7 +785,7 @@ TextInput::make('name')
 
 ### Adding extra content below a field's error message
 
-You can insert extra content below a field's error message using the `belowErrorMessage()` method. It will not be visible unless an error message is displayed. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content below a field's [error message](validation) using the `belowErrorMessage()` method. It will not be visible unless an error message is displayed. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Forms\Components\TextInput;
