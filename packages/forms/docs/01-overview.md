@@ -692,7 +692,7 @@ TextInput::make('name')
     This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-a-fields-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the field, not below the label, since the label is displayed in a separate column to the field content.
 </Aside>
 
-## Adding extra content above a field's content
+### Adding extra content above a field's content
 
 You can insert extra content above a field's content using the `aboveContent()` method. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
 
