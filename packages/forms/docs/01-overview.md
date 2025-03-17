@@ -363,6 +363,84 @@ Toggle::make('is_admin')
     The `visibleOn()` method will overwrite any previous calls to the `visible()` method, and vice versa.
 </Aside>
 
+## Inline labels
+
+Fields may have their labels displayed inline with the field, rather than above it. This is useful for forms with many fields, where vertical space is at a premium. To display a field's label inline, use the `inlineLabel()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->inlineLabel()
+```
+
+<AutoScreenshot name="forms/fields/inline-label" alt="Form field with inline label" version="4.x" />
+
+Optionally, you may pass a boolean value to control if the label should be displayed inline or not:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->inlineLabel(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `inlineLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Using inline labels in multiple places at once
+
+If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/section) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all fields within it will have their labels displayed inline:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make('Details')
+    ->inlineLabel()
+    ->fields([
+        TextInput::make('name'),
+        TextInput::make('email')
+            ->label('Email address'),
+        TextInput::make('phone')
+            ->label('Phone number'),
+    ])
+```
+
+<AutoScreenshot name="forms/fields/inline-label/section" alt="Form fields with inline labels in a section" version="4.x" />
+
+You can also use `inlineLabel()` on the entire schema to display all labels inline:
+
+```php
+use Filament\Schemas\Schema;
+
+public function form(Schema $schema): Schema
+{
+    return $schema
+        ->inlineLabel()
+        ->components([
+            // ...
+        ]);
+}
+```
+
+When using `inlineLabel()` on a layout component or schema, you can still opt-out of inline labels for individual fields by using the `inlineLabel(false)` method on the field:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make('Details')
+    ->inlineLabel()
+    ->fields([
+        TextInput::make('name'),
+        TextInput::make('email')
+            ->label('Email address'),
+        TextInput::make('phone')
+            ->label('Phone number')
+            ->inlineLabel(false),
+    ])
+```
+
 ## Autofocusing a field when the schema is loaded
 
 Most fields are autofocusable. Typically, you should aim for the first significant field in your schema to be autofocused for the best user experience. You can nominate a field to be autofocused using the `autofocus()` method:
@@ -407,13 +485,13 @@ Fields contain many "slots" where content can be inserted in a child schema. Slo
 The following slots are available for all fields:
 
 - `aboveLabel()`
-- `belowLabel()`
 - `beforeLabel()`
 - `afterLabel()`
+- `belowLabel()`
 - `aboveContent()`
-- `belowContent()`
 - `beforeContent()`
 - `afterContent()`
+- `belowContent()`
 - `aboveErrorMessage()`
 - `belowErrorMessage()`
 
@@ -513,6 +591,214 @@ TextInput::make('name')
 </Aside>
 
 <AutoScreenshot name="forms/fields/below-content/alignment" alt="Form field with aligned components below content" version="4.x" />
+
+### Adding extra content above a field's label
+
+You can insert extra content above a field's label using the `aboveLabel()` method. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->aboveLabel([
+        Icon::make(Heroicon::Star),
+        'This is the content above the field\'s label'
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `aboveLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/above-label" alt="Form field with extra content above label" version="4.x" />
+
+### Adding extra content before a field's label
+
+You can insert extra content before a field's label using the `beforeLabel()` method. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->beforeLabel(Icon::make(Heroicon::Star))
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `beforeLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/before-label" alt="Form field with extra content before label" version="4.x" />
+
+### Adding extra content after a field's label
+
+You can insert extra content after a field's label using the `afterLabel()` method. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->afterLabel([
+        Icon::make(Heroicon::Star),
+        'This is the content after the field\'s label'
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/after-label" alt="Form field with extra content after label" version="4.x" />
+
+By default, the content in the `afterLabel()` schema is aligned to the end of the container. If you wish to align it to the start of the container, you should pass a `Schema::start()` object containing the content:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->afterLabel(Schema::start([
+        Icon::make(Heroicon::Star),
+        'This is the content after the field\'s label'
+    ]))
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/after-label/aligned-start" alt="Form field with extra content after label aligned to the start" version="4.x" />
+
+### Adding extra content below a field's label
+
+You can insert extra content below a field's label using the `belowLabel()` method. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->belowLabel([
+        Icon::make(Heroicon::Star),
+        'This is the content below the field\'s label'
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `belowLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/below-label" alt="Form field with extra content below label" version="4.x" />
+
+<Aside variant="info">
+    This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-a-fields-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the field, not below the label, since the label is displayed in a separate column to the field content.
+</Aside>
+
+## Adding extra content above a field's content
+
+You can insert extra content above a field's content using the `aboveContent()` method. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->aboveContent([
+        Icon::make(Heroicon::Star),
+        'This is the content above the field\'s content'
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `aboveContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/above-content" alt="Form field with extra content above content" version="4.x" />
+
+<Aside variant="info">
+    This may seem like the same as the [`belowLabel()` method](#adding-extra-content-below-a-fields-label). However, when using [inline labels](#inline-labels), the `belowLabel()` method will place the content below the label, not above the field's content, since the label is displayed in a separate column to the field content.
+</Aside>
+
+### Adding extra content before a field's content
+
+You can insert extra content before a field's content using the `beforeContent()` method. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->beforeContent(Icon::make(Heroicon::Star))
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `beforeContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/before-content" alt="Form field with extra content before content" version="4.x" />
+
+<Aside variant="tip">
+    Some fields, such as the [text input](text-input#adding-affix-text-aside-the-field), [select](select#adding-affix-text-aside-the-field), and [date-time picker](date-time-picker#adding-affix-text-aside-the-field) fields, have a `prefix()` method to insert content before the field's content, adjoined to the field itself. This is often a better UI choice than using `beforeContent()`.
+
+    <AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="4.x" />
+</Aside>
+
+### Adding extra content after a field's content
+
+You can insert extra content after a field's content using the `afterContent()` method. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->afterContent(Icon::make(Heroicon::Star))
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `afterContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/after-content" alt="Form field with extra content after content" version="4.x" />
+
+<Aside variant="tip">
+    Some fields, such as the [text input](text-input#adding-affix-text-aside-the-field), [select](select#adding-affix-text-aside-the-field), and [date-time picker](date-time-picker#adding-affix-text-aside-the-field) fields, have a `suffix()` method to insert content after the field's content, adjoined to the field itself. This is often a better UI choice than using `beforeContent()`.
+
+    <AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="4.x" />
+</Aside>
+
+### Adding extra content above a field's error message
+
+You can insert extra content above a field's error message using the `aboveErrorMessage()` method. It will not be visible unless an error message is displayed. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->required()
+    ->aboveErrorMessage([
+        Icon::make(Heroicon::Star),
+        'This is the content above the field\'s error message'
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `aboveErrorMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/above-error-message" alt="Form field with extra content above error message" version="4.x" />
+
+### Adding extra content below a field's error message
+
+You can insert extra content below a field's error message using the `belowErrorMessage()` method. It will not be visible unless an error message is displayed. You can [pass any content](#adding-extra-content-to-a-field) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('name')
+    ->required()
+    ->belowErrorMessage([
+        Icon::make(Heroicon::Star),
+        'This is the content below the field\'s error message'
+    ])
+```
 
 ## Adding extra HTML attributes to a field
 

@@ -11,11 +11,15 @@
 
     & .fi-fo-field-label-ctn,
     & .fi-fo-field-label {
-        @apply flex items-center gap-x-3;
+        @apply flex items-start gap-x-3;
+
+        & > .fi-sc:nth-child(1) {
+            @apply grow-0;
+        }
     }
 
     & .fi-fo-field-label-content {
-        @apply text-sm leading-6 font-medium text-gray-950 dark:text-white;
+        @apply text-sm font-medium text-gray-950 dark:text-white;
 
         & .fi-fo-field-label-required-mark {
             @apply text-danger-600 dark:text-danger-400 font-medium;

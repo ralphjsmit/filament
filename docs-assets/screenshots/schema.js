@@ -287,6 +287,24 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/inline-label': {
+        url: 'forms/fields',
+        selector: '#inlineLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/inline-label/section': {
+        url: 'forms/fields',
+        selector: '#inlineLabelSection',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/placeholder': {
         url: 'forms/fields',
         selector: '#placeholder',
@@ -335,6 +353,96 @@ export default {
     'forms/fields/below-content/alignment': {
         url: 'forms/fields',
         selector: '#belowContentAlignment',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/above-label': {
+        url: 'forms/fields',
+        selector: '#aboveLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/before-label': {
+        url: 'forms/fields',
+        selector: '#beforeLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/after-label': {
+        url: 'forms/fields',
+        selector: '#afterLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/after-label/aligned-start': {
+        url: 'forms/fields',
+        selector: '#afterLabelAlignedStart',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-label': {
+        url: 'forms/fields',
+        selector: '#belowLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/above-content': {
+        url: 'forms/fields',
+        selector: '#aboveContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/before-content': {
+        url: 'forms/fields',
+        selector: '#beforeContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/after-content': {
+        url: 'forms/fields',
+        selector: '#afterContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/above-error-message': {
+        url: 'forms/fields',
+        selector: '#aboveErrorMessage',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-error-message': {
+        url: 'forms/fields',
+        selector: '#belowErrorMessage',
         viewport: {
             width: 1920,
             height: 640,

@@ -10,11 +10,15 @@
     }
 
     & .fi-in-entry-label-ctn {
-        @apply flex items-center gap-x-3;
+        @apply flex items-start gap-x-3;
+
+        & > .fi-sc:nth-child(1) {
+            @apply grow-0;
+        }
     }
 
     & .fi-in-entry-label {
-        @apply text-sm leading-6 font-medium text-gray-950 dark:text-white;
+        @apply text-sm font-medium text-gray-950 dark:text-white;
     }
 
     & .fi-in-entry-label-col {

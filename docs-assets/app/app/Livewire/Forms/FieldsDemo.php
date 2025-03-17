@@ -27,6 +27,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Icon;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -46,6 +47,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
     public function mount(): void
     {
         $this->form->fill();
+        $this->validate(
+            ['data.aboveErrorMessage' => ['required'], 'data.belowErrorMessage' => ['required']],
+            attributes: ['data.aboveErrorMessage' => 'name', 'data.belowErrorMessage' => 'name'],
+        );
     }
 
     public function form(Schema $form): Schema
@@ -73,6 +78,33 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Name')
                             ->disabled()
                             ->default('Dan Harrin'),
+                    ]),
+                Group::make()
+                    ->id('inlineLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('inlineLabel')
+                            ->label('Name')
+                            ->inlineLabel(),
+                    ]),
+                Group::make()
+                    ->id('inlineLabelSection')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Section::make('Details')
+                            ->schema([
+                                TextInput::make('inlineLabelSectionName')
+                                    ->label('Name'),
+                                TextInput::make('inlineLabelSectionEmail')
+                                    ->label('Email address'),
+                                TextInput::make('inlineLabelSectionPhone')
+                                    ->label('Phone number'),
+                            ])
+                            ->inlineLabel(),
                     ]),
                 Group::make()
                     ->id('placeholder')
@@ -151,6 +183,129 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 ]),
                                 Action::make('generate'),
                             ])),
+                    ]),
+                Group::make()
+                    ->id('aboveLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('aboveLabel')
+                            ->label('Name')
+                            ->aboveLabel([
+                                Icon::make(Heroicon::Star),
+                                'This is the content above the field\'s label'
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('beforeLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('beforeLabel')
+                            ->label('Name')
+                            ->beforeLabel(Icon::make(Heroicon::Star)),
+                    ]),
+                Group::make()
+                    ->id('afterLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('afterLabel')
+                            ->label('Name')
+                            ->afterLabel([
+                                Icon::make(Heroicon::Star),
+                                'This is the content after the field\'s label'
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('afterLabelAlignedStart')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('afterLabelAlignedStart')
+                            ->label('Name')
+                            ->afterLabel(Schema::start([
+                                Icon::make(Heroicon::Star),
+                                'This is the content after the field\'s label'
+                            ])),
+                    ]),
+                Group::make()
+                    ->id('belowLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('belowLabel')
+                            ->label('Name')
+                            ->belowLabel([
+                                Icon::make(Heroicon::Star),
+                                'This is the content below the field\'s label'
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('aboveContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('aboveContent')
+                            ->label('Name')
+                            ->belowLabel([
+                                Icon::make(Heroicon::Star),
+                                'This is the content above the field\'s content'
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('beforeContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('beforeContent')
+                            ->label('Name')
+                            ->beforeContent(Icon::make(Heroicon::Star)),
+                    ]),
+                Group::make()
+                    ->id('afterContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('afterContent')
+                            ->label('Name')
+                            ->afterContent(Icon::make(Heroicon::Star)),
+                    ]),
+                Group::make()
+                    ->id('aboveErrorMessage')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('aboveErrorMessage')
+                            ->label('Name')
+                            ->required()
+                            ->aboveErrorMessage([
+                                Icon::make(Heroicon::Star),
+                                'This is the content above the field\'s error message'
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('belowErrorMessage')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('belowErrorMessage')
+                            ->label('Name')
+                            ->required()
+                            ->belowErrorMessage([
+                                Icon::make(Heroicon::Star),
+                                'This is the content below the field\'s error message'
+                            ]),
                     ]),
                 Group::make()
                     ->id('textInput')

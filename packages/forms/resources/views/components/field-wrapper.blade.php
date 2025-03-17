@@ -120,15 +120,15 @@
 
             {{ $belowContentContainer }}
 
-            {{ $aboveErrorMessageContainer }}
-
             @if ($hasError)
+                {{ $aboveErrorMessageContainer }}
+
                 <p data-validation-error class="fi-fo-field-wrp-error-message">
                     {{ $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
                 </p>
-            @endif
 
-            {{ $belowErrorMessageContainer }}
+                {{ $belowErrorMessageContainer }}
+            @endif
         </div>
     @endif
 </div>
