@@ -508,11 +508,11 @@ TextInput::make('name')
     ]))
 ```
 
-<AutoScreenshot name="forms/fields/below-content/alignment" alt="Form field with aligned components below content" version="4.x" />
-
 <Aside variant="tip">
     As you can see in the above example for `Schema::between()`, a [`Flex` component](../schemas/layouts#flex-component) is used to group the icon and text together so they do not have space between them. The icon uses `grow(false)` to prevent it from taking up half of the horizontal space, allowing the text to consume the remaining space.
 </Aside>
+
+<AutoScreenshot name="forms/fields/below-content/alignment" alt="Form field with aligned components below content" version="4.x" />
 
 ## Adding extra HTML attributes to a field
 
