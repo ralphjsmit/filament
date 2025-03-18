@@ -14,8 +14,8 @@ use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\NestedSchema;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
@@ -106,25 +106,18 @@ class RequestPasswordReset extends SimplePage
             ->danger();
     }
 
-    public function form(Schema $schema): Schema
+    public function defaultForm(Schema $schema): Schema
     {
-        return $schema;
+        return $schema
+            ->statePath('data');
     }
 
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            'form' => $this->form(
-                $this->makeSchema()
-                    ->schema([
-                        $this->getEmailFormComponent(),
-                    ])
-                    ->statePath('data'),
-            ),
-        ];
+        return $schema
+            ->components([
+                $this->getEmailFormComponent(),
+            ]);
     }
 
     protected function getEmailFormComponent(): Component
@@ -202,7 +195,7 @@ class RequestPasswordReset extends SimplePage
 
     public function getFormContentComponent(): Component
     {
-        return Form::make([NestedSchema::make('form')])
+        return Form::make([EmbeddedSchema::make('form')])
             ->id('form')
             ->livewireSubmitHandler('request')
             ->footer([

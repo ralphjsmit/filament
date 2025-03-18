@@ -7,7 +7,7 @@
 
         theme = localStorage.getItem('theme') || @js(filament()->getDefaultThemeMode()->value)
     "
-    class="fi-theme-switcher grid grid-flow-col gap-x-1"
+    class="fi-theme-switcher"
 >
     <x-filament-panels::theme-switcher.button
         :icon="\Filament\Support\Icons\Heroicon::Sun"

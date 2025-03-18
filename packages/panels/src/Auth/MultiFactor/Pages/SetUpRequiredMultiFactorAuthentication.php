@@ -12,7 +12,6 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 
 class SetUpRequiredMultiFactorAuthentication extends SimplePage
 {
@@ -43,7 +42,7 @@ class SetUpRequiredMultiFactorAuthentication extends SimplePage
         return $schema
             ->components([
                 $this->getMultiFactorAuthenticationContentComponent(),
-                ...Arr::wrap($this->getFooterActionsContentComponent()),
+                $this->getFooterActionsContentComponent(),
             ]);
     }
 
@@ -62,7 +61,7 @@ class SetUpRequiredMultiFactorAuthentication extends SimplePage
                 ->all());
     }
 
-    public function getFooterActionsContentComponent(): ?Component
+    public function getFooterActionsContentComponent(): Component
     {
         return Actions::make($this->getFooterActions())
             ->fullWidth();

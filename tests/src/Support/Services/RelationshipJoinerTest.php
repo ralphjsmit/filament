@@ -8,7 +8,7 @@ use Illuminate\Database\Query\Expression;
 
 uses(TestCase::class);
 
-it('can prepare query for no constraints for a BelongsToMany relationship', function () {
+it('can prepare query for no constraints for a BelongsToMany relationship', function (): void {
     $user = User::factory()->create();
 
     expect($user->teams()->toBase())

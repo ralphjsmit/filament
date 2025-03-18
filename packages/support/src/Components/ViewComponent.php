@@ -127,6 +127,14 @@ abstract class ViewComponent extends Component implements Htmlable
         return new HtmlString($html);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtraViewData(): array
+    {
+        return [];
+    }
+
     public function render(): View
     {
         return $this->viewInstance ??= view(
@@ -135,6 +143,7 @@ abstract class ViewComponent extends Component implements Htmlable
                 'attributes' => new ComponentAttributeBag,
                 ...$this->extractPublicMethods(),
                 ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
+                ...$this->getExtraViewData(),
                 ...$this->viewData,
             ],
         );

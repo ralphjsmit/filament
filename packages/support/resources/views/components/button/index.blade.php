@@ -1,16 +1,16 @@
 @php
-    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\Badge;
-    use Filament\Support\View\Components\Button;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Filament\Support\View\Components\ButtonComponent;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
-    'badgeSize' => 'xs',
+    'badgeSize' => Size::ExtraSmall,
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -25,7 +25,7 @@
     'labelSrOnly' => false,
     'loadingIndicator' => true,
     'outlined' => false,
-    'size' => ActionSize::Medium,
+    'size' => Size::Medium,
     'spaMode' => null,
     'tag' => 'button',
     'target' => null,
@@ -38,8 +38,12 @@
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
 
-    if (! $size instanceof ActionSize) {
-        $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
+    if (! $size instanceof Size) {
+        $size = filled($size) ? (Size::tryFrom($size) ?? $size) : null;
+    }
+
+    if (! $badgeSize instanceof Size) {
+        $badgeSize = filled($badgeSize) ? (Size::tryFrom($badgeSize) ?? $badgeSize) : null;
     }
 
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
@@ -47,7 +51,7 @@
     }
 
     $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall, ActionSize::Small => IconSize::Small,
+        Size::ExtraSmall, Size::Small => IconSize::Small,
         default => null,
     };
 
@@ -59,12 +63,15 @@
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
+
+    $hasTooltip = filled($tooltip);
 @endphp
 
 @if ($labeledFrom)
     <x-filament::icon-button
         :badge="$badge"
         :badge-color="$badgeColor"
+        :badge-size="$badgeSize"
         :color="$color"
         :disabled="$disabled"
         :form="$form"
@@ -75,7 +82,9 @@
         :icon-size="$iconSize"
         :key-bindings="$keyBindings"
         :label="$slot"
+        :loading-indicator="$loadingIndicator"
         :size="$size"
+        :spa-mode="$spaMode"
         :tag="$tag"
         :target="$target"
         :tooltip="$tooltip"
@@ -85,14 +94,14 @@
 @endif
 
 <{{ $tag }}
-    @if (($tag === 'a') && (! ($disabled && filled($tooltip))))
+    @if (($tag === 'a') && (! ($disabled && $hasTooltip)))
         {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
     @endif
     @if ($keyBindings)
         x-bind:id="$id('key-bindings')"
         x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
     @endif
-    @if (filled($tooltip))
+    @if ($hasTooltip)
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
@@ -116,7 +125,7 @@
                 'x-bind:aria-label' => ($labelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . \Illuminate\Support\Js::from(trim(strip_tags($slot->toHtml())))) : null,
             ], escape: false)
             ->when(
-                $disabled && filled($tooltip),
+                $disabled && $hasTooltip,
                 fn (ComponentAttributeBag $attributes) => $attributes->filter(
                     fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
                 ),
@@ -125,10 +134,10 @@
                 'fi-btn',
                 'fi-disabled' => $disabled,
                 'fi-outlined' => $outlined,
-                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
+                ($size instanceof Size) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
                 is_string($labeledFrom) ? "fi-labeled-from-{$labeledFrom}" : null,
             ])
-            ->color(app(Button::class, ['isOutlined' => $outlined]), $color)
+            ->color(app(ButtonComponent::class, ['isOutlined' => $outlined]), $color)
     }}
 >
     @if ($iconPosition === IconPosition::Before)
@@ -215,8 +224,8 @@
                 <span
                     @class([
                         'fi-badge',
-                        ...\Filament\Support\get_component_color_classes(Badge::class, $badgeColor),
-                        ($badgeSize instanceof ActionSize) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
+                        ...\Filament\Support\get_component_color_classes(BadgeComponent::class, $badgeColor),
+                        ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
                     ])
                 >
                     {{ $badge }}

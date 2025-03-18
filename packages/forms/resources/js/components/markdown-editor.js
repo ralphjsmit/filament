@@ -190,15 +190,13 @@ export default function markdownEditorFormComponent({
                     this.state = this.editor.value()
 
                     if (isLiveDebounced) {
-                        this.$wire.call('$refresh')
+                        this.$wire.commit()
                     }
                 }, liveDebounce ?? 300),
             )
 
             if (isLiveOnBlur) {
-                this.editor.codemirror.on('blur', () =>
-                    this.$wire.call('$refresh'),
-                )
+                this.editor.codemirror.on('blur', () => this.$wire.commit())
             }
 
             this.$watch('state', () => {

@@ -1,8 +1,8 @@
 @php
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Facades\FilamentView;
-    use Filament\Widgets\View\Components\StatsOverviewWidget\Stat\Description;
-    use Filament\Widgets\View\Components\StatsOverviewWidget\Stat\StatsOverviewWidgetStatChart;
+    use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent;
+    use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
 
     $chartColor = $getChartColor() ?? 'gray';
     $descriptionColor = $getDescriptionColor() ?? 'gray';
@@ -41,7 +41,7 @@
             <div
                 @class([
                     'fi-wi-stats-overview-stat-description',
-                    ...\Filament\Support\get_component_color_classes(Description::class, $descriptionColor),
+                    ...\Filament\Support\get_component_color_classes(DescriptionComponent::class, $descriptionColor),
                 ])
             >
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::Before, 'before']))
@@ -76,7 +76,7 @@
                         })"
                 @class([
                     'fi-wi-stats-overview-stat-chart',
-                    ...\Filament\Support\get_component_color_classes(StatsOverviewWidgetStatChart::class, $chartColor),
+                    ...\Filament\Support\get_component_color_classes(StatsOverviewWidgetStatChartComponent::class, $chartColor),
                 ])
             >
                 <canvas x-ref="canvas"></canvas>

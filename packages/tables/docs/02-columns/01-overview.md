@@ -2,16 +2,8 @@
 title: Overview
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
-import LaracastsBanner from "@components/LaracastsBanner.astro"
 
-## Overview
-
-<LaracastsBanner
-    title="Table Columns"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding columns to Filament resource tables."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/9"
-    series="rapid-laravel-development"
-/>
+## Introduction
 
 Column classes can be found in the `Filament\Tables\Columns` namespace. You can put them inside the `$table->columns()` method:
 
@@ -66,15 +58,6 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->label('Post title')
-```
-
-Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('title')
-    ->translateLabel() // Equivalent to `label(__('Title'))`
 ```
 
 ## Sorting

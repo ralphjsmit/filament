@@ -9,7 +9,7 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasVerticalAlignment;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 
 class Actions extends Component
 {
@@ -23,13 +23,13 @@ class Actions extends Component
 
     protected bool | Closure $isFullWidth = false;
 
-    const BEFORE_LABEL_CONTAINER = 'before_label';
+    const BEFORE_LABEL_SCHEMA_KEY = 'before_label';
 
-    const AFTER_LABEL_CONTAINER = 'after_label';
+    const AFTER_LABEL_SCHEMA_KEY = 'after_label';
 
-    const ABOVE_CONTENT_CONTAINER = 'above_content';
+    const ABOVE_CONTENT_SCHEMA_KEY = 'above_content';
 
-    const BELOW_CONTENT_CONTAINER = 'below_content';
+    const BELOW_CONTENT_SCHEMA_KEY = 'below_content';
 
     /**
      * @param  array<Action | ActionGroup>  $actions
@@ -66,7 +66,7 @@ class Actions extends Component
             return true;
         }
 
-        foreach ($this->getChildComponentContainer()->getComponents() as $component) {
+        foreach ($this->getChildSchema()->getComponents() as $component) {
             if ($component->isVisible()) {
                 return false;
             }
@@ -92,7 +92,7 @@ class Actions extends Component
      */
     public function beforeLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::BEFORE_LABEL_CONTAINER);
+        $this->childComponents($components, static::BEFORE_LABEL_SCHEMA_KEY);
 
         return $this;
     }
@@ -102,7 +102,7 @@ class Actions extends Component
      */
     public function afterLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::AFTER_LABEL_CONTAINER);
+        $this->childComponents($components, static::AFTER_LABEL_SCHEMA_KEY);
 
         return $this;
     }
@@ -112,7 +112,7 @@ class Actions extends Component
      */
     public function aboveContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::ABOVE_CONTENT_CONTAINER);
+        $this->childComponents($components, static::ABOVE_CONTENT_SCHEMA_KEY);
 
         return $this;
     }
@@ -122,39 +122,39 @@ class Actions extends Component
      */
     public function belowContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::BELOW_CONTENT_CONTAINER);
+        $this->childComponents($components, static::BELOW_CONTENT_SCHEMA_KEY);
 
         return $this;
     }
 
-    protected function makeSchemaForSlot(string $slot): Schema
+    protected function makeChildSchema(string $key): Schema
     {
-        $schema = parent::makeSchemaForSlot($slot);
+        $schema = parent::makeChildSchema($key);
 
-        if ($slot === static::AFTER_LABEL_CONTAINER) {
+        if ($key === static::AFTER_LABEL_SCHEMA_KEY) {
             $schema->alignEnd();
         }
 
         return $schema;
     }
 
-    protected function configureSchemaForSlot(Schema $schema, string $slot): Schema
+    protected function configureChildSchema(Schema $schema, string $key): Schema
     {
-        $schema = parent::configureSchemaForSlot($schema, $slot);
+        $schema = parent::configureChildSchema($schema, $key);
 
-        if (in_array($slot, [
-            static::BEFORE_LABEL_CONTAINER,
-            static::AFTER_LABEL_CONTAINER,
-            static::ABOVE_CONTENT_CONTAINER,
-            static::BELOW_CONTENT_CONTAINER,
+        if (in_array($key, [
+            static::BEFORE_LABEL_SCHEMA_KEY,
+            static::AFTER_LABEL_SCHEMA_KEY,
+            static::ABOVE_CONTENT_SCHEMA_KEY,
+            static::BELOW_CONTENT_SCHEMA_KEY,
         ])) {
             $schema
                 ->inline()
                 ->embeddedInParentComponent()
                 ->configureActionsUsing(fn (Action $action) => $action
-                    ->defaultSize(ActionSize::Small)
+                    ->defaultSize(Size::Small)
                     ->defaultView(Action::LINK_VIEW))
-                ->configureActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(ActionSize::Small));
+                ->configureActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
         }
 
         return $schema;

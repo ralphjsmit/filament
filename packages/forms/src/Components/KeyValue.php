@@ -7,7 +7,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\KeyValueStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 
@@ -102,7 +102,7 @@ class KeyValue extends Field
             ->color('danger')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (): bool => $this->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
@@ -134,7 +134,7 @@ class KeyValue extends Field
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyReorderActionUsing) {

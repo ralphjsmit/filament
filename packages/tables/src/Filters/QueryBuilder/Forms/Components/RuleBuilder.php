@@ -42,7 +42,7 @@ class RuleBuilder extends Builder
                                 return __('filament-tables::filters/query-builder.no_rules');
                             }
 
-                            $repeater = $component->getChildComponentContainer($uuid)
+                            $repeater = $component->getChildSchema($uuid)
                                 ->getComponent(fn (Component $component): bool => $component instanceof Repeater);
 
                             if (! ($repeater instanceof Repeater)) {

@@ -16,15 +16,24 @@ use Filament\Support\Concerns\HasTooltip;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
+use Filament\Support\View\Concerns\CanGenerateButtonHtml;
+use Filament\Support\View\Concerns\CanGenerateDropdownItemHtml;
+use Filament\Support\View\Concerns\CanGenerateIconButtonHtml;
+use Filament\Support\View\Concerns\CanGenerateLinkHtml;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
-use Illuminate\View\ComponentSlot;
 
 class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 {
+    use CanGenerateBadgeHtml;
+    use CanGenerateButtonHtml;
+    use CanGenerateDropdownItemHtml;
+    use CanGenerateIconButtonHtml;
+    use CanGenerateLinkHtml;
     use Concerns\BelongsToGroup;
     use Concerns\BelongsToLivewire;
     use Concerns\BelongsToSchemaComponent;
@@ -80,8 +89,6 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
      * @var view-string | Closure | null
      */
     protected string | Closure | null $defaultTriggerView = null;
-
-    protected View $triggerViewInstance;
 
     /**
      * @param  array<Action | ActionGroup>  $actions
@@ -393,7 +400,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-on:click="toggle"
                 class="fi-dropdown-trigger"
             >
-                <?= $this->renderTrigger()->render() ?>
+                <?= $this->toTriggerHtml() ?>
             </div>
 
             <div
@@ -415,103 +422,6 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         </div>
 
         <?php return ob_get_clean();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getBadgeTriggerViewData(): array
-    {
-        return [
-            'class' => 'fi-ac-badge-group',
-            'iconPosition' => $this->getIconPosition(),
-            'size' => $this->getSize(),
-            'slot' => new ComponentSlot(e($this->getLabel())),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getButtonTriggerViewData(): array
-    {
-        return [
-            'badge' => $this->getBadge(),
-            'badgeColor' => $this->getBadgeColor(),
-            'class' => 'fi-ac-btn-group',
-            'iconPosition' => $this->getIconPosition(),
-            'labeledFrom' => $this->getLabeledFromBreakpoint(),
-            'outlined' => $this->isOutlined(),
-            'size' => $this->getSize(),
-            'slot' => new ComponentSlot(e($this->getLabel())),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getGroupedTriggerViewData(): array
-    {
-        return [
-            'badge' => $this->getBadge(),
-            'badgeColor' => $this->getBadgeColor(),
-            'class' => 'fi-ac-grouped-group',
-            'icon' => $this->getIcon(),
-            'slot' => new ComponentSlot(e($this->getLabel())),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getIconButtonTriggerViewData(): array
-    {
-        return [
-            'badge' => $this->getBadge(),
-            'badgeColor' => $this->getBadgeColor(),
-            'class' => 'fi-ac-icon-btn-group',
-            'label' => $this->getLabel(),
-            'size' => $this->getSize(),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getLinkTriggerViewData(): array
-    {
-        return [
-            'badge' => $this->getBadge(),
-            'badgeColor' => $this->getBadgeColor(),
-            'class' => 'fi-ac-link-group',
-            'iconPosition' => $this->getIconPosition(),
-            'size' => $this->getSize(),
-            'slot' => new ComponentSlot(e($this->getLabel())),
-            'tag' => 'button',
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getTriggerViewData(): array
-    {
-        return [
-            'attributes' => $this->getExtraAttributeBag(),
-            'color' => $this->getColor(),
-            'icon' => $this->getIcon(),
-            'iconSize' => $this->getIconSize(),
-            'labelSrOnly' => $this->isLabelHidden(),
-            'tooltip' => $this->getTooltip(),
-            ...match ($this->getTriggerView()) {
-                static::BADGE_VIEW => $this->getBadgeTriggerViewData(),
-                static::BUTTON_VIEW => $this->getButtonTriggerViewData(),
-                static::GROUPED_VIEW => $this->getGroupedTriggerViewData(),
-                static::ICON_BUTTON_VIEW => $this->getIconButtonTriggerViewData(),
-                static::LINK_VIEW => $this->getLinkTriggerViewData(),
-                default => [],
-            },
-        ];
     }
 
     /**
@@ -562,11 +472,123 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return $this->evaluate($this->defaultTriggerView);
     }
 
+    public function toTriggerHtml(): string
+    {
+        return match ($this->getTriggerView()) {
+            static::BADGE_VIEW => $this->toBadgeTriggerHtml(),
+            static::BUTTON_VIEW => $this->toButtonTriggerHtml(),
+            static::GROUPED_VIEW => $this->toGroupedTriggerHtml(),
+            static::ICON_BUTTON_VIEW => $this->toIconButtonTriggerHtml(),
+            static::LINK_VIEW => $this->toLinkTriggerHtml(),
+            default => $this->renderTrigger()->render(),
+        };
+    }
+
+    protected function toBadgeTriggerHtml(): string
+    {
+        return $this->generateBadgeHtml(
+            attributes: (new ComponentAttributeBag)
+                ->merge($this->getExtraAttributes(), escape: false)
+                ->class(['fi-ac-badge-group']),
+            color: $this->getColor(),
+            icon: $this->getIcon(),
+            iconPosition: $this->getIconPosition(),
+            iconSize: $this->getIconSize(),
+            label: $this->getLabel(),
+            size: $this->getSize(),
+            tag: 'button',
+            tooltip: $this->getTooltip(),
+        );
+    }
+
+    protected function toButtonTriggerHtml(): string
+    {
+        return $this->generateButtonHtml(
+            attributes: (new ComponentAttributeBag)
+                ->merge($this->getExtraAttributes(), escape: false)
+                ->class(['fi-ac-btn-group']),
+            badge: $this->getBadge(),
+            badgeColor: $this->getBadgeColor(),
+            color: $this->getColor(),
+            icon: $this->getIcon(),
+            iconPosition: $this->getIconPosition(),
+            iconSize: $this->getIconSize(),
+            isLabelSrOnly: $this->isLabelHidden(),
+            isOutlined: $this->isOutlined(),
+            label: $this->getLabel(),
+            labeledFromBreakpoint: $this->getLabeledFromBreakpoint(),
+            size: $this->getSize(),
+            tag: 'button',
+            tooltip: $this->getTooltip(),
+        );
+    }
+
+    protected function toGroupedTriggerHtml(): string
+    {
+        return $this->generateDropdownItemHtml(
+            attributes: (new ComponentAttributeBag)
+                ->merge($this->getExtraAttributes(), escape: false)
+                ->class(['fi-ac-grouped-group']),
+            badge: $this->getBadge(),
+            badgeColor: $this->getBadgeColor(),
+            badgeTooltip: $this->getBadgeTooltip(),
+            color: $this->getColor(),
+            icon: $this->getIcon(),
+            iconSize: $this->getIconSize(),
+            label: $this->getLabel(),
+            tag: 'button',
+            tooltip: $this->getTooltip(),
+        );
+    }
+
+    protected function toIconButtonTriggerHtml(): string
+    {
+        return $this->generateIconButtonHtml(
+            attributes: (new ComponentAttributeBag)
+                ->merge($this->getExtraAttributes(), escape: false)
+                ->class(['fi-ac-icon-btn-group']),
+            badge: $this->getBadge(),
+            badgeColor: $this->getBadgeColor(),
+            color: $this->getColor(),
+            icon: $this->getIcon(),
+            iconSize: $this->getIconSize(),
+            label: $this->getLabel(),
+            size: $this->getSize(),
+            tag: 'button',
+            tooltip: $this->getTooltip(),
+        );
+    }
+
+    protected function toLinkTriggerHtml(): string
+    {
+        return $this->generateLinkHtml(
+            attributes: (new ComponentAttributeBag)
+                ->merge($this->getExtraAttributes(), escape: false)
+                ->class(['fi-ac-link-group']),
+            badge: $this->getBadge(),
+            badgeColor: $this->getBadgeColor(),
+            color: $this->getColor(),
+            icon: $this->getIcon(),
+            iconPosition: $this->getIconPosition(),
+            iconSize: $this->getIconSize(),
+            isLabelSrOnly: $this->isLabelHidden(),
+            label: $this->getLabel(),
+            size: $this->getSize(),
+            tag: 'button',
+            tooltip: $this->getTooltip(),
+        );
+    }
+
     public function renderTrigger(): View
     {
-        return $this->triggerViewInstance ??= view(
+        return view(
             $this->getTriggerView(),
-            $this->getTriggerViewData(),
+            [
+                'attributes' => new ComponentAttributeBag,
+                ...$this->extractPublicMethods(),
+                ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
+                ...$this->viewData,
+            ],
         );
     }
 

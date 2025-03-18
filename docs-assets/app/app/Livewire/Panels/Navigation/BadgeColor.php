@@ -4,7 +4,6 @@ namespace App\Livewire\Panels\Navigation;
 
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 
 class BadgeColor extends Page
@@ -20,7 +19,7 @@ class BadgeColor extends Page
                     ->label('Orders')
                     ->url(fn (): string => '#')
                     ->icon(Heroicon::OutlinedShoppingCart)
-                    ->badge(32, Color::Red),
+                    ->badge(32, 'danger'),
             ]);
     }
 }

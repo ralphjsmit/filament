@@ -5,7 +5,7 @@ namespace Filament\Forms\Components\Concerns;
 use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
@@ -185,7 +185,7 @@ trait HasAffixes
             foreach (Arr::wrap($this->evaluate($prefixAction)) as $action) {
                 $this->cachedPrefixActions[$action->getName()] = $this->prepareAction(
                     $action
-                        ->defaultSize(ActionSize::Small)
+                        ->defaultSize(Size::Small)
                         ->defaultView(Action::ICON_BUTTON_VIEW),
                 );
             }
@@ -213,7 +213,7 @@ trait HasAffixes
             foreach (Arr::wrap($this->evaluate($suffixAction)) as $action) {
                 $this->cachedSuffixActions[$action->getName()] = $this->prepareAction(
                     $action
-                        ->defaultSize(ActionSize::Small)
+                        ->defaultSize(Size::Small)
                         ->defaultView(Action::ICON_BUTTON_VIEW),
                 );
             }

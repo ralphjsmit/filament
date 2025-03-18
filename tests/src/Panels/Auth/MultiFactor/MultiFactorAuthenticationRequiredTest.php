@@ -6,7 +6,7 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-it('redirects the user to the setup page if they have not set up multi-factor authentication', function () {
+it('redirects the user to the setup page if they have not set up multi-factor authentication', function (): void {
     Filament::setCurrentPanel('required-multi-factor-authentication');
 
     $user = User::factory()->create();
@@ -17,7 +17,7 @@ it('redirects the user to the setup page if they have not set up multi-factor au
         ->assertRedirect(Filament::getSetUpRequiredMultiFactorAuthenticationUrl());
 });
 
-it('can render setup page', function () {
+it('can render setup page', function (): void {
     Filament::setCurrentPanel('required-multi-factor-authentication');
 
     $user = User::factory()->create();
@@ -30,7 +30,7 @@ it('can render setup page', function () {
         ->assertSuccessful();
 });
 
-it('can render setup page with a custom slug', function () {
+it('can render setup page with a custom slug', function (): void {
     Filament::setCurrentPanel('slugs');
 
     expect(Filament::getSetUpRequiredMultiFactorAuthenticationUrl())->toEndWith('/multi-factor-authentication-test/set-up-test');
@@ -43,7 +43,7 @@ it('can render setup page with a custom slug', function () {
         ->assertSuccessful();
 });
 
-it('redirects the user away from the setup page if they have already set up multi-factor authentication', function () {
+it('redirects the user away from the setup page if they have already set up multi-factor authentication', function (): void {
     Filament::setCurrentPanel('required-multi-factor-authentication');
 
     $user = User::factory()

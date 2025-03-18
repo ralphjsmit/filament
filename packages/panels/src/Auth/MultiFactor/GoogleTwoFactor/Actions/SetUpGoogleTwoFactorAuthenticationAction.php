@@ -12,14 +12,15 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Split;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -60,12 +61,12 @@ class SetUpGoogleTwoFactorAuthenticationAction
                         Text::make(__('filament-panels::auth/multi-factor/google-two-factor/actions/set-up.modal.content.qr_code.instruction'))
                             ->color('neutral'),
                         Image::make(
-                            url: fn (): string => $googleTwoFactorAuthentication->generateQRCodeDataUri(decrypt($action->getArguments()['encrypted'])['secret']),
+                            url: fn (): string => $googleTwoFactorAuthentication->generateQrCodeDataUri(decrypt($action->getArguments()['encrypted'])['secret']),
                             alt: __('filament-panels::auth/multi-factor/google-two-factor/actions/set-up.modal.content.qr_code.alt'),
                         )
                             ->imageHeight('12rem')
                             ->alignCenter(),
-                        Split::make([
+                        Flex::make([
                             Text::make(__('filament-panels::auth/multi-factor/google-two-factor/actions/set-up.modal.content.text_code.instruction'))
                                 ->color('neutral')
                                 ->grow(false),
@@ -86,11 +87,11 @@ class SetUpGoogleTwoFactorAuthenticationAction
                                         ->copyable()
                                         ->copyMessage(__('filament-panels::auth/multi-factor/recovery-codes-modal-content.messages.copied'))
                                         ->fontFamily(FontFamily::Mono)
-                                        ->size('xs')
+                                        ->size(TextSize::ExtraSmall)
                                         ->color('neutral'),
                                     decrypt($action->getArguments()['encrypted'] ?? encrypt([]))['recoveryCodes'] ?? [],
                                 ))
-                                    ->size('xs'),
+                                    ->size(TextSize::ExtraSmall),
                                 Text::make(function () use ($action): Htmlable {
                                     $recoveryCodes = decrypt($action->getArguments()['encrypted'])['recoveryCodes'];
 

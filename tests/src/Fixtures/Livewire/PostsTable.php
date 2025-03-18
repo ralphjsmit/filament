@@ -15,8 +15,8 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
@@ -28,10 +28,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
-class PostsTable extends Component implements HasActions, HasForms, Tables\Contracts\HasTable
+class PostsTable extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
-    use InteractsWithForms;
+    use InteractsWithSchemas;
     use Tables\Concerns\InteractsWithTable;
 
     public function table(Table $table): Table
@@ -140,20 +140,20 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
             ->headerActions([
                 Action::make('data')
                     ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
-                    ->form([
+                    ->schema([
                         TextInput::make('payload')->required(),
                     ])
-                    ->action(function (array $data) {
+                    ->action(function (array $data): void {
                         $this->dispatch('data-called', data: $data);
                     }),
                 Action::make('arguments')
                     ->requiresConfirmation()
-                    ->action(function (array $arguments) {
+                    ->action(function (array $arguments): void {
                         $this->dispatch('arguments-called', arguments: $arguments);
                     }),
                 Action::make('halt')
                     ->requiresConfirmation()
-                    ->action(function (Action $action) {
+                    ->action(function (Action $action): void {
                         $this->dispatch('halt-called');
 
                         $action->halt();
@@ -195,11 +195,11 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                 RestoreAction::make(),
                 ReplicateAction::make()
                     ->mutateRecordDataUsing(function (array $data): array {
-                        $data['title'] = $data['title'] . ' (Copy)';
+                        $data['title'] .= ' (Copy)';
 
                         return $data;
                     })
-                    ->form([
+                    ->schema([
                         TextInput::make('title')
                             ->required(),
                     ]),
@@ -223,7 +223,7 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                                     ->cancelParentActions(),
                             ]),
                     ])
-                    ->action(function (array $data, Post $record) {
+                    ->action(function (array $data, Post $record): void {
                         $this->dispatch('parent-called', foo: $data['foo'], recordKey: $record->getKey());
                     })
                     ->extraModalFooterActions([
@@ -266,7 +266,7 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                                         ->cancelParentActions(),
                                 ]),
                         ])
-                        ->action(function (array $data, Post $record) {
+                        ->action(function (array $data, Post $record): void {
                             $this->dispatch('grouped-parent-called', foo: $data['foo'], recordKey: $record->getKey());
                         })
                         ->extraModalFooterActions([
@@ -291,20 +291,20 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                 DeleteBulkAction::make(),
                 BulkAction::make('data')
                     ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
-                    ->form([
+                    ->schema([
                         TextInput::make('payload')->required(),
                     ])
-                    ->action(function (array $data) {
+                    ->action(function (array $data): void {
                         $this->dispatch('data-called', data: $data);
                     }),
                 BulkAction::make('arguments')
                     ->requiresConfirmation()
-                    ->action(function (array $arguments) {
+                    ->action(function (array $arguments): void {
                         $this->dispatch('arguments-called', arguments: $arguments);
                     }),
                 BulkAction::make('halt')
                     ->requiresConfirmation()
-                    ->action(function (BulkAction $action) {
+                    ->action(function (BulkAction $action): void {
                         $this->dispatch('halt-called');
 
                         $action->halt();

@@ -102,6 +102,21 @@ trait EvaluatesClosures
         throw new BindingResolutionException("An attempt was made to evaluate a closure for [{$staticClass}], but [\${$parameterName}] was unresolvable.");
     }
 
+    protected function evaluationValueIsFunctionAndHasParameter(mixed $value, string $parameterName): bool
+    {
+        if (! $value instanceof Closure) {
+            return false;
+        }
+
+        foreach ((new ReflectionFunction($value))->getParameters() as $parameter) {
+            if ($parameter->getName() === $parameterName) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @return array<mixed>
      */

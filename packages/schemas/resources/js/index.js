@@ -25,6 +25,16 @@ const resolveRelativeStatePath = function (containerPath, path, isAbsolute) {
     return `${containerPathCopy}.${path}`
 }
 
+const findClosestLivewireComponent = (el) => {
+    let closestRoot = Alpine.findClosest(el, (i) => i.__livewire)
+
+    if (!closestRoot) {
+        throw 'Could not find Livewire component in DOM tree.'
+    }
+
+    return closestRoot.__livewire
+}
+
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('filamentSchema', ({ livewireId }) => ({
         handleFormValidationError: function (event) {
@@ -83,4 +93,40 @@ document.addEventListener('alpine:init', () => {
             },
         }),
     )
+
+    Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+        succeed(({ snapshot, effects }) => {
+            effects.dispatches?.forEach((dispatch) => {
+                if (!dispatch.params?.awaitSchemaComponent) {
+                    return
+                }
+
+                let els = Array.from(
+                    component.el.querySelectorAll(
+                        `[wire\\:partial="schema-component::${dispatch.params.awaitSchemaComponent}"]`,
+                    ),
+                ).filter((el) => findClosestLivewireComponent(el) === component)
+
+                if (els.length === 1) {
+                    return
+                }
+
+                if (els.length > 1) {
+                    throw `Multiple schema components found with key [${dispatch.params.awaitSchemaComponent}].`
+                }
+
+                window.addEventListener(
+                    `schema-component-${component.id}-${dispatch.params.awaitSchemaComponent}-loaded`,
+                    () => {
+                        window.dispatchEvent(
+                            new CustomEvent(dispatch.name, {
+                                detail: dispatch.params,
+                            }),
+                        )
+                    },
+                    { once: true },
+                )
+            })
+        })
+    })
 })

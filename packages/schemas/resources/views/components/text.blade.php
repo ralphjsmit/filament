@@ -1,11 +1,16 @@
 @php
+    use Filament\Schemas\View\Components\TextComponent;
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\RawJs;
 
     $color = $getColor();
     $content = $getContent();
+    $icon = $getIcon();
+    $iconPosition = $getIconPosition();
+    $iconSize = $getIconSize();
     $size = $getSize();
+    $tooltip = $getTooltip();
     $weight = $getWeight();
     $fontFamily = $getFontFamily();
 
@@ -18,9 +23,9 @@
 @if ($isBadge())
     <x-filament::badge
         :color="$color"
-        :icon="$getIcon()"
-        :icon-position="$getIconPosition()"
-        :icon-size="$getIconSize()"
+        :icon="$icon"
+        :icon-position="$iconPosition"
+        :icon-size="$iconSize"
         :size="$size"
         :x-on:click="
             $isCopyable ? '
@@ -32,6 +37,8 @@
             ' : null
         "
         :tag="$isCopyable ? 'button' : 'span'"
+        :tooltip="$tooltip"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag()->class(['fi-sc-text']))"
     >
         {{ $content }}
     </x-filament::badge>
@@ -46,45 +53,21 @@
                 })
             "
         @endif
-        @class([
-            'fi-sc-text break-words',
-            'cursor-pointer' => $isCopyable,
-            match ($color) {
-                'gray' => 'text-gray-600 dark:text-gray-400',
-                'neutral' => 'text-gray-950 dark:text-white',
-                default => 'fi-color text-color-600 dark:text-color-400',
-            },
-            is_string($color) ? "fi-color-{$color}" : null,
-            match ($size) {
-                'xs' => 'text-xs',
-                null => 'text-sm',
-                default => $size,
-            },
-            match ($weight) {
-                FontWeight::Thin, 'thin' => 'font-thin',
-                FontWeight::ExtraLight, 'extralight' => 'font-extralight',
-                FontWeight::Light, 'light' => 'font-light',
-                FontWeight::Medium, 'medium' => 'font-medium',
-                FontWeight::SemiBold, 'semibold' => 'font-semibold',
-                FontWeight::Bold, 'bold' => 'font-bold',
-                FontWeight::ExtraBold, 'extrabold' => 'font-extrabold',
-                FontWeight::Black, 'black' => 'font-black',
-                default => $weight,
-            },
-            match ($fontFamily) {
-                FontFamily::Sans, 'sans' => 'font-sans',
-                FontFamily::Serif, 'serif' => 'font-serif',
-                FontFamily::Mono, 'mono' => 'font-mono',
-                default => $fontFamily,
-            },
-        ])
-        @style([
-            \Filament\Support\get_color_css_variables(
-                $color,
-                shades: [400, 600],
-                alias: 'schema::components.text',
-            ),
-        ])
+        @if (filled($tooltip))
+            x-tooltip="{ content: @js($tooltip), theme: $store.theme }"
+        @endif
+        {{
+            (new \Illuminate\View\ComponentAttributeBag)
+                ->color(TextComponent::class, $color)
+                ->class([
+                    'fi-sc-text',
+                    'fi-copyable' => $isCopyable,
+                    ($size instanceof \Filament\Support\Enums\TextSize) ? "fi-size-{$size->value}" : $size,
+                    ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : $weight,
+                    ($fontFamily instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : $fontFamily,
+                ])
+                ->merge($getExtraAttributes(), escape: false)
+        }}
     >
         {{ $content }}
     </span>

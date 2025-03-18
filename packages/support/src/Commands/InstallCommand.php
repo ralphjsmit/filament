@@ -10,13 +10,14 @@ use Filament\Support\Commands\Concerns\CanOpenUrlInBrowser;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Arr;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 use function Laravel\Prompts\confirm;
 
-#[AsCommand(name: 'filament:install')]
+#[AsCommand(name: 'filament:install', aliases: [
+    'install:filament',
+])]
 class InstallCommand extends Command
 {
     use CanGeneratePanels;
@@ -26,6 +27,13 @@ class InstallCommand extends Command
     protected $description = 'Install Filament';
 
     protected $name = 'filament:install';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'install:filament',
+    ];
 
     /**
      * @return array<InputOption>
@@ -98,11 +106,10 @@ class InstallCommand extends Command
             return;
         }
 
-        static::updateNpmPackages();
-
         $filesystem = app(Filesystem::class);
-        $filesystem->delete(resource_path('js/bootstrap.js'));
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
+
+        $hasNotifications = false;
 
         if (
             InstalledVersions::isInstalled('filament/notifications') &&
@@ -115,52 +122,32 @@ class InstallCommand extends Command
             $layout = (string) str($layout)
                 ->replace('{{ $slot }}', '{{ $slot }}' . PHP_EOL . PHP_EOL . '        @livewire(\'notifications\')');
             $filesystem->put(resource_path('views/components/layouts/app.blade.php'), $layout);
+
+            $hasNotifications = true;
         }
+
+        $packagesCssImports = collect([
+            'actions',
+            'forms',
+            'infolists',
+            ...($hasNotifications ? ['notifications'] : []),
+            'schemas',
+            'tables',
+            'widgets',
+        ])
+            ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))
+            ->implode('/resources/css/index.css\';' . PHP_EOL . '@import \'../../vendor/filament/');
+
+        $css = $filesystem->get(resource_path('css/app.css'));
+        $css = (string) str($css)->replace(
+            '@import \'../../vendor/filament/support/resources/css/index.css\';',
+            '@import \'../../vendor/filament/support/resources/css/index.css\';' . PHP_EOL . "@import '../../vendor/filament/{$packagesCssImports}/resources/css/index.css';",
+        );
+        $filesystem->put(resource_path('css/app.css'), $css);
 
         $this->components->info('Scaffolding installed successfully.');
 
-        $this->components->info('Please run `npm install && npm run dev` to compile your new assets.');
-    }
-
-    protected static function updateNpmPackages(bool $dev = true): void
-    {
-        if (! file_exists(base_path('package.json'))) {
-            return;
-        }
-
-        $configurationKey = $dev ? 'devDependencies' : 'dependencies';
-
-        $packages = json_decode(file_get_contents(base_path('package.json')), associative: true);
-
-        $packages[$configurationKey] = static::updateNpmPackageArray(
-            array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : []
-        );
-
-        ksort($packages[$configurationKey]);
-
-        file_put_contents(
-            base_path('package.json'),
-            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
-        );
-    }
-
-    /**
-     * @param  array<string, string>  $packages
-     * @return array<string, string>
-     */
-    protected static function updateNpmPackageArray(array $packages): array
-    {
-        return [
-            ...Arr::except($packages, [
-                'axios',
-                'lodash',
-            ]),
-            '@tailwindcss/forms' => '^0.5.2',
-            '@tailwindcss/postcss' => '^4.0.0',
-            '@tailwindcss/typography' => '^0.5.4',
-            'postcss' => '^8.4.14',
-            'tailwindcss' => '^4.0.0',
-        ];
+        $this->components->info('Please run `npm run build` to compile your new assets.');
     }
 
     protected function installUpgradeCommand(): void

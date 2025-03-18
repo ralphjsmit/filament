@@ -67,7 +67,7 @@ class QueryBuilder extends BaseFilter
         $count = 0;
 
         foreach ($rules as $ruleIndex => $rule) {
-            $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
@@ -98,7 +98,7 @@ class QueryBuilder extends BaseFilter
     public function applyRulesToQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
         foreach ($rules as $ruleIndex => $rule) {
-            $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 $query->where(function (Builder $query) use ($rule, $ruleBuilderBlockContainer): void {
@@ -136,7 +136,7 @@ class QueryBuilder extends BaseFilter
     public function applyRulesToBaseQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
         foreach ($rules as $ruleIndex => $rule) {
-            $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
@@ -227,7 +227,7 @@ class QueryBuilder extends BaseFilter
     {
         $builder = $schema
             ->getComponent(fn (Component $component): bool => $component instanceof Repeater)
-            ->getChildComponentContainer($orGroupIndex)
+            ->getChildSchema($orGroupIndex)
             ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {

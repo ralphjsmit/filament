@@ -18,9 +18,9 @@ use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\NestedSchema;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -151,61 +151,56 @@ class Login extends SimplePage
         ]);
     }
 
+    public function defaultForm(Schema $schema): Schema
+    {
+        return $schema
+            ->statePath('data');
+    }
+
     public function form(Schema $schema): Schema
     {
-        return $schema;
+        return $schema
+            ->components([
+                $this->getEmailFormComponent(),
+                $this->getPasswordFormComponent(),
+                $this->getRememberFormComponent(),
+            ]);
+    }
+
+    public function defaultMultiFactorChallengeForm(Schema $schema): Schema
+    {
+        return $schema
+            ->components(function (): array {
+                if (blank($this->userUndertakingMultiFactorAuthentication)) {
+                    return [];
+                }
+
+                $authProvider = Filament::auth()->getProvider(); /** @phpstan-ignore-line */
+                $user = $authProvider->retrieveById(decrypt($this->userUndertakingMultiFactorAuthentication));
+
+                $enabledMultiFactorAuthenticationProviders = array_filter(
+                    Filament::getMultiFactorAuthenticationProviders(),
+                    fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider): bool => $multiFactorAuthenticationProvider->isEnabled($user)
+                );
+
+                return [
+                    ...Arr::wrap($this->getMultiFactorProviderFormComponent()),
+                    ...collect($enabledMultiFactorAuthenticationProviders)
+                        ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider): Component => Group::make($multiFactorAuthenticationProvider->getChallengeFormComponents($user))
+                            ->statePath($multiFactorAuthenticationProvider->getId())
+                            ->when(
+                                count($enabledMultiFactorAuthenticationProviders) > 1,
+                                fn (Group $group) => $group->visible(fn (Get $get): bool => $get('provider') === $multiFactorAuthenticationProvider->getId())
+                            ))
+                        ->all(),
+                ];
+            })
+            ->statePath('data.multiFactor');
     }
 
     public function multiFactorChallengeForm(Schema $schema): Schema
     {
         return $schema;
-    }
-
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->form(
-                $this->makeSchema()
-                    ->schema([
-                        $this->getEmailFormComponent(),
-                        $this->getPasswordFormComponent(),
-                        $this->getRememberFormComponent(),
-                    ])
-                    ->statePath('data'),
-            ),
-            'multiFactorChallengeForm' => $this->multiFactorChallengeForm(
-                $this->makeSchema()
-                    ->schema(function (): array {
-                        if (blank($this->userUndertakingMultiFactorAuthentication)) {
-                            return [];
-                        }
-
-                        $authProvider = Filament::auth()->getProvider(); /** @phpstan-ignore-line */
-                        $user = $authProvider->retrieveById(decrypt($this->userUndertakingMultiFactorAuthentication));
-
-                        $enabledMultiFactorAuthenticationProviders = array_filter(
-                            Filament::getMultiFactorAuthenticationProviders(),
-                            fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider): bool => $multiFactorAuthenticationProvider->isEnabled($user)
-                        );
-
-                        return [
-                            ...Arr::wrap($this->getMultiFactorProviderFormComponent()),
-                            ...collect($enabledMultiFactorAuthenticationProviders)
-                                ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider): Component => Group::make($multiFactorAuthenticationProvider->getChallengeFormComponents($user))
-                                    ->statePath($multiFactorAuthenticationProvider->getId())
-                                    ->when(
-                                        count($enabledMultiFactorAuthenticationProviders) > 1,
-                                        fn (Group $group) => $group->visible(fn (Get $get): bool => $get('provider') === $multiFactorAuthenticationProvider->getId())
-                                    ))
-                                ->all(),
-                        ];
-                    })
-                    ->statePath('data.multiFactor'),
-            ),
-        ];
     }
 
     protected function getEmailFormComponent(): Component
@@ -272,7 +267,7 @@ class Login extends SimplePage
                         $section
                             ->getContainer()
                             ->getComponent($provider->getId())
-                            ->getChildComponentContainer()
+                            ->getChildSchema()
                             ->fill();
 
                         if (! ($provider instanceof HasBeforeChallengeHook)) {
@@ -391,7 +386,7 @@ class Login extends SimplePage
 
     public function getFormContentComponent(): Component
     {
-        return Form::make([NestedSchema::make('form')])
+        return Form::make([EmbeddedSchema::make('form')])
             ->id('form')
             ->livewireSubmitHandler('authenticate')
             ->footer([
@@ -404,7 +399,7 @@ class Login extends SimplePage
 
     public function getMultiFactorChallengeFormContentComponent(): Component
     {
-        return Form::make([NestedSchema::make('multiFactorChallengeForm')])
+        return Form::make([EmbeddedSchema::make('multiFactorChallengeForm')])
             ->id('multiFactorChallengeForm')
             ->livewireSubmitHandler('authenticate')
             ->footer([

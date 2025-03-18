@@ -11,7 +11,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can call an action with data', function () {
+it('can call an action with data', function (): void {
     livewire(InfolistActions::class)
         ->callAction(TestAction::make('setValue')->schemaComponent('infolist.textEntry'), data: [
             'value' => $value = Str::random(),
@@ -25,7 +25,7 @@ it('can call an action with data', function () {
         ->assertDispatched('foo', $value);
 });
 
-it('can validate an action\'s data', function () {
+it('can validate an action\'s data', function (): void {
     livewire(InfolistActions::class)
         ->callAction(TestAction::make('setValue')->schemaComponent('infolist.textEntry'), data: [
             'value' => null,
@@ -41,7 +41,7 @@ it('can validate an action\'s data', function () {
         ->assertNotDispatched('foo');
 });
 
-it('can set default action data when mounted', function () {
+it('can set default action data when mounted', function (): void {
     livewire(InfolistActions::class)
         ->mountAction(TestAction::make('setValue')->schemaComponent('infolist.textEntry'))
         ->assertActionDataSet([
@@ -55,7 +55,7 @@ it('can set default action data when mounted', function () {
         ]);
 });
 
-it('can call an action with arguments', function () {
+it('can call an action with arguments', function (): void {
     livewire(InfolistActions::class)
         ->callAction(TestAction::make('setValueFromArguments')->schemaComponent('infolist.textEntry')->arguments([
             'value' => $value = Str::random(),
@@ -69,7 +69,7 @@ it('can call an action with arguments', function () {
         ->assertDispatched('foo', $value);
 });
 
-it('can call an action and halt', function () {
+it('can call an action and halt', function (): void {
     livewire(InfolistActions::class)
         ->callAction(TestAction::make('halt')->schemaComponent('infolist.textEntry'))
         ->assertActionHalted(TestAction::make('halt')->schemaComponent('infolist.textEntry'));
@@ -79,7 +79,7 @@ it('can call an action and halt', function () {
         ->assertInfolistActionHalted('textEntry', 'halt');
 });
 
-it('can hide an action', function () {
+it('can hide an action', function (): void {
     livewire(InfolistActions::class)
         ->assertActionVisible(TestAction::make('visible')->schemaComponent('infolist.textEntry'))
         ->assertActionHidden(TestAction::make('hidden')->schemaComponent('infolist.textEntry'))
@@ -93,7 +93,7 @@ it('can hide an action', function () {
         ->assertInfolistActionHidden('textEntry', 'hidden');
 });
 
-it('can disable an action', function () {
+it('can disable an action', function (): void {
     livewire(InfolistActions::class)
         ->assertActionEnabled(TestAction::make('enabled')->schemaComponent('infolist.textEntry'))
         ->assertActionDisabled(TestAction::make('disabled')->schemaComponent('infolist.textEntry'));
@@ -103,7 +103,7 @@ it('can disable an action', function () {
         ->assertInfolistActionDisabled('textEntry', 'disabled');
 });
 
-it('can have an icon', function () {
+it('can have an icon', function (): void {
     livewire(InfolistActions::class)
         ->assertActionHasIcon(TestAction::make('hasIcon')->schemaComponent('infolist.textEntry'), Heroicon::PencilSquare)
         ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->schemaComponent('infolist.textEntry'), Heroicon::Trash);
@@ -113,7 +113,7 @@ it('can have an icon', function () {
         ->assertInfolistActionDoesNotHaveIcon('textEntry', 'hasIcon', Heroicon::Trash);
 });
 
-it('can have a label', function () {
+it('can have a label', function (): void {
     livewire(InfolistActions::class)
         ->assertActionHasLabel(TestAction::make('hasLabel')->schemaComponent('infolist.textEntry'), 'My Action')
         ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->schemaComponent('infolist.textEntry'), 'My Other Action');
@@ -123,7 +123,7 @@ it('can have a label', function () {
         ->assertInfolistActionDoesNotHaveLabel('textEntry', 'hasLabel', 'My Other Action');
 });
 
-it('can have a color', function () {
+it('can have a color', function (): void {
     livewire(InfolistActions::class)
         ->assertActionHasColor(TestAction::make('hasColor')->schemaComponent('infolist.textEntry'), 'primary')
         ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->schemaComponent('infolist.textEntry'), 'gray');
@@ -133,7 +133,7 @@ it('can have a color', function () {
         ->assertInfolistActionDoesNotHaveColor('textEntry', 'hasColor', 'gray');
 });
 
-it('can have a URL', function () {
+it('can have a URL', function (): void {
     livewire(InfolistActions::class)
         ->assertActionHasUrl(TestAction::make('url')->schemaComponent('infolist.textEntry'), 'https://filamentphp.com')
         ->assertActionDoesNotHaveUrl(TestAction::make('url')->schemaComponent('infolist.textEntry'), 'https://google.com');
@@ -143,7 +143,7 @@ it('can have a URL', function () {
         ->assertInfolistActionDoesNotHaveUrl('textEntry', 'url', 'https://google.com');
 });
 
-it('can open a URL in a new tab', function () {
+it('can open a URL in a new tab', function (): void {
     livewire(InfolistActions::class)
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('urlInNewTab')->schemaComponent('infolist.textEntry'))
         ->assertActionShouldNotOpenUrlInNewTab(TestAction::make('urlNotInNewTab')->schemaComponent('infolist.textEntry'));
@@ -153,7 +153,7 @@ it('can open a URL in a new tab', function () {
         ->assertInfolistActionShouldNotOpenUrlInNewTab('textEntry', 'urlNotInNewTab');
 });
 
-it('can state whether a form component action exists', function () {
+it('can state whether a form component action exists', function (): void {
     livewire(InfolistActions::class)
         ->assertActionExists(TestAction::make('exists')->schemaComponent('infolist.textEntry'))
         ->assertActionDoesNotExist(TestAction::make('doesNotExist')->schemaComponent('infolist.textEntry'));

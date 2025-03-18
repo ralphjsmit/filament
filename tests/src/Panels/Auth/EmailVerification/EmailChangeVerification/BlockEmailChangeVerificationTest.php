@@ -8,7 +8,7 @@ use League\Uri\Components\Query;
 
 uses(TestCase::class);
 
-it('can block an email change', function () {
+it('can block an email change', function (): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email;
 
@@ -44,7 +44,7 @@ it('can block an email change', function () {
         ->email->not->toBe($newEmail);
 });
 
-it('cannot block an email change when signed in as another user', function () {
+it('cannot block an email change when signed in as another user', function (): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email;
 
@@ -71,7 +71,7 @@ it('cannot block an email change when signed in as another user', function () {
         ->email->toBe($newEmail);
 });
 
-it('cannot block an email change once it has been verified', function () {
+it('cannot block an email change once it has been verified', function (): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email;
 

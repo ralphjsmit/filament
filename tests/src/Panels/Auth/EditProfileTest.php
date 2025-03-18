@@ -14,18 +14,18 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->create();
 
     $this->actingAs($this->user);
 });
 
-it('can render page', function () {
+it('can render page', function (): void {
     $this->get(Filament::getProfileUrl())
         ->assertSuccessful();
 });
 
-it('can retrieve data', function () {
+it('can retrieve data', function (): void {
     livewire(EditProfile::class)
         ->assertFormSet([
             'name' => $this->user->name,
@@ -33,7 +33,7 @@ it('can retrieve data', function () {
         ]);
 });
 
-it('can save name', function () {
+it('can save name', function (): void {
     $newUserData = User::factory()->make();
 
     livewire(EditProfile::class)
@@ -48,7 +48,7 @@ it('can save name', function () {
         ->name->toBe($newUserData->name);
 });
 
-it('can save email', function () {
+it('can save email', function (): void {
     Filament::getCurrentOrDefaultPanel()->emailChangeVerification(false);
 
     $newUserData = User::factory()->make();
@@ -66,7 +66,7 @@ it('can save email', function () {
         ->email->toBe($newUserData->email);
 });
 
-it('can send email change verification', function () {
+it('can send email change verification', function (): void {
     Notification::fake();
 
     Filament::getCurrentOrDefaultPanel()->emailChangeVerification();
@@ -105,7 +105,7 @@ it('can send email change verification', function () {
     });
 });
 
-it('can save password', function () {
+it('can save password', function (): void {
     expect(Filament::auth()->attempt([
         'email' => $this->user->email,
         'password' => 'password',
@@ -138,7 +138,7 @@ it('can save password', function () {
     ]))->toBeTrue();
 });
 
-it('can validate', function (array $formData, array $errors) {
+it('can validate', function (array $formData, array $errors): void {
     Filament::getCurrentOrDefaultPanel()->emailChangeVerification(false);
 
     livewire(EditProfile::class)

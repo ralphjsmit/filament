@@ -95,8 +95,8 @@ trait BelongsToModel
         if ($andHydrate) {
             $this->callAfterStateHydrated();
 
-            foreach ($this->getChildComponentContainers() as $container) {
-                $container->callAfterStateHydrated();
+            foreach ($this->getChildSchemas() as $childSchema) {
+                $childSchema->callAfterStateHydrated();
             }
 
             $this->fillStateWithNull();

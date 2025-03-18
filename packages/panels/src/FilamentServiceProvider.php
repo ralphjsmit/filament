@@ -85,8 +85,8 @@ class FilamentServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Blade::components([
-            LegacyComponents\Page::class => 'filament::page',
-            LegacyComponents\Widget::class => 'filament::widget',
+            LegacyComponents\PageComponent::class => 'filament::page',
+            LegacyComponents\WidgetComponent::class => 'filament::widget',
         ]);
 
         FilamentAsset::register([

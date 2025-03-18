@@ -13,7 +13,7 @@ use function Pest\Laravel\actingAs;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     Filament::setCurrentPanel('google-two-factor-authentication');
 
     actingAs(User::factory()
@@ -21,7 +21,7 @@ beforeEach(function () {
         ->create());
 });
 
-it('can generate new recovery codes when valid challenge code is used', function () {
+it('can generate new recovery codes when valid challenge code is used', function (): void {
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -68,7 +68,7 @@ it('can generate new recovery codes when valid challenge code is used', function
         ->toHaveCount(8);
 });
 
-it('can generate new recovery codes when the current user\'s password is used', function () {
+it('can generate new recovery codes when the current user\'s password is used', function (): void {
     $user = auth()->user();
 
     $recoveryCodes = $user->getGoogleTwoFactorAuthenticationRecoveryCodes();
@@ -113,7 +113,7 @@ it('can generate new recovery codes when the current user\'s password is used', 
         ->toHaveCount(8);
 });
 
-it('will not generate new recovery codes when an invalid code is used', function () {
+it('will not generate new recovery codes when an invalid code is used', function (): void {
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -137,7 +137,7 @@ it('will not generate new recovery codes when an invalid code is used', function
         ->toBe($recoveryCodes);
 });
 
-test('codes are required without the user\'s current password', function () {
+test('codes are required without the user\'s current password', function (): void {
     $user = auth()->user();
 
     $recoveryCodes = $user->getGoogleTwoFactorAuthenticationRecoveryCodes();
@@ -161,7 +161,7 @@ test('codes are required without the user\'s current password', function () {
         ->toBe($recoveryCodes);
 });
 
-test('codes must be 6 digits', function () {
+test('codes must be 6 digits', function (): void {
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -187,7 +187,7 @@ test('codes must be 6 digits', function () {
         ->toBe($recoveryCodes);
 });
 
-test('the user\'s current password must be valid', function () {
+test('the user\'s current password must be valid', function (): void {
     $user = auth()->user();
 
     $recoveryCodes = $user->getGoogleTwoFactorAuthenticationRecoveryCodes();

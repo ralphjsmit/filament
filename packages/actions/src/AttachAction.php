@@ -68,7 +68,7 @@ class AttachAction extends Action
 
         $this->color('gray');
 
-        $this->form(fn (): array => [$this->getRecordSelect()]);
+        $this->schema(fn (): array => [$this->getRecordSelect()]);
 
         $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var BelongsToMany $relationship */

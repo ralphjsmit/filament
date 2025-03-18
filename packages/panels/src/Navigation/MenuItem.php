@@ -151,7 +151,7 @@ class MenuItem extends Component
 
     public function getSort(): int
     {
-        return $this->evaluate($this->sort) ?? -1;
+        return $this->evaluate($this->sort) ?? 0;
     }
 
     public function getUrl(): ?string

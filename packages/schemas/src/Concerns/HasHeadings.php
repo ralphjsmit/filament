@@ -16,7 +16,7 @@ trait HasHeadings
     public function getRootHeadingLevel(): int
     {
         if ($parentComponent = $this->getParentComponent()) {
-            return $parentComponent->getChildComponentContainerRootHeadingLevel();
+            return $parentComponent->getChildSchemaRootHeadingLevel();
         }
 
         return $this->rootHeadingLevel;

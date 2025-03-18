@@ -14,22 +14,12 @@
         "filament/forms": "self.version",
         "filament/infolists": "self.version",
         "filament/notifications": "self.version",
+        "filament/schemas": "self.version",
         "filament/support": "self.version",
         "filament/tables": "self.version",
         "filament/widgets": "self.version",
-        "illuminate/auth": "^11.15",
-        "illuminate/console": "^11.15",
-        "illuminate/contracts": "^11.15",
-        "illuminate/cookie": "^11.15",
-        "illuminate/database": "^11.15",
-        "illuminate/http": "^11.15",
-        "illuminate/routing": "^11.15",
-        "illuminate/session": "^11.15",
-        "illuminate/support": "^11.15",
-        "illuminate/view": "^11.15",
         "pragmarx/google2fa": "^8.0",
-        "pragmarx/google2fa-qrcode": "^3.0",
-        "spatie/laravel-package-tools": "^1.9"
+        "pragmarx/google2fa-qrcode": "^3.0"
     },
     "autoload": {
         "files": [

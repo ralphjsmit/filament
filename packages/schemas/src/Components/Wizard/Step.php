@@ -20,6 +20,8 @@ class Step extends Component implements CanConcealComponents
 
     protected string | BackedEnum | Closure | null $completedIcon = null;
 
+    protected bool | Closure $hasFormWrapper = true;
+
     /**
      * @var view-string
      */
@@ -126,5 +128,17 @@ class Step extends Component implements CanConcealComponents
     public function canConcealComponents(): bool
     {
         return true;
+    }
+
+    public function formWrapper(bool | Closure $condition = true): static
+    {
+        $this->hasFormWrapper = $condition;
+
+        return $this;
+    }
+
+    public function hasFormWrapper(): bool
+    {
+        return (bool) $this->evaluate($this->hasFormWrapper);
     }
 }

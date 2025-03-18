@@ -8,7 +8,7 @@ use Filament\Tests\Panels\Navigation\TestCase;
 
 uses(TestCase::class);
 
-it('can register navigation items from resources and pages', function () {
+it('can register navigation items from resources and pages', function (): void {
     expect(Filament::getNavigation())
         ->sequence(
             fn ($group) => $group
@@ -64,7 +64,7 @@ it('can register navigation items from resources and pages', function () {
         );
 });
 
-it('can reorder navigation groups by registering them', function () {
+it('can reorder navigation groups by registering them', function (): void {
     Filament::getCurrentOrDefaultPanel()->navigationGroups([
         NavigationGroup::make()->label('Shop'),
         NavigationGroup::make()->label('Blog'),
@@ -84,7 +84,7 @@ it('can reorder navigation groups by registering them', function () {
         );
 });
 
-it('can reorder navigation groups by registering them with different labels', function () {
+it('can reorder navigation groups by registering them with different labels', function (): void {
     Filament::getCurrentOrDefaultPanel()->navigationGroups([
         'Shop' => NavigationGroup::make()->label('Store'),
         'Blog' => NavigationGroup::make()->label('Posts'),
@@ -104,7 +104,7 @@ it('can reorder navigation groups by registering them with different labels', fu
         );
 });
 
-it('can reorder navigation groups by registering their labels', function () {
+it('can reorder navigation groups by registering their labels', function (): void {
     Filament::getCurrentOrDefaultPanel()->navigationGroups([
         'Shop',
         'Blog',

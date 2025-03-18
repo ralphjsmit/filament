@@ -18,7 +18,7 @@ class Group extends Component implements CanEntangleWithSingularRelationships
     protected string $view = 'filament-schemas::components.grid';
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Closure  $schema
+     * @param  array<Component | Action | ActionGroup | string> | Closure  $schema
      */
     final public function __construct(array | Closure $schema = [])
     {
@@ -26,7 +26,7 @@ class Group extends Component implements CanEntangleWithSingularRelationships
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Closure  $schema
+     * @param  array<Component | Action | ActionGroup | string> | Closure  $schema
      */
     public static function make(array | Closure $schema = []): static
     {

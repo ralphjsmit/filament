@@ -22,7 +22,7 @@ trait BelongsToLivewire
             return $this->livewire;
         }
 
-        if ($livewire = $this->getSchemaComponentContainer()?->getLivewire()) {
+        if ($livewire = $this->getSchemaContainer()?->getLivewire()) {
             return $livewire;
         }
 

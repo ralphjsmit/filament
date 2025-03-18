@@ -33,8 +33,6 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
     {
         parent::setUp();
 
-        $this->columnSpan('full');
-
         $this->columns(2);
     }
 }

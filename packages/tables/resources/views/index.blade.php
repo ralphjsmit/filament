@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
+    use Filament\Support\Enums\Width;
     use Filament\Support\Facades\FilamentView;
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
@@ -319,7 +320,7 @@
                             @if (! $areGroupingSettingsInDropdownOnDesktop)
                                 <div class="fi-ta-grouping-settings-fields">
                                     <label>
-                                        <span class="sr-only">
+                                        <span class="fi-sr-only">
                                             {{ __('filament-tables::table.grouping.fields.group.label') }}
                                         </span>
 
@@ -345,7 +346,7 @@
 
                                     @if (! $isGroupingDirectionSettingHidden)
                                         <label x-cloak x-show="group">
-                                            <span class="sr-only">
+                                            <span class="fi-sr-only">
                                                 {{ __('filament-tables::table.grouping.fields.direction.label') }}
                                             </span>
 
@@ -448,7 +449,7 @@
                                         :max-height="$filtersFormMaxHeight"
                                         placement="bottom-end"
                                         shift
-                                        :width="$filtersFormWidth"
+                                        :width="$filtersFormWidth ?? Width::ExtraSmall"
                                         :wire:key="$this->getId() . '.table.filters'"
                                         class="fi-ta-filters-dropdown"
                                     >
@@ -622,7 +623,7 @@
                         wire:target="removeTableFilters,removeTableFilter"
                         class="fi-icon-btn fi-size-sm"
                     >
-                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'tables::filters.remove-all-button', size: \FIlament\Support\Enums\IconSize::Small) }}
+                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'tables::filters.remove-all-button', size: \Filament\Support\Enums\IconSize::Small) }}
                     </button>
                 @endif
             </div>
@@ -718,7 +719,7 @@
                                         </label>
 
                                         <label x-cloak x-show="column">
-                                            <span class="sr-only">
+                                            <span class="fi-sr-only">
                                                 {{ __('filament-tables::table.sorting.fields.direction.label') }}
                                             </span>
 
@@ -902,7 +903,7 @@
                                                 type="button"
                                                 class="fi-icon-btn fi-size-sm"
                                             >
-                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \FIlament\Support\Enums\IconSize::Small) }}
+                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \Filament\Support\Enums\IconSize::Small) }}
                                             </button>
                                         @endif
                                     </div>
@@ -1565,7 +1566,7 @@
                                                                 type="button"
                                                                 class="fi-icon-btn fi-size-sm"
                                                             >
-                                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \FIlament\Support\Enums\IconSize::Small) }}
+                                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \Filament\Support\Enums\IconSize::Small) }}
                                                             </button>
                                                         @endif
                                                     </div>
@@ -1701,11 +1702,12 @@
 
                                                     $columnAction = $column->getAction();
                                                     $columnUrl = $column->getUrl();
+                                                    $columnHasStateBasedUrls = $column->hasStateBasedUrls();
                                                     $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
 
                                                     $columnWrapperTag = match (true) {
-                                                        ($columnUrl || ($recordUrl && $columnAction === null)) && (! $isColumnClickDisabled) => 'a',
-                                                        ($columnAction || $recordAction) && (! $isColumnClickDisabled) => 'button',
+                                                        ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
+                                                        ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
                                                         default => 'div',
                                                     };
 
@@ -1747,8 +1749,8 @@
                                                             wire:target="{{ $columnWireClickAction }}"
                                                         @endif
                                                         @class([
-                                                            'fi-ta-col-wrp',
-                                                            'fi-ta-col-wrap-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
+                                                            'fi-ta-col',
+                                                            'fi-ta-col-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
                                                         ])
                                                     >
                                                         {{ $column }}
@@ -1890,7 +1892,7 @@
             @else
                 <div class="fi-ta-empty-state">
                     <div class="fi-ta-empty-state-content">
-                        <div class="fi-ta-empty-state-icon-ctn">
+                        <div class="fi-ta-empty-state-icon-bg">
                             {{ \Filament\Support\generate_icon_html($getEmptyStateIcon(), size: \Filament\Support\Enums\IconSize::Large) }}
                         </div>
 
@@ -1900,9 +1902,9 @@
                             {{ $getEmptyStateHeading() }}
                         </{{ $secondLevelHeadingTag }}>
 
-                        @if ($emptyStateDescription = $getEmptyStateDescription())
+                        @if (filled($emptyStateDescription = $getEmptyStateDescription()))
                             <p class="fi-ta-empty-state-description">
-                                {{ $description }}
+                                {{ $emptyStateDescription }}
                             </p>
                         @endif
 

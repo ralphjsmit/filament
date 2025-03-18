@@ -7,6 +7,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasIcon;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
@@ -22,12 +23,12 @@ class Tab extends Component implements CanConcealComponents
      */
     protected string $view = 'filament-schemas::components.tabs.tab';
 
-    final public function __construct(?string $label = null)
+    final public function __construct(string | Htmlable | Closure | null $label = null)
     {
         $this->label($label);
     }
 
-    public static function make(?string $label = null): static
+    public static function make(string | Htmlable | Closure | null $label = null): static
     {
         $static = app(static::class, ['label' => $label]);
         $static->configure();

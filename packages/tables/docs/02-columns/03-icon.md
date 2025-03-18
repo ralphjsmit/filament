@@ -3,7 +3,7 @@ title: Icon column
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 Icon columns render an [icon](../../styling/icons) representing their contents:
 
@@ -47,10 +47,10 @@ In the function, `$state` is the value of the column, and `$record` can be used 
 The default icon size is `IconColumnSize::Large`, but you may customize the size to be either `IconColumnSize::ExtraSmall`, `IconColumnSize::Small`, `IconColumnSize::Medium`, `IconColumnSize::ExtraLarge` or `IconColumnSize::TwoExtraLarge`:
 
 ```php
-use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Enums\IconSize;
 
 IconColumn::make('status')
-    ->size(IconColumn\Enums\IconColumnSize::Medium)
+    ->size(IconSize::Medium)
 ```
 
 <AutoScreenshot name="tables/columns/icon/medium" alt="Medium-sized icon column" version="4.x" />
@@ -66,7 +66,7 @@ IconColumn::make('is_featured')
     ->boolean()
 ```
 
-> If this column in the model class is already cast as a `bool` or `boolean`, Filament is able to detect this, and you do not need to use `boolean()` manually.
+> If this attribute in the model class is already cast as a `bool` or `boolean`, Filament is able to detect this, and you do not need to use `boolean()` manually.
 
 <AutoScreenshot name="tables/columns/icon/boolean" alt="Icon column to display a boolean" version="4.x" />
 

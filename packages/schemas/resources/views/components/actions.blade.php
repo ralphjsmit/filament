@@ -1,6 +1,10 @@
 @php
     use Filament\Support\Enums\VerticalAlignment;
+    use Filament\Support\Facades\FilamentView;
 
+    $actions = $getChildSchema()->getComponents();
+    $alignment = $getAlignment();
+    $isFullWidth = $isFullWidth();
     $verticalAlignment = $getVerticalAlignment();
 
     if (! $verticalAlignment instanceof VerticalAlignment) {
@@ -8,42 +12,18 @@
     }
 @endphp
 
-@if (filled($label = $getLabel()))
-    <div class="mb-2 flex items-center gap-x-3">
-        {{ $getChildComponentContainer($schemaComponent::BEFORE_LABEL_CONTAINER) }}
-
-        <div
-            class="text-sm leading-6 font-medium text-gray-950 dark:text-white"
-        >
-            {{ $label }}
-        </div>
-
-        {{ $getChildComponentContainer($schemaComponent::AFTER_LABEL_CONTAINER) }}
-    </div>
-@endif
-
-@if ($aboveContentContainer = $getChildComponentContainer($schemaComponent::ABOVE_CONTENT_CONTAINER)?->toHtmlString())
-    <div class="mb-2">
-        {{ $aboveContentContainer }}
-    </div>
-@endif
-
 <div
     @if ($isSticky())
-        x-data="{
-            isSticky: false,
-
-            evaluatePageScrollPosition: function () {
-                this.isSticky =
-                    document.body.scrollHeight >=
-                    window.scrollY + window.innerHeight * 2
-            },
-        }"
-        x-init="evaluatePageScrollPosition"
+        @if (FilamentView::hasSpaMode())
+            {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
+        @else
+            x-load
+        @endif
+        x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('actions', 'filament/schemas') }}"
+        x-data="actionsSchemaComponent()"
         x-on:scroll.window="evaluatePageScrollPosition"
         x-bind:class="{
-            'fi-sticky sticky bottom-0 -mx-4 transform bg-white p-4 shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10 md:bottom-4 md:rounded-xl':
-                isSticky,
+            'fi-sticky': isSticky,
         }"
     @endif
     {{
@@ -53,25 +33,34 @@
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-sc-actions flex h-full flex-col',
-                match ($verticalAlignment) {
-                    VerticalAlignment::Start => 'justify-start',
-                    VerticalAlignment::Center => 'justify-center',
-                    VerticalAlignment::End => 'justify-end',
-                    default => $verticalAlignment,
-                },
+                'fi-sc-actions',
+                ($verticalAlignment instanceof VerticalAlignment) ? "fi-vertical-align-{$verticalAlignment->value}" : $verticalAlignment,
             ])
     }}
 >
-    <x-filament::actions
-        :actions="$getChildComponentContainer()->getComponents()"
-        :alignment="$getAlignment()"
-        :full-width="$isFullWidth()"
-    />
-</div>
+    @if (filled($label = $getLabel()))
+        <div class="fi-sc-actions-label-ctn">
+            {{ $getChildSchema($schemaComponent::BEFORE_LABEL_SCHEMA_KEY) }}
 
-@if ($belowContentContainer = $getChildComponentContainer($schemaComponent::BELOW_CONTENT_CONTAINER)?->toHtmlString())
-    <div class="mt-2">
+            <div class="fi-sc-actions-label">
+                {{ $label }}
+            </div>
+
+            {{ $getChildSchema($schemaComponent::AFTER_LABEL_SCHEMA_KEY) }}
+        </div>
+    @endif
+
+    @if ($aboveContentContainer = $getChildSchema($schemaComponent::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString())
+        {{ $aboveContentContainer }}
+    @endif
+
+    <x-filament::actions
+        :actions="$actions"
+        :alignment="$alignment"
+        :full-width="$isFullWidth"
+    />
+
+    @if ($belowContentContainer = $getChildSchema($schemaComponent::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString())
         {{ $belowContentContainer }}
-    </div>
-@endif
+    @endif
+</div>

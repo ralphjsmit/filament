@@ -1,8 +1,8 @@
 @php
-    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\Badge;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\Components\BadgeComponent;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 
@@ -19,7 +19,7 @@
     'iconSize' => null,
     'keyBindings' => null,
     'loadingIndicator' => true,
-    'size' => ActionSize::Medium,
+    'size' => Size::Medium,
     'spaMode' => null,
     'tag' => 'span',
     'target' => null,
@@ -32,8 +32,8 @@
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
 
-    if (! $size instanceof ActionSize) {
-        $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
+    if (! $size instanceof Size) {
+        $size = filled($size) ? (Size::tryFrom($size) ?? $size) : null;
     }
 
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
@@ -54,11 +54,8 @@
 @endphp
 
 <{{ $tag }}
-    @if (($tag === 'a') && (! ($disabled && filled($tooltip))))
+    @if (($tag === 'a') && (! ($disabled && $hasTooltip)))
         {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
-    @endif
-    @if ($keyBindings || $hasTooltip)
-        x-data="{}"
     @endif
     @if ($keyBindings)
         x-bind:id="$id('key-bindings')"
@@ -81,7 +78,7 @@
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->when(
-                $disabled && filled($tooltip),
+                $disabled && $hasTooltip,
                 fn (ComponentAttributeBag $attributes) => $attributes->filter(
                     fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
                 ),
@@ -89,9 +86,9 @@
             ->class([
                 'fi-badge',
                 'fi-disabled' => $disabled,
-                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
+                ($size instanceof Size) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
             ])
-            ->color(Badge::class, $color)
+            ->color(BadgeComponent::class, $color)
     }}
 >
     @if ($iconPosition === IconPosition::Before)
@@ -100,7 +97,7 @@
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ]))->class([$iconClasses]), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
             }}
         @endif
 
@@ -109,7 +106,7 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ]))->class([$iconClasses]), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
             }}
         @endif
     @endif
@@ -158,7 +155,7 @@
             @endif
 
             @if (filled($label = $deleteButton->attributes->get('label')))
-                <span class="sr-only">
+                <span class="fi-sr-only">
                     {{ $label }}
                 </span>
             @endif
@@ -169,7 +166,7 @@
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ]))->class([$iconClasses]), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
             }}
         @endif
 
@@ -178,7 +175,7 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ]))->class([$iconClasses]), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
             }}
         @endif
     @endif

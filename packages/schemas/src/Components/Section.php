@@ -21,8 +21,8 @@ use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
-use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Size;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
@@ -51,17 +51,17 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
 
     protected bool | Closure $isFormBefore = false;
 
-    const AFTER_HEADER_CONTAINER = 'after_header';
+    const AFTER_HEADER_SCHEMA_KEY = 'after_header';
 
-    const FOOTER_CONTAINER = 'footer';
+    const FOOTER_SCHEMA_KEY = 'footer';
 
-    const BEFORE_LABEL_CONTAINER = 'before_label';
+    const BEFORE_LABEL_SCHEMA_KEY = 'before_label';
 
-    const AFTER_LABEL_CONTAINER = 'after_label';
+    const AFTER_LABEL_SCHEMA_KEY = 'after_label';
 
-    const ABOVE_CONTENT_CONTAINER = 'above_content';
+    const ABOVE_CONTENT_SCHEMA_KEY = 'above_content';
 
-    const BELOW_CONTENT_CONTAINER = 'below_content';
+    const BELOW_CONTENT_SCHEMA_KEY = 'below_content';
 
     /**
      * @param  string | array<Component | Action | ActionGroup> | Htmlable | Closure | null  $heading
@@ -87,8 +87,6 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->columnSpan('full');
 
         $this->key(function (Section $component): ?string {
             if ($statePath = $component->getStatePath(isAbsolute: false)) {
@@ -147,7 +145,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
      */
     public function afterHeader(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::AFTER_HEADER_CONTAINER);
+        $this->childComponents($components, static::AFTER_HEADER_SCHEMA_KEY);
 
         return $this;
     }
@@ -157,7 +155,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
      */
     public function footer(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::FOOTER_CONTAINER);
+        $this->childComponents($components, static::FOOTER_SCHEMA_KEY);
 
         return $this;
     }
@@ -167,7 +165,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
      */
     public function beforeLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::BEFORE_LABEL_CONTAINER);
+        $this->childComponents($components, static::BEFORE_LABEL_SCHEMA_KEY);
 
         return $this;
     }
@@ -177,7 +175,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
      */
     public function afterLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::AFTER_LABEL_CONTAINER);
+        $this->childComponents($components, static::AFTER_LABEL_SCHEMA_KEY);
 
         return $this;
     }
@@ -187,7 +185,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
      */
     public function aboveContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::ABOVE_CONTENT_CONTAINER);
+        $this->childComponents($components, static::ABOVE_CONTENT_SCHEMA_KEY);
 
         return $this;
     }
@@ -197,50 +195,50 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
      */
     public function belowContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::BELOW_CONTENT_CONTAINER);
+        $this->childComponents($components, static::BELOW_CONTENT_SCHEMA_KEY);
 
         return $this;
     }
 
-    protected function makeSchemaForSlot(string $slot): Schema
+    protected function makeChildSchema(string $key): Schema
     {
-        $schema = parent::makeSchemaForSlot($slot);
+        $schema = parent::makeChildSchema($key);
 
-        if (in_array($slot, [static::AFTER_HEADER_CONTAINER, static::AFTER_LABEL_CONTAINER])) {
+        if (in_array($key, [static::AFTER_HEADER_SCHEMA_KEY, static::AFTER_LABEL_SCHEMA_KEY])) {
             $schema->alignEnd();
         }
 
         return $schema;
     }
 
-    protected function configureSchemaForSlot(Schema $schema, string $slot): Schema
+    protected function configureChildSchema(Schema $schema, string $key): Schema
     {
-        $schema = parent::configureSchemaForSlot($schema, $slot);
+        $schema = parent::configureChildSchema($schema, $key);
 
-        if (in_array($slot, [
-            static::AFTER_HEADER_CONTAINER,
-            static::FOOTER_CONTAINER,
-            static::BEFORE_LABEL_CONTAINER,
-            static::AFTER_LABEL_CONTAINER,
-            static::ABOVE_CONTENT_CONTAINER,
-            static::BELOW_CONTENT_CONTAINER,
+        if (in_array($key, [
+            static::AFTER_HEADER_SCHEMA_KEY,
+            static::FOOTER_SCHEMA_KEY,
+            static::BEFORE_LABEL_SCHEMA_KEY,
+            static::AFTER_LABEL_SCHEMA_KEY,
+            static::ABOVE_CONTENT_SCHEMA_KEY,
+            static::BELOW_CONTENT_SCHEMA_KEY,
         ])) {
             $schema
                 ->inline()
                 ->embeddedInParentComponent();
         }
 
-        if (in_array($slot, [
-            static::BEFORE_LABEL_CONTAINER,
-            static::AFTER_LABEL_CONTAINER,
-            static::ABOVE_CONTENT_CONTAINER,
-            static::BELOW_CONTENT_CONTAINER,
+        if (in_array($key, [
+            static::BEFORE_LABEL_SCHEMA_KEY,
+            static::AFTER_LABEL_SCHEMA_KEY,
+            static::ABOVE_CONTENT_SCHEMA_KEY,
+            static::BELOW_CONTENT_SCHEMA_KEY,
         ])) {
             $schema
                 ->configureActionsUsing(fn (Action $action) => $action
-                    ->defaultSize(ActionSize::Small)
+                    ->defaultSize(Size::Small)
                     ->defaultView(Action::LINK_VIEW))
-                ->configureActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(ActionSize::Small));
+                ->configureActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
         }
 
         return $schema;

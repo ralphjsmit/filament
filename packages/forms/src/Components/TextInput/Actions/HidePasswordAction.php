@@ -24,7 +24,7 @@ class HidePasswordAction extends Action
         $this->color('gray');
 
         $this->extraAttributes([
-            'x-cloak' => true,
+            'x-cloak' => 'x-cloak',
             'x-show' => 'isPasswordRevealed',
         ], merge: true);
 

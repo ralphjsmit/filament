@@ -5,15 +5,16 @@ namespace Filament\Schemas\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\TextSize;
 
 class UnorderedList extends Component
 {
     protected string $view = 'filament-schemas::components.unordered-list';
 
-    protected string | Closure | null $size = null;
+    protected TextSize | string | Closure | null $size = null;
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Closure  $schema
+     * @param  array<Component | Action | ActionGroup | string> | Closure  $schema
      */
     final public function __construct(array | Closure $schema = [])
     {
@@ -21,7 +22,7 @@ class UnorderedList extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Closure  $schema
+     * @param  array<Component | Action | ActionGroup | string> | Closure  $schema
      */
     public static function make(array | Closure $schema = []): static
     {
@@ -31,15 +32,25 @@ class UnorderedList extends Component
         return $static;
     }
 
-    public function size(string | Closure | null $size): static
+    public function size(TextSize | string | Closure | null $size): static
     {
         $this->size = $size;
 
         return $this;
     }
 
-    public function getSize(): ?string
+    public function getSize(): TextSize | string | null
     {
-        return $this->evaluate($this->size);
+        $size = $this->evaluate($this->size);
+
+        if (blank($size)) {
+            return null;
+        }
+
+        if (is_string($size)) {
+            $size = TextSize::tryFrom($size) ?? $size;
+        }
+
+        return $size;
     }
 }

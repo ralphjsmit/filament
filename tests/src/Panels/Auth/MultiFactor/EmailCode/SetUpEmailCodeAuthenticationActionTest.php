@@ -15,7 +15,7 @@ use function Pest\Laravel\actingAs;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     Filament::setCurrentPanel('email-code-authentication');
 
     actingAs(User::factory()->create());
@@ -23,7 +23,7 @@ beforeEach(function () {
     Notification::fake();
 });
 
-it('can generate a secret when the action is mounted', function () {
+it('can generate a secret when the action is mounted', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $livewire = livewire(EditProfile::class)
@@ -57,7 +57,7 @@ it('can generate a secret when the action is mounted', function () {
     });
 });
 
-it('can save the secret to the user when the action is submitted', function () {
+it('can save the secret to the user when the action is submitted', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -87,7 +87,7 @@ it('can save the secret to the user when the action is submitted', function () {
         ->toBe($secret);
 });
 
-it('can resend the code to the user', function () {
+it('can resend the code to the user', function (): void {
     $this->travelTo(now()->subMinute());
 
     $livewire = livewire(EditProfile::class)
@@ -105,7 +105,7 @@ it('can resend the code to the user', function () {
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });
 
-it('can resend the code to the user more than once per minute', function () {
+it('can resend the code to the user more than once per minute', function (): void {
     $this->travelTo(now()->subMinute());
 
     $livewire = livewire(EditProfile::class)
@@ -129,7 +129,7 @@ it('can resend the code to the user more than once per minute', function () {
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });
 
-it('will not set up authentication when an invalid code is used', function () {
+it('will not set up authentication when an invalid code is used', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -161,7 +161,7 @@ it('will not set up authentication when an invalid code is used', function () {
         ->toBeEmpty();
 });
 
-test('codes are required', function () {
+test('codes are required', function (): void {
     $user = auth()->user();
 
     expect($user->hasEmailCodeAuthentication())
@@ -186,7 +186,7 @@ test('codes are required', function () {
         ->toBeEmpty();
 });
 
-test('codes must be 6 digits', function () {
+test('codes must be 6 digits', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();

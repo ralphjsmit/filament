@@ -1,6 +1,6 @@
 @php
     use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\Dropdown\Header;
+    use Filament\Support\View\Components\DropdownComponent\HeaderComponent;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 
@@ -23,7 +23,7 @@
             ->class([
                 'fi-dropdown-header',
             ])
-            ->color(Header::class, $color)
+            ->color(HeaderComponent::class, $color)
     }}
 >
     {{ \Filament\Support\generate_icon_html($icon, size: $iconSize) }}

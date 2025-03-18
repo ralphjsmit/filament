@@ -9,8 +9,9 @@ use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\NestedSchema;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
@@ -216,15 +217,23 @@ class CreateRecord extends Page
 
     protected function getCreateFormAction(): Action
     {
+        $hasFormWrapper = $this->hasFormWrapper();
+
         return Action::make('create')
             ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
-            ->submit('create')
+            ->submit($hasFormWrapper ? $this->getSubmitFormLivewireMethodName() : null)
+            ->action($hasFormWrapper ? null : $this->getSubmitFormLivewireMethodName())
             ->keyBindings(['mod+s']);
     }
 
     protected function getSubmitFormAction(): Action
     {
         return $this->getCreateFormAction();
+    }
+
+    protected function getSubmitFormLivewireMethodName(): string
+    {
+        return 'create';
     }
 
     protected function getCreateAnotherFormAction(): Action
@@ -261,36 +270,19 @@ class CreateRecord extends Page
         ]);
     }
 
+    public function defaultForm(Schema $schema): Schema
+    {
+        return $schema
+            ->columns($this->hasInlineLabels() ? 1 : 2)
+            ->inlineLabel($this->hasInlineLabels())
+            ->model($this->getModel())
+            ->operation('create')
+            ->statePath('data');
+    }
+
     public function form(Schema $schema): Schema
     {
-        return $schema;
-    }
-
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->configureForm(
-                $this->makeSchema()
-                    ->operation('create')
-                    ->model($this->getModel())
-                    ->statePath($this->getFormStatePath()),
-            ),
-        ];
-    }
-
-    public function configureForm(Schema $schema): Schema
-    {
-        $schema->columns($this->hasInlineLabels() ? 1 : 2);
-        $schema->inlineLabel($this->hasInlineLabels());
-
-        static::getResource()::form($schema);
-
-        $this->form($schema);
-
-        return $schema;
+        return static::getResource()::form($schema);
     }
 
     protected function getRedirectUrl(): string
@@ -334,11 +326,6 @@ class CreateRecord extends Page
         static::$canCreateAnother = false;
     }
 
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
-    }
-
     public function getRecord(): ?Model
     {
         return $this->record;
@@ -354,15 +341,32 @@ class CreateRecord extends Page
 
     public function getFormContentComponent(): Component
     {
-        return Form::make([NestedSchema::make('form')])
-            ->id('form')
-            ->livewireSubmitHandler('create')
-            ->footer([
-                Actions::make($this->getFormActions())
-                    ->alignment($this->getFormActionsAlignment())
-                    ->fullWidth($this->hasFullWidthFormActions())
-                    ->sticky($this->areFormActionsSticky()),
+        if (! $this->hasFormWrapper()) {
+            return Group::make([
+                EmbeddedSchema::make('form'),
+                $this->getFormActionsContentComponent(),
             ]);
+        }
+
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler($this->getSubmitFormLivewireMethodName())
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+    public function getFormActionsContentComponent(): Component
+    {
+        return Actions::make($this->getFormActions())
+            ->alignment($this->getFormActionsAlignment())
+            ->fullWidth($this->hasFullWidthFormActions())
+            ->sticky($this->areFormActionsSticky());
+    }
+
+    public function hasFormWrapper(): bool
+    {
+        return true;
     }
 
     /**

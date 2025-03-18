@@ -3,7 +3,7 @@ title: Summaries
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 You may render a "summary" section below your table content. This is great for displaying the results of calculations such as averages, sums, counts, and ranges of the data in your table.
 
@@ -301,6 +301,15 @@ Alternatively, you can set the default locale used across your app using the `Ta
 use Filament\Tables\Table;
 
 Table::$defaultNumberLocale = 'nl';
+```
+
+If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->summarize(Sum::make()->money('EUR', decimalPlaces: 3))
 ```
 
 ### Limiting text length

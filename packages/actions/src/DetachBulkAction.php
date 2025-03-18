@@ -9,6 +9,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Throwable;
 
 class DetachBulkAction extends BulkAction
 {
@@ -40,20 +41,32 @@ class DetachBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::detach-action.modal') ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
-            $this->process(function (Collection $records, Table $table): void {
+            $this->process(function (DetachBulkAction $action, Collection $records, Table $table): void {
                 /** @var BelongsToMany $relationship */
                 $relationship = $table->getRelationship();
+                $relationshipPivotAccessor = $relationship->getPivotAccessor();
 
-                if ($table->allowsDuplicates()) {
-                    $records->each(
-                        fn (Model $record) => $record->{$relationship->getPivotAccessor()}->delete(),
-                    );
-                } else {
-                    $relationship->detach($records);
-                }
+                $isFirstException = true;
+
+                $records->each(
+                    function (Model $record) use ($action, &$isFirstException, $relationshipPivotAccessor): void {
+                        try {
+                            $record->{$relationshipPivotAccessor}->delete();
+                        } catch (Throwable $exception) {
+                            $action->reportBulkProcessingFailure();
+
+                            if ($isFirstException) {
+                                // Only report the first exception so as to not flood error logs. Even
+                                // if Filament did not catch exceptions like this, only the first
+                                // would be reported as the rest of the process would be halted.
+                                report($exception);
+
+                                $isFirstException = false;
+                            }
+                        }
+                    },
+                );
             });
-
-            $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();

@@ -31,9 +31,9 @@ trait HasFilters
         $table = $this->getTable();
 
         return $this->makeSchema()
-            ->schema($table->getFiltersFormSchema())
             ->columns($table->getFiltersFormColumns())
             ->model($table->getModel())
+            ->schema($table->getFiltersFormSchema())
             ->when(
                 $table->hasDeferredFilters(),
                 fn (Schema $schema) => $schema
@@ -76,7 +76,7 @@ trait HasFilters
         $filterResetState = $filter->getResetState();
 
         $filterFormGroup = $this->getTableFiltersForm()->getComponent($filterName);
-        $filterFields = $filterFormGroup?->getChildComponentContainer()->getFlatFields();
+        $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields();
 
         if (filled($field) && array_key_exists($field, $filterFields)) {
             $filterFields = [$field => $filterFields[$field]];
@@ -87,7 +87,7 @@ trait HasFilters
 
             $field->state($filterResetState[$fieldName] ?? match (true) {
                 is_array($state) => [],
-                is_bool($state) => false,
+                is_bool($state) => $field->hasNullableBooleanState() ? null : false,
                 default => null,
             });
         }
@@ -187,7 +187,7 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = md5($this::class);
 
         return "tables.{$table}_filters";
     }

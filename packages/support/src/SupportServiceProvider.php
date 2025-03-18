@@ -5,7 +5,6 @@ namespace Filament\Support;
 use Composer\InstalledVersions;
 use Filament\Commands\CacheComponentsCommand;
 use Filament\Support\Assets\AssetManager;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;
 use Filament\Support\Commands\AboutCommand as FilamentAboutCommand;
@@ -138,7 +137,6 @@ class SupportServiceProvider extends PackageServiceProvider
         app('livewire')->componentHook(new SupportPartials);
 
         FilamentAsset::register([
-            Css::make('support', __DIR__ . '/../dist/index.css'),
             Js::make('support', __DIR__ . '/../dist/index.js'),
         ], 'filament/support');
 

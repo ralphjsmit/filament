@@ -14,13 +14,13 @@ use function Pest\Laravel\actingAs;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     Filament::setCurrentPanel('google-two-factor-authentication');
 
     actingAs(User::factory()->create());
 });
 
-it('can generate a secret and recovery codes when the action is mounted', function () {
+it('can generate a secret and recovery codes when the action is mounted', function (): void {
     livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
             ->schemaComponent('content.google_two_factor'))
@@ -59,7 +59,7 @@ it('can generate a secret and recovery codes when the action is mounted', functi
             }));
 });
 
-it('can save the secret and recovery codes to the user when the action is submitted', function () {
+it('can save the secret and recovery codes to the user when the action is submitted', function (): void {
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -103,7 +103,7 @@ it('can save the secret and recovery codes to the user when the action is submit
     }
 });
 
-it('will not set up authentication when an invalid code is used', function () {
+it('will not set up authentication when an invalid code is used', function (): void {
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -143,7 +143,7 @@ it('will not set up authentication when an invalid code is used', function () {
         ->toBeEmpty();
 });
 
-test('codes are required', function () {
+test('codes are required', function (): void {
     $user = auth()->user();
 
     expect($user->hasGoogleTwoFactorAuthentication())
@@ -176,7 +176,7 @@ test('codes are required', function () {
         ->toBeEmpty();
 });
 
-test('codes must be 6 digits', function () {
+test('codes must be 6 digits', function (): void {
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();

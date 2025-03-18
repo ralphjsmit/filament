@@ -36,7 +36,7 @@ class RegenerateGoogleTwoFactorAuthenticationRecoveryCodesAction
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/google-two-factor/actions/regenerate-recovery-codes.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/google-two-factor/actions/regenerate-recovery-codes.modal.description'))
-            ->form([
+            ->schema([
                 OneTimeCodeInput::make('code')
                     ->label(__('filament-panels::auth/multi-factor/google-two-factor/actions/regenerate-recovery-codes.modal.form.code.label'))
                     ->validationAttribute(__('filament-panels::auth/multi-factor/google-two-factor/actions/regenerate-recovery-codes.modal.form.code.validation_attribute'))

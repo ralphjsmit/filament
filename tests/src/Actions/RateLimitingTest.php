@@ -7,7 +7,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can rate limit an action', function () {
+it('can rate limit an action', function (): void {
     livewire(Actions::class)
         ->callAction('rate-limited')
         ->assertDispatched('rate-limited-called')

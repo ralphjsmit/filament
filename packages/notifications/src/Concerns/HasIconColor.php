@@ -7,7 +7,7 @@ use Filament\Support\Concerns\HasIconColor as BaseTrait;
 trait HasIconColor
 {
     use BaseTrait {
-        getIconColor as baseGetIconColor;
+        getIconColor as getBaseIconColor;
     }
 
     /**
@@ -15,6 +15,6 @@ trait HasIconColor
      */
     public function getIconColor(): string | array | null
     {
-        return $this->baseGetIconColor() ?? $this->getStatus();
+        return $this->getBaseIconColor() ?? $this->getStatus();
     }
 }

@@ -4,23 +4,29 @@ namespace Filament\Infolists\Components;
 
 use BackedEnum;
 use Closure;
-use Filament\Infolists\Components\IconEntry\Enums\IconEntrySize;
+use Filament\Infolists\View\Components\IconEntryComponent\IconComponent;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Concerns\CanWrap;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 
-class IconEntry extends Entry
+use function Filament\Support\generate_icon_html;
+
+class IconEntry extends Entry implements HasEmbeddedView
 {
+    use CanWrap;
     use Concerns\HasColor {
         getColor as getBaseColor;
     }
     use Concerns\HasIcon {
         getIcon as getBaseIcon;
     }
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-infolists::components.icon-entry';
 
     protected bool | Closure | null $isBoolean = null;
 
@@ -38,7 +44,9 @@ class IconEntry extends Entry
 
     protected string | BackedEnum | Closure | null $trueIcon = null;
 
-    protected IconEntrySize | string | Closure | null $size = null;
+    protected IconSize | string | Closure | null $size = null;
+
+    protected bool | Closure $isListWithLineBreaks = false;
 
     public function boolean(bool | Closure $condition = true): static
     {
@@ -107,14 +115,14 @@ class IconEntry extends Entry
         return $this;
     }
 
-    public function size(IconEntrySize | string | Closure | null $size): static
+    public function size(IconSize | string | Closure | null $size): static
     {
         $this->size = $size;
 
         return $this;
     }
 
-    public function getSize(mixed $state): IconEntrySize | string | null
+    public function getSize(mixed $state): IconSize | string | null
     {
         return $this->evaluate($this->size, [
             'state' => $state,
@@ -188,6 +196,18 @@ class IconEntry extends Entry
             ?? Heroicon::OutlinedCheckCircle;
     }
 
+    public function listWithLineBreaks(bool | Closure $condition = true): static
+    {
+        $this->isListWithLineBreaks = $condition;
+
+        return $this;
+    }
+
+    public function isListWithLineBreaks(): bool
+    {
+        return (bool) $this->evaluate($this->isListWithLineBreaks);
+    }
+
     public function isBoolean(): bool
     {
         if (blank($this->isBoolean)) {
@@ -195,5 +215,86 @@ class IconEntry extends Entry
         }
 
         return (bool) $this->evaluate($this->isBoolean);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $state = $this->getState();
+
+        if ($state instanceof Collection) {
+            $state = $state->all();
+        }
+
+        $attributes = $this->getExtraAttributeBag()
+            ->class([
+                'fi-in-icon',
+            ]);
+
+        if (blank($state)) {
+            $attributes = $attributes
+                ->merge([
+                    'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())
+                        ? '{
+                            content: ' . Js::from($tooltip) . ',
+                            theme: $store.theme,
+                        }'
+                        : null,
+                ], escape: false);
+
+            $placeholder = $this->getPlaceholder();
+
+            ob_start(); ?>
+
+            <div <?= $attributes->toHtml() ?>>
+                <?php if (filled($placeholder !== null)) { ?>
+                    <p class="fi-in-placeholder">
+                        <?= e($placeholder) ?>
+                    </p>
+                <?php } ?>
+            </div>
+
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        }
+
+        $state = Arr::wrap($state);
+
+        $alignment = $this->getAlignment();
+
+        $attributes = $attributes
+            ->class([
+                'fi-in-icon-has-line-breaks' => $this->isListWithLineBreaks(),
+                'fi-wrapped' => $this->canWrap(),
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php foreach ($state as $stateItem) { ?>
+                <?php
+                $color = $this->getColor($stateItem);
+                $size = $this->getSize($stateItem);
+                ?>
+
+                <?= generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
+                    ->merge([
+                        'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                            ? '{
+                                content: ' . Js::from($tooltip) . ',
+                                theme: $store.theme,
+                            }'
+                            : null,
+                    ], escape: false)
+                    ->color(IconComponent::class, $color), size: $size ?? IconSize::Large)
+                    ->toHtml() ?>
+            <?php } ?>
+        </div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+    }
+
+    public function canWrapByDefault(): bool
+    {
+        return true;
     }
 }

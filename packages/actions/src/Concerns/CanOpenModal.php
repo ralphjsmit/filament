@@ -9,7 +9,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
-use Filament\Support\View\Components\Modal;
+use Filament\Support\View\Components\ModalComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
@@ -421,7 +421,7 @@ trait CanOpenModal
     public function prepareModalAction(Action $action): Action
     {
         return $action
-            ->schemaComponentContainer($this->getSchemaComponentContainer())
+            ->schemaContainer($this->getSchemaContainer())
             ->schemaComponent($this->getSchemaComponent())
             ->livewire($this->getLivewire())
             ->when(
@@ -444,9 +444,12 @@ trait CanOpenModal
 
     public function getModalSubmitAction(): ?Action
     {
+        $hasFormWrapper = $this->hasFormWrapper();
+
         $action = static::makeModalAction('submit')
             ->label($this->getModalSubmitActionLabel())
-            ->submit($this->getLivewireCallMountedActionName())
+            ->submit($hasFormWrapper ? $this->getLivewireCallMountedActionName() : null)
+            ->action($hasFormWrapper ? null : $this->getLivewireCallMountedActionName())
             ->color(match ($color = $this->getColor()) {
                 'gray' => 'primary',
                 default => $color,
@@ -630,22 +633,22 @@ trait CanOpenModal
 
     public function hasModalCloseButton(): bool
     {
-        return $this->evaluate($this->hasModalCloseButton) ?? Modal::$hasCloseButton;
+        return $this->evaluate($this->hasModalCloseButton) ?? ModalComponent::$hasCloseButton;
     }
 
     public function isModalClosedByClickingAway(): bool
     {
-        return (bool) ($this->evaluate($this->isModalClosedByClickingAway) ?? Modal::$isClosedByClickingAway);
+        return (bool) ($this->evaluate($this->isModalClosedByClickingAway) ?? ModalComponent::$isClosedByClickingAway);
     }
 
     public function isModalClosedByEscaping(): bool
     {
-        return (bool) ($this->evaluate($this->isModalClosedByEscaping) ?? Modal::$isClosedByEscaping);
+        return (bool) ($this->evaluate($this->isModalClosedByEscaping) ?? ModalComponent::$isClosedByEscaping);
     }
 
     public function isModalAutofocused(): bool
     {
-        return $this->evaluate($this->isModalAutofocused) ?? Modal::$isAutofocused;
+        return $this->evaluate($this->isModalAutofocused) ?? ModalComponent::$isAutofocused;
     }
 
     /**

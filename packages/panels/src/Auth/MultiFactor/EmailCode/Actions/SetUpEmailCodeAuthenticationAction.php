@@ -42,7 +42,7 @@ class SetUpEmailCodeAuthenticationAction
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/email-code/actions/set-up.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/email-code/actions/set-up.modal.description'))
-            ->form(fn (array $arguments): array => [
+            ->schema(fn (array $arguments): array => [
                 OneTimeCodeInput::make('code')
                     ->label(__('filament-panels::auth/multi-factor/email-code/actions/set-up.modal.form.code.label'))
                     ->belowContent(Action::make('resend')

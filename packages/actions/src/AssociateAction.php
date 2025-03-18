@@ -68,7 +68,7 @@ class AssociateAction extends Action
 
         $this->color('gray');
 
-        $this->form(fn (): array => [$this->getRecordSelect()]);
+        $this->schema(fn (): array => [$this->getRecordSelect()]);
 
         $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var HasMany | MorphMany $relationship */
@@ -288,7 +288,7 @@ class AssociateAction extends Action
             ->getOptionLabelsUsing(function (array $values) use ($table): array {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-                return $relationship->getQuery()->find($values)
+                return $relationship->getQuery()->findMany($values)
                     ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                     ->all();
             })

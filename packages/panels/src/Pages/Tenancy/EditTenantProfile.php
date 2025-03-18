@@ -11,8 +11,8 @@ use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\NestedSchema;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
@@ -177,24 +177,17 @@ abstract class EditTenantProfile extends Page
         return null;
     }
 
+    public function defaultForm(Schema $schema): Schema
+    {
+        return $schema
+            ->operation('edit')
+            ->model($this->tenant)
+            ->statePath('data');
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema;
-    }
-
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->form(
-                $this->makeSchema()
-                    ->operation('edit')
-                    ->model($this->tenant)
-                    ->statePath('data'),
-            ),
-        ];
     }
 
     /**
@@ -244,7 +237,7 @@ abstract class EditTenantProfile extends Page
 
     public function getFormContentComponent(): Component
     {
-        return Form::make([NestedSchema::make('form')])
+        return Form::make([EmbeddedSchema::make('form')])
             ->id('form')
             ->livewireSubmitHandler('save')
             ->footer([

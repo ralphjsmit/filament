@@ -17,7 +17,7 @@
     x-id="['input']"
     {{ $attributes->class(['fi-ta-search-field']) }}
 >
-    <label x-bind:for="$id('input')" class="sr-only">
+    <label x-bind:for="$id('input')" class="fi-sr-only">
         {{ __('filament-tables::table.fields.search.label') }}
     </label>
 

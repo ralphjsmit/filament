@@ -78,7 +78,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
 
     public function getFiltersSessionKey(): string
     {
-        $livewire = class_basename($this::class);
+        $livewire = md5($this::class);
 
         return "{$livewire}_filters";
     }

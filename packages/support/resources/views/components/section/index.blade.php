@@ -1,7 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\Section\Icon;
+    use Filament\Support\View\Components\SectionComponent\IconComponent;
 
     use function Filament\Support\is_slot_empty;
 @endphp
@@ -74,7 +74,7 @@
             {{
                 \Filament\Support\generate_icon_html($icon, attributes: (new \Illuminate\View\ComponentAttributeBag)
                     ->class([
-                        ...\Filament\Support\get_component_color_classes(Icon::class, $iconColor),
+                        ...\Filament\Support\get_component_color_classes(IconComponent::class, $iconColor),
                     ]), size: $iconSize ?? IconSize::Large)
             }}
 

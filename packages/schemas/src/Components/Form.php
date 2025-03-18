@@ -21,9 +21,9 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Ex
 
     protected string | Closure | null $livewireSubmitHandler = null;
 
-    const HEADER_CONTAINER = 'header';
+    const HEADER_SCHEMA_KEY = 'header';
 
-    const FOOTER_CONTAINER = 'footer';
+    const FOOTER_SCHEMA_KEY = 'footer';
 
     /**
      * @param  array<Component | Action | ActionGroup> | Closure  $schema
@@ -72,7 +72,7 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Ex
      */
     public function header(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::HEADER_CONTAINER);
+        $this->childComponents($components, static::HEADER_SCHEMA_KEY);
 
         return $this;
     }
@@ -82,18 +82,18 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Ex
      */
     public function footer(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
     {
-        $this->childComponents($components, static::FOOTER_CONTAINER);
+        $this->childComponents($components, static::FOOTER_SCHEMA_KEY);
 
         return $this;
     }
 
-    protected function configureSchemaForSlot(Schema $schema, string $slot): Schema
+    protected function configureChildSchema(Schema $schema, string $key): Schema
     {
-        $schema = parent::configureSchemaForSlot($schema, $slot);
+        $schema = parent::configureChildSchema($schema, $key);
 
-        if (in_array($slot, [
-            static::HEADER_CONTAINER,
-            static::FOOTER_CONTAINER,
+        if (in_array($key, [
+            static::HEADER_SCHEMA_KEY,
+            static::FOOTER_SCHEMA_KEY,
         ])) {
             $schema->embeddedInParentComponent();
         }

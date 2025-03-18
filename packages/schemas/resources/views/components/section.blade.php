@@ -1,61 +1,74 @@
 @php
+    $afterHeader = $getChildSchema($schemaComponent::AFTER_HEADER_SCHEMA_KEY)?->toHtmlString();
     $isAside = $isAside();
+    $isCollapsed = $isCollapsed();
+    $isCollapsible = $isCollapsible();
+    $isCompact = $isCompact();
+    $isContained = $isContained();
     $isDivided = $isDivided();
+    $isFormBefore = $isFormBefore();
+    $description = $getDescription();
+    $footer = $getChildSchema($schemaComponent::FOOTER_SCHEMA_KEY)?->toHtmlString();
+    $heading = $getHeading();
+    $headingTag = $getHeadingTag();
+    $icon = $getIcon();
+    $iconColor = $getIconColor();
+    $iconSize = $getIconSize();
+    $shouldPersistCollapsed = $shouldPersistCollapsed();
+    $isSecondary = $isSecondary();
 @endphp
 
-@if (filled($label = $getLabel()))
-    <div class="mb-2 flex items-center gap-x-3">
-        {{ $getChildComponentContainer($schemaComponent::BEFORE_LABEL_CONTAINER) }}
-
-        <div
-            class="text-sm leading-6 font-medium text-gray-950 dark:text-white"
-        >
-            {{ $label }}
-        </div>
-
-        {{ $getChildComponentContainer($schemaComponent::AFTER_LABEL_CONTAINER) }}
-    </div>
-@endif
-
-@if ($aboveContentContainer = $getChildComponentContainer($schemaComponent::ABOVE_CONTENT_CONTAINER)?->toHtmlString())
-    <div class="mb-2">
-        {{ $aboveContentContainer }}
-    </div>
-@endif
-
-<x-filament::section
-    :after-header="$getChildComponentContainer($schemaComponent::AFTER_HEADER_CONTAINER)?->toHtmlString()"
-    :aside="$isAside"
-    :collapsed="$isCollapsed()"
-    :collapsible="$isCollapsible() && (! $isAside)"
-    :compact="$isCompact()"
-    :contained="$isContained()"
-    :content-before="$isFormBefore()"
-    :description="$getDescription()"
-    :divided="$isDivided"
-    :footer="$getChildComponentContainer($schemaComponent::FOOTER_CONTAINER)?->toHtmlString()"
-    :has-content-el="false"
-    :heading="$getHeading()"
-    :heading-tag="$getHeadingTag()"
-    :icon="$getIcon()"
-    :icon-color="$getIconColor()"
-    :icon-size="$getIconSize()"
-    :persist-collapsed="$shouldPersistCollapsed()"
-    :secondary="$isSecondary()"
-    :attributes="
-        \Filament\Support\prepare_inherited_attributes($attributes)
+<div
+    {{
+        $attributes
             ->merge([
                 'id' => $getId(),
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
-    "
+            ->class(['fi-sc-section'])
+    }}
 >
-    {{ $getChildComponentContainer()->gap(! $isDivided)->extraAttributes(['class' => 'fi-section-content']) }}
-</x-filament::section>
+    @if (filled($label = $getLabel()))
+        <div class="fi-sc-section-label-ctn">
+            {{ $getChildSchema($schemaComponent::BEFORE_LABEL_SCHEMA_KEY) }}
 
-@if ($belowContentContainer = $getChildComponentContainer($schemaComponent::BELOW_CONTENT_CONTAINER)?->toHtmlString())
-    <div class="mt-2">
+            <div class="fi-sc-section-label">
+                {{ $label }}
+            </div>
+
+            {{ $getChildSchema($schemaComponent::AFTER_LABEL_SCHEMA_KEY) }}
+        </div>
+    @endif
+
+    @if ($aboveContentContainer = $getChildSchema($schemaComponent::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString())
+        {{ $aboveContentContainer }}
+    @endif
+
+    <x-filament::section
+        :after-header="$afterHeader"
+        :aside="$isAside"
+        :collapsed="$isCollapsed"
+        :collapsible="$isCollapsible && (! $isAside)"
+        :compact="$isCompact"
+        :contained="$isContained"
+        :content-before="$isFormBefore"
+        :description="$description"
+        :divided="$isDivided"
+        :footer="$footer"
+        :has-content-el="false"
+        :heading="$heading"
+        :heading-tag="$headingTag"
+        :icon="$icon"
+        :icon-color="$iconColor"
+        :icon-size="$iconSize"
+        :persist-collapsed="$shouldPersistCollapsed"
+        :secondary="$isSecondary"
+    >
+        {{ $getChildSchema()->gap(! $isDivided)->extraAttributes(['class' => 'fi-section-content']) }}
+    </x-filament::section>
+
+    @if ($belowContentContainer = $getChildSchema($schemaComponent::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString())
         {{ $belowContentContainer }}
-    </div>
-@endif
+    @endif
+</div>

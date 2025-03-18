@@ -4,7 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Grouping\Group;
@@ -112,7 +112,7 @@ trait CanGroupRecords
         }
 
         if ($action->getView() === Action::BUTTON_VIEW) {
-            $action->defaultSize(ActionSize::Small);
+            $action->defaultSize(Size::Small);
         }
 
         return $action;

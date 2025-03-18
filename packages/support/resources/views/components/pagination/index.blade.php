@@ -73,7 +73,7 @@
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
 
-                <span class="sr-only">
+                <span class="fi-sr-only">
                     {{ __('filament::components/pagination.fields.records_per_page.label') }}
                 </span>
             </label>

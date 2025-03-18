@@ -196,8 +196,10 @@ trait CanGenerateModelForms
             } elseif (in_array($componentData['type'], [
                 TextInput::class,
                 Textarea::class,
-            ]) && isset($type['length'])) {
-                $componentData['maxLength'] = [$type['length']];
+            ])) {
+                if (isset($column['length'])) {
+                    $componentData['maxLength'] = [$column['length']];
+                }
 
                 if (filled($column['default'])) {
                     $componentData['default'] = [$this->parseDefaultExpression($column, $model)];

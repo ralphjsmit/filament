@@ -14,13 +14,13 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     Filament::setCurrentPanel('email-code-authentication');
 
     Notification::fake();
 });
 
-it('can render the challenge form after valid login credentials are successfully used', function () {
+it('can render the challenge form after valid login credentials are successfully used', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
@@ -51,7 +51,7 @@ it('can render the challenge form after valid login credentials are successfully
     });
 });
 
-it('will authenticate the user after a valid challenge code is used', function () {
+it('will authenticate the user after a valid challenge code is used', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
@@ -78,7 +78,7 @@ it('will authenticate the user after a valid challenge code is used', function (
     $this->assertAuthenticatedAs($userToAuthenticate);
 });
 
-it('can resend the code to the user', function () {
+it('can resend the code to the user', function (): void {
     $this->travelTo(now()->subMinute());
 
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
@@ -105,7 +105,7 @@ it('can resend the code to the user', function () {
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });
 
-it('can not resend the code to the user more than once per minute', function () {
+it('can not resend the code to the user more than once per minute', function (): void {
     $this->travelTo(now()->subMinute());
 
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
@@ -138,7 +138,7 @@ it('can not resend the code to the user more than once per minute', function () 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });
 
-it('will not render the challenge form after invalid login credentials are used', function () {
+it('will not render the challenge form after invalid login credentials are used', function (): void {
     $userToAuthenticate = User::factory()
         ->hasEmailCodeAuthentication()
         ->create();
@@ -158,7 +158,7 @@ it('will not render the challenge form after invalid login credentials are used'
     Notification::assertNotSentTo($userToAuthenticate, VerifyEmailCodeAuthentication::class);
 });
 
-it('will not render the challenge form if a user does not have multi-factor authentication enabled', function () {
+it('will not render the challenge form if a user does not have multi-factor authentication enabled', function (): void {
     $userToAuthenticate = User::factory()->create();
 
     livewire(Login::class)
@@ -176,7 +176,7 @@ it('will not render the challenge form if a user does not have multi-factor auth
     Notification::assertNotSentTo($userToAuthenticate, VerifyEmailCodeAuthentication::class);
 });
 
-it('will not authenticate the user when an invalid challenge code is used', function () {
+it('will not authenticate the user when an invalid challenge code is used', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
@@ -207,7 +207,7 @@ it('will not authenticate the user when an invalid challenge code is used', func
     $this->assertGuest();
 });
 
-test('challenge codes are required', function () {
+test('challenge codes are required', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
@@ -236,7 +236,7 @@ test('challenge codes are required', function () {
     $this->assertGuest();
 });
 
-test('challenge codes must be numeric', function () {
+test('challenge codes must be numeric', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
@@ -265,7 +265,7 @@ test('challenge codes must be numeric', function () {
     $this->assertGuest();
 });
 
-test('challenge codes must be 6 digits', function () {
+test('challenge codes must be 6 digits', function (): void {
     $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()

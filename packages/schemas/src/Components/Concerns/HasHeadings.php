@@ -20,7 +20,7 @@ trait HasHeadings
         return "h{$level}";
     }
 
-    public function getChildComponentContainerRootHeadingLevel(): int
+    public function getChildSchemaRootHeadingLevel(): int
     {
         return $this->getHeadingLevel() + $this->getHeadingsCount();
     }

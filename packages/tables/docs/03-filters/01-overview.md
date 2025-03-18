@@ -2,16 +2,8 @@
 title: Overview
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
-import LaracastsBanner from "@components/LaracastsBanner.astro"
 
-## Overview
-
-<LaracastsBanner
-    title="Table Filters"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding filters to Filament resource tables."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/10"
-    series="rapid-laravel-development"
-/>
+## Introduction
 
 Filters allow you to define certain constraints on your data, and allow users to scope it to find the information they need. You put them in the `$table->filters()` method:
 
@@ -59,15 +51,6 @@ use Filament\Tables\Filters\Filter;
 
 Filter::make('is_featured')
     ->label('Featured')
-```
-
-Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
-
-```php
-use Filament\Tables\Filters\Filter;
-
-Filter::make('is_featured')
-    ->translateLabel() // Equivalent to `label(__('Is featured'))`
 ```
 
 ## Customizing the filter form

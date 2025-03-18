@@ -2,12 +2,14 @@
 
 namespace Filament\Forms\Components;
 
+use BackedEnum;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
@@ -93,9 +95,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $isMultiple = false;
 
-    protected Closure $getOptionLabelUsing;
+    protected ?Closure $getOptionLabelUsing;
 
-    protected Closure $getOptionLabelsUsing;
+    protected ?Closure $getOptionLabelsUsing;
 
     protected ?Closure $getSearchResultsUsing = null;
 
@@ -153,6 +155,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 }
 
                 return $groupedOptions[$value];
+            }
+
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
             }
 
             if (! array_key_exists($value, $options)) {
@@ -213,6 +219,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         ]);
 
         $this->placeholder($placeholder ?? '-');
+
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
 
         return $this;
     }
@@ -281,7 +289,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $action = Action::make($this->getCreateOptionActionName())
             ->label(__('filament-forms::components.select.actions.create_option.label'))
-            ->form(function (Select $component, Schema $schema): array | Schema | null {
+            ->schema(function (Select $component, Schema $schema): array | Schema | null {
                 return $component->getCreateOptionActionForm($schema->model(
                     $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
                 ));
@@ -294,6 +302,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $createdOptionKey = $component->evaluate($component->getCreateOptionUsing(), [
                     'data' => $data,
                     'form' => $schema,
+                    'schema' => $schema,
                 ]);
 
                 $state = $component->isMultiple()
@@ -367,7 +376,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function getCreateOptionActionForm(Schema $schema): array | Schema | null
     {
-        return $this->evaluate($this->createOptionActionForm, ['form' => $schema]);
+        return $this->evaluate($this->createOptionActionForm, ['form' => $schema, 'schema' => $schema]);
     }
 
     public function hasCreateOptionActionFormSchema(): bool
@@ -380,7 +389,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function getEditOptionActionForm(Schema $schema): array | Schema | null
     {
-        return $this->evaluate($this->editOptionActionForm, ['form' => $schema]);
+        return $this->evaluate($this->editOptionActionForm, ['form' => $schema, 'schema' => $schema]);
     }
 
     public function hasEditOptionActionFormSchema(): bool
@@ -436,7 +445,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $action = Action::make($this->getEditOptionActionName())
             ->label(__('filament-forms::components.select.actions.edit_option.label'))
-            ->form(function (Select $component, Schema $schema): array | Schema | null {
+            ->schema(function (Select $component, Schema $schema): array | Schema | null {
                 return $component->getEditOptionActionForm(
                     $schema->model($component->getSelectedRecord()),
                 );
@@ -450,6 +459,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $component->evaluate($component->getUpdateOptionUsing(), [
                     'data' => $data,
                     'form' => $schema,
+                    'schema' => $schema,
                 ]);
 
                 $component->refreshSelectedOptionLabel();
@@ -500,7 +510,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->editOptionModalHeading);
     }
 
-    public function getOptionLabelUsing(Closure $callback): static
+    public function getOptionLabelUsing(?Closure $callback): static
     {
         $this->getOptionLabelUsing = $callback;
 
@@ -514,7 +524,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
-    public function getOptionLabelsUsing(Closure $callback): static
+    public function getOptionLabelsUsing(?Closure $callback): static
     {
         $this->getOptionLabelsUsing = $callback;
 
@@ -898,7 +908,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 $component->state(
                     $relatedRecords
-                        ->pluck($relationship->getForeignKeyName())
+                        ->pluck($relationship->getLocalKeyName())
                         ->all(),
                 );
 
@@ -910,7 +920,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 $component->state(
                     $relatedModel?->getAttribute(
-                        $relationship->getForeignKeyName(),
+                        $relationship->getLocalKeyName(),
                     ),
                 );
 
@@ -1000,6 +1010,42 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) use ($modifyQueryUsing): void {
             $relationship = $component->getRelationship();
+
+            if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
+                $query = $relationship->getQuery();
+
+                if ($modifyQueryUsing) {
+                    $component->evaluate($modifyQueryUsing, [
+                        'query' => $query,
+                        'search' => null,
+                    ]);
+                }
+
+                $query->update([
+                    $relationship->getForeignKeyName() => null,
+                ]);
+
+                if (! empty($state)) {
+                    $relationship::noConstraints(function () use ($component, $record, $state, $modifyQueryUsing): void {
+                        $relationship = $component->getRelationship();
+
+                        $query = $relationship->getQuery()->whereIn($relationship->getLocalKeyName(), Arr::wrap($state));
+
+                        if ($modifyQueryUsing) {
+                            $component->evaluate($modifyQueryUsing, [
+                                'query' => $query,
+                                'search' => null,
+                            ]);
+                        }
+
+                        $query->update([
+                            $relationship->getForeignKeyName() => $record->getAttribute($relationship->getLocalKeyName()),
+                        ]);
+                    });
+                }
+
+                return;
+            }
 
             if (
                 ($relationship instanceof HasOneOrMany) ||
@@ -1354,5 +1400,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function hasInValidationOnMultipleValues(): bool
     {
         return $this->isMultiple();
+    }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return true;
     }
 }

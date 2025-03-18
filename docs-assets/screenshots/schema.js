@@ -120,7 +120,7 @@ export default {
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
-        selector: 'body',
+        selector: '.fi-modal-window-ctn',
     },
     'actions/modal/confirmation-custom-text': {
         url: 'actions',
@@ -135,7 +135,7 @@ export default {
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
-        selector: 'body',
+        selector: '.fi-modal-window-ctn',
     },
     'actions/modal/icon': {
         url: 'actions',
@@ -150,7 +150,7 @@ export default {
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
-        selector: 'body',
+        selector: '.fi-modal-window-ctn',
     },
     'actions/modal/form': {
         url: 'actions',
@@ -165,7 +165,7 @@ export default {
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
-        selector: 'body',
+        selector: '.fi-modal-window-ctn',
     },
     'actions/modal/wizard': {
         url: 'actions',
@@ -180,7 +180,7 @@ export default {
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
-        selector: 'body',
+        selector: '.fi-modal-window-ctn',
     },
     'actions/modal/slide-over': {
         url: 'actions',
@@ -195,7 +195,7 @@ export default {
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
-        selector: 'body',
+        selector: '.fi-modal-window-ctn',
     },
     'actions/group/simple': {
         url: 'actions',
@@ -269,42 +269,6 @@ export default {
         url: 'admin',
         selector: 'body',
     },
-    'forms/getting-started/fields': {
-        url: 'forms/getting-started',
-        selector: '#fields',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/getting-started/columns': {
-        url: 'forms/getting-started',
-        selector: '#columns',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/getting-started/column-span': {
-        url: 'forms/getting-started',
-        selector: '#columnSpan',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/getting-started/section': {
-        url: 'forms/getting-started',
-        selector: '#section',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
     'forms/fields/simple': {
         url: 'forms/fields',
         selector: '#simple',
@@ -323,9 +287,162 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/inline-label': {
+        url: 'forms/fields',
+        selector: '#inlineLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/inline-label/section': {
+        url: 'forms/fields',
+        selector: '#inlineLabelSection',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/placeholder': {
         url: 'forms/fields',
         selector: '#placeholder',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-content/text': {
+        url: 'forms/fields',
+        selector: '#textBelowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-content/component': {
+        url: 'forms/fields',
+        selector: '#componentBelowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-content/action': {
+        url: 'forms/fields',
+        selector: '#actionBelowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-content': {
+        url: 'forms/fields',
+        selector: '#belowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-content/alignment': {
+        url: 'forms/fields',
+        selector: '#belowContentAlignment',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/above-label': {
+        url: 'forms/fields',
+        selector: '#aboveLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/before-label': {
+        url: 'forms/fields',
+        selector: '#beforeLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/after-label': {
+        url: 'forms/fields',
+        selector: '#afterLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/after-label/aligned-start': {
+        url: 'forms/fields',
+        selector: '#afterLabelAlignedStart',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-label': {
+        url: 'forms/fields',
+        selector: '#belowLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/above-content': {
+        url: 'forms/fields',
+        selector: '#aboveContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/before-content': {
+        url: 'forms/fields',
+        selector: '#beforeContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/after-content': {
+        url: 'forms/fields',
+        selector: '#afterContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/above-error-message': {
+        url: 'forms/fields',
+        selector: '#aboveErrorMessage',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/below-error-message': {
+        url: 'forms/fields',
+        selector: '#belowErrorMessage',
         viewport: {
             width: 1920,
             height: 640,
@@ -415,8 +532,8 @@ export default {
         },
         before: async (page) => {
             await page.click('#multipleSelect .choices')
-            await page.click('#multipleSelect .choices #choices--datamultipleSelect-item-choice-2')
-            await page.click('#multipleSelect .choices #choices--datamultipleSelect-item-choice-3')
+            await page.click('#multipleSelect .choices #choices--formmultipleSelect-item-choice-2')
+            await page.click('#multipleSelect .choices #choices--formmultipleSelect-item-choice-3')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -446,7 +563,7 @@ export default {
     },
     'forms/fields/select/create-option-modal': {
         url: 'forms/fields',
-        selector: 'body',
+        selector: '.fi-modal-window-ctn',
         viewport: {
             width: 640,
             height: 300,
@@ -469,7 +586,7 @@ export default {
     },
     'forms/fields/select/edit-option-modal': {
         url: 'forms/fields',
-        selector: 'body',
+        selector: '.fi-modal-window-ctn',
         viewport: {
             width: 640,
             height: 300,
@@ -479,6 +596,8 @@ export default {
             await page.click('#editSelectOption button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
+
+            await page.$eval('.fi-modal-window-ctn input[type=text]', (el) => el.blur())
         },
     },
     'forms/fields/select/affix': {
@@ -1067,8 +1186,17 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/fieldset/simple': {
-        url: 'schema/layout',
+    'schemas/overview/example': {
+        url: 'schemas/overview',
+        selector: '#example',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/fieldset/simple': {
+        url: 'schemas/layout',
         selector: '#fieldset',
         viewport: {
             width: 1920,
@@ -1076,8 +1204,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/tabs/simple': {
-        url: 'schema/layout',
+    'schemas/layout/tabs/simple': {
+        url: 'schemas/layout',
         selector: '#tabs',
         viewport: {
             width: 1920,
@@ -1085,8 +1213,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/tabs/icons': {
-        url: 'schema/layout',
+    'schemas/layout/tabs/icons': {
+        url: 'schemas/layout',
         selector: '#tabsIcons',
         viewport: {
             width: 1920,
@@ -1094,8 +1222,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/tabs/icons-after': {
-        url: 'schema/layout',
+    'schemas/layout/tabs/icons-after': {
+        url: 'schemas/layout',
         selector: '#tabsIconsAfter',
         viewport: {
             width: 1920,
@@ -1103,8 +1231,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/tabs/badges': {
-        url: 'schema/layout',
+    'schemas/layout/tabs/badges': {
+        url: 'schemas/layout',
         selector: '#tabsBadges',
         viewport: {
             width: 1920,
@@ -1112,8 +1240,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/wizard/simple': {
-        url: 'schema/layout',
+    'schemas/layout/wizard/simple': {
+        url: 'schemas/layout',
         selector: '#wizard',
         viewport: {
             width: 1920,
@@ -1121,8 +1249,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/wizard/icons': {
-        url: 'schema/layout',
+    'schemas/layout/wizard/icons': {
+        url: 'schemas/layout',
         selector: '#wizardIcons',
         viewport: {
             width: 1920,
@@ -1130,8 +1258,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/wizard/completed-icons': {
-        url: 'schema/layout',
+    'schemas/layout/wizard/completed-icons': {
+        url: 'schemas/layout',
         selector: '#wizardCompletedIcons',
         viewport: {
             width: 1920,
@@ -1139,8 +1267,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/wizard/descriptions': {
-        url: 'schema/layout',
+    'schemas/layout/wizard/descriptions': {
+        url: 'schemas/layout',
         selector: '#wizardDescriptions',
         viewport: {
             width: 1920,
@@ -1148,8 +1276,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/section/simple': {
-        url: 'schema/layout',
+    'schemas/layout/section/simple': {
+        url: 'schemas/layout',
         selector: '#section',
         viewport: {
             width: 1920,
@@ -1157,8 +1285,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/section/header/actions': {
-        url: 'schema/layout',
+    'schemas/layout/section/header/actions': {
+        url: 'schemas/layout',
         selector: '#sectionHeaderActions',
         viewport: {
             width: 1920,
@@ -1166,8 +1294,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/section/footer/actions': {
-        url: 'schema/layout',
+    'schemas/layout/section/footer/actions': {
+        url: 'schemas/layout',
         selector: '#sectionFooterActions',
         viewport: {
             width: 1920,
@@ -1175,8 +1303,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/section/icons': {
-        url: 'schema/layout',
+    'schemas/layout/section/icons': {
+        url: 'schemas/layout',
         selector: '#sectionIcons',
         viewport: {
             width: 1920,
@@ -1184,8 +1312,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/section/aside': {
-        url: 'schema/layout',
+    'schemas/layout/section/aside': {
+        url: 'schemas/layout',
         selector: '#sectionAside',
         viewport: {
             width: 1920,
@@ -1193,8 +1321,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/section/collapsed': {
-        url: 'schema/layout',
+    'schemas/layout/section/collapsed': {
+        url: 'schemas/layout',
         selector: '#sectionCollapsed',
         viewport: {
             width: 1920,
@@ -1202,8 +1330,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/section/compact': {
-        url: 'schema/layout',
+    'schemas/layout/section/compact': {
+        url: 'schemas/layout',
         selector: '#sectionCompact',
         viewport: {
             width: 1920,
@@ -1211,8 +1339,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/section/without-header': {
-        url: 'schema/layout',
+    'schemas/layout/section/without-header': {
+        url: 'schemas/layout',
         selector: '#sectionWithoutHeader',
         viewport: {
             width: 1920,
@@ -1220,17 +1348,17 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/split/simple': {
-        url: 'schema/layout',
-        selector: '#split',
+    'schemas/layout/flex/simple': {
+        url: 'schemas/layout',
+        selector: '#flex',
         viewport: {
             width: 1920,
             height: 320,
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/actions/independent/simple': {
-        url: 'schema/layout',
+    'schemas/layout/actions/independent/simple': {
+        url: 'schemas/layout',
         selector: '#independentActions',
         viewport: {
             width: 1920,
@@ -1238,8 +1366,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/actions/independent/full-width': {
-        url: 'schema/layout',
+    'schemas/layout/actions/independent/full-width': {
+        url: 'schemas/layout',
         selector: '#independentActionsFullWidth',
         viewport: {
             width: 1920,
@@ -1247,8 +1375,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/actions/independent/horizontally-aligned-center': {
-        url: 'schema/layout',
+    'schemas/layout/actions/independent/horizontally-aligned-center': {
+        url: 'schemas/layout',
         selector: '#independentActionsHorizontallyAlignedCenter',
         viewport: {
             width: 1920,
@@ -1256,8 +1384,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/actions/independent/vertically-aligned-end': {
-        url: 'schema/layout',
+    'schemas/layout/actions/independent/vertically-aligned-end': {
+        url: 'schemas/layout',
         selector: '#independentActionsVerticallyAlignedEnd',
         viewport: {
             width: 1920,
@@ -1717,7 +1845,7 @@ export default {
             return image.extract({ width: 650, height: 540, left: 0, top: 0 })
         },
         before: async (page) => {
-            await page.click('.fi-sidebar-header button[title="Collapse sidebar"]')
+            await page.click('.fi-topbar-close-collapse-sidebar-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1734,7 +1862,7 @@ export default {
             return image.extract({ width: 650, height: 300, left: 0, top: 0 })
         },
         before: async (page) => {
-            await page.click('.fi-sidebar-header button[title="Collapse sidebar"]')
+            await page.click('.fi-topbar-close-collapse-sidebar-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1843,6 +1971,201 @@ export default {
         },
         crop: (image) => {
             return image.extract({ width: 650, height: 550, left: 0, top: 0 })
+        },
+    },
+    'primes/overview/example': {
+        url: 'primes',
+        selector: '#example',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/simple': {
+        url: 'primes',
+        selector: '#text',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/html': {
+        url: 'primes',
+        selector: '#textHtml',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/color': {
+        url: 'primes',
+        selector: '#textColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/neutral': {
+        url: 'primes',
+        selector: '#textNeutral',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/badge': {
+        url: 'primes',
+        selector: '#textBadge',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/badge-icon': {
+        url: 'primes',
+        selector: '#textBadgeIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/large': {
+        url: 'primes',
+        selector: '#textLarge',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/bold': {
+        url: 'primes',
+        selector: '#textBold',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/mono': {
+        url: 'primes',
+        selector: '#textMono',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/text/tooltip': {
+        url: 'primes',
+        selector: '#textTooltip',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('#textTooltip .fi-sc-text')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'primes/icon/simple': {
+        url: 'primes',
+        selector: '#icon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/icon/color': {
+        url: 'primes',
+        selector: '#iconColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/icon/tooltip': {
+        url: 'primes',
+        selector: '#iconTooltip',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('#iconTooltip .fi-sc-icon')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'primes/image/simple': {
+        url: 'primes',
+        selector: '#image',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/image/size': {
+        url: 'primes',
+        selector: '#imageSize',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/image/alignment': {
+        url: 'primes',
+        selector: '#imageAlignment',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/image/tooltip': {
+        url: 'primes',
+        selector: '#imageTooltip',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('#imageTooltip .fi-sc-image')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'primes/unordered-list/simple': {
+        url: 'primes',
+        selector: '#unorderedList',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'primes/unordered-list/large': {
+        url: 'primes',
+        selector: '#unorderedListLarge',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
         },
     },
     'tables/example': {
@@ -1988,7 +2311,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('[wire\\:key$="4.column.email_verified_at"] .fi-ta-col-wrp')
+            await page.hover('[wire\\:key$="4.column.email_verified_at"] .fi-icon')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },

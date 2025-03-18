@@ -10,12 +10,11 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-trait InteractsWithForms
+trait InteractsWithForms /** @phpstan-ignore trait.unused */
 {
     use InteractsWithSchemas {
-        getCachedSchemas as baseGetCachedSchemas;
+        getCachedSchemas as getBaseCachedSchemas;
     }
 
     protected bool $hasCachedForms = false;
@@ -29,7 +28,7 @@ trait InteractsWithForms
             $this->cacheForms();
         }
 
-        return $this->baseGetCachedSchemas();
+        return $this->getBaseCachedSchemas();
     }
 
     /**
@@ -143,7 +142,7 @@ trait InteractsWithForms
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema($this->getFormSchema())
+            ->components($this->getFormSchema())
             ->model($this->getFormModel())
             ->statePath($this->getFormStatePath())
             ->operation($this->getFormContext());
@@ -191,14 +190,6 @@ trait InteractsWithForms
     public function isCachingForms(): bool
     {
         return $this->isCachingSchemas();
-    }
-
-    /**
-     * @deprecated Use `getSchemaComponentFileAttachment()` instead.
-     */
-    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
-    {
-        return $this->getSchemaComponentFileAttachment($statePath);
     }
 
     /**

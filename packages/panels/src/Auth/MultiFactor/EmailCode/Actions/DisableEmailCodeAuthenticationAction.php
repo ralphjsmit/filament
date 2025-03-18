@@ -32,7 +32,7 @@ class DisableEmailCodeAuthenticationAction
             ->modalIcon(Heroicon::OutlinedLockOpen)
             ->modalHeading(__('filament-panels::auth/multi-factor/email-code/actions/disable.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/email-code/actions/disable.modal.description'))
-            ->form([
+            ->schema([
                 OneTimeCodeInput::make('code')
                     ->label(__('filament-panels::auth/multi-factor/email-code/actions/disable.modal.form.code.label'))
                     ->validationAttribute(__('filament-panels::auth/multi-factor/email-code/actions/disable.modal.form.code.validation_attribute'))

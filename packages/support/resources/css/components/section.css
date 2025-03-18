@@ -19,7 +19,7 @@
         }
 
         &:not(.fi-aside) {
-            @apply rounded-xl bg-white ring-1 shadow-sm ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+            @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
             &.fi-compact {
                 @apply rounded-lg;
@@ -42,7 +42,7 @@
 
         &.fi-aside {
             & .fi-section-content-ctn {
-                @apply rounded-xl bg-white ring-1 shadow-sm ring-gray-950/5 md:col-span-2 dark:bg-gray-900 dark:ring-white/10;
+                @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 md:col-span-2 dark:bg-gray-900 dark:ring-white/10;
             }
 
             &.fi-compact {

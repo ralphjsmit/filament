@@ -7,9 +7,9 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -17,7 +17,7 @@ use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;
 
 /**
- * @method HasForms instance()
+ * @method HasSchemas instance()
  *
  * @mixin Testable
  */

@@ -18,7 +18,7 @@
 ])
 
 @php
-    use Filament\Support\View\Components\Input\Wrapper\Icon;
+    use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -38,7 +38,7 @@
     $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
 
     $getIconClasses = fn (string $color = 'gray'): string => \Illuminate\Support\Arr::toCssClasses([
-        ...\Filament\Support\get_component_color_classes(Icon::class, $color),
+        ...\Filament\Support\get_component_color_classes(IconComponent::class, $color),
     ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();

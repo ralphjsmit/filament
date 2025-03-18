@@ -5,25 +5,26 @@ namespace Filament\Resources\Pages;
 use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\NestedSchema;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 
 /**
  * @property-read Schema $form
  */
 class ViewRecord extends Page
 {
-    use Concerns\HasRelationManagers;
+    use Concerns\HasRelationManagers {
+        getContentTabComponent as getBaseContentTabComponent;
+    }
     use Concerns\InteractsWithRecord;
 
     /**
@@ -95,16 +96,14 @@ class ViewRecord extends Page
     }
 
     /**
-     * @param  array<string>  $attributes
+     * @param  array<string>  $statePaths
      */
-    public function refreshFormData(array $attributes): void
+    public function refreshFormData(array $statePaths): void
     {
-        $data = [
-            ...$this->data,
-            ...Arr::only($this->getRecord()->attributesToArray(), $attributes),
-        ];
-
-        $this->form->fill($data);
+        $this->form->fillPartially(
+            $this->mutateFormDataBeforeFill($this->getRecord()->attributesToArray()),
+            $statePaths,
+        );
     }
 
     /**
@@ -120,7 +119,7 @@ class ViewRecord extends Page
     {
         return match (true) {
             $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => static::getResource()::form($schema->columns(2)),
-            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->hasInfolist() ? $this->configureInfolist($schema) : $this->configureForm($schema),
+            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->hasInfolist() ? $schema->components([EmbeddedSchema::make('infolist')]) : $schema->components([EmbeddedSchema::make('form')]),
             default => null,
         };
     }
@@ -136,60 +135,33 @@ class ViewRecord extends Page
         ]);
     }
 
+    public function defaultForm(Schema $schema): Schema
+    {
+        return $schema
+            ->columns($this->hasInlineLabels() ? 1 : 2)
+            ->disabled()
+            ->inlineLabel($this->hasInlineLabels())
+            ->model($this->getRecord())
+            ->operation('view')
+            ->statePath('data');
+    }
+
     public function form(Schema $schema): Schema
     {
-        return $schema;
+        return static::getResource()::form($schema);
     }
 
-    public function configureForm(Schema $schema): Schema
+    public function defaultInfolist(Schema $schema): Schema
     {
-        $schema->columns($this->hasInlineLabels() ? 1 : 2);
-        $schema->inlineLabel($this->hasInlineLabels());
-
-        static::getResource()::form($schema);
-
-        $this->form($schema);
-
-        return $schema;
+        return $schema
+            ->columns($this->hasInlineLabels() ? 1 : 2)
+            ->inlineLabel($this->hasInlineLabels())
+            ->record($this->getRecord());
     }
 
-    public function configureInfolist(Schema $schema): Schema
+    public function infolist(Schema $schema): Schema
     {
-        $schema->columns($this->hasInlineLabels() ? 1 : 2);
-        $schema->inlineLabel($this->hasInlineLabels());
-
-        static::getResource()::infolist($schema);
-
-        return $schema;
-    }
-
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->configureForm(
-                $this->makeSchema()
-                    ->operation('view')
-                    ->disabled()
-                    ->model($this->getRecord())
-                    ->statePath($this->getFormStatePath()),
-            ),
-        ];
-    }
-
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
-    }
-
-    public function infolist(): Schema
-    {
-        return $this->configureInfolist(
-            $this->makeSchema()
-                ->record($this->getRecord()),
-        );
+        return static::getResource()::infolist($schema);
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool
@@ -199,33 +171,40 @@ class ViewRecord extends Page
 
     public function content(Schema $schema): Schema
     {
+        if ($this->hasCombinedRelationManagerTabsWithContent()) {
+            return $schema
+                ->components([
+                    $this->getRelationManagersContentComponent(),
+                ]);
+        }
+
         return $schema
             ->components([
-                ...($this->hasCombinedRelationManagerTabsWithContent() ? [] : $this->getContentComponents()),
+                $this->hasInfolist()
+                    ? $this->getInfolistContentComponent()
+                    : $this->getFormContentComponent(),
                 $this->getRelationManagersContentComponent(),
             ]);
     }
 
-    /**
-     * @return array<Component | Action | ActionGroup>
-     */
-    public function getContentComponents(): array
-    {
-        return [
-            $this->hasInfolist()
-                ? $this->getInfolistContentComponent()
-                : $this->getFormContentComponent(),
-        ];
-    }
-
     public function getFormContentComponent(): Component
     {
-        return NestedSchema::make('form');
+        return EmbeddedSchema::make('form');
     }
 
     public function getInfolistContentComponent(): Component
     {
-        return NestedSchema::make('infolist');
+        return EmbeddedSchema::make('infolist');
+    }
+
+    public function getContentTabComponent(): Tab
+    {
+        return $this->getBaseContentTabComponent()
+            ->schema([
+                $this->hasInfolist()
+                    ? $this->getInfolistContentComponent()
+                    : $this->getFormContentComponent(),
+            ]);
     }
 
     /**

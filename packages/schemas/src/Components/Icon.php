@@ -4,15 +4,19 @@ namespace Filament\Schemas\Components;
 
 use BackedEnum;
 use Closure;
+use Filament\Schemas\View\Components\IconComponent;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasTooltip;
+use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 
-class Icon extends Component
+use function Filament\Support\generate_icon_html;
+
+class Icon extends Component implements HasEmbeddedView
 {
     use HasColor;
     use HasTooltip;
-
-    protected string $view = 'filament-schemas::components.icon';
 
     protected string | BackedEnum | Closure $icon;
 
@@ -39,5 +43,12 @@ class Icon extends Component
     public function getIcon(): string | BackedEnum
     {
         return $this->evaluate($this->icon);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        return generate_icon_html($this->getIcon(), attributes: (new ComponentAttributeBag([
+            'x-tooltip' => filled($tooltip = $this->getTooltip()) ? '{ content: ' . Js::from($tooltip) . ', theme: $store.theme }' : null,
+        ]))->merge($this->getExtraAttributes(), escape: false)->color(IconComponent::class, $this->getColor() ?? 'primary')->class(['fi-sc-icon']))->toHtml();
     }
 }

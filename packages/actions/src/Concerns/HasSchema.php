@@ -72,6 +72,7 @@ trait HasSchema
                 ->startOnStep($this->getWizardStartStep())
                 ->cancelAction($this->getModalCancelAction())
                 ->submitAction($this->getModalSubmitAction())
+                ->alpineSubmitHandler("\$wire.{$this->getLivewireCallMountedActionName()}()")
                 ->skippable($this->isWizardSkippable())
                 ->disabled($this->isSchemaDisabled());
 
@@ -85,7 +86,7 @@ trait HasSchema
         }
 
         if (is_array($modifiedSchema)) {
-            $modifiedSchema = $schema->schema($modifiedSchema);
+            $modifiedSchema = $schema->components($modifiedSchema);
         }
 
         if ($this->isSchemaDisabled()) {

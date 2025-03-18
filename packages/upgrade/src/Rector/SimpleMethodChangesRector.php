@@ -6,6 +6,7 @@ use Closure;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\ViewRecord;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
@@ -61,6 +62,19 @@ class SimpleMethodChangesRector extends AbstractRector
                 'changes' => [
                     'canCreateAnother' => function (ClassMethod $node): void {
                         $node->flags &= ~Modifiers::STATIC;
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    ViewRecord::class,
+                ],
+                'changes' => [
+                    'infolist' => function (ClassMethod $node): void {
+                        $param = new Param(new Variable('schema'));
+                        $param->type = new Name('\\Filament\\Schemas\\Schema');
+
+                        $node->params = [$param];
                     },
                 ],
             ],

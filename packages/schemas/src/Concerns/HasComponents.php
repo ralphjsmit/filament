@@ -93,29 +93,29 @@ trait HasComponents
                 $componentNestedContainerKey = $nestedContainerKey;
             }
 
-            foreach ($component->getChildComponentContainers() as $childComponentContainer) {
-                $childComponentContainerKey = $childComponentContainer->getKey(isAbsolute: false);
+            foreach ($component->getChildSchemas() as $childSchema) {
+                $childSchemaKey = $childSchema->getKey(isAbsolute: false);
 
-                if (filled($childComponentContainerKey)) {
+                if (filled($childSchemaKey)) {
                     if (blank($componentNestedContainerKey)) {
                         continue;
                     }
 
                     if (
-                        ($componentNestedContainerKey !== $childComponentContainerKey)
-                        && (! str($componentNestedContainerKey)->startsWith("{$childComponentContainerKey}."))
+                        ($componentNestedContainerKey !== $childSchemaKey)
+                        && (! str($componentNestedContainerKey)->startsWith("{$childSchemaKey}."))
                     ) {
                         continue;
                     }
 
-                    $childComponentContainerNestedContainerKey = ($componentNestedContainerKey === $childComponentContainerKey)
+                    $childSchemaNestedContainerKey = ($componentNestedContainerKey === $childSchemaKey)
                         ? null
-                        : (string) str($componentNestedContainerKey)->after("{$childComponentContainerKey}.");
+                        : (string) str($componentNestedContainerKey)->after("{$childSchemaKey}.");
                 } else {
-                    $childComponentContainerNestedContainerKey = $componentNestedContainerKey;
+                    $childSchemaNestedContainerKey = $componentNestedContainerKey;
                 }
 
-                if ($action = $childComponentContainer->getAction($actionName, $childComponentContainerNestedContainerKey)) {
+                if ($action = $childSchema->getAction($actionName, $childSchemaNestedContainerKey)) {
                     return $action;
                 }
             }
@@ -142,8 +142,8 @@ trait HasComponents
                         continue;
                     }
 
-                    foreach ($component->getChildComponentContainers($withHidden) as $childComponentContainer) {
-                        if ($foundComponent = $childComponentContainer->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, skipComponentChildContainersWhileSearching: $skipComponentChildContainersWhileSearching)) {
+                    foreach ($component->getChildSchemas($withHidden) as $childSchema) {
+                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, skipComponentChildContainersWhileSearching: $skipComponentChildContainersWhileSearching)) {
                             return $foundComponent;
                         }
                     }
@@ -162,8 +162,8 @@ trait HasComponents
                 }
 
                 if (blank($componentKey) || str_starts_with($findComponentUsing, "{$componentKey}.")) {
-                    foreach ($component->getChildComponentContainers($withHidden) as $childComponentContainer) {
-                        if ($foundComponent = $childComponentContainer->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentChildContainersWhileSearching)) {
+                    foreach ($component->getChildSchemas($withHidden) as $childSchema) {
+                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentChildContainersWhileSearching)) {
                             return $foundComponent;
                         }
                     }
@@ -214,10 +214,10 @@ trait HasComponents
                     $carry[$componentKey] = $component;
                 }
 
-                foreach ($component->getChildComponentContainers($withHidden) as $childComponentContainer) {
+                foreach ($component->getChildSchemas($withHidden) as $childSchema) {
                     $carry = [
                         ...$carry,
-                        ...$childComponentContainer->getFlatComponents($withActions, $withHidden, $withAbsoluteKeys, $containerKey),
+                        ...$childSchema->getFlatComponents($withActions, $withHidden, $withAbsoluteKeys, $containerKey),
                     ];
                 }
 
@@ -242,7 +242,7 @@ trait HasComponents
             }
 
             if (($component instanceof Action) || ($component instanceof ActionGroup)) {
-                return $component->schemaComponentContainer($this);
+                return $component->schemaContainer($this);
             }
 
             if (is_string($component)) {
@@ -281,7 +281,7 @@ trait HasComponents
             $this->components = array_map(
                 fn (Component | Action | ActionGroup | string $component): Component | Action | ActionGroup | string => match (true) {
                     $component instanceof Action, $component instanceof ActionGroup => (clone $component)
-                        ->schemaComponentContainer($this),
+                        ->schemaContainer($this),
                     $component instanceof Component => $component
                         ->container($this)
                         ->getClone(),

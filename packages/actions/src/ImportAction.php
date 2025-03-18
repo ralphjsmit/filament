@@ -85,7 +85,7 @@ class ImportAction extends Action
 
         $this->groupedIcon(FilamentIcon::resolve('actions::import-action.grouped') ?? Heroicon::ArrowUpTray);
 
-        $this->form(fn (ImportAction $action): array => array_merge([
+        $this->schema(fn (ImportAction $action): array => array_merge([
             FileUpload::make('file')
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
@@ -398,16 +398,14 @@ class ImportAction extends Action
     public function getUploadedFileStream(TemporaryUploadedFile $file)
     {
         $fileDisk = invade($file)->disk; /** @phpstan-ignore-line */
-        $filePath = $file->getRealPath();
-
         if (config("filesystems.disks.{$fileDisk}.driver") !== 's3') {
-            $resource = fopen($filePath, mode: 'r');
+            $resource = $file->readStream();
         } else {
             /** @var AwsS3V3Adapter $s3Adapter */
             $s3Adapter = Storage::disk($fileDisk)->getAdapter();
 
             invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-            $fileS3Path = (string) str('s3://' . config("filesystems.disks.{$fileDisk}.bucket") . '/' . $filePath)->replace('\\', '/');
+            $fileS3Path = (string) str('s3://' . config("filesystems.disks.{$fileDisk}.bucket") . '/' . $file->getRealPath())->replace('\\', '/');
 
             $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
                 's3' => [

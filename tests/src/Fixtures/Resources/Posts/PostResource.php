@@ -31,7 +31,7 @@ class PostResource extends Resource
     public static function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 Forms\Components\TextInput::make('title')->required(),
                 Forms\Components\MarkdownEditor::make('content'),
                 Forms\Components\Select::make('author_id')

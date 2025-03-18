@@ -48,10 +48,10 @@ trait CanToggleColumns
         }
 
         return $this->makeSchema()
-            ->schema($this->getTableColumnToggleFormSchema())
             ->columns($this->getTable()->getColumnToggleFormColumns())
-            ->statePath('toggledTableColumns')
-            ->live();
+            ->live()
+            ->schema($this->getTableColumnToggleFormSchema())
+            ->statePath('toggledTableColumns');
     }
 
     /**
@@ -80,7 +80,7 @@ trait CanToggleColumns
 
     public function getTableColumnToggleFormStateSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = md5($this::class);
 
         return "tables.{$table}_toggled_columns";
     }

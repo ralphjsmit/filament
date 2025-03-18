@@ -1,15 +1,15 @@
 @php
-    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\Badge;
-    use Filament\Support\View\Components\IconButton;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Filament\Support\View\Components\IconButtonComponent;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
-    'badgeSize' => 'xs',
+    'badgeSize' => Size::ExtraSmall,
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -21,7 +21,7 @@
     'keyBindings' => null,
     'label' => null,
     'loadingIndicator' => true,
-    'size' => ActionSize::Medium,
+    'size' => Size::Medium,
     'spaMode' => null,
     'tag' => 'button',
     'target' => null,
@@ -30,8 +30,12 @@
 ])
 
 @php
-    if (! $size instanceof ActionSize) {
-        $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
+    if (! $size instanceof Size) {
+        $size = filled($size) ? (Size::tryFrom($size) ?? $size) : null;
+    }
+
+    if (! $badgeSize instanceof Size) {
+        $badgeSize = filled($badgeSize) ? (Size::tryFrom($badgeSize) ?? $badgeSize) : null;
     }
 
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
@@ -39,14 +43,10 @@
     }
 
     $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall => IconSize::Small,
-        ActionSize::Large, ActionSize::ExtraLarge => IconSize::Large,
+        Size::ExtraSmall => IconSize::Small,
+        Size::Large, Size::ExtraLarge => IconSize::Large,
         default => null,
     };
-
-    if (! $badgeSize instanceof ActionSize) {
-        $badgeSize = filled($badgeSize) ? (ActionSize::tryFrom($badgeSize) ?? $badgeSize) : null;
-    }
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
@@ -56,15 +56,12 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 
-    $hasTooltip = filled($tooltip);
+    $hasTooltip = $hasTooltip = filled($tooltip);
 @endphp
 
 <{{ $tag }}
-    @if (($tag === 'a') && (! ($disabled && filled($tooltip))))
+    @if (($tag === 'a') && (! ($disabled && $hasTooltip)))
         {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
-    @endif
-    @if ($keyBindings || $hasTooltip)
-        x-data="{}"
     @endif
     @if ($keyBindings)
         x-bind:id="$id('key-bindings')"
@@ -88,10 +85,10 @@
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->merge([
-                'title' => $label,
+                'title' => $hasTooltip ? null : $label,
             ], escape: true)
             ->when(
-                $disabled && filled($tooltip),
+                $disabled && $hasTooltip,
                 fn (ComponentAttributeBag $attributes) => $attributes->filter(
                     fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
                 ),
@@ -99,9 +96,9 @@
             ->class([
                 'fi-icon-btn',
                 'fi-disabled' => $disabled,
-                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
+                ($size instanceof Size) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
             ])
-            ->color(IconButton::class, $color)
+            ->color(IconButtonComponent::class, $color)
     }}
 >
     {{
@@ -128,8 +125,8 @@
                 <span
                     @class([
                         'fi-badge',
-                        ...\Filament\Support\get_component_color_classes(Badge::class, $badgeColor),
-                        ($badgeSize instanceof ActionSize) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
+                        ...\Filament\Support\get_component_color_classes(BadgeComponent::class, $badgeColor),
+                        ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
                     ])
                 >
                     {{ $badge }}

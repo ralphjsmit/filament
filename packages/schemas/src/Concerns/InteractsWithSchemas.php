@@ -24,7 +24,7 @@ trait InteractsWithSchemas
     use WithFileUploads;
 
     /**
-     * @var array <string, TemporaryUploadedFile | null>
+     * @var array <string, TemporaryUploadedFile | array<TemporaryUploadedFile> | null>
      */
     public array $componentFileAttachments = [];
 
@@ -37,7 +37,7 @@ trait InteractsWithSchemas
      * @var array<string>
      */
     #[Locked]
-    public array $discoveredSchemaNames = [];
+    public array $discoveredSchemaKeys = [];
 
     /**
      * @var array<string, ?Schema>
@@ -82,11 +82,6 @@ trait InteractsWithSchemas
     public function partiallyRenderSchemaComponent(string $componentKey): void
     {
         $this->getSchemaComponent($componentKey)?->partiallyRender();
-    }
-
-    public function getSchemaComponentFileAttachment(string $componentKey): ?TemporaryUploadedFile
-    {
-        return data_get($this->componentFileAttachments, $componentKey);
     }
 
     /**
@@ -138,9 +133,9 @@ trait InteractsWithSchemas
             return null;
         }
 
-        $schemaName = (string) str($key)->before('.');
+        $schemaKey = (string) str($key)->before('.');
 
-        $schema = $this->getSchema($schemaName);
+        $schema = $this->getSchema($schemaKey);
 
         return $schema?->getComponent($key, withHidden: $withHidden, isAbsoluteKey: true, skipComponentChildContainersWhileSearching: $skipComponentChildContainersWhileSearching);
     }
@@ -199,8 +194,12 @@ trait InteractsWithSchemas
                     return null;
                 }
 
-                if (! in_array($name, $this->discoveredSchemaNames)) {
-                    $this->discoveredSchemaNames[] = $name;
+                if (! in_array($name, $this->discoveredSchemaKeys)) {
+                    $this->discoveredSchemaKeys[] = $name;
+                }
+
+                if (method_exists($this, 'default' . ucfirst($name))) {
+                    $schema = $this->{'default' . ucfirst($name)}($schema);
                 }
 
                 return $this->cachedSchemas[$name] = ($this->{$methodName}())->key($name);
@@ -234,9 +233,17 @@ trait InteractsWithSchemas
                 return null;
             }
 
+            if (! in_array($name, $this->discoveredSchemaKeys)) {
+                $this->discoveredSchemaKeys[] = $name;
+            }
+
             $schema = $this->makeSchema();
 
-            return $this->cachedSchemas[$name] = $this->{$name}($schema)->key($name);
+            if (method_exists($this, 'default' . ucfirst($name))) {
+                $schema = $this->{'default' . ucfirst($name)}($schema);
+            }
+
+            return $this->cachedSchemas[$name] = $this->{$methodName}($schema)->key($name);
         } finally {
             $this->isCachingSchemas = false;
         }
@@ -266,15 +273,15 @@ trait InteractsWithSchemas
      */
     public function getCachedSchemas(): array
     {
-        foreach ($this->discoveredSchemaNames as $schemaName) {
-            if (array_key_exists($schemaName, $this->cachedSchemas)) {
-                continue;
+        if (! $this->isCachingSchemas) {
+            foreach ($this->discoveredSchemaKeys as $schemaKey) {
+                if (array_key_exists($schemaKey, $this->cachedSchemas)) {
+                    continue;
+                }
+
+                $this->cacheSchema($schemaKey);
             }
-
-            $this->cacheSchema($schemaName);
         }
-
-        $this->discoveredSchemaNames = [];
 
         return $this->cachedSchemas;
     }

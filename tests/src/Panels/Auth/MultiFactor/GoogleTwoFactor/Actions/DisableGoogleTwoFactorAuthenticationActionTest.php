@@ -13,7 +13,7 @@ use function Pest\Laravel\actingAs;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     Filament::setCurrentPanel('google-two-factor-authentication');
 
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
@@ -25,7 +25,7 @@ beforeEach(function () {
         ->create());
 });
 
-it('can disable authentication when valid challenge code is used', function () {
+it('can disable authentication when valid challenge code is used', function (): void {
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -59,7 +59,7 @@ it('can disable authentication when valid challenge code is used', function () {
         ->toBeEmpty();
 });
 
-it('can disable authentication when a valid recovery code is used', function () {
+it('can disable authentication when a valid recovery code is used', function (): void {
     $user = auth()->user();
 
     expect($user->hasGoogleTwoFactorAuthentication())
@@ -94,7 +94,7 @@ it('can disable authentication when a valid recovery code is used', function () 
         ->toBeEmpty();
 });
 
-it('will not disable authentication when an invalid code is used', function () {
+it('will not disable authentication when an invalid code is used', function (): void {
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -128,7 +128,7 @@ it('will not disable authentication when an invalid code is used', function () {
         ->toHaveCount(8);
 });
 
-test('codes are required without a recovery code', function () {
+test('codes are required without a recovery code', function (): void {
     $user = auth()->user();
 
     expect($user->hasGoogleTwoFactorAuthentication())
@@ -162,7 +162,7 @@ test('codes are required without a recovery code', function () {
         ->toHaveCount(8);
 });
 
-test('codes must be 6 digits', function () {
+test('codes must be 6 digits', function (): void {
     $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
@@ -198,7 +198,7 @@ test('codes must be 6 digits', function () {
         ->toHaveCount(8);
 });
 
-it('will not disable authentication when an invalid recovery code is used', function () {
+it('will not disable authentication when an invalid recovery code is used', function (): void {
     $user = auth()->user();
 
     expect($user->hasGoogleTwoFactorAuthentication())
@@ -233,7 +233,7 @@ it('will not disable authentication when an invalid recovery code is used', func
         ->toHaveCount(8);
 });
 
-it('will not disable authentication with a recovery code if recovery is disabled', function () {
+it('will not disable authentication with a recovery code if recovery is disabled', function (): void {
     Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders())
         ->recoverable(false);
 

@@ -2,8 +2,8 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Schema;
 
@@ -14,25 +14,39 @@ trait HasWizard /** @phpstan-ignore trait.unused */
         return 1;
     }
 
-    public function form(Schema $schema): Schema
+    public function defaultForm(Schema $schema): Schema
     {
-        return parent::form($schema)
-            ->schema([
-                Wizard::make($this->getSteps())
-                    ->startOnStep($this->getStartStep())
-                    ->cancelAction($this->getCancelFormAction())
-                    ->submitAction($this->getSubmitFormAction())
-                    ->skippable($this->hasSkippableSteps()),
-            ])
+        return parent::defaultForm($schema)
             ->columns(null);
     }
 
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
+    public function form(Schema $schema): Schema
     {
-        return [];
+        return parent::form($schema)
+            ->components([
+                $this->getWizardComponent(),
+            ]);
+    }
+
+    public function getWizardComponent(): Component
+    {
+        return Wizard::make($this->getSteps())
+            ->startOnStep($this->getStartStep())
+            ->cancelAction($this->getCancelFormAction())
+            ->submitAction($this->getSubmitFormAction())
+            ->alpineSubmitHandler("\$wire.{$this->getSubmitFormLivewireMethodName()}()")
+            ->skippable($this->hasSkippableSteps())
+            ->contained(false);
+    }
+
+    public function hasFormWrapper(): bool
+    {
+        return false;
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        return EmbeddedSchema::make('form');
     }
 
     public function getSteps(): array

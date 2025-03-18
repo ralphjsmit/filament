@@ -88,6 +88,10 @@ trait HasUserMenu
 
                 $action = $this->evaluate($item);
 
+                if ($action instanceof MenuItem) {
+                    $action = $action->toAction();
+                }
+
                 return [$action->getName() => $action];
             })
             ->when(

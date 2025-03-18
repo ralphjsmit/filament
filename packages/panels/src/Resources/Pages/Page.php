@@ -46,7 +46,7 @@ abstract class Page extends BasePage
      */
     public function getResourceUrl(?string $name = null, array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = true): string
     {
-        if (method_exists($this, 'getRecord')) {
+        if (filled($name) && ($name !== 'index') && method_exists($this, 'getRecord')) {
             $parameters['record'] ??= $this->getRecord();
         }
 

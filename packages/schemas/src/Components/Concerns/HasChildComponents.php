@@ -28,9 +28,9 @@ trait HasChildComponents
     /**
      * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
      */
-    public function childComponents(array | Schema | Component | Action | ActionGroup | string | Closure | null $components, string $slot = 'default'): static
+    public function childComponents(array | Schema | Component | Action | ActionGroup | string | Closure | null $components, string $key = 'default'): static
     {
-        $this->childComponents[$slot] = $components;
+        $this->childComponents[$key] = $components;
 
         return $this;
     }
@@ -48,9 +48,9 @@ trait HasChildComponents
     /**
      * @return array<Component | Action | ActionGroup | string>
      */
-    public function getChildComponents(?string $slot = null): array
+    public function getChildComponents(?string $key = null): array
     {
-        return $this->getChildComponentContainer($slot)->getComponents();
+        return $this->getChildSchema($key)->getComponents();
     }
 
     /**
@@ -64,50 +64,60 @@ trait HasChildComponents
     /**
      * @param  array-key  $key
      */
-    public function getChildComponentContainer($key = null): ?Schema
+    public function getChildSchema($key = null): ?Schema
     {
-        if (filled($key) && array_key_exists($key, $containers = $this->getDefaultChildComponentContainers())) {
+        if (filled($key) && array_key_exists($key, $containers = $this->getDefaultChildSchemas())) {
             return $containers[$key];
         }
 
-        $slot = $key ?? 'default';
+        $key ??= 'default';
 
-        $components = ($slot === 'default')
+        $components = ($key === 'default')
             ? $this->getDefaultChildComponents()
-            : $this->evaluate($this->childComponents[$slot] ?? []) ?? [];
+            : $this->evaluate($this->childComponents[$key] ?? []) ?? [];
 
         if (blank($components)) {
-            return ($slot === 'default')
-                ? $this->configureSchemaForSlot(
-                    $this->makeSchemaForSlot($slot),
-                    $slot,
+            return ($key === 'default')
+                ? $this->configureChildSchema(
+                    $this->makeChildSchema($key),
+                    $key,
                 )
                 : null;
         }
 
         if ($components instanceof Schema) {
-            return $this->configureSchemaForSlot(
+            return $this->configureChildSchema(
                 $components
                     ->livewire($this->getLivewire())
                     ->parentComponent($this),
-                $slot,
+                $key,
             );
         }
 
-        return $this->configureSchemaForSlot(
-            $this->makeSchemaForSlot($slot)
+        return $this->configureChildSchema(
+            $this->makeChildSchema($key)
                 ->components($components),
-            $slot,
+            $key,
         );
     }
 
-    protected function makeSchemaForSlot(string $slot): Schema
+    /**
+     * @deprecated Use `getChildSchema()` instead.
+     *
+     * @param  array-key  $key
+     */
+    public function getChildComponentContainer($key = null): ?Schema
+    {
+        return $this->getChildSchema($key);
+    }
+
+    protected function makeChildSchema(string $key): Schema
     {
         return Schema::make($this->getLivewire())
             ->parentComponent($this);
     }
 
-    protected function configureSchemaForSlot(Schema $schema, string $slot): Schema
+    protected function configureChildSchema(Schema $schema, string $key): Schema
     {
         return $schema;
     }
@@ -115,23 +125,23 @@ trait HasChildComponents
     /**
      * @return array<Schema>
      */
-    public function getChildComponentContainers(bool $withHidden = false): array
+    public function getChildSchemas(bool $withHidden = false): array
     {
         if ((! $withHidden) && $this->isHidden()) {
             return [];
         }
 
         return [
-            ...(array_key_exists('default', $this->childComponents) ? $this->getDefaultChildComponentContainers() : []),
+            ...(array_key_exists('default', $this->childComponents) ? $this->getDefaultChildSchemas() : []),
             ...array_reduce(
                 array_keys($this->childComponents),
-                function (array $carry, string $slot): array {
-                    if ($slot === 'default') {
+                function (array $carry, string $key): array {
+                    if ($key === 'default') {
                         return $carry;
                     }
 
-                    if ($container = $this->getChildComponentContainer($slot)) {
-                        $carry[$slot] = $container;
+                    if ($container = $this->getChildSchema($key)) {
+                        $carry[$key] = $container;
                     }
 
                     return $carry;
@@ -142,18 +152,28 @@ trait HasChildComponents
     }
 
     /**
+     * @deprecated Use `getChildSchemas()` instead.
+     *
      * @return array<Schema>
      */
-    public function getDefaultChildComponentContainers(): array
+    public function getChildComponentContainers(bool $withHidden = false): array
     {
-        return ['default' => $this->getChildComponentContainer()];
+        return $this->getChildSchemas($withHidden);
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        return ['default' => $this->getChildSchema()];
     }
 
     protected function cloneChildComponents(): static
     {
-        foreach ($this->childComponents as $slot => $childComponents) {
+        foreach ($this->childComponents as $key => $childComponents) {
             if (is_array($childComponents)) {
-                $this->childComponents[$slot] = array_map(
+                $this->childComponents[$key] = array_map(
                     fn (Component | Action | ActionGroup $component): Component | Action | ActionGroup => match (true) {
                         $component instanceof Component => $component->getClone(),
                         default => clone $component,
@@ -161,7 +181,7 @@ trait HasChildComponents
                     $childComponents,
                 );
             } elseif (! ($childComponents instanceof Closure)) {
-                $this->childComponents[$slot] = $childComponents->getClone();
+                $this->childComponents[$key] = $childComponents->getClone();
             }
         }
 

@@ -19,9 +19,9 @@ use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\RenderHook;
-use Filament\Schemas\Components\TableBuilder;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -155,28 +155,10 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $this->getRecord();
     }
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema;
-    }
-
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema;
-    }
-
     /**
      * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
     public function getRelationManagers(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
     {
         return [];
     }
@@ -188,9 +170,9 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
                 Group::make([
                     $this->getTabsContentComponent(),
                     RenderHook::make(PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_BEFORE),
-                    TableBuilder::make(),
+                    EmbeddedTable::make(),
                     RenderHook::make(PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_AFTER),
-                ])->visible(! empty($this->table->getColumns())),
+                ])->visible(! empty($this->getTable()->getColumns())),
                 $this->getRelationManagersContentComponent(),
             ]);
     }
@@ -271,8 +253,8 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
-            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->configureForm($schema),
-            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->configureInfolist($this->configureForm($schema)),
+            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->form($this->defaultForm($schema)),
+            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->infolist($this->defaultInfolist($this->form($this->defaultForm($schema)))),
             default => null,
         };
     }

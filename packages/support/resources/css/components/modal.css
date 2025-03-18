@@ -136,7 +136,7 @@
     }
 
     & .fi-modal-window {
-        @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white ring-1 shadow-xl ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
         &.fi-align-start,
         &.fi-align-left {
@@ -144,7 +144,7 @@
                 @apply gap-x-5;
             }
 
-            & .fi-modal-icon-wrp {
+            & .fi-modal-icon-bg {
                 @apply p-2;
             }
         }
@@ -154,11 +154,11 @@
                 @apply flex-col text-center;
             }
 
-            & .fi-modal-icon-wrp-ctn {
+            & .fi-modal-icon-ctn {
                 @apply mb-5 flex items-center justify-center;
             }
 
-            & .fi-modal-icon-wrp {
+            & .fi-modal-icon-bg {
                 @apply p-3;
             }
         }
@@ -345,7 +345,7 @@
         }
     }
 
-    & .fi-modal-icon-wrp {
+    & .fi-modal-icon-bg {
         @apply rounded-full bg-gray-100 dark:bg-gray-500/20;
 
         & > .fi-icon {

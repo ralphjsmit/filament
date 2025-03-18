@@ -5,7 +5,7 @@ namespace Filament\Infolists\Concerns;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 
-trait InteractsWithInfolists
+trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
 {
     /**
      * @deprecated Use `getSchema()` instead.

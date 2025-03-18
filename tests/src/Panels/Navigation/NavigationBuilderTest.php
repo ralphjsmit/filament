@@ -15,7 +15,7 @@ use Filament\Tests\Panels\Navigation\TestCase;
 
 uses(TestCase::class);
 
-it('can register navigation', function () {
+it('can register navigation', function (): void {
     Filament::getCurrentOrDefaultPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
         return $navigation
             ->items([
@@ -80,7 +80,7 @@ it('can register navigation', function () {
         );
 });
 
-it('can register navigation groups individually', function () {
+it('can register navigation groups individually', function (): void {
     Filament::getCurrentOrDefaultPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
         return $navigation
             ->group('Blog', [

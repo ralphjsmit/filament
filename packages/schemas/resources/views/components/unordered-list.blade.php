@@ -1,14 +1,12 @@
 <ul
-    @class([
-        'fi-sc-unordered-list ms-3 list-disc sm:columns-2',
-        match ($size = $getSize()) {
-            'xs' => 'text-xs',
-            null => 'text-sm',
-            default => $size,
-        },
-    ])
+    {{
+        $getExtraAttributeBag()->class([
+            'fi-sc-unordered-list',
+            (($size = $getSize()) instanceof \Filament\Support\Enums\TextSize) ? "fi-size-{$size->value}" : $size,
+        ])
+    }}
 >
-    @foreach ($getChildComponentContainer()->getComponents() as $component)
+    @foreach ($getChildSchema()->getComponents() as $component)
         <li>
             {{ $component }}
         </li>

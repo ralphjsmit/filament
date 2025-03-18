@@ -2,8 +2,8 @@
 
 namespace Filament\Actions\Exports\Jobs;
 
-use Filament\Actions\Action as NotificationAction;
-use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\Action;
+use Filament\Actions\Exports\Enums\Contracts\ExportFormat;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Notifications\Notification;
@@ -71,7 +71,7 @@ class ExportCompletion implements ShouldQueue
             ->when(
                 $failedRowsCount < $this->export->total_rows,
                 fn (Notification $notification) => $notification->actions(array_map(
-                    fn (ExportFormat $format): NotificationAction => $format->getDownloadNotificationAction($this->export, $this->authGuard),
+                    fn (ExportFormat $format): Action => $format->getDownloadNotificationAction($this->export, $this->authGuard),
                     $this->formats,
                 )),
             )

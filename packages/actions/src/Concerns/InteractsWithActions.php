@@ -6,6 +6,7 @@ use Closure;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
+use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -104,8 +105,8 @@ trait InteractsWithActions
         }
 
         if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
-            foreach ($actionComponent->getChildComponentContainers() as $actionComponentChildComponentContainer) {
-                $actionComponentChildComponentContainer->validate();
+            foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
+                $actionComponentChildSchema->validate();
             }
         }
 
@@ -200,10 +201,10 @@ trait InteractsWithActions
             $schemaState = [];
 
             if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
-                foreach ($actionComponent->getChildComponentContainers() as $actionComponentChildComponentContainer) {
+                foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
                     $schemaState = [
                         ...$schemaState,
-                        ...$actionComponentChildComponentContainer->getState(),
+                        ...$actionComponentChildSchema->getState(),
                     ];
                 }
             }
@@ -236,6 +237,17 @@ trait InteractsWithActions
 
             $this->afterActionCalled();
 
+            (match ($action->getStatus()) {
+                ActionStatus::Success => function () use ($action): void {
+                    $action->sendSuccessNotification();
+                    $action->dispatchSuccessRedirect();
+                },
+                ActionStatus::Failure => function () use ($action): void {
+                    $action->sendFailureNotification();
+                    $action->dispatchFailureRedirect();
+                },
+            })();
+
             $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
@@ -265,6 +277,8 @@ trait InteractsWithActions
         }
 
         if (store($this)->has('redirect')) {
+            $this->unmountAction();
+
             return $result;
         }
 
@@ -510,12 +524,12 @@ trait InteractsWithActions
 
         $key = $action['context']['schemaComponent'];
 
-        $schemaName = (string) str($key)->before('.');
+        $schemaKey = (string) str($key)->before('.');
 
-        $schema = $this->getSchema($schemaName);
+        $schema = $this->getSchema($schemaKey);
 
         if (! $schema) {
-            throw new ActionNotResolvableException("Schema [{$schemaName}] not found.");
+            throw new ActionNotResolvableException("Schema [{$schemaKey}] not found.");
         }
 
         $resolvedAction = $schema->getAction(

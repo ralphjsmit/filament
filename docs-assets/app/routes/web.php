@@ -2,7 +2,6 @@
 
 use App\Livewire\ActionsDemo;
 use App\Livewire\Forms\FieldsDemo;
-use App\Livewire\Forms\GettingStartedDemo;
 use App\Livewire\Infolists\EntriesDemo;
 use App\Livewire\NotificationsDemo;
 use App\Livewire\Panels\Navigation\ActiveIcon;
@@ -20,7 +19,9 @@ use App\Livewire\Panels\Navigation\SidebarFullyCollapsibleOnDesktop;
 use App\Livewire\Panels\Navigation\SortItems;
 use App\Livewire\Panels\Navigation\TopNavigation;
 use App\Livewire\Panels\Navigation\UserMenuCustomization;
-use App\Livewire\Schema\LayoutDemo;
+use App\Livewire\PrimesDemo;
+use App\Livewire\Schemas\LayoutDemo;
+use App\Livewire\Schemas\OverviewDemo;
 use App\Livewire\TablesDemo;
 use Illuminate\Support\Facades\Route;
 
@@ -36,24 +37,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/actions', ActionsDemo::class);
-Route::get('/notifications', NotificationsDemo::class);
-Route::get('/tables', TablesDemo::class);
 
-Route::group(['prefix' => 'forms'], function () {
+Route::prefix('forms')->group(function (): void {
     Route::get('fields', FieldsDemo::class);
-    Route::get('getting-started', GettingStartedDemo::class);
 });
 
-Route::prefix('infolists')->group(function () {
+Route::prefix('infolists')->group(function (): void {
     Route::get('entries', EntriesDemo::class);
 });
 
-Route::prefix('schemas')->group(function () {
-    Route::get('layout', LayoutDemo::class);
-});
+Route::get('primes', PrimesDemo::class);
 
-Route::prefix('panels')->group(function () {
-    Route::prefix('navigation')->group(function () {
+Route::get('/notifications', NotificationsDemo::class);
+
+Route::prefix('panels')->middleware(['panel:admin'])->group(function (): void {
+    Route::prefix('navigation')->group(function (): void {
         Route::get('user-menu-customization', UserMenuCustomization::class);
         Route::get('disabled-navigation', DisabledNavigation::class);
         Route::get('active-icon', ActiveIcon::class);
@@ -71,3 +69,10 @@ Route::prefix('panels')->group(function () {
         Route::get('group-not-collapsible', GroupNotCollapsible::class);
     });
 });
+
+Route::prefix('schemas')->group(function (): void {
+    Route::get('layout', LayoutDemo::class);
+    Route::get('overview', OverviewDemo::class);
+});
+
+Route::get('/tables', TablesDemo::class);

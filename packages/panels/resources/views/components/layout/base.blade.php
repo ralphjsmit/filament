@@ -7,7 +7,7 @@
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament-panels::layout.direction') ?? 'ltr' }}"
     @class([
-        'fi min-h-screen',
+        'fi',
         'dark' => filament()->hasDarkModeForced(),
     ])
 >
@@ -38,6 +38,10 @@
             [x-cloak='x-cloak'],
             [x-cloak='1'] {
                 display: none !important;
+            }
+
+            [x-cloak='inline-flex'] {
+                display: inline-flex !important;
             }
 
             @media (max-width: 1023px) {
@@ -85,16 +89,22 @@
             </script>
         @else
             <script>
-                const theme = localStorage.getItem('theme') ?? @js(filament()->getDefaultThemeMode()->value)
+                const loadDarkMode = () => {
+                    window.theme = localStorage.getItem('theme') ?? @js(filament()->getDefaultThemeMode()->value)
 
-                if (
-                    theme === 'dark' ||
-                    (theme === 'system' &&
-                        window.matchMedia('(prefers-color-scheme: dark)')
-                            .matches)
-                ) {
-                    document.documentElement.classList.add('dark')
+                    if (
+                        window.theme === 'dark' ||
+                        (window.theme === 'system' &&
+                            window.matchMedia('(prefers-color-scheme: dark)')
+                                .matches)
+                    ) {
+                        document.documentElement.classList.add('dark')
+                    }
                 }
+
+                loadDarkMode()
+
+                document.addEventListener('livewire:navigated', loadDarkMode)
             </script>
         @endif
 
@@ -107,7 +117,6 @@
                 ->class([
                     'fi-body',
                     'fi-panel-' . filament()->getId(),
-                    'min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white',
                 ]) }}
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::BODY_START, scopes: $livewire->getRenderHookScopes()) }}
@@ -125,6 +134,12 @@
                 window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
 
                 window.dispatchEvent(new CustomEvent('EchoLoaded'))
+            </script>
+        @endif
+
+        @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
+            <script>
+                loadDarkMode()
             </script>
         @endif
 

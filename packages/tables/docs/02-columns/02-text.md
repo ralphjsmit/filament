@@ -3,7 +3,7 @@ title: Text column
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 Text columns display simple text from your database:
 
@@ -173,6 +173,15 @@ Alternatively, you can set the default locale used across your app using the `Ta
 use Filament\Tables\Table;
 
 Table::$defaultNumberLocale = 'nl';
+```
+
+If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->money('EUR', decimalPlaces: 3)
 ```
 
 ## Limiting text length
@@ -426,10 +435,10 @@ Text columns have small font size by default, but you may change this to `TextCo
 For instance, you may make the text larger using `size(TextColumnSize::Large)`:
 
 ```php
-use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
 
 TextColumn::make('title')
-    ->size(TextColumn\Enums\TextColumnSize::Large)
+    ->size(TextSize::Large)
 ```
 
 <AutoScreenshot name="tables/columns/text/large" alt="Text column in a large font size" version="4.x" />

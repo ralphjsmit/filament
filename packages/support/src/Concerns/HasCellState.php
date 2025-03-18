@@ -261,6 +261,7 @@ trait HasCellState
             }
 
             array_shift($nameParts);
+            $record = $record->{$namePart}()->getRelated();
         }
 
         return Arr::first($nameParts);
@@ -282,6 +283,7 @@ trait HasCellState
             }
 
             array_shift($nameParts);
+            $record = $record->{$namePart}()->getRelated();
         }
 
         return implode('.', $nameParts);

@@ -32,7 +32,7 @@ class DisableGoogleTwoFactorAuthenticationAction
             ->modalIcon(Heroicon::OutlinedLockOpen)
             ->modalHeading(__('filament-panels::auth/multi-factor/google-two-factor/actions/disable.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/google-two-factor/actions/disable.modal.description'))
-            ->form([
+            ->schema([
                 OneTimeCodeInput::make('code')
                     ->label(__('filament-panels::auth/multi-factor/google-two-factor/actions/disable.modal.form.code.label'))
                     ->belowContent(fn (Get $get): Action => Action::make('useRecoveryCode')

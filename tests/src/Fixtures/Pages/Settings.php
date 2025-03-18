@@ -34,7 +34,7 @@ class Settings extends Page
     public function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 TextInput::make('name')->required(),
             ]);
     }

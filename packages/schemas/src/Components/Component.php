@@ -25,6 +25,8 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Concerns\HasMaxWidth;
 use Filament\Schemas\Components\Concerns\HasMeta;
 use Filament\Schemas\Components\Concerns\HasState;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Concerns\HasColumns;
 use Filament\Schemas\Concerns\HasGap;
 use Filament\Schemas\Concerns\HasStateBindingModifiers;
@@ -98,11 +100,17 @@ class Component extends ViewComponent
         $record = $this->getRecord();
 
         if (! $record) {
-            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+            return match ($parameterType) {
+                Get::class => [$this->makeGetUtility()],
+                Set::class => [$this->makeSetUtility()],
+                default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+            };
         }
 
         return match ($parameterType) {
+            Get::class => [$this->makeGetUtility()],
             Model::class, $record::class => [$record],
+            Set::class => [$this->makeSetUtility()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
@@ -132,5 +140,17 @@ class Component extends ViewComponent
         } catch (RootTagMissingFromViewException) {
             return $html;
         }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtraViewData(): array
+    {
+        return [
+            'get' => $this->makeGetUtility(),
+            'operation' => $this->getContainer()->getOperation(),
+            'record' => $this->getRecord(),
+        ];
     }
 }

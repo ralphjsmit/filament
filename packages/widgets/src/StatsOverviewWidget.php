@@ -2,6 +2,7 @@
 
 namespace Filament\Widgets;
 
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -38,14 +39,19 @@ class StatsOverviewWidget extends Widget implements HasSchemas
     {
         return $schema
             ->components([
-                Section::make()
-                    ->heading($this->getHeading())
-                    ->description($this->getDescription())
-                    ->schema($this->getCachedStats())
-                    ->columns($this->getColumns())
-                    ->contained(false)
-                    ->gridContainer(),
+                $this->getSectionContentComponent(),
             ]);
+    }
+
+    public function getSectionContentComponent(): Component
+    {
+        return Section::make()
+            ->heading($this->getHeading())
+            ->description($this->getDescription())
+            ->schema($this->getCachedStats())
+            ->columns($this->getColumns())
+            ->contained(false)
+            ->gridContainer();
     }
 
     /**

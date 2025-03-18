@@ -8,7 +8,7 @@ use League\Uri\Components\Query;
 
 uses(TestCase::class);
 
-it('can verify an email change', function () {
+it('can verify an email change', function (): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email;
 
@@ -31,7 +31,7 @@ it('can verify an email change', function () {
         ->email->toBe($newEmail);
 });
 
-it('can verify an email with a custom slug', function () {
+it('can verify an email with a custom slug', function (): void {
     Filament::setCurrentPanel('slugs');
 
     $userToVerify = User::factory()->create();
@@ -55,7 +55,7 @@ it('can verify an email with a custom slug', function () {
         ->email->toBe($newEmail);
 });
 
-it('cannot verify an email when signed in as another user', function () {
+it('cannot verify an email when signed in as another user', function (): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email;
 
@@ -78,7 +78,7 @@ it('cannot verify an email when signed in as another user', function () {
         ->email->not->toBe($newEmail);
 });
 
-it('cannot verify an email change with the same URL twice', function () {
+it('cannot verify an email change with the same URL twice', function (): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email;
 
