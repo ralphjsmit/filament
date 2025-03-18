@@ -55,6 +55,9 @@
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
+                ->class([
+                    'fi-fo-slider',
+                ])
         }}
     ></div>
 </x-dynamic-component>

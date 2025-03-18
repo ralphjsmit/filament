@@ -1,5 +1,6 @@
 @import 'nouislider/dist/nouislider.css';
-
-.noUi-connect {
-    @apply bg-primary-600 opacity-100;
+.fi-fo-slider {
+    & .noUi-connect {
+        @apply bg-primary-600 opacity-100;
+    }
 }
