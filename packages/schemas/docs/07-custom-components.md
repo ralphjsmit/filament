@@ -11,7 +11,7 @@ You may use a "view" component to insert a Blade view into a schema arbitrarily:
 ```php
 use Filament\Schemas\Components\View;
 
-View::make('filament.schema.components.chart')
+View::make('filament.schemas.components.chart')
 ```
 
 This assumes that you have a `resources/views/filament/schemas/components/chart.blade.php` file.
@@ -24,7 +24,7 @@ You may pass an array of child schema components to the `schema()` method of the
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\View;
 
-View::make('filament.schema.components.chart')
+View::make('filament.schemas.components.chart')
     ->schema([
         TextInput::make('subtotal'),
         TextInput::make('total'),
@@ -216,7 +216,9 @@ Livewire::make(Chart::class)
 
 You may create your own custom component classes and views, which you can reuse across your project, and even release as a plugin to the community.
 
-> If you're just creating a simple custom component to use once, you could instead use a [view component](#view-components) to render any custom Blade file.
+<Aside variant="tip">
+    If you're just creating a simple custom component to use once, you could instead use a [view component](#inserting-a-blade-view-into-a-schema) to render any custom Blade file.
+</Aside>
 
 To create a custom component class and view, you may use the following command:
 
@@ -231,7 +233,7 @@ use Filament\Schemas\Components\Component;
 
 class Chart extends Component
 {
-    protected string $view = 'filament.schema.components.chart';
+    protected string $view = 'filament.schemas.components.chart';
 
     public static function make(): static
     {
@@ -257,7 +259,7 @@ use Filament\Schemas\Components\Component;
 
 class Chart extends Component
 {
-    protected string $view = 'filament.schema.components.chart';
+    protected string $view = 'filament.schemas.components.chart';
     
     protected ?string $heading = null;
 
@@ -309,7 +311,7 @@ use Filament\Schemas\Components\Component;
 
 class Chart extends Component
 {
-    protected string $view = 'filament.schema.components.chart';
+    protected string $view = 'filament.schemas.components.chart';
     
     protected string | Closure | null $heading = null;
 
@@ -351,7 +353,7 @@ use Filament\Schemas\Components\Component;
 
 class Chart extends Component
 {
-    protected string $view = 'filament.schema.components.chart';
+    protected string $view = 'filament.schemas.components.chart';
     
     protected string | Closure | null $heading = null;
 
