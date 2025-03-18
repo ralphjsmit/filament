@@ -76,7 +76,7 @@ It will also create a view file at `resources/views/filament/forms/components/lo
     Filament schema components are **not** Livewire components. Defining public properties and methods on a schema component class will not make them accessible in the Blade view.
 </Aside>
 
-### Accessing the state of another component in a Blade view
+## Accessing the state of another component in a Blade view
 
 Inside the Blade view, you may access the state of another component in the schema using the `$get()` function:
 
@@ -93,7 +93,7 @@ Inside the Blade view, you may access the state of another component in the sche
     Unless a form field is [reactive](../forms/overview#the-basics-of-reactivity), the Blade view will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 </Aside>
 
-### Accessing the Eloquent record in a Blade view
+## Accessing the Eloquent record in a Blade view
 
 Inside the Blade view, you may access the current Eloquent record using the `$record` variable:
 
@@ -106,7 +106,7 @@ Inside the Blade view, you may access the current Eloquent record using the `$re
 </x-dynamic-component>
 ```
 
-### Accessing the current operation in a Blade view
+## Accessing the current operation in a Blade view
 
 Inside the Blade view, you may access the current operation, usually `create`, `edit` or `view`, using the `$operation` variable:
 
@@ -123,7 +123,7 @@ Inside the Blade view, you may access the current operation, usually `create`, `
 </x-dynamic-component>
 ```
 
-### Accessing the current Livewire component instance in a Blade view
+## Accessing the current Livewire component instance in a Blade view
 
 Inside the Blade view, you may access the current Livewire component instance using `$this`:
 
@@ -142,7 +142,7 @@ Inside the Blade view, you may access the current Livewire component instance us
 </x-dynamic-component>
 ```
 
-### Accessing the current field instance in a Blade view
+## Accessing the current field instance in a Blade view
 
 Inside the Blade view, you may access the current field instance using `$field`. You can call public methods on this object to access other information that may not be available in variables:
 
@@ -157,7 +157,7 @@ Inside the Blade view, you may access the current field instance using `$field`.
 </x-dynamic-component>
 ```
 
-### Adding a configuration method to a custom field class
+## Adding a configuration method to a custom field class
 
 You may add a public method to the custom field class that accepts a configuration value, stores it in a protected property, and returns it again from another public method:
 
@@ -206,7 +206,7 @@ LocationPicker::make('location')
     ->zoom(0.5)
 ```
 
-### Allowing utility injection in a custom field configuration method
+## Allowing utility injection in a custom field configuration method
 
 [Utility injection](overview#field-utility-injection) is a powerful feature of Filament that allows users to configure a component using functions that can access various utilities. You can allow utility injection by ensuring that the parameter type and property type of the configuration allows the user to pass a `Closure`. In the getter method, you should pass the configuration value to the `$this->evaluate()` method, which will inject utilities into the user's function if they pass one, or return the value if it is static:
 
