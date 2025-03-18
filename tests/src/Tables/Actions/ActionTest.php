@@ -159,7 +159,7 @@ it('can replicate a record', function () {
     ]);
 });
 
-it('can generate a Livewire click handler with argum', function () {
+it('can generate a Livewire click handler with arguments', function () {
     livewire(PostsTable::class)
         ->tap(function (Testable $testable) {
             /** @var PostsTable $instance */
