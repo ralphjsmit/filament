@@ -7,6 +7,7 @@ use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPosts;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
+use Illuminate\Support\Facades\DB;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
@@ -114,4 +115,38 @@ it('can bulk delete posts', function () {
     foreach ($posts as $post) {
         assertSoftDeleted($post);
     }
+});
+
+it('actions will not interfere with database transactions on an error', function () {
+    $post = Post::factory()->create();
+
+    $transactionLevel = DB::transactionLevel();
+
+    try {
+        livewire(PostResource\Pages\EditPost::class, [
+            'record' => $post->getKey(),
+        ])
+            ->callAction('randomize_title');
+    } catch (Exception $e) {
+        // This can be catched and handled somewhere else, code continues...
+    }
+
+    expect(DB::transactionLevel())
+        ->toBe($transactionLevel);
+});
+
+it('table actions will not interfere with database transactions on an error', function () {
+    $post = Post::factory()->create();
+
+    $transactionLevel = DB::transactionLevel();
+
+    try {
+        livewire(PostResource\Pages\ListPosts::class)
+            ->callTableAction('randomize_title', $post);
+    } catch (Exception $e) {
+        // This can be catched and handled somewhere else, code continues...
+    }
+
+    expect(DB::transactionLevel())
+        ->toBe($transactionLevel);
 });
