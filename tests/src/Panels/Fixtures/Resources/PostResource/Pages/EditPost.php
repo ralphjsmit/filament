@@ -24,7 +24,7 @@ class EditPost extends EditRecord
                 ->databaseTransaction()
                 ->action(action: function (Post $record) {
                     DB::afterCommit(function () {
-                        throw new RuntimeException('This exception, happening after the successfully commit of the current transaction, should not trigger a rollback by Filament.');
+                        throw new RuntimeException('This exception, happening after the successful commit of the current transaction, should not trigger a rollback by Filament.');
                     });
 
                     $record->title = 'Test';
