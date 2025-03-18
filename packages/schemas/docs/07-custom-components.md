@@ -301,7 +301,7 @@ Chart::make()
     ->heading('Sales')
 ```
 
-### Allowing utility injection in a custom component configuration method
+#### Allowing utility injection in a custom component configuration method
 
 [Utility injection](overview#component-utility-injection) is a powerful feature of Filament that allows users to configure a component using functions that can access various utilities. You can allow utility injection by ensuring that the parameter type and property type of the configuration allows the user to pass a `Closure`. In the getter method, you should pass the configuration value to the `$this->evaluate()` method, which will inject utilities into the user's function if they pass one, or return the value if it is static:
 
