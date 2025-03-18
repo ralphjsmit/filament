@@ -1186,6 +1186,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/slider/simple': {
+        url: 'forms/fields',
+        selector: '#simpleSlider',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/overview/example': {
         url: 'schemas/overview',
         selector: '#example',

@@ -1,7 +1,7 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
+    $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
+    $isDisabled = $isDisabled();
     $statePath = $getStatePath();
     $range = $getRange();
     $step = $getStep();
@@ -19,7 +19,7 @@
     $ariaFormat = $getAriaFormat();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         {{-- Set dimensions! Vertical sliders don't assume a default height, so a height needs to be set. --}}
         {{-- Set margin bottom when orientation is horizontal due to nouislider bug --}}
@@ -49,7 +49,8 @@
         {{
             $attributes
                 ->merge([
-                    'disabled' => $isDisabled(),
+                    'disabled' => $isDisabled,
+                    'id' => $id,
                     'wire:target' => $statePath,
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)

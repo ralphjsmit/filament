@@ -18,6 +18,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -1567,6 +1568,15 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 Action::make('copyCostToPrice')
                                     ->icon(Heroicon::Clipboard),
                             ),
+                    ]),
+                Group::make()
+                    ->id('simpleSlider')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('simpleSlider')
+                            ->label('Slider'),
                     ]),
             ]);
     }

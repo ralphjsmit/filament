@@ -55,11 +55,6 @@ class Slider extends Field
 
     protected RawJs | Closure | null $pips = null;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     /** @param array<string, int>|Closure $range */
     public function range(array | Closure $range): static
     {
