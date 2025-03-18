@@ -298,6 +298,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class OrderProduct extends Pivot
 {
+    public $incrementing = true;
+
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
@@ -310,7 +312,7 @@ class OrderProduct extends Pivot
 }
 ```
 
-> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted.
+> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted. To make sure that Filament keeps track of the primary key, the pivot model needs to have the `$incrementing` property set to `true`.
 
 Now you can use the `orderProducts` relationship with the repeater, and it will save the data to the `order_product` pivot table:
 
@@ -741,4 +743,24 @@ livewire(EditPost::class, ['record' => $post])
     });
 
 $undoRepeaterFake();
+```
+
+### Testing repeater actions
+
+In order to test that repeater actions are working as expected, you can utilize the `callFormComponentAction()` method to call your repeater actions and then [perform additional assertions](../testing#actions).
+
+To interact with an action on a particular repeater item, you need to pass in the `item` argument with the key of that repeater item. If your repeater is reading from a relationship, you should prefix the ID (key) of the related record with `record-` to form the key of the repeater item:  
+
+```php
+use App\Models\Quote;
+use Filament\Forms\Components\Repeater;
+use function Pest\Livewire\livewire;
+
+$quote = Quote::first();
+
+livewire(EditPost::class, ['record' => $post])
+    ->callFormComponentAction('quotes', 'sendQuote', arguments: [
+        'item' => "record-{$quote->getKey()}",
+    ])
+    ->assertNotified('Quote sent!');
 ```
