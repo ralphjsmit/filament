@@ -10,6 +10,7 @@ use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Filament\Tables\Actions\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Js;
 
 class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
@@ -69,7 +70,14 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             return null;
         }
 
-        return $this->generateJavaScriptClickHandler('mountTableAction');
+        $argumentsParameter = '';
+
+        if (count($arguments = $this->getArguments())) {
+            $argumentsParameter .= ', ';
+            $argumentsParameter .= Js::from($arguments);
+        }
+
+        return "mountTableAction('{$this->getName()}'{$argumentsParameter})";
     }
 
     protected function generateJavaScriptClickHandler(string $method): string

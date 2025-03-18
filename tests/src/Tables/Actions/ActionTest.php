@@ -6,6 +6,7 @@ use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportTesting\Testable;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseHas;
@@ -156,4 +157,19 @@ it('can replicate a record', function () {
     assertDatabaseHas('posts', [
         'title' => $post->title . ' (Copy)',
     ]);
+});
+
+it('can generate a Livewire click handler with argum', function () {
+    livewire(PostsTable::class)
+        ->tap(function (Testable $testable) {
+            /** @var PostsTable $instance */
+            $instance = $testable->instance();
+
+            $action = $instance->getTable()->getAction('data');
+
+            expect($action)
+                ->getLivewireClickHandler()->toBe("mountTableAction('data')")
+                ->arguments(['some_argument' => 999])
+                ->getLivewireClickHandler()->toBe("mountTableAction('data', JSON.parse('{\u0022some_argument\u0022:999}'))");
+        });
 });
