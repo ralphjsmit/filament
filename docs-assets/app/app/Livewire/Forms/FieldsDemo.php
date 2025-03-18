@@ -132,7 +132,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ])
                     ->schema([
                         TextInput::make('name')
-                            ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold))
+                            ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold)),
                     ]),
                 Group::make()
                     ->id('actionBelowContent')
@@ -141,7 +141,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ])
                     ->schema([
                         TextInput::make('name')
-                            ->belowContent(Action::make('generate'))
+                            ->belowContent(Action::make('generate')),
                     ]),
                 Group::make()
                     ->id('belowContent')
@@ -154,7 +154,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 Icon::make(Heroicon::InformationCircle),
                                 'This is the user\'s full name.',
                                 Action::make('generate'),
-                            ])
+                            ]),
                     ]),
                 Group::make()
                     ->id('belowContentAlignment')
@@ -194,7 +194,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Name')
                             ->aboveLabel([
                                 Icon::make(Heroicon::Star),
-                                'This is the content above the field\'s label'
+                                'This is the content above the field\'s label',
                             ]),
                     ]),
                 Group::make()
@@ -217,7 +217,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Name')
                             ->afterLabel([
                                 Icon::make(Heroicon::Star),
-                                'This is the content after the field\'s label'
+                                'This is the content after the field\'s label',
                             ]),
                     ]),
                 Group::make()
@@ -230,7 +230,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Name')
                             ->afterLabel(Schema::start([
                                 Icon::make(Heroicon::Star),
-                                'This is the content after the field\'s label'
+                                'This is the content after the field\'s label',
                             ])),
                     ]),
                 Group::make()
@@ -243,7 +243,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Name')
                             ->belowLabel([
                                 Icon::make(Heroicon::Star),
-                                'This is the content below the field\'s label'
+                                'This is the content below the field\'s label',
                             ]),
                     ]),
                 Group::make()
@@ -256,7 +256,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Name')
                             ->belowLabel([
                                 Icon::make(Heroicon::Star),
-                                'This is the content above the field\'s content'
+                                'This is the content above the field\'s content',
                             ]),
                     ]),
                 Group::make()
@@ -290,7 +290,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->required()
                             ->aboveErrorMessage([
                                 Icon::make(Heroicon::Star),
-                                'This is the content above the field\'s error message'
+                                'This is the content above the field\'s error message',
                             ]),
                     ]),
                 Group::make()
@@ -304,7 +304,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->required()
                             ->belowErrorMessage([
                                 Icon::make(Heroicon::Star),
-                                'This is the content below the field\'s error message'
+                                'This is the content below the field\'s error message',
                             ]),
                     ]),
                 Group::make()
