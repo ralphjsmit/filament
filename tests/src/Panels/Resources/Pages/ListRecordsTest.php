@@ -131,6 +131,8 @@ test('actions will not interfere with database transactions on an error', functi
         // This can be catched and handled somewhere else, code continues...
     }
 
+    // Original transaction level should be unaffected...
+
     expect(DB::transactionLevel())
         ->toBe($transactionLevel);
 });
@@ -146,6 +148,8 @@ test('table actions will not interfere with database transactions on an error', 
     } catch (Exception $e) {
         // This can be catched and handled somewhere else, code continues...
     }
+
+    // Original transaction level should be unaffected...
 
     expect(DB::transactionLevel())
         ->toBe($transactionLevel);
