@@ -116,7 +116,7 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
                     })
                     ->tap(function (Collection $files) use ($locale, $package) {
                         $missingKeysCount = $files->sum(fn ($file): int => count($file['missing']));
-                        $removedKeysCount = $files->sum(fn ($file): int => $file['removed'] ? count($file['removed']) : 0);
+                        $removedKeysCount = $files->sum(fn ($file): int => count($file['removed']));
 
                         $locale = locale_get_display_name($locale, 'en');
 
