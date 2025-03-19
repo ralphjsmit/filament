@@ -735,12 +735,6 @@ TextEntry::make('name')
 
 <AutoScreenshot name="infolists/entries/before-content" alt="Infolist entry with extra content before content" version="4.x" />
 
-<Aside variant="tip">
-    Some entries, such as the [text input](text-input#adding-affix-text-aside-the-entry), [select](select#adding-affix-text-aside-the-entry), and [date-time picker](date-time-picker#adding-affix-text-aside-the-entry) entries, have a `prefix()` method to insert content before the entry's content, adjoined to the entry itself. This is often a better UI choice than using `beforeContent()`.
-
-    <AutoScreenshot name="infolists/entries/text-input/affix" alt="Text input with affixes" version="4.x" />
-</Aside>
-
 ### Adding extra content after an entry's content
 
 You can insert extra content after an entry's content using the `afterContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
@@ -757,12 +751,6 @@ TextEntry::make('name')
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `afterContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/after-content" alt="Infolist entry with extra content after content" version="4.x" />
-
-<Aside variant="tip">
-    Some entries, such as the [text input](text-input#adding-affix-text-aside-the-entry), [select](select#adding-affix-text-aside-the-entry), and [date-time picker](date-time-picker#adding-affix-text-aside-the-entry) entries, have a `suffix()` method to insert content after the entry's content, adjoined to the entry itself. This is often a better UI choice than using `beforeContent()`.
-
-    <AutoScreenshot name="infolists/entries/text-input/affix" alt="Text input with affixes" version="4.x" />
-</Aside>
 
 ## Adding extra HTML attributes to an entry
 
