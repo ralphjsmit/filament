@@ -35,6 +35,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\RawJs;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
@@ -1577,6 +1578,53 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Slider::make('simpleSlider')
                             ->label('Slider'),
+                    ]),
+                Group::make()
+                    ->id('pipsSlider')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('pipsSlider')
+                            ->pips(RawJs::make(<<<'JS'
+                                {
+                                    mode: 'range',
+                                    density: 5
+                                }
+                            JS))
+                            ->step(5),
+                    ]),
+                Group::make()
+                    ->id('multipleHandlesSlider')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('multipleHandlesSlider')
+                            ->connect(true)
+                            ->pips(RawJs::make(<<<'JS'
+                                {
+                                    mode: 'range',
+                                    density: 5,
+                                }
+                            JS))
+                            ->start([50, 150])
+                            ->range(['min' => 0, 'max' => 200]),
+                    ]),
+                Group::make()
+                    ->id('tooltipsSlider')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('slider')
+                            ->connect(true)
+                            ->tooltips(true)
+                            ->ariaFormat(RawJs::make(<<<'JS'
+                                wNumb({decimals: 3})
+                            JS))
+                            ->start([50, 150])
+                            ->range(['min' => 0, 'max' => 200]),
                     ]),
             ]);
     }

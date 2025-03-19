@@ -1188,7 +1188,34 @@ export default {
     },
     'forms/fields/slider/simple': {
         url: 'forms/fields',
-        selector: '#simpleSlider',
+        selector: '#pipsSlider',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips': {
+        url: 'forms/fields',
+        selector: '#pipsSlider',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/multiple-handles': {
+        url: 'forms/fields',
+        selector: '#multipleHandlesSlider',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/tooltips': {
+        url: 'forms/fields',
+        selector: '#tooltipsSlider',
         viewport: {
             width: 1920,
             height: 640,

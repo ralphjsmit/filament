@@ -32,12 +32,10 @@ use Filament\Forms\Components\Slider;
 Slider::make('slider')
     ->pips(RawJs::make(<<<'JS'
         {
-            mode: 'steps',
-            stepped: true,
+            mode: 'range',
             density: 5,
         }
     JS))
-    ->step(true)
 ]);
 ```
 
@@ -54,12 +52,11 @@ Slider::make('slider')
     ->connect(true)
     ->pips(RawJs::make(<<<'JS'
         {
-            mode: 'steps',
-            stepped: true,
+            mode: 'range',
             density: 5,
         }
     JS))
-    ->start([10, 50])
+    ->start([50, 150])
     ->range(['min' => 0, 'max' => 200]),
 ```
 
@@ -85,7 +82,7 @@ use Filament\Forms\Components\Slider;
 
 Slider::make('slider')
     ->connect(true)
-    ->step(true)
+    ->step(1)
     ->start([10, 50])
     ->margin(90)
     ->range(['min' => 0, 'max' => 200]),
@@ -100,7 +97,7 @@ use Filament\Forms\Components\Slider;
 
 Slider::make('slider')
     ->connect(true)
-    ->step(true)
+    ->step(1)
     ->start([10, 50])
     ->limit(90)
     ->range(['min' => 0, 'max' => 200]),
@@ -128,7 +125,7 @@ You can add steps to the slider, which determines the amount the slider changes 
 use Filament\Forms\Components\Slider;
 
 Slider::make('slider')
-    ->step(true),
+    ->step(1),
 ```
 
 ## Orientation
@@ -200,3 +197,7 @@ use Filament\Forms\Components\Enums\SliderBehaviour;
 Slider::make('slider')
     ->behaviour([SliderBehaviour::Drag]),
 ```
+
+## Advanced
+
+Show slider value live in the hint (WIP)
