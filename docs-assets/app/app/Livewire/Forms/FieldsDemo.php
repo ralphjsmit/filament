@@ -1617,7 +1617,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         'class' => 'p-16 max-w-xl',
                     ])
                     ->schema([
-                        Slider::make('slider')
+                        Slider::make('tooltipsSlider')
                             ->connect(true)
                             ->tooltips(true)
                             ->ariaFormat(RawJs::make(<<<'JS'
