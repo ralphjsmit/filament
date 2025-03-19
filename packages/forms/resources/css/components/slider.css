@@ -6,11 +6,15 @@
         @apply bg-primary-600 opacity-100;
     }
 
-    & .fi-fo-slider-orientation-vertical {
-        @apply h-40;
+    &.fi-fo-slider-orientation-vertical {
+        @apply mt-4 h-40;
     }
 
-    & .fi-fo-slider-orientation-horizontal {
+    &.fi-fo-slider-orientation-horizontal {
+        @apply mt-2;
+    }
+
+    &:not(.fi-fo-slider-orientation-vertical).fi-fo-slider-pips {
         @apply mb-8;
     }
 }

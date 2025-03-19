@@ -53,6 +53,7 @@
                     'fi-fo-slider',
                     'fi-fo-slider-orientation-vertical' => $orientation === Filament\Forms\Components\Enums\SliderOrientation::Vertical->value,
                     'fi-fo-slider-orientation-horizontal' => $orientation === Filament\Forms\Components\Enums\SliderOrientation::Horizontal->value,
+                    'fi-fo-slider-pips' => $pips,
                 ])
         }}
     ></div>

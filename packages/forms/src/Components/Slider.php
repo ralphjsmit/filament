@@ -226,8 +226,12 @@ class Slider extends Field
         return $this->evaluate($this->direction);
     }
 
-    public function getOrientation(): ?string
+    public function getOrientation(): string
     {
+        if (! $this->orientation) {
+            return SliderOrientation::Horizontal->value;
+        }
+
         return $this->evaluate($this->orientation);
     }
 
