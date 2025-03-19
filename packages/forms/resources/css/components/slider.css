@@ -1,6 +1,16 @@
 @import 'nouislider/dist/nouislider.css';
 .fi-fo-slider {
+    @apply gap-4;
+
     & .noUi-connect {
         @apply bg-primary-600 opacity-100;
+    }
+
+    & .fi-fo-slider-orientation-vertical {
+        @apply h-40;
+    }
+
+    & .fi-fo-slider-orientation-horizontal {
+        @apply mb-8;
     }
 }

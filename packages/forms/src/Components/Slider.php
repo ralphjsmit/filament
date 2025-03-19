@@ -119,7 +119,6 @@ class Slider extends Field
 
     public function direction(SliderDirection | Closure | null $direction = SliderDirection::LTR): static
     {
-        // Convert the enum to its string value before assignment
         if ($direction instanceof SliderDirection) {
             $direction = $direction->value;
         }
@@ -131,7 +130,6 @@ class Slider extends Field
 
     public function orientation(SliderOrientation | Closure | null $orientation = SliderOrientation::Horizontal): static
     {
-        // Convert the enum to its string value before assignment
         if ($orientation instanceof SliderOrientation) {
             $orientation = $orientation->value;
         }
