@@ -1,9 +1,12 @@
-@import 'nouislider/dist/nouislider.css';
 .fi-fo-slider {
     @apply gap-4;
 
     & .noUi-connect {
         @apply bg-primary-600 opacity-100;
+    }
+
+    & .noUi-handle {
+        @apply focus:outline-primary-600 dark:focus:outline-primary-500 absolute backface-hidden focus:outline-2;
     }
 
     &.fi-fo-slider-orientation-vertical {
