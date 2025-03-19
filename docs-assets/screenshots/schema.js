@@ -1411,6 +1411,24 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/inline-label': {
+        url: 'infolists/entries',
+        selector: '#inlineLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/inline-label/section': {
+        url: 'infolists/entries',
+        selector: '#inlineLabelSection',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/tooltips': {
         url: 'infolists/entries',
         selector: '#tooltips',
@@ -1423,6 +1441,123 @@ export default {
             await page.hover('#tooltips .fi-in-text')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'infolists/entries/below-content/text': {
+        url: 'infolists/entries',
+        selector: '#textBelowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/below-content/component': {
+        url: 'infolists/entries',
+        selector: '#componentBelowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/below-content/action': {
+        url: 'infolists/entries',
+        selector: '#actionBelowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/below-content': {
+        url: 'infolists/entries',
+        selector: '#belowContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/below-content/alignment': {
+        url: 'infolists/entries',
+        selector: '#belowContentAlignment',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/above-label': {
+        url: 'infolists/entries',
+        selector: '#aboveLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/before-label': {
+        url: 'infolists/entries',
+        selector: '#beforeLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/after-label': {
+        url: 'infolists/entries',
+        selector: '#afterLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/after-label/aligned-start': {
+        url: 'infolists/entries',
+        selector: '#afterLabelAlignedStart',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/below-label': {
+        url: 'infolists/entries',
+        selector: '#belowLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/above-content': {
+        url: 'infolists/entries',
+        selector: '#aboveContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/before-content': {
+        url: 'infolists/entries',
+        selector: '#beforeContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/after-content': {
+        url: 'infolists/entries',
+        selector: '#afterContent',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
         },
     },
     'infolists/entries/text/simple': {

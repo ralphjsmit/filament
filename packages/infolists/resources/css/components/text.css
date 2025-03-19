@@ -135,7 +135,7 @@
     }
 
     &.fi-size-sm {
-        @apply text-sm leading-6;
+        @apply text-sm;
     }
 
     &.fi-size-md {
