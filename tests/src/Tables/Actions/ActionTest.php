@@ -159,17 +159,58 @@ it('can replicate a record', function () {
     ]);
 });
 
-it('can generate a Livewire click handler with arguments', function () {
+it('can generate a Livewire click handler without record without arguments', function () {
     livewire(PostsTable::class)
-        ->tap(function (Testable $testable) {
+        ->tap(callback: function (Testable $testable) {
             /** @var PostsTable $instance */
             $instance = $testable->instance();
 
             $action = $instance->getTable()->getAction('data');
 
             expect($action)
-                ->getLivewireClickHandler()->toBe("mountTableAction('data')")
+                ->getLivewireClickHandler()->toBe("mountTableAction('data')");
+        });
+});
+
+it('can generate a Livewire click handler without record with arguments', function () {
+    livewire(PostsTable::class)
+        ->tap(callback: function (Testable $testable) {
+            /** @var PostsTable $instance */
+            $instance = $testable->instance();
+
+            $action = $instance->getTable()->getAction('data');
+
+            expect($action)
                 ->arguments(['some_argument' => 999])
-                ->getLivewireClickHandler()->toBe("mountTableAction('data', JSON.parse('{\u0022some_argument\u0022:999}'))");
+                ->getLivewireClickHandler()->toBe("mountTableAction('data', null, JSON.parse('{\u0022some_argument\u0022:999}'))");
+        });
+});
+
+it('can generate a Livewire click handler with record without arguments', function () {
+    livewire(PostsTable::class)
+        ->tap(callback: function (Testable $testable) {
+            /** @var PostsTable $instance */
+            $instance = $testable->instance();
+
+            $action = $instance->getTable()->getAction('data');
+
+            expect($action)
+                ->record($post = Post::factory()->create())
+                ->getLivewireClickHandler()->toBe("mountTableAction('data', '{$post->getKey()}')");
+        });
+});
+
+it('can generate a Livewire click handler with record with arguments', function () {
+    livewire(PostsTable::class)
+        ->tap(callback: function (Testable $testable) {
+            /** @var PostsTable $instance */
+            $instance = $testable->instance();
+
+            $action = $instance->getTable()->getAction('data');
+
+            expect($action)
+                ->record($post = Post::factory()->create())
+                ->arguments(['some_argument' => 999])
+                ->getLivewireClickHandler()->toBe("mountTableAction('data', '{$post->getKey()}', JSON.parse('{\u0022some_argument\u0022:999}'))");
         });
 });

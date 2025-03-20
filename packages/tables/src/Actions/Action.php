@@ -70,6 +70,11 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             return null;
         }
 
+        return $this->generateJavaScriptClickHandler('mountTableAction');
+    }
+
+    protected function generateJavaScriptClickHandler(string $method): string
+    {
         $argumentsParameter = '';
 
         if (count($arguments = $this->getArguments())) {
@@ -77,18 +82,13 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             $argumentsParameter .= Js::from($arguments);
         }
 
-        return "mountTableAction('{$this->getName()}'{$argumentsParameter})";
-    }
-
-    protected function generateJavaScriptClickHandler(string $method): string
-    {
         if ($record = $this->getRecord()) {
             $recordKey = $this->getLivewire()->getTableRecordKey($record);
 
-            return "{$method}('{$this->getName()}', '{$recordKey}')";
+            return "{$method}('{$this->getName()}', '{$recordKey}'{$argumentsParameter})";
         }
 
-        return "{$method}('{$this->getName()}')";
+        return "{$method}('{$this->getName()}', null{$argumentsParameter})";
     }
 
     /**
