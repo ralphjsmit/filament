@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Resources\Posts;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -15,6 +16,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 class PostResource extends Resource
 {
@@ -62,6 +66,16 @@ class PostResource extends Resource
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
+                Action::make('randomize_title')
+                    ->databaseTransaction()
+                    ->action(action: function (Post $record) {
+                        DB::afterCommit(function () {
+                            throw new RuntimeException('This exception, happening after the successful commit of the current transaction, should not trigger a rollback by Filament.');
+                        });
+
+                        $record->title = Str::random(10);
+                        $record->save();
+                    }),
                 DeleteAction::make(),
             ])
             ->bulkActions([

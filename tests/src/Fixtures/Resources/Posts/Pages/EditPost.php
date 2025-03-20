@@ -5,6 +5,9 @@ namespace Filament\Tests\Fixtures\Resources\Posts\Pages;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
+use Filament\Tests\Fixtures\Models\Post;
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class EditPost extends EditRecord
 {
@@ -17,6 +20,16 @@ class EditPost extends EditRecord
             Actions\ActionGroup::make([
                 Actions\DeleteAction::make(),
             ]),
+            Actions\Action::make('randomize_title')
+                ->databaseTransaction()
+                ->action(action: function (Post $record) {
+                    DB::afterCommit(function () {
+                        throw new RuntimeException('This exception, happening after the successful commit of the current transaction, should not trigger a rollback by Filament.');
+                    });
+
+                    $record->title = 'Test';
+                    $record->save();
+                }),
         ];
     }
 

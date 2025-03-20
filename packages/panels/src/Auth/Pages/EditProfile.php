@@ -172,8 +172,6 @@ class EditProfile extends Page
             $this->handleRecordUpdate($this->getUser(), $data);
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -185,6 +183,8 @@ class EditProfile extends Page
 
             throw $exception;
         }
+
+        $this->commitDatabaseTransaction();
 
         if (request()->hasSession() && array_key_exists('password', $data)) {
             request()->session()->put([

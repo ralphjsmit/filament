@@ -95,8 +95,6 @@ class CreateRecord extends Page
             $this->form->model($this->getRecord())->saveRelationships();
 
             $this->callHook('afterCreate');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -108,6 +106,8 @@ class CreateRecord extends Page
 
             throw $exception;
         }
+
+        $this->commitDatabaseTransaction();
 
         $this->rememberData();
 

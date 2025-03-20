@@ -24,6 +24,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\DB;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
@@ -131,6 +132,24 @@ it('can bulk delete posts', function (): void {
     foreach ($posts as $post) {
         assertSoftDeleted($post);
     }
+});
+
+test('table actions will not interfere with database transactions on an error', function () {
+    $post = Post::factory()->create();
+
+    $transactionLevel = DB::transactionLevel();
+
+    try {
+        livewire(ListPosts::class)
+            ->callTableAction('randomize_title', $post);
+    } catch (Exception $exception) {
+        // This can be caught and handled somewhere else, code continues...
+    }
+
+    // Original transaction level should be unaffected...
+
+    expect(DB::transactionLevel())
+        ->toBe($transactionLevel);
 });
 
 it('can render ticket messages page without a policy', function (): void {

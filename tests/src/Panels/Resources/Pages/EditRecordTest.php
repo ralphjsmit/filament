@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -121,6 +122,27 @@ it('can refresh data', function (): void {
     $page->assertFormSet([
         'title' => $newPostTitle,
     ]);
+});
+
+
+test('actions will not interfere with database transactions on an error', function () {
+    $post = Post::factory()->create();
+
+    $transactionLevel = DB::transactionLevel();
+
+    try {
+        livewire(EditPost::class, [
+            'record' => $post->getKey(),
+        ])
+            ->callAction('randomize_title');
+    } catch (Exception $exception) {
+        // This can be caught and handled somewhere else, code continues...
+    }
+
+    // Original transaction level should be unaffected...
+
+    expect(DB::transactionLevel())
+        ->toBe($transactionLevel);
 });
 
 it('can ticket messages page without a policy', function (): void {
