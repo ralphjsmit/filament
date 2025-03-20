@@ -26,6 +26,6 @@ The Filament team processes bug reports for supported versions in chronological 
 
 The Filament team currently plans to continue providing security fixes for major versions for at least three years. When the team decides a major version will no longer receive security fixes, they will announce the change at least one year before discontinuing support.
 
-If you discover a security vulnerability in Filament, please report it by emailing Dan Harrin at [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be addressed promptly.
+If you discover a security vulnerability in Filament, please [report it through GitHub](https://github.com/filamentphp/filament/security/advisories). All security vulnerabilities will be addressed promptly.
 
 Please note that while a Filament version may receive security fixes, its underlying dependencies (PHP, Laravel, and Livewire) may no longer be supported. Therefore, applications using older versions of Filament could still be vulnerable to security issues in these dependencies.
