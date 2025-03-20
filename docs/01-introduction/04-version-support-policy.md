@@ -5,12 +5,12 @@ contents: false
 
 ## Introduction
 
-| Version | New features | Bug fixes | Security fixes     |
-|---------|--------------|-----------|--------------------|
-| 1.x     | ❌            | ❌         | ✅ until Jul 1 2025 |
-| 2.x     | ❌            | ❌         | ✅ until Jan 1 2026 |
-| 3.x     | ❌            | ✅         | ✅                  |
-| 4.x     | ✅            | ✅         | ✅                  |
+| Version | New features               | Bug fixes                          | Security fixes                        |
+|---------|----------------------------|------------------------------------|---------------------------------------|
+| 1.x     | ❌ ended Jan 1 2022         | ❌ ended Jan 1 2025                 | ✅ until Jul 1 2025                    |
+| 2.x     | ❌ ended Jul 1 2023         | ❌ ended Jan 1 2025                 | ✅ until Jan 1 2026                    |
+| 3.x     | ❌ ended Aug 1 2024         | ✅ until Jul 1 2026                 | ✅ until Jan 1 2028                    |
+| 4.x     | ✅ until 5.x stable release | ✅ ~1 year after 5.x stable release | ✅ ~2.5 years after 5.x stable release |
 
 ## New features
 
