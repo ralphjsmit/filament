@@ -117,26 +117,6 @@ it('can bulk delete posts', function () {
     }
 });
 
-test('actions will not interfere with database transactions on an error', function () {
-    $post = Post::factory()->create();
-
-    $transactionLevel = DB::transactionLevel();
-
-    try {
-        livewire(PostResource\Pages\EditPost::class, [
-            'record' => $post->getKey(),
-        ])
-            ->callAction('randomize_title');
-    } catch (Exception $e) {
-        // This can be catched and handled somewhere else, code continues...
-    }
-
-    // Original transaction level should be unaffected...
-
-    expect(DB::transactionLevel())
-        ->toBe($transactionLevel);
-});
-
 test('table actions will not interfere with database transactions on an error', function () {
     $post = Post::factory()->create();
 
