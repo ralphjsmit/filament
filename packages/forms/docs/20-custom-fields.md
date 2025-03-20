@@ -45,10 +45,6 @@ This is the basis of how fields work in Filament. Each field is assigned to a pu
 
 If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../assets#asynchronous-alpinejs-components).
 
-<Aside variant="info">
-    Filament form fields are **not** Livewire components. Defining public properties and methods on a form field class will not make them accessible in the Blade view.
-</Aside>
-
 ## Custom field classes
 
 You may create your own custom field classes and views, which you can reuse across your project, and even release as a plugin to the community.
@@ -73,10 +69,10 @@ class LocationPicker extends Field
 It will also create a view file at `resources/views/filament/forms/components/location-picker.blade.php`.
 
 <Aside variant="info">
-    Filament schema components are **not** Livewire components. Defining public properties and methods on a schema component class will not make them accessible in the Blade view.
+    Filament form fields are **not** Livewire components. Defining public properties and methods on a form field class will not make them accessible in the Blade view.
 </Aside>
 
-## Accessing the state of another component in a Blade view
+## Accessing the state of another component in the Blade view
 
 Inside the Blade view, you may access the state of another component in the schema using the `$get()` function:
 
@@ -93,7 +89,7 @@ Inside the Blade view, you may access the state of another component in the sche
     Unless a form field is [reactive](../forms/overview#the-basics-of-reactivity), the Blade view will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 </Aside>
 
-## Accessing the Eloquent record in a Blade view
+## Accessing the Eloquent record in the Blade view
 
 Inside the Blade view, you may access the current Eloquent record using the `$record` variable:
 
@@ -106,7 +102,7 @@ Inside the Blade view, you may access the current Eloquent record using the `$re
 </x-dynamic-component>
 ```
 
-## Accessing the current operation in a Blade view
+## Accessing the current operation in the Blade view
 
 Inside the Blade view, you may access the current operation, usually `create`, `edit` or `view`, using the `$operation` variable:
 
@@ -123,7 +119,7 @@ Inside the Blade view, you may access the current operation, usually `create`, `
 </x-dynamic-component>
 ```
 
-## Accessing the current Livewire component instance in a Blade view
+## Accessing the current Livewire component instance in the Blade view
 
 Inside the Blade view, you may access the current Livewire component instance using `$this`:
 
@@ -142,7 +138,7 @@ Inside the Blade view, you may access the current Livewire component instance us
 </x-dynamic-component>
 ```
 
-## Accessing the current field instance in a Blade view
+## Accessing the current field instance in the Blade view
 
 Inside the Blade view, you may access the current field instance using `$field`. You can call public methods on this object to access other information that may not be available in variables:
 

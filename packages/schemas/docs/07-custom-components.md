@@ -39,7 +39,7 @@ Inside the Blade view, you may render the component's `schema()` using the `$get
 </div>
 ```
 
-### Accessing the state of another component in a Blade view
+### Accessing the state of another component in the Blade view
 
 Inside the Blade view, you may access the state of another component in the schema using the `$get()` function:
 
@@ -53,7 +53,7 @@ Inside the Blade view, you may access the state of another component in the sche
     Unless a form field is [reactive](../forms/overview#the-basics-of-reactivity), the Blade view will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 </Aside>
 
-### Accessing the Eloquent record in a Blade view
+### Accessing the Eloquent record in the Blade view
 
 Inside the Blade view, you may access the current Eloquent record using the `$record` variable:
 
@@ -63,7 +63,7 @@ Inside the Blade view, you may access the current Eloquent record using the `$re
 </div>
 ```
 
-### Accessing the current operation in a Blade view
+### Accessing the current operation in the Blade view
 
 Inside the Blade view, you may access the current operation, usually `create`, `edit` or `view`, using the `$operation` variable:
 
@@ -77,7 +77,7 @@ Inside the Blade view, you may access the current operation, usually `create`, `
 </p>
 ```
 
-### Accessing the current Livewire component instance in a Blade view
+### Accessing the current Livewire component instance in the Blade view
 
 Inside the Blade view, you may access the current Livewire component instance using `$this`:
 
@@ -93,7 +93,7 @@ Inside the Blade view, you may access the current Livewire component instance us
 </p>
 ```
 
-### Accessing the current component instance in a Blade view
+### Accessing the current component instance in the Blade view
 
 Inside the Blade view, you may access the current component instance using `$schemaComponent`. You can call public methods on this object to access other information that may not be available in variables:
 
@@ -117,7 +117,7 @@ Livewire::make(Chart::class)
 ```
 
 <Aside variant="info">
-    When inserting a Livewire component into the schema, there are limited capabilities. Only serializable data is accessible from the nested Livewire component, since they are rendered separately. As such, you can't [render a child schema](#rendering-the-components-child-schema), [access another component's live state](#accessing-the-state-of-another-component-in-a-blade-view), [access the current Livewire component instance](#accessing-the-current-livewire-component-instance-in-a-blade-view), or [access the current component instance](#accessing-the-current-component-instance-in-a-blade-view). Only [static data that you pass to the Livewire component](#passing-parameters-to-a-livewire-component), and [the current record](#accessing-the-current-record-in-the-livewire-component) are accessible. Situations where you should render a nested Livewire component instead of a [Blade view](#inserting-a-blade-view-into-a-schema) are rare because of these limitations.
+    When inserting a Livewire component into the schema, there are limited capabilities. Only serializable data is accessible from the nested Livewire component, since they are rendered separately. As such, you can't [render a child schema](#rendering-the-components-child-schema), [access another component's live state](#accessing-the-state-of-another-component-in-the-blade-view), [access the current Livewire component instance](#accessing-the-current-livewire-component-instance-in-the-blade-view), or [access the current component instance](#accessing-the-current-component-instance-in-the-blade-view). Only [static data that you pass to the Livewire component](#passing-parameters-to-a-livewire-component), and [the current record](#accessing-the-current-record-in-the-livewire-component) are accessible. Situations where you should render a nested Livewire component instead of a [Blade view](#inserting-a-blade-view-into-a-schema) are rare because of these limitations.
 </Aside>
 
 If you are rendering multiple of the same Livewire component, please make sure to pass a unique `key()` to each:
@@ -244,7 +244,7 @@ class Chart extends Component
 
 It will also create a view file at `resources/views/filament/schemas/components/chart.blade.php`.
 
-You may use the same utilities as you would when [inserting a Blade view into a schema](#inserting-a-blade-view-into-a-schema) to [render the component's child schema](#rendering-the-components-child-schema), [access another component's live state](#accessing-the-state-of-another-component-in-a-blade-view), [access the current Eloquent record](#accessing-the-eloquent-record-in-a-blade-view), [access the current operation](#accessing-the-current-operation-in-a-blade-view), [access the current Livewire component instance](#accessing-the-current-livewire-component-instance-in-a-blade-view), and [access the current component instance](#accessing-the-current-component-instance-in-a-blade-view).
+You may use the same utilities as you would when [inserting a Blade view into a schema](#inserting-a-blade-view-into-a-schema) to [render the component's child schema](#rendering-the-components-child-schema), [access another component's live state](#accessing-the-state-of-another-component-in-the-blade-view), [access the current Eloquent record](#accessing-the-eloquent-record-in-the-blade-view), [access the current operation](#accessing-the-current-operation-in-the-blade-view), [access the current Livewire component instance](#accessing-the-current-livewire-component-instance-in-the-blade-view), and [access the current component instance](#accessing-the-current-component-instance-in-the-blade-view).
 
 <Aside variant="info">
     Filament schema components are **not** Livewire components. Defining public properties and methods on a schema component class will not make them accessible in the Blade view.
