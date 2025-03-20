@@ -32,7 +32,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             return $handler;
         }
 
-        if (!$this->canAccessSelectedRecords()) {
+        if (! $this->canAccessSelectedRecords()) {
             return null;
         }
 
@@ -45,7 +45,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             return $target;
         }
 
-        if (!$this->canAccessSelectedRecords()) {
+        if (! $this->canAccessSelectedRecords()) {
             return null;
         }
 
@@ -54,7 +54,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
 
     public function getLivewireClickHandler(): ?string
     {
-        if (!$this->isLivewireClickHandlerEnabled()) {
+        if (! $this->isLivewireClickHandlerEnabled()) {
             return null;
         }
 
@@ -73,12 +73,12 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
         $arguments = $this->getArguments();
 
         return $this->generateJavaScriptClickHandler('mountTableAction', [
-            ...$arguments ? [$arguments] : []
+            ...$arguments ? [$arguments] : [],
         ]);
     }
 
     /**
-     * @param array<array-key, array<mixed, mixed>> $parameters
+     * @param  array<array-key, array<mixed, mixed>>  $parameters
      */
     protected function generateJavaScriptClickHandler(string $method, array $parameters = []): string
     {
@@ -125,7 +125,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
     {
         $record = $this->getRecord();
 
-        if (!$record) {
+        if (! $record) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
         }
 
@@ -166,7 +166,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
     {
         $action = parent::prepareModalAction($action);
 
-        if (!$action instanceof Action) {
+        if (! $action instanceof Action) {
             return $action;
         }
 
@@ -181,7 +181,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
     }
 
     /**
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      */
     public function call(array $parameters = []): mixed
     {
