@@ -68,8 +68,8 @@ class PostResource extends Resource
                 EditAction::make(),
                 Action::make('randomize_title')
                     ->databaseTransaction()
-                    ->action(action: function (Post $record) {
-                        DB::afterCommit(function () {
+                    ->action(action: function (Post $record): void {
+                        DB::afterCommit(function (): void {
                             throw new RuntimeException('This exception, happening after the successful commit of the current transaction, should not trigger a rollback by Filament.');
                         });
 

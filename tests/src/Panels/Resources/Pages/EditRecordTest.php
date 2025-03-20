@@ -124,8 +124,7 @@ it('can refresh data', function (): void {
     ]);
 });
 
-
-test('actions will not interfere with database transactions on an error', function () {
+test('actions will not interfere with database transactions on an error', function (): void {
     $post = Post::factory()->create();
 
     $transactionLevel = DB::transactionLevel();

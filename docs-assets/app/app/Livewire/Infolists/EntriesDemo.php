@@ -3,7 +3,6 @@
 namespace App\Livewire\Infolists;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;

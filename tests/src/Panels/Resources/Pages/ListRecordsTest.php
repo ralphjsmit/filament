@@ -134,7 +134,7 @@ it('can bulk delete posts', function (): void {
     }
 });
 
-test('table actions will not interfere with database transactions on an error', function () {
+test('table actions will not interfere with database transactions on an error', function (): void {
     $post = Post::factory()->create();
 
     $transactionLevel = DB::transactionLevel();
