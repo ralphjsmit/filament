@@ -36,7 +36,11 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             return null;
         }
 
-        return $this->generateJavaScriptClickHandler('mountAction');
+        $arguments = $this->getArguments();
+
+        return $this->generateJavaScriptClickHandler('mountTableAction', [
+            ...$arguments ? [$arguments] : [],
+        ]);
     }
 
     public function getLivewireTarget(): ?string
@@ -49,7 +53,11 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             return null;
         }
 
-        return $this->generateJavaScriptClickHandler('mountTableAction');
+        $arguments = $this->getArguments();
+
+        return $this->generateJavaScriptClickHandler('mountTableAction', [
+            ...$arguments ? [$arguments] : [],
+        ]);
     }
 
     public function getLivewireClickHandler(): ?string
