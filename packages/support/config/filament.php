@@ -88,14 +88,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Utility Route Prefix
+    | System Route Prefix
     |--------------------------------------------------------------------------
     |
-    | This is the prefix used for the utility routes that Filament registers,
+    | This is the prefix used for the system routes that Filament registers,
     | such as the routes for downloading exports and failed import rows.
     |
     */
 
-    'utility_route_prefix' => 'filament',
+    'system_route_prefix' => 'filament',
 
 ];
