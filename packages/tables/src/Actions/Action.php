@@ -94,14 +94,14 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             }
         }
 
-        $additionalParameters = '';
+        $extraParameters = '';
 
         foreach ($parameters as $parameter) {
-            $additionalParameters .= ', ';
-            $additionalParameters .= Js::from($parameter);
+            $extraParameters .= ', ';
+            $extraParameters .= Js::from($parameter);
         }
 
-        return "{$method}('{$this->getName()}'{$recordParameter}{$additionalParameters})";
+        return "{$method}('{$this->getName()}'{$recordParameter}{$extraParameters})";
     }
 
     /**
