@@ -71,11 +71,11 @@ Wizard::make([
 BLADE)))
 ```
 
-You could use this component in a separate Blade view if you want.
+You could extract this component to a separate Blade view if you prefer.
 
-## Setting up step icons
+## Setting a step icon
 
-Steps may also have an [icon](../styling/icons), set using the `icon()` method:
+Steps may have an [icon](../styling/icons), which you can set using the `icon()` method:
 
 ```php
 use Filament\Schemas\Components\Wizard\Step;
@@ -181,7 +181,7 @@ Wizard::make([
 ])->persistStepInQueryString()
 ```
 
-By default, the current step is persisted in the URL's query string using the `step` key. You can change this key by passing it to the `persistStepInQueryString()` method:
+When enabled, the current step is persisted in the URL's query string using the `step` key. You can change this key by passing it to the `persistStepInQueryString()` method:
 
 ```php
 use Filament\Schemas\Components\Wizard;
