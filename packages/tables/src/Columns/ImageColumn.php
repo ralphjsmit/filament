@@ -457,7 +457,7 @@ class ImageColumn extends Column implements HasEmbeddedView
                 <img
                     <?= $this->getExtraImgAttributeBag()
                         ->merge([
-                            'src' => filled($stateItem) ? $this->getImageUrl($stateItem) : $defaultImageUrl,
+                            'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
                             'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                                 ? '{
                                     content: ' . Js::from($tooltip) . ',
