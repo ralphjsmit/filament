@@ -1240,6 +1240,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/tabs/badges-color': {
+        url: 'schemas/layout',
+        selector: '#tabsBadgesColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/wizard/simple': {
         url: 'schemas/layout',
         selector: '#wizard',

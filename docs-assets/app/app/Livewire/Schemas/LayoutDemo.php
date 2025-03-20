@@ -175,6 +175,31 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
+                    ->id('tabsBadgesColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Tabs::make('Tabs')
+                            ->statePath('tabsBadgesColor')
+                            ->schema([
+                                Tab::make('Notifications')
+                                    ->badge(5)
+                                    ->badgeColor('info')
+                                    ->schema([
+                                        Checkbox::make('enabled')
+                                            ->default(true),
+                                        Select::make('frequency')
+                                            ->default('hourly')
+                                            ->options([
+                                                'hourly' => 'Hourly',
+                                            ]),
+                                    ]),
+                                Tab::make('Security'),
+                                Tab::make('Meta'),
+                            ]),
+                    ]),
+                Group::make()
                     ->id('wizard')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
