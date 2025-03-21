@@ -28,22 +28,26 @@
         @endphp
 
         <div
-            x-data="{
-                async updateState () {
-                    if (this.isLoading || $el.hasAttribute('disabled')) {
+            role="switch"
+            aria-checked="false"
+            x-bind:aria-checked="state.toString()"
+            wire:loading.attr="disabled"
+            @if (! $isDisabled)
+                x-on:click.stop.prevent="
+                    if (isLoading || $el.hasAttribute('disabled')) {
                         return
                     }
 
-                    const updatedState = ! this.state
+                    const updatedState = ! state
 
                     // Only update the state if the toggle is being turned off,
                     // otherwise it will flicker on twice when Livewire replaces
                     // the element.
-                    if (this.state) {
-                        this.state = false
+                    if (state) {
+                        state = false
                     }
 
-                    this.isLoading = true
+                    isLoading = true
 
                     const response = await $wire.updateTableColumnState(
                         @js($getName()),
@@ -55,21 +59,12 @@
 
                     // The state is only updated on the frontend if the toggle is
                     // being turned off, so we only need to reset it then.
-                    if (! this.state && error) {
-                        this.state = ! this.state
+                    if (! state && error) {
+                        state = ! state
                     }
 
-                    this.isLoading = false
-                }
-            }"
-            role="switch"
-            aria-checked="false"
-            x-bind:aria-checked="state.toString()"
-            wire:loading.attr="disabled"
-            @if (! $isDisabled)
-                tabindex="0"
-                x-on:keydown.space="updateState"
-                x-on:click.stop="updateState"
+                    isLoading = false
+                "
                 x-tooltip="
                     error === undefined
                         ? false
@@ -119,7 +114,7 @@
                     }}'
             "
             @class([
-                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out focus-visible:ring-primary-600 focus-visible:ring-offset-1 focus-visible:ring-2 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900',
+                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out',
                 'pointer-events-none opacity-70' => $isDisabled,
             ])
         >
