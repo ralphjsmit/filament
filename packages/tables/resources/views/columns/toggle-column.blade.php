@@ -30,7 +30,7 @@
         <div
             x-data="{
                 async updateState () {
-                    if (this.isLoading) {
+                    if (this.isLoading || $el.hasAttribute('disabled')) {
                         return
                     }
 
