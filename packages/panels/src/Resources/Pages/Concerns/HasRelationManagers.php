@@ -16,9 +16,19 @@ trait HasRelationManagers
     /**
      * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
+    protected function getRelations(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
+     */
     public function getRelationManagers(): array
     {
-        $managers = $this->getResource()::getRelations();
+        $managers = filled($relations = $this->getRelations())
+            ? $relations
+            : $this->getResource()::getRelations();
 
         return array_filter(
             $managers,
