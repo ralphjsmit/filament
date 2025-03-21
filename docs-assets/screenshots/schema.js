@@ -2321,7 +2321,7 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'tables/getting-started/columns': {
+    'tables/overview/columns': {
         url: 'tables?table=gettingStartedColumns',
         selector: 'body',
         viewport: {
@@ -2330,7 +2330,7 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'tables/getting-started/searchable-columns': {
+    'tables/overview/searchable-columns': {
         url: 'tables?table=gettingStartedSearchableColumns',
         selector: 'body',
         viewport: {
@@ -2339,7 +2339,7 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'tables/getting-started/sortable-columns': {
+    'tables/overview/sortable-columns': {
         url: 'tables?table=gettingStartedSortableColumns',
         selector: 'body',
         viewport: {
@@ -2348,7 +2348,7 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'tables/getting-started/relationship-columns': {
+    'tables/overview/relationship-columns': {
         url: 'tables?table=gettingStartedRelationshipColumns',
         selector: 'body',
         viewport: {
@@ -2357,7 +2357,7 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'tables/getting-started/filters': {
+    'tables/overview/filters': {
         url: 'tables?table=gettingStartedFilters',
         selector: 'body',
         viewport: {
@@ -2371,7 +2371,7 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
-    'tables/getting-started/actions': {
+    'tables/overview/actions': {
         url: 'tables?table=gettingStartedActions',
         selector: 'body',
         viewport: {
@@ -2380,7 +2380,7 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'tables/getting-started/actions-modal': {
+    'tables/overview/actions-modal': {
         url: 'tables?table=gettingStartedActions',
         selector: 'body',
         viewport: {

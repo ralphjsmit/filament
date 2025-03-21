@@ -186,7 +186,7 @@ public static function table(Table $table): Table
 }
 ```
 
-Check out the [tables](../../tables/getting-started) docs to find out how to add table columns, filters, actions and more.
+Check out the [tables](../../tables/overview) docs to find out how to add table columns, filters, actions and more.
 
 ## Authorization
 

@@ -131,10 +131,10 @@ use Filament\Tables\View\TablesRenderHook;
 - `TablesRenderHook::TOOLBAR_END` - The end of the toolbar
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER` - After the [grouping](../tables/grouping) selector
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE` - Before the [grouping](../tables/grouping) selector
-- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER` - After the [reorder](../tables/advanced#reordering-records) trigger
-- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE` - Before the [reorder](../tables/advanced#reordering-records) trigger
-- `TablesRenderHook::TOOLBAR_SEARCH_AFTER` - After the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
-- `TablesRenderHook::TOOLBAR_SEARCH_BEFORE` - Before the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER` - After the [reorder](../tables/overview#reordering-records) trigger
+- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE` - Before the [reorder](../tables/overview#reordering-records) trigger
+- `TablesRenderHook::TOOLBAR_SEARCH_AFTER` - After the [search](../tables/overview#making-columns-sortable-and-searchable) container
+- `TablesRenderHook::TOOLBAR_SEARCH_BEFORE` - Before the [search](../tables/overview#making-columns-sortable-and-searchable) container
 - `TablesRenderHook::TOOLBAR_START` - The start of the toolbar
 - `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
 - `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger

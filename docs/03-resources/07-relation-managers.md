@@ -842,7 +842,7 @@ public static function getTitle(Model $ownerRecord, string $pageClass): string
 }
 ```
 
-The title will be reflected in the [heading of the table](../../tables/advanced#customizing-the-table-header), as well as the relation manager tab if there is more than one. If you want to customize the table heading independently, you can still use the `$table->heading()` method:
+The title will be reflected in the [heading of the table](../../tables/overview#customizing-the-table-header), as well as the relation manager tab if there is more than one. If you want to customize the table heading independently, you can still use the `$table->heading()` method:
 
 ```php
 use Filament\Tables;
