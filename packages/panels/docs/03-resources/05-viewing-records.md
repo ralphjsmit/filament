@@ -207,7 +207,7 @@ protected function getAllRelationManagers(): array
 }
 ```
 
-If `getAllRelationManagers` isn't defined or returns an empty array, any relation managers defined in the resource will be used.
+If `getAllRelationManagers()` isn't defined, any relation managers defined in the resource will be used.
 
 ## Adding view pages to resource sub-navigation
 
