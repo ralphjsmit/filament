@@ -24,6 +24,13 @@ trait HasCellState
 
     protected ?string $inverseRelationshipName = null;
 
+    protected array $cachedStatePerRecordId = [];
+
+    protected function getRecordId(): mixed
+    {
+        return $this->getRecord()?->getKey();
+    }
+
     public function inverseRelationship(?string $name): static
     {
         $this->inverseRelationshipName = $name;
@@ -75,6 +82,10 @@ trait HasCellState
             return null;
         }
 
+        if (array_key_exists($this->getRecordId(), $this->cachedStatePerRecordId)) {
+            return $this->cachedStatePerRecordId[$this->getRecordId()];
+        }
+
         $state = ($this->getStateUsing !== null) ?
             $this->evaluate($this->getStateUsing) :
             $this->getStateFromRecord();
@@ -89,6 +100,8 @@ trait HasCellState
         if (blank($state)) {
             $state = $this->getDefaultState();
         }
+
+        $this->cachedStatePerRecordId[$this->getRecordId()] = $state;
 
         return $state;
     }
