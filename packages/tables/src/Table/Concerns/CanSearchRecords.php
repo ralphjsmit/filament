@@ -33,6 +33,8 @@ trait CanSearchRecords
 
     protected bool | Closure $shouldSplitSearchTerms = true;
 
+    protected ?Closure $searchUsing = null;
+
     public function persistSearchInSession(bool | Closure $condition = true): static
     {
         $this->persistsSearchInSession = $condition;
@@ -269,5 +271,25 @@ trait CanSearchRecords
     public function shouldSplitSearchTerms(): bool
     {
         return (bool) $this->evaluate($this->shouldSplitSearchTerms);
+    }
+
+    public function searchUsing(?Closure $searchUsing): static
+    {
+        $this->searchUsing = $searchUsing;
+
+        return $this;
+    }
+
+    public function hasSearchUsingCallback(): bool
+    {
+        return filled($this->searchUsing);
+    }
+
+    public function callSearchUsing(Builder $query, string $search): void
+    {
+        $this->evaluate($this->searchUsing, [
+            'query' => $query,
+            'search' => $search,
+        ]);
     }
 }

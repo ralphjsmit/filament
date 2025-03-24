@@ -9,21 +9,33 @@ use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 
-trait HasFormSchema
+trait HasSchema
 {
     /**
      * @var array<Component | Action | ActionGroup> | Closure | null
      */
-    protected array | Closure | null $formSchema = null;
+    protected array | Closure | null $schema = null;
 
     protected ?Closure $modifyFormFieldUsing = null;
 
     /**
      * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
+    public function schema(array | Closure | null $schema): static
+    {
+        $this->schema = $schema;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `schema()` instead.
+     *
+     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
+     */
     public function form(array | Closure | null $schema): static
     {
-        $this->formSchema = $schema;
+        $this->schema($schema);
 
         return $this;
     }
@@ -38,9 +50,9 @@ trait HasFormSchema
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public function getFormSchema(): array
+    public function getSchemaComponents(): array
     {
-        $schema = $this->evaluate($this->formSchema);
+        $schema = $this->evaluate($this->schema);
 
         if ($schema !== null) {
             return $schema;
@@ -67,9 +79,19 @@ trait HasFormSchema
         return [$field];
     }
 
-    public function hasFormSchema(): bool
+    /**
+     * @deprecated Use `getSchema()` instead.
+     *
+     * @return array<Component | Action | ActionGroup>
+     */
+    public function getFormSchema(): array
     {
-        return $this->evaluate($this->formSchema) !== null;
+        return $this->getSchemaComponents();
+    }
+
+    public function hasSchema(): bool
+    {
+        return $this->evaluate($this->schema) !== null;
     }
 
     public function getFormField(): ?Field
@@ -77,7 +99,7 @@ trait HasFormSchema
         return null;
     }
 
-    public function getForm(): Schema
+    public function getSchema(): Schema
     {
         return $this->getLivewire()
             ->getTableFiltersForm()

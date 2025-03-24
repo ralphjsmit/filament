@@ -65,7 +65,7 @@ Sometimes, you may wish to modify form data before it is finally saved to the da
 use Filament\Actions\EditAction;
 
 EditAction::make()
-    ->mutateFormDataUsing(function (array $data): array {
+    ->mutateDataUsing(function (array $data): array {
         $data['last_edited_by_id'] = auth()->id();
 
         return $data;

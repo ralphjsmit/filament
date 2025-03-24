@@ -62,8 +62,8 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasAction;
     use Concerns\HasArguments;
+    use Concerns\HasData;
     use Concerns\HasExtraModalWindowAttributes;
-    use Concerns\HasForm;
     use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;
     use Concerns\HasKeyBindings;
@@ -460,7 +460,7 @@ class Action extends ViewComponent implements Arrayable
             'arguments' => [$this->getArguments()],
             'component', 'schemaComponent' => [$this->getSchemaComponent()],
             'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
-            'data' => [$this->getFormData()],
+            'data' => [$this->getData()],
             'get' => [$this->getSchemaComponent()->makeGetUtility()],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel() ?? $this->getSchemaContainer()?->getModel() ?? $this->getSchemaComponent()?->getModel()],

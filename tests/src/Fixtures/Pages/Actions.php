@@ -33,7 +33,7 @@ class Actions extends Page
                     TextInput::make('payload')->required(),
                 ])
                 ->before(function (Action $action): void {
-                    $this->dispatch('before-hook-called', data: $action->getFormData());
+                    $this->dispatch('before-hook-called', data: $action->getData());
                 }),
             Action::make('arguments')
                 ->requiresConfirmation()

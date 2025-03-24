@@ -95,7 +95,7 @@ Filter::make('is_featured')
     ->modifyFormFieldUsing(fn (Checkbox $field) => $field->inline(false))
 ```
 
-## Persist filters in session
+## Persisting filters in the user's session
 
 To persist the table filters in the user's session, use the `persistFiltersInSession()` method:
 

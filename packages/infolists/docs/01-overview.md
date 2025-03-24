@@ -32,7 +32,7 @@ TextEntry::make('author.name')
 
 ## Entry content (state)
 
-Entries may feel a bit magic at first, but they are designed to be simple to use and optimized to display data from an Eloquent record. Despite this, they are flexible and you can display data from any source, not just an Eloquent record.
+Entries may feel a bit magic at first, but they are designed to be simple to use and optimized to display data from an Eloquent record. Despite this, they are flexible and you can display data from any source, not just an Eloquent record attribute.
 
 The data that an entry displays is called its "state". When using a [panel resource](../resources), the infolist is aware of the record it is displaying. This means that the state of the entry is set based on the value of the attribute on the record. For example, if the entry is used in the infolist of a `PostResource`, then the `title` attribute value of the current post will be displayed.
 
@@ -484,7 +484,7 @@ TextEntry::make('title')
 
 ## Adding extra content to an entry
 
-Entries contain many "slots" where content can be inserted in a child schema. Slots can accept text, [any schema component](../schemas/overview), [actions](../actions) and [action groups](../actions/grouping-actions). Usually, [prime components](../schemas/primes) are used for content.
+Entries contain many "slots" where content can be inserted in a child schema. Slots can accept text, [any schema component](../schemas), [actions](../actions) and [action groups](../actions/grouping-actions). Usually, [prime components](../schemas/primes) are used for content.
 
 The following slots are available for all entries:
 
@@ -808,7 +808,7 @@ These injected utilities require specific parameter names to be used. Otherwise,
 
 ### Injecting the current state of the entry
 
-If you wish to access the current value (state) of the entry, define a `$state` parameter:
+If you wish to access the current [value (state)](#entry-content-state) of the entry, define a `$state` parameter:
 
 ```php
 function ($state) {
@@ -888,11 +888,11 @@ function (Entry $component) {
 The parameters are injected dynamically using reflection, so you are able to combine multiple parameters in any order:
 
 ```php
+use App\Models\User;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Livewire\Component as Livewire;
 
-function (Livewire $livewire, Get $get, Set $set) {
+function (Livewire $livewire, Get $get, User $record) {
     // ...
 }
 ```
@@ -902,10 +902,10 @@ function (Livewire $livewire, Get $get, Set $set) {
 You may inject anything from Laravel's container like normal, alongside utilities:
 
 ```php
-use Filament\Schemas\Components\Utilities\Set;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-function (Request $request, Set $set) {
+function (Request $request, User $record) {
     // ...
 }
 ```
@@ -918,8 +918,7 @@ If you wish to change the default behavior of all entries globally, then you can
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::configureUsing(function (TextEntry $entry): void {
-    $entry
-        ->words(10);
+    $entry->words(10);
 });
 ```
 

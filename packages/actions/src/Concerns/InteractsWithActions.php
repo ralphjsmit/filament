@@ -215,7 +215,7 @@ trait InteractsWithActions
                 $schema->getState(afterValidate: function (array $state) use ($action, $schemaState): void {
                     $action->callAfterFormValidated();
 
-                    $action->formData([
+                    $action->data([
                         ...$schemaState,
                         ...$state,
                     ]);
@@ -223,7 +223,7 @@ trait InteractsWithActions
                     $action->callBefore();
                 });
             } else {
-                $action->formData($schemaState);
+                $action->data($schemaState);
 
                 $action->callBefore();
             }
@@ -262,7 +262,7 @@ trait InteractsWithActions
 
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
                 $action->resetArguments();
-                $action->resetFormData();
+                $action->resetData();
 
                 $this->unmountAction();
             }
@@ -283,7 +283,7 @@ trait InteractsWithActions
         }
 
         $action->resetArguments();
-        $action->resetFormData();
+        $action->resetData();
 
         $onlyActionNamesAndContexts = fn (array $actions): array => collect($actions)
             ->map(fn (array $action): array => Arr::only($action, ['name', 'context']))
@@ -573,7 +573,7 @@ trait InteractsWithActions
 
         return $mountedAction->getSchema(
             $this->makeSchema()
-                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionFormModel() ?? $this->getMountedActionSchemaModel())
+                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(

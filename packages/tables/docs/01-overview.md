@@ -1,19 +1,18 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
-Filament's Table Builder package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [Panel Builder](../panels) for displaying [resources](../panels/resources) and [relation managers](../panels/resources/relation-managers), as well as for the [table widget](../panels/dashboard#table-widgets). Learning the features of the Table Builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
-
-This guide will walk you through the basics of building tables with Filament's table package. If you're planning to add a new table to your own Livewire component, you should [do that first](adding-a-table-to-a-livewire-component) and then come back. If you're adding a table to an [app resource](../panels/resources), or another Filament package, you're ready to go!
+Tables are a common UI pattern for displaying lists of records in web applications. Filament provides a PHP-based API for defining tables with many features, while also being incredibly customizable.
 
 ## Defining table columns
 
 The basis of any table is rows and columns. Filament uses Eloquent to get the data for rows in the table, and you are responsible for defining the columns that are used in that row.
 
-Filament includes many column types prebuilt for you, and you can [view a full list here](columns/overview#available-columns). You can even [create your own custom column types](columns/custom) to display data in whatever way you need.
+Filament includes many column types prebuilt for you, and you can [view a full list here](columns/overview). You can even [create your own custom column types](columns/custom-columns) to display data in whatever way you need.
 
 Columns are stored in an array, as objects within the `$table->columns()` method:
 
@@ -76,11 +75,13 @@ TextColumn::make('author.name')
 
 <AutoScreenshot name="tables/overview/relationship-columns" alt="Table with relationship column" version="4.x" />
 
-In this case, Filament will search for an `author` relationship on the `Post` model, and then display the `name` attribute of that relationship. We call this "dot notation" - you can use it to display any attribute of any relationship, even nested distant relationships. Filament uses this dot notation to eager-load the results of that relationship for you.
+In this case, Filament will search for an `author` relationship on the `Post` model, and then display the `name` attribute of that relationship. We call this "dot notation", and you can use it to display any attribute of any relationship, even nested relationships. Filament uses this dot notation to eager-load the results of that relationship for you.
+
+For more information about column relationships, visit the [Relationships section](columns/relationships).
 
 ## Defining table filters
 
-As well as making columns `searchable()`, you can allow the users to filter rows in the table in other ways. We call these components "filters", and they are defined in the `$table->filters()` method:
+As well as making columns `searchable()`, which allows the user to filter the table by searching the content of columns, you can also allow the users to filter rows in the table in other ways. [Filters](filters) can be defined in the `$table->filters()` method:
 
 ```php
 use Filament\Tables\Filters\Filter;
@@ -115,11 +116,11 @@ The first filter is rendered as a checkbox. When it's checked, only featured row
 
 The second filter is rendered as a select dropdown. When a user selects an option, only rows with that status will be displayed. When no option is selected, all rows will be displayed.
 
-It's possible to define as many filters as you need, and use any component from the [Form Builder package](../forms) to create a UI. For example, you could create [a custom date range filter](../filters/custom).
+You can use any [schema component](../schemas) to build the UI for a filter. For example, you could create [a custom date range filter](filters/custom).
 
 ## Defining table actions
 
-Filament's tables can use [Actions](../actions/overview). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
+Filament's tables can use [actions](../actions/overview). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
 
 ```php
 use App\Models\Post;
@@ -163,23 +164,11 @@ We also define a bulk action. When bulk actions are defined, each row in the tab
 
 <AutoScreenshot name="tables/overview/actions-modal" alt="Table with action modal open" version="4.x" />
 
-Actions can also open modals to request confirmation from the user, as well as render forms inside to collect extra data. It's a good idea to read the [Actions documentation](../actions/overview) to learn more about their extensive capabilities throughout Filament.
+Actions can also open modals to request confirmation from the user, as well as render forms inside to collect extra data. It's a good idea to read the [Actions documentation](../actions) to learn more about their extensive capabilities throughout Filament.
 
 ## Pagination
 
-### Disabling pagination
-
-By default, tables will be paginated. To disable this, you should use the `$table->paginated(false)` method:
-
-```php
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->paginated(false);
-}
-```
+By default, Filament tables will be paginated. The user can choose between 5, 10, 25, and 50 records per page. If there are more records than the selected number, the user can navigate between pages using the pagination buttons.
 
 ### Customizing the pagination options
 
@@ -195,7 +184,9 @@ public function table(Table $table): Table
 }
 ```
 
-Be aware when using `all` as it will cause performance issues when dealing with a large number of records.
+<Aside variant="warning">
+    Be aware when using very high numbers and `all` as large number of records can cause performance issues.
+</Aside>
 
 ### Customizing the default pagination page option
 
@@ -211,21 +202,9 @@ public function table(Table $table): Table
 }
 ```
 
-### Preventing query string conflicts with the pagination page
-
-By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
-
-To fix this, you may define a `$table->queryStringIdentifier()`, to return a unique query string identifier for that table:
-
-```php
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->queryStringIdentifier('users');
-}
-```
+<Aside variant="info">
+    Make sure that the default pagination page option is included in the [pagination options](#customizing-the-pagination-options).
+</Aside>
 
 ### Displaying links to the first and the last pagination page
 
@@ -271,6 +250,36 @@ public function table(Table $table): Table
 }
 ```
 
+### Preventing query string conflicts with the pagination page
+
+By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
+
+To fix this, you may define a `$table->queryStringIdentifier()`, to return a unique query string identifier for that table:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->queryStringIdentifier('users');
+}
+```
+
+### Disabling pagination
+
+By default, tables will be paginated. To disable this, you should use the `$table->paginated(false)` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->paginated(false);
+}
+```
+
 ## Record URLs (clickable rows)
 
 You may allow table rows to be completely clickable by using the `$table->recordUrl()` method:
@@ -288,7 +297,11 @@ public function table(Table $table): Table
 }
 ```
 
-In this example, clicking on each post will take you to the `posts.edit` route.
+When using a [resource](../resources) table, the URL for each row is usually already set up for you, but this method can be called to override the default URL for each row.
+
+<Aside variant="tip">
+    You can also [override the URL](columns/overview#opening-urls) for a specific column, or [trigger an action](columns/overview#triggering-actions) when a column is clicked.
+</Aside>
 
 You may also open the URL in a new tab:
 
@@ -301,8 +314,6 @@ public function table(Table $table): Table
         ->openRecordUrlInNewTab();
 }
 ```
-
-If you'd like to [override the URL](columns/overview#opening-urls) for a specific column, or instead [run an action](columns/overview#running-actions) when a column is clicked, see the [columns documentation](columns/overview#opening-urls).
 
 ## Reordering records
 
@@ -350,7 +361,7 @@ public function table(Table $table): Table
 
 ### Enabling pagination while reordering
 
-Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure then you can use `$table->paginatedWhileReordering()`:
+Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally a bad experience to have pagination while reordering, but if would like to override this use `$table->paginatedWhileReordering()`:
 
 ```php
 use Filament\Tables\Table;
@@ -414,7 +425,7 @@ public function table(Table $table): Table
         ]);
 ```
 
-You can pass a view to the `$table->header()` method to customize the entire header:
+You can pass a view to the `$table->header()` method to customize the entire header HTML:
 
 ```php
 use Filament\Tables\Table;
@@ -460,29 +471,20 @@ public function table(Table $table): Table
 
 ## Searching records with Laravel Scout
 
-While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may override methods to integrate it.
-
-Use a `whereIn()` clause to filter the query for Scout results:
+While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may use the `searchUsing()` method with a `whereKey()` clause to filter the query for Scout results:
 
 ```php
 use App\Models\Post;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-protected function applySearchToTableQuery(Builder $query): Builder
+public function table(Table $table): Table
 {
-    $this->applyColumnSearchesToTableQuery($query);
-    
-    if (filled($search = $this->getTableSearch())) {
-        $query->whereIn('id', Post::search($search)->keys());
-    }
-
-    return $query;
-}
+    return $table
+        ->searchUsing(fn (Builder $query, string $search) => $query->whereKey(Post::search($search)->keys()));
 ```
 
-Scout uses this `whereIn()` method to retrieve results internally, so there is no performance penalty for using it.
-
-The `applyColumnSearchesToTableQuery()` method ensures that searching individual columns will still work. You can replace that method with your own implementation if you want to use Scout for those search inputs as well.
+Under normal circumstances Scout uses the `whereKey()` (`whereIn()`) method to retrieve results internally, so there is no performance penalty for using it.
 
 For the global search input to show, at least one column in the table needs to be `searchable()`. Alternatively, if you are using Scout to control which columns are searchable already, you can simply pass `searchable()` to the entire table instead:
 
@@ -494,45 +496,6 @@ public function table(Table $table): Table
     return $table
         ->searchable();
 }
-```
-
-## Query string
-
-Livewire ships with a feature to store data in the URL's query string, to access across requests.
-
-With Filament, this allows you to store your table's filters, sort, search and pagination state in the URL.
-
-To store the filters, sorting, and search state of your table in the query string:
-
-```php
-use Livewire\Attributes\Url;
-
-#[Url]
-public bool $isTableReordering = false;
-
-/**
- * @var array<string, mixed> | null
- */
-#[Url]
-public ?array $tableFilters = null;
-
-#[Url]
-public ?string $tableGrouping = null;
-
-#[Url]
-public ?string $tableGroupingDirection = null;
-
-/**
- * @var ?string
- */
-#[Url]
-public $tableSearch = '';
-
-#[Url]
-public ?string $tableSortColumn = null;
-
-#[Url]
-public ?string $tableSortDirection = null;
 ```
 
 ## Styling table rows
@@ -558,6 +521,7 @@ public function table(Table $table): Table
 You may want to conditionally style rows based on the record data. This can be achieved by specifying a string or array of CSS classes to be applied to the row using the `$table->recordClasses()` method:
 
 ```php
+use App\Models\Post;
 use Closure;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -565,28 +529,18 @@ use Illuminate\Database\Eloquent\Model;
 public function table(Table $table): Table
 {
     return $table
-        ->recordClasses(fn (Model $record) => match ($record->status) {
-            'draft' => 'opacity-30',
-            'reviewing' => 'border-s-2 border-orange-600 dark:border-orange-300',
-            'published' => 'border-s-2 border-green-600 dark:border-green-300',
+        ->recordClasses(fn (Post $record) => match ($record->status) {
+            'draft' => 'draft-post-table-row',
+            'reviewing' => 'reviewing-post-table-row',
+            'published' => 'published-post-table-row',
             default => null,
         });
 }
 ```
 
-These classes are not automatically compiled by Tailwind CSS. If you want to apply Tailwind CSS classes that are not already used in Blade files, you should update your `content` configuration in `tailwind.config.js` to also scan for classes inside your directory: `'./app/Filament/**/*.php'`
-
-## Resetting the table
-
-If you make changes to the table definition during a Livewire request, for example, when consuming a public property in the `table()` method, you may need to reset the table to ensure that the changes are applied. To do this, you can call the `resetTable()` method on the Livewire component:
-
-```php
-$this->resetTable();
-```
-
 ## Global settings
 
-To customize the default configuration that is used for all tables, you can call the static `configureUsing()` method from the `boot()` method of a service provider. The function will be run for each table that gets created:
+To customize the default configuration used for all tables, you can call the static `configureUsing()` method from the `boot()` method of a service provider. The function will be run for each table that gets created:
 
 ```php
 use Filament\Tables\Enums\FiltersLayout;

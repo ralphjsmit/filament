@@ -133,7 +133,7 @@ Section::make('Cart')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-### Persisting collapsed sections
+### Persisting collapsed sections in the user's session
 
 You can persist whether a section is collapsed in local storage using the `persistCollapsed()` method, so it will remain collapsed when the user refreshes the page:
 

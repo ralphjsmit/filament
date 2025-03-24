@@ -3,6 +3,7 @@
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
+use Filament\Tables\Filters\BaseFilter;
 use Filament\Upgrade\Rector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
@@ -271,8 +272,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
         new MethodCallRename(Action::class, 'infolist', 'schema'),
         new MethodCallRename(Action::class, 'form', 'schema'),
+        new MethodCallRename(Action::class, 'mutateFormDataUsing', 'mutateDataUsing'),
         new MethodCallRename(Component::class, 'getChildComponentContainer', 'getChildSchema'),
         new MethodCallRename(Component::class, 'getChildComponentContainers', 'getChildSchemas'),
+        new MethodCallRename(BaseFilter::class, 'form', 'schema'),
         new MethodCallRename(Schema::class, 'schema', 'components'),
     ]);
 };

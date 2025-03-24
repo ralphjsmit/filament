@@ -50,7 +50,7 @@ Sometimes, you may wish to modify form data before it is finally saved to the da
 use Filament\Actions\CreateAction;
 
 CreateAction::make()
-    ->mutateFormDataUsing(function (array $data): array {
+    ->mutateDataUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
 
         return $data;

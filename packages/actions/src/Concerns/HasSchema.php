@@ -18,22 +18,14 @@ trait HasSchema
 
     protected bool | Closure $isSchemaDisabled = false;
 
-    /**
-     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
-     */
-    public function components(array | Closure | null $schema): static
-    {
-        $this->schema = $schema;
-
-        return $this;
-    }
+    protected bool | Closure | null $hasFormWrapper = null;
 
     /**
      * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
     public function schema(array | Closure | null $schema): static
     {
-        $this->components($schema);
+        $this->schema = $schema;
 
         return $this;
     }
@@ -94,5 +86,65 @@ trait HasSchema
         }
 
         return $modifiedSchema;
+    }
+
+    public function formWrapper(bool | Closure | null $condition = true): static
+    {
+        $this->hasFormWrapper = $condition;
+
+        return $this;
+    }
+
+    public function hasFormWrapper(): bool
+    {
+        return (bool) ($this->evaluate($this->hasFormWrapper) ?? (! $this->isWizard()));
+    }
+
+    /**
+     * @deprecated Use `disabledSchema() instead.
+     */
+    public function disableForm(bool | Closure $condition = true): static
+    {
+        $this->disabledSchema($condition);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `disabledSchema() instead.
+     */
+    public function disabledForm(bool | Closure $condition = true): static
+    {
+        $this->disabledSchema($condition);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `schema() instead.
+     *
+     * @param  array<Component| Action> | Closure | null  $form
+     */
+    public function form(array | Closure | null $form): static
+    {
+        $this->schema($form);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `getSchema()` instead.
+     */
+    public function getForm(Schema $schema): ?Schema
+    {
+        return $this->getSchema($schema);
+    }
+
+    /**
+     * @deprecated Use `isSchemaDisabled()` instead.
+     */
+    public function isFormDisabled(): bool
+    {
+        return $this->isSchemaDisabled();
     }
 }

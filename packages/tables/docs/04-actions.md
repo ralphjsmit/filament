@@ -263,7 +263,7 @@ This is useful for things like "create" actions, which are not related to any sp
 
 ## Column actions
 
-Actions can be added to columns, such that when a cell in that column is clicked, it acts as the trigger for an action. You can learn more about [column actions](columns/overview#running-actions) in the documentation.
+Actions can be added to columns, such that when a cell in that column is clicked, it acts as the trigger for an action. You can learn more about [column actions](columns/overview#triggering-actions) in the documentation.
 
 ## Prebuilt table actions
 

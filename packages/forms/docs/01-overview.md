@@ -482,7 +482,7 @@ TextInput::make('name')
 
 ## Adding extra content to a field
 
-Fields contain many "slots" where content can be inserted in a child schema. Slots can accept text, [any schema component](../schemas/overview), [actions](../actions) and [action groups](../actions/grouping-actions). Usually, [prime components](../schemas/primes) are used for content.
+Fields contain many "slots" where content can be inserted in a child schema. Slots can accept text, [any schema component](../schemas), [actions](../actions) and [action groups](../actions/grouping-actions). Usually, [prime components](../schemas/primes) are used for content.
 
 The following slots are available for all fields:
 

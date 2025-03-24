@@ -1282,13 +1282,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return Model|class-string<Model>|null
      */
-    public function getActionFormModel(): Model | string | null
+    public function getActionSchemaModel(): Model | string | null
     {
         if ($this->hasRelationship()) {
             return $this->getRelationship()->getModel()::class;
         }
 
-        return parent::getActionFormModel();
+        return parent::getActionSchemaModel();
     }
 
     public function getOptionsLimit(): int
