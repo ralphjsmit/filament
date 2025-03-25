@@ -261,7 +261,7 @@ Select::make('role')
         'user' => 'User',
         'staff' => 'Staff',
     ])
-    ->live(),
+    ->live()
 
 Toggle::make('is_admin')
     ->hidden(fn (Get $get): bool => $get('role') !== 'staff')
@@ -281,11 +281,11 @@ Select::make('role')
     ->options([
         'user' => 'User',
         'staff' => 'Staff',
-    ]),
+    ])
 
 Toggle::make('is_admin')
     ->hiddenJs(<<<'JS'
-    $get('role') !== 'staff'
+        $get('role') !== 'staff'
     JS)
 ```
 
@@ -301,11 +301,11 @@ Select::make('role')
     ->options([
         'user' => 'User',
         'staff' => 'Staff',
-    ]),
+    ])
 
 Toggle::make('is_admin')
     ->visibleJs(<<<'JS'
-    $get('role') === 'staff'
+        $get('role') === 'staff'
     JS)
 ```
 
@@ -1167,7 +1167,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 
 Checkbox::make('is_company')
-    ->live(),
+    ->live()
 
 TextInput::make('company_name')
     ->hidden(fn (Get $get): bool => ! $get('is_company'))
@@ -1183,7 +1183,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 
 Checkbox::make('is_company')
-    ->live(),
+    ->live()
     
 TextInput::make('company_name')
     ->visible(fn (Get $get): bool => $get('is_company'))
@@ -1203,7 +1203,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('company_name')
-    ->live(onBlur: true),
+    ->live(onBlur: true)
     
 TextInput::make('vat_number')
     ->required(fn (Get $get): bool => filled($get('company_name')))
@@ -1220,10 +1220,11 @@ To generate a slug from a title while the user is typing, you can use the [`afte
 ```php
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Str;
 
 TextInput::make('title')
     ->live(onBlur: true)
-    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', str($state)->slug())),
+    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
     
 TextInput::make('slug')
 ```
@@ -1236,17 +1237,18 @@ One thing to note is that the user may customize the slug manually, and we don't
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Str;
 
 TextInput::make('title')
     ->live(onBlur: true)
     ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
-        if (str($get('slug'))->toString() !== str($old)->slug()->toString()) {
+        if (($get('slug') ?? '') !== Str::slug($old)) {
             return;
         }
-
-        $set('slug', str($state)->slug());
-    }),
-
+    
+        $set('slug', Str::slug($state));
+    })
+    
 TextInput::make('slug')
 ```
 
@@ -1264,7 +1266,7 @@ Select::make('category')
         'mobile' => 'Mobile development',
         'design' => 'Design',
     ])
-    ->live(),
+    ->live()
 
 Select::make('sub_category')
     ->options(fn (Get $get): array => match ($get('category')) {
@@ -1295,7 +1297,7 @@ use Illuminate\Support\Collection;
 
 Select::make('category')
     ->options(Category::query()->pluck('name', 'id'))
-    ->live(),
+    ->live()
     
 Select::make('sub_category')
     ->options(fn (Get $get): Collection => SubCategory::query()
@@ -1324,7 +1326,7 @@ Select::make('type')
         ->getContainer()
         ->getComponent('dynamicTypeFields')
         ->getChildSchema()
-        ->fill()),
+        ->fill())
     
 Grid::make(2)
     ->schema(fn (Get $get): array => match ($get('type')) {
