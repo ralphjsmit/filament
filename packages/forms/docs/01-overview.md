@@ -90,6 +90,15 @@ TextInput::make('name')
     ->label(__('fields.name'))
 ```
 
+Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization#introduction) with the `translateLabel()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->translateLabel() // Equivalent to `label(__('Name'))`
+```
+
 ### Hiding a field's label
 
 It may be tempting to set the label to an empty string to hide it, but this is not recommended. Setting the label to an empty string will not communicate the purpose of the field to screen readers, even if the purpose is clear visually. Instead, you should use the `hiddenLabel()` method, so it is hidden visually but still accessible to screen readers:
@@ -261,7 +270,7 @@ Select::make('role')
         'user' => 'User',
         'staff' => 'Staff',
     ])
-    ->live()
+    ->live(),
 
 Toggle::make('is_admin')
     ->hidden(fn (Get $get): bool => $get('role') !== 'staff')
@@ -281,11 +290,11 @@ Select::make('role')
     ->options([
         'user' => 'User',
         'staff' => 'Staff',
-    ])
+    ]),
 
 Toggle::make('is_admin')
-    ->hiddenJs(>>>JS
-        \$get('role') !== 'staff'
+    ->hiddenJs(<<<'JS'
+    $get('role') !== 'staff'
     JS)
 ```
 
@@ -301,11 +310,11 @@ Select::make('role')
     ->options([
         'user' => 'User',
         'staff' => 'Staff',
-    ])
-    
+    ]),
+
 Toggle::make('is_admin')
-    ->visibleJs(>>>JS
-        \$get('role') === 'staff'
+    ->visibleJs(<<<'JS'
+    $get('role') === 'staff'
     JS)
 ```
 
@@ -391,7 +400,7 @@ TextInput::make('name')
 
 ### Using inline labels in multiple places at once
 
-If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/section) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all fields within it will have their labels displayed inline:
+If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/sections) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all fields within it will have their labels displayed inline:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -399,7 +408,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->fields([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -433,7 +442,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->fields([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -819,7 +828,9 @@ TextInput::make('name')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+<Aside variant="tip">
+    By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ### Adding extra HTML attributes to the input element of a field
 
@@ -834,7 +845,9 @@ TextInput::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraInputAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+<Aside variant="tip">
+    By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ### Adding extra HTML attributes to the field wrapper
 
@@ -849,7 +862,9 @@ TextInput::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraFieldWrapperAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraFieldWrapperAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+<Aside variant="tip">
+    By default, calling `extraFieldWrapperAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ## Field utility injection
 
@@ -1161,7 +1176,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 
 Checkbox::make('is_company')
-    ->live()
+    ->live(),
 
 TextInput::make('company_name')
     ->hidden(fn (Get $get): bool => ! $get('is_company'))
@@ -1177,11 +1192,16 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 
 Checkbox::make('is_company')
-    ->live()
+    ->live(),
     
 TextInput::make('company_name')
     ->visible(fn (Get $get): bool => $get('is_company'))
 ```
+
+<Aside variant="tip">
+    Using `live()` means the schema reloads every time the field changes, triggering a network request.
+    Alternatively, you can use [JavaScript to hide the field based on another field's value](#hiding-a-field-using-javascript).
+</Aside>
 
 ### Conditionally making a field required
 
@@ -1192,7 +1212,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('company_name')
-    ->live(onBlur: true)
+    ->live(onBlur: true),
     
 TextInput::make('vat_number')
     ->required(fn (Get $get): bool => filled($get('company_name')))
@@ -1209,11 +1229,10 @@ To generate a slug from a title while the user is typing, you can use the [`afte
 ```php
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Support\Str;
 
 TextInput::make('title')
     ->live(onBlur: true)
-    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', str($state)->slug())),
     
 TextInput::make('slug')
 ```
@@ -1226,18 +1245,17 @@ One thing to note is that the user may customize the slug manually, and we don't
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Support\Str;
 
 TextInput::make('title')
     ->live(onBlur: true)
     ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
-        if (($get('slug') ?? '') !== Str::slug($old)) {
+        if (str($get('slug'))->toString() !== str($old)->slug()->toString()) {
             return;
         }
-    
-        $set('slug', Str::slug($state));
-    })
-    
+
+        $set('slug', str($state)->slug());
+    }),
+
 TextInput::make('slug')
 ```
 
@@ -1255,7 +1273,7 @@ Select::make('category')
         'mobile' => 'Mobile development',
         'design' => 'Design',
     ])
-    ->live()
+    ->live(),
 
 Select::make('sub_category')
     ->options(fn (Get $get): array => match ($get('category')) {
@@ -1286,7 +1304,7 @@ use Illuminate\Support\Collection;
 
 Select::make('category')
     ->options(Category::query()->pluck('name', 'id'))
-    ->live()
+    ->live(),
     
 Select::make('sub_category')
     ->options(fn (Get $get): Collection => SubCategory::query()
@@ -1315,7 +1333,7 @@ Select::make('type')
         ->getContainer()
         ->getComponent('dynamicTypeFields')
         ->getChildSchema()
-        ->fill())
+        ->fill()),
     
 Grid::make(2)
     ->schema(fn (Get $get): array => match ($get('type')) {
@@ -1387,6 +1405,10 @@ TextInput::make('password')
     ->dehydrated(fn (?string $state): bool => filled($state))
     ->required(fn (string $operation): bool => $operation === 'create')
 ```
+
+<Aside variant="info">
+    In this example, `Hash::make($state)` shows how to use a [dehydration function](#field-dehydration). However, you don't need to do this if your Model uses `'password' => 'hashed'` in its [casts function — Laravel will handle hashing automatically](https://laravel.com/docs/eloquent-mutators#attribute-casting).
+</Aside>
 
 ## Saving data to relationships
 
