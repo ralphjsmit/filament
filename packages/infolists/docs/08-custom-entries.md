@@ -3,14 +3,14 @@ title: Custom entries
 ---
 import Aside from "@components/Aside.astro"
 
-## Custom entry classes
+## Introduction
 
 You may create your own custom entry classes and views, which you can reuse across your project, and even release as a plugin to the community.
 
 To create a custom entry class and view, you may use the following command:
 
 ```bash
-php artisan make:filament-infolist-entry AudioPlayer
+php artisan make:filament-infolist-entry AudioPlayerEntry
 ```
 
 This will create the following component class:
@@ -18,13 +18,13 @@ This will create the following component class:
 ```php
 use Filament\Infolists\Components\Entry;
 
-class AudioPlayer extends Entry
+class AudioPlayerEntry extends Entry
 {
-    protected string $view = 'filament.infolists.components.audio-player';
+    protected string $view = 'filament.infolists.components.audio-player-entry';
 }
 ```
 
-It will also create a view file at `resources/views/filament/infolists/components/audio-player.blade.php`.
+It will also create a view file at `resources/views/filament/infolists/components/audio-player-entry.blade.php`.
 
 <Aside variant="info">
     Filament infolist entries are **not** Livewire components. Defining public properties and methods on a infolist entry class will not make them accessible in the Blade view.
@@ -131,9 +131,9 @@ You may add a public method to the custom entry class that accepts a configurati
 ```php
 use Filament\Infolists\Components\Entry;
 
-class AudioPlayer extends Entry
+class AudioPlayerEntry extends Entry
 {
-    protected string $view = 'filament.infolists.components.audio-player';
+    protected string $view = 'filament.infolists.components.audio-player-entry';
     
     protected ?float $speed = null;
 
@@ -167,9 +167,9 @@ Any public method that you define on the custom entry class can be accessed in t
 To pass the configuration value to the custom entry class, you may use the public method:
 
 ```php
-use App\Filament\Infolists\Components\AudioPlayer;
+use App\Filament\Infolists\Components\AudioPlayerEntry;
 
-AudioPlayer::make('recording')
+AudioPlayerEntry::make('recording')
     ->speed(0.5)
 ```
 
@@ -181,9 +181,9 @@ AudioPlayer::make('recording')
 use Closure;
 use Filament\Infolists\Components\Entry;
 
-class AudioPlayer extends Entry
+class AudioPlayerEntry extends Entry
 {
-    protected string $view = 'filament.infolists.components.audio-player';
+    protected string $view = 'filament.infolists.components.audio-player-entry';
     
     protected float | Closure | null $speed = null;
 
@@ -204,8 +204,8 @@ class AudioPlayer extends Entry
 Now, you can pass a static value or a function to the `speed()` method, and [inject any utility](overview#component-utility-injection) as a parameter:
 
 ```php
-use App\Filament\Infolists\Components\AudioPlayer;
+use App\Filament\Infolists\Components\AudioPlayerEntry;
 
-AudioPlayer::make('recording')
+AudioPlayerEntry::make('recording')
     ->speed(fn (Conference $record): float => $record->isGlobal() ? 1 : 0.5)
 ```

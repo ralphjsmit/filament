@@ -413,7 +413,7 @@ use Illuminate\Contracts\View\View;
 
 TextColumn::make('description')
     ->formatStateUsing(fn (string $state): View => view(
-        'filament.tables.components.description-column-content',
+        'filament.tables.columns.description-column-content',
         ['state' => $state],
     ))
 ```

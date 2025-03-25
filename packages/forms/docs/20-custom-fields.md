@@ -3,7 +3,7 @@ title: Custom fields
 ---
 import Aside from "@components/Aside.astro"
 
-## How fields work
+## Introduction
 
 Livewire components are PHP classes that have their state stored in the user's browser. When a network request is made, the state is sent to the server, and filled into public properties on the Livewire component class, where it can be accessed in the same way as any other class property in PHP can be.
 
@@ -45,7 +45,7 @@ This is the basis of how fields work in Filament. Each field is assigned to a pu
 
 If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../assets#asynchronous-alpinejs-components).
 
-## Custom field classes
+### Custom field classes
 
 You may create your own custom field classes and views, which you can reuse across your project, and even release as a plugin to the community.
 
