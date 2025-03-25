@@ -261,7 +261,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                                 <?php } ?>
                                 <?php if (filled($xShow = match ([filled($hiddenJs), filled($visibleJs)]) {
                                     [true, true] => "(! {$hiddenJs}) && ({$visibleJs})",
-                                    [true, false] => "! {$hiddenJs}",
+                                    [true, false] => "! ({$hiddenJs})",
                                     [false, true] => $visibleJs,
                                     default => null,
                                 })) { ?>
