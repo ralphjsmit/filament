@@ -43,12 +43,12 @@ For building [forms](../forms), Filament includes a set of fields for different 
 
 For displaying data in a label-value "description list" format, Filament includes [infolist](../infolists) entry components:
 
-- [Text entry](../infolists/text)
-- [Icon entry](../infolists/icon)
-- [Image entry](../infolists/image)
-- [Color entry](../infolists/color)
-- [Key-value entry](../infolists/key-value)
-- [Repeatable entry](../infolists/repeatable)
+- [Text entry](../infolists/text-entry)
+- [Icon entry](../infolists/icon-entry)
+- [Image entry](../infolists/image-entry)
+- [Color entry](../infolists/color-entry)
+- [Key-value entry](../infolists/key-value-entry)
+- [Repeatable entry](../infolists/repeatable-entry)
 - Or, build your own [custom infolist entry](../infolists/custom-entries)
 
 To arrange components into a [layout](layouts), Filament includes layout components:
@@ -117,7 +117,7 @@ $schema
 
 [TextInput](../forms/text-input), [Select](../forms/select), and [Checkbox](../forms/checkbox) are form components that accept input from the user.
 
-[TextEntry](../infolists/text) is an infolist component that displays read-only information. In this example, it is used to display the created and updated timestamps of the record. The `dateTime()` method is used to format the timestamps as dates and times.
+[TextEntry](../infolists/text-entry) is an infolist component that displays read-only information. In this example, it is used to display the created and updated timestamps of the record. The `dateTime()` method is used to format the timestamps as dates and times.
 
 The schema object is the container for the components and can now be rendered. Rendering the schema will render all the components within it in the correct layout.
 

@@ -59,7 +59,7 @@ $schema
     ])
 ```
 
-Although text can be rendered in a schema using an [infolist text entry](../infolists/text), entries are intended to render a label-value detail about an entity (like an Eloquent model), and not to render arbitrary text. Prime components are more suitable for this purpose. Infolists can be considered more similar to [description lists](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dl) in HTML.
+Although text can be rendered in a schema using an [infolist text entry](../infolists/text-entry), entries are intended to render a label-value detail about an entity (like an Eloquent model), and not to render arbitrary text. Prime components are more suitable for this purpose. Infolists can be considered more similar to [description lists](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dl) in HTML.
 
 Prime component classes can be found in the `Filament\Schemas\Components` namespace. They reside within the schema array of components.
 

@@ -9,12 +9,12 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 Entry classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema array of components. Filament includes a number of entries built-in:
 
-- [Text entry](text)
-- [Icon entry](icon)
-- [Image entry](image)
-- [Color entry](color)
-- [Key-value entry](key-value)
-- [Repeatable entry](repeatable)
+- [Text entry](text-entry)
+- [Icon entry](icon-entry)
+- [Image entry](image-entry)
+- [Color entry](color-entry)
+- [Key-value entry](key-value-entry)
+- [Repeatable entry](repeatable-entry)
 
 You may also [create your own custom entries](custom-entries) to display data however you wish.
 
@@ -73,7 +73,7 @@ TextEntry::make('title')
 
 ### Setting the default state of an entry
 
-When an entry is empty (its state is `null`), you can use the `default()` method to define alternative state to use instead. This method will treat the default state as if it were real, so entries like [image](image) or [color](color) will display the default image or color.
+When an entry is empty (its state is `null`), you can use the `default()` method to define alternative state to use instead. This method will treat the default state as if it were real, so entries like [image](image-entry) or [color](color-entry) will display the default image or color.
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -912,7 +912,7 @@ function (Request $request, User $record) {
 
 ## Global settings
 
-If you wish to change the default behavior of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`words(10)`](text#limiting-word-count), you can do it like so:
+If you wish to change the default behavior of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`words(10)`](text-entry#limiting-word-count), you can do it like so:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
