@@ -19,7 +19,7 @@ TextColumn::make('title')
 
 ## Customizing the color
 
-You may set a [color](../styling/colors) for the text:
+You may set a [color](../../styling/colors) for the text:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -34,7 +34,7 @@ TextColumn::make('status')
 
 ## Adding an icon
 
-Text columns may also have an [icon](../styling/icons):
+Text columns may also have an [icon](../../styling/icons):
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -64,7 +64,7 @@ TextColumn::make('email')
 
 <AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" version="4.x" />
 
-The icon color defaults to the text color, but you may customize the icon [color](../styling/colors) separately using `iconColor()`:
+The icon color defaults to the text color, but you may customize the icon [color](../../styling/colors) separately using `iconColor()`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
