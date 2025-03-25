@@ -90,15 +90,6 @@ TextInput::make('name')
     ->label(__('fields.name'))
 ```
 
-Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization#introduction) with the `translateLabel()` method:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')
-    ->translateLabel() // Equivalent to `label(__('Name'))`
-```
-
 ### Hiding a field's label
 
 It may be tempting to set the label to an empty string to hide it, but this is not recommended. Setting the label to an empty string will not communicate the purpose of the field to screen readers, even if the purpose is clear visually. Instead, you should use the `hiddenLabel()` method, so it is hidden visually but still accessible to screen readers:
