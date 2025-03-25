@@ -77,7 +77,7 @@ TextColumn::make('author.name')
 
 In this case, Filament will search for an `author` relationship on the `Post` model, and then display the `name` attribute of that relationship. We call this "dot notation", and you can use it to display any attribute of any relationship, even nested relationships. Filament uses this dot notation to eager-load the results of that relationship for you.
 
-For more information about column relationships, visit the [Relationships section](columns/relationships).
+For more information about column relationships, visit the [Relationships section](columns/overview#displaying-data-from-relationships).
 
 ## Defining table filters
 

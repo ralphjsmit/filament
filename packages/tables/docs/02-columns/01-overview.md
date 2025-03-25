@@ -23,7 +23,7 @@ Editable columns allow the user to update data in the database without leaving t
 
 You may also [create your own custom columns](custom-columns) to display data however you wish.
 
-Entries may be created using the static `make()` method, passing its unique name. Usually, the name of an entry corresponds to the name of an attribute on an Eloquent model. You may use "dot notation" to access attributes within relationships:
+Columns may be created using the static `make()` method, passing its unique name. Usually, the name of a column corresponds to the name of an attribute on an Eloquent model. You may use "dot notation" to access attributes within relationships:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -98,6 +98,85 @@ TextColumn::make('title')
 
 <AutoScreenshot name="tables/columns/placeholder" alt="Column with a placeholder for empty state" version="4.x" />
 
+### Displaying data from relationships
+
+You may use "dot notation" to access columns within relationships. The name of the relationship comes first, followed by a period, followed by the name of the column to display:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('author.name')
+```
+
+#### Counting relationships
+
+If you wish to count the number of related records in a column, you may use the `counts()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('users_count')->counts('users')
+```
+
+In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
+
+If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+
+TextColumn::make('users_count')->counts([
+    'users' => fn (Builder $query) => $query->where('is_active', true),
+])
+```
+
+#### Determining relationship existence
+
+If you simply wish to indicate whether related records exist in a column, you may use the `exists()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('users_exists')->exists('users')
+```
+
+In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
+
+If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+
+TextColumn::make('users_exists')->exists([
+    'users' => fn (Builder $query) => $query->where('is_active', true),
+])
+```
+
+#### Aggregating relationships
+
+Filament provides several methods for aggregating a relationship field, including `avg()`, `max()`, `min()` and `sum()`. For instance, if you wish to show the average of a field on all related records in a column, you may use the `avg()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('users_avg_age')->avg('users', 'age')
+```
+
+In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
+
+If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+
+TextColumn::make('users_avg_age')->avg([
+    'users' => fn (Builder $query) => $query->where('is_active', true),
+], 'age')
+```
+
 ## Setting a column's label
 
 By default, the label of the column, which is displayed in the header of the table, is generated from the name of the column. You may customize this using the `label()` method:
@@ -133,7 +212,7 @@ TextColumn::make('name')
 
 <AutoScreenshot name="tables/columns/sortable" alt="Table with sortable column" version="4.x" />
 
-Using the name of the column, Filament will apply an `orderBy()` clause to the Eloquent query. This is useful for simple cases where the column name matches the database column name. It can also handle [relationships](relationships).
+Using the name of the column, Filament will apply an `orderBy()` clause to the Eloquent query. This is useful for simple cases where the column name matches the database column name. It can also handle [relationships](#displaying-data-from-relationships).
 
 However, many columns are not as simple. The [state](#column-content-state) of the column might be customized, or using an [Eloquent accessor](https://laravel.com/docs/12.x/eloquent-mutators#accessors-and-mutators). In this case, you may need to customize the sorting behaviour.
 
@@ -248,7 +327,7 @@ TextColumn::make('name')
 
 <AutoScreenshot name="tables/columns/searchable" alt="Table with searchable column" version="4.x" />
 
-By default, Filament will apply a `where` clause to the Eloquent query, searching for the column name. This is useful for simple cases where the column name matches the database column name. It can also handle [relationships](relationships).
+By default, Filament will apply a `where` clause to the Eloquent query, searching for the column name. This is useful for simple cases where the column name matches the database column name. It can also handle [relationships](#displaying-data-from-relationships).
 
 However, many columns are not as simple. The [state](#column-content-state) of the column might be customized, or using an [Eloquent accessor](https://laravel.com/docs/12.x/eloquent-mutators#accessors-and-mutators). In this case, you may need to customize the search behaviour.
 
