@@ -2,6 +2,7 @@
 title: Select filters
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -20,6 +21,8 @@ SelectFilter::make('status')
 
 The `options()` that are passed to the filter are the same as those that are passed to the [select field](../../forms/fields/select).
 
+<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Customizing the column used by a select filter
 
 Select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `attribute()` method:
@@ -36,9 +39,11 @@ SelectFilter::make('status')
     ->attribute('status_id')
 ```
 
+<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `attribute()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Multi-select filters
 
-These allow the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using. When the user selects multiple options, the table will be filtered to show records that match any of the selected options. You can enable this behavior using the `multiple()` method:
+These allow the user to [select multiple options](../../forms/select#multi-select) to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using. When the user selects multiple options, the table will be filtered to show records that match any of the selected options. You can enable this behavior using the `multiple()` method:
 
 ```php
 use Filament\Tables\Filters\SelectFilter;
@@ -141,4 +146,6 @@ SelectFilter::make('status')
     ->multiple()
     ->default(['draft', 'reviewing'])
 ```
+
+<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `default()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

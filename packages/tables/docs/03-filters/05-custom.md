@@ -3,9 +3,9 @@ title: Custom filters
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Custom filter forms
+## Custom filter schemas
 
-You may use components from the [Form Builder](../../forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
+You may use [schema components](../../schemas) to create custom filters. The data from the custom filter schema is available in the `$data` array of the `query()` callback:
 
 ```php
 use Filament\Forms\Components\DatePicker;
@@ -30,11 +30,11 @@ Filter::make('created_at')
     })
 ```
 
-<AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter form" version="4.x" />
+<AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter schema" version="4.x" />
 
 ### Setting default values for custom filter fields
 
-To customize the default value of a field in a custom filter form, you may use the `default()` method:
+To customize the default value of a field in a custom filter schema, you may use the `default()` method:
 
 ```php
 use Filament\Forms\Components\DatePicker;
@@ -64,7 +64,7 @@ Filter::make('is_admin')
     ->indicator('Administrators')
 ```
 
-If you are using a [custom filter form](#custom-filter-forms), you should use [`indicateUsing()`](#custom-active-indicators) to display an active indicator.
+If you are using a [custom filter schema](#custom-filter-schemas), you should use [`indicateUsing()`](#custom-active-indicators) to display an active indicator.
 
 Please note: if you do not have an indicator for your filter, then the badge-count of how many filters are active in the table will not include that filter.
 

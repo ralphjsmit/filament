@@ -2,18 +2,25 @@
 title: Overview
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-Filters allow you to define certain constraints on your data, and allow users to scope it to find the information they need. You put them in the `$table->filters()` method:
+Filters allow you to define certain constraints on your data, and allow users to scope it to find the information they need. You put them in the `$table->filters()` method.
+
+Filters may be created using the static `make()` method, passing its unique name. You should then pass a callback to `query()` which applies your filter's scope:
 
 ```php
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 public function table(Table $table): Table
 {
     return $table
         ->filters([
+            Filter::make('is_featured')
+                ->query(fn (Builder $query): Builder => $query->where('is_featured', true))
             // ...
         ]);
 }
@@ -21,30 +28,20 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/filters/simple" alt="Table with filter" version="4.x" />
 
-Filters may be created using the static `make()` method, passing its unique name. You should then pass a callback to `query()` which applies your filter's scope:
-
-```php
-use Filament\Tables\Filters\Filter;
-use Illuminate\Database\Eloquent\Builder;
-
-Filter::make('is_featured')
-    ->query(fn (Builder $query): Builder => $query->where('is_featured', true))
-```
-
 ## Available filters
 
 By default, using the `Filter::make()` method will render a checkbox form component. When the checkbox is on, the `query()` will be activated.
 
 - You can also [replace the checkbox with a toggle](#using-a-toggle-button-instead-of-a-checkbox).
-- You can use a [ternary filter](ternary) to replace the checkbox with a select field to allow users to pick between 3 states - usually "true", "false" and "blank". This is useful for filtering boolean columns that are nullable.
-- The [trashed filter](ternary#filtering-soft-deletable-records) is a pre-built ternary filter that allows you to filter soft-deletable records.
 - You may use a [select filter](select) to allow users to select from a list of options, and filter using the selection.
-- You may use a [query builder](query-builder) to allow users to create complex sets of filters, with an advanced user interface for combining constraints.
+- You can use a [ternary filter](ternary) to replace the checkbox with a select field to allow users to pick between 3 states - usually "true", "false" and "blank". This is useful for filtering boolean columns.
+- The [trashed filter](ternary#filtering-soft-deletable-records) is a pre-built ternary filter that allows you to filter soft-deletable records.
+- Using a [query builder](query-builder), users can create complex sets of filters, with an advanced user interface for combining constraints.
 - You may build [custom filters](custom) with other form fields, to do whatever you want.
 
 ## Setting a label
 
-By default, the label of the filter, which is displayed in the filter form, is generated from the name of the filter. You may customize this using the `label()` method:
+By default, the label of the filter is generated from the name of the filter. You may customize this using the `label()` method:
 
 ```php
 use Filament\Tables\Filters\Filter;
@@ -53,7 +50,18 @@ Filter::make('is_featured')
     ->label('Featured')
 ```
 
-## Customizing the filter form
+<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
+
+```php
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')
+    ->label(__('filters.is_featured'))
+```
+
+## Customizing the filter schema
 
 By default, creating a filter with the `Filter` class will render a [checkbox form component](../../forms/fields/checkbox). When the checkbox is checked, the `query()` function will be applied to the table's query, scoping the records in the table. When the checkbox is unchecked, the `query()` function will be removed from the table's query.
 
@@ -72,17 +80,6 @@ Filter::make('is_featured')
 
 <AutoScreenshot name="tables/filters/toggle" alt="Table with toggle filter" version="4.x" />
 
-### Applying the filter by default
-
-You may set a filter to be enabled by default, using the `default()` method:
-
-```php
-use Filament\Tables\Filters\Filter;
-
-Filter::make('is_featured')
-    ->default()
-```
-
 ### Customizing the built-in filter form field
 
 Whether you are using a checkbox, a [toggle](#using-a-toggle-button-instead-of-a-checkbox) or a [select](select), you can customize the built-in form field used for the filter, using the `modifyFormFieldUsing()` method. The method accepts a function with a `$field` parameter that gives you access to the form field object to customize:
@@ -94,6 +91,21 @@ use Filament\Tables\Filters\Filter;
 Filter::make('is_featured')
     ->modifyFormFieldUsing(fn (Checkbox $field) => $field->inline(false))
 ```
+
+<UtilityInjection set="tableFilters" version="4.x" extras="Field;;Filament\Forms\Components\Field;;$field;;The field object to modify.">The function passed to `modifyFormFieldUsing()` can inject various utilities as parameters.</UtilityInjection>
+
+## Applying the filter by default
+
+You may set a filter to be enabled by default, using the `default()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')
+    ->default()
+```
+
+If you're using a [select filter](select), [visit the "applying select filters by default" section](select#applying-select-filters-by-default).
 
 ## Persisting filters in the user's session
 
@@ -212,7 +224,7 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/filters/custom-trigger-action" alt="Table with custom filters trigger action" version="4.x" />
 
-## Table filter utility injection
+## Filter utility injection
 
 The vast majority of methods used to configure filters accept functions as parameters instead of hardcoded values:
 
