@@ -284,9 +284,9 @@ Select::make('role')
     ])
 
 Toggle::make('is_admin')
-    ->hiddenJs(>>>JS
-        \$get('role') !== 'staff'
-    JS)
+    ->hiddenJs(<<<'JS'
+        $get('role') !== 'staff'
+        JS)
 ```
 
 Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on field to be `live()`.
@@ -302,11 +302,11 @@ Select::make('role')
         'user' => 'User',
         'staff' => 'Staff',
     ])
-    
+
 Toggle::make('is_admin')
-    ->visibleJs(>>>JS
-        \$get('role') === 'staff'
-    JS)
+    ->visibleJs(<<<'JS'
+        $get('role') === 'staff'
+        JS)
 ```
 
 <Aside variant="info">
@@ -391,7 +391,7 @@ TextInput::make('name')
 
 ### Using inline labels in multiple places at once
 
-If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/section) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all fields within it will have their labels displayed inline:
+If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/sections) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all fields within it will have their labels displayed inline:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -399,7 +399,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->fields([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -433,7 +433,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->fields([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -819,7 +819,9 @@ TextInput::make('name')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+<Aside variant="tip">
+    By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ### Adding extra HTML attributes to the input element of a field
 
@@ -834,7 +836,9 @@ TextInput::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraInputAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+<Aside variant="tip">
+    By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ### Adding extra HTML attributes to the field wrapper
 
@@ -849,7 +853,9 @@ TextInput::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraFieldWrapperAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraFieldWrapperAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+<Aside variant="tip">
+    By default, calling `extraFieldWrapperAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ## Field utility injection
 
@@ -1183,6 +1189,11 @@ TextInput::make('company_name')
     ->visible(fn (Get $get): bool => $get('is_company'))
 ```
 
+<Aside variant="tip">
+    Using `live()` means the schema reloads every time the field changes, triggering a network request.
+    Alternatively, you can use [JavaScript to hide the field based on another field's value](#hiding-a-field-using-javascript).
+</Aside>
+
 ### Conditionally making a field required
 
 To conditionally make a field required, you can pass a function to the `required()` method, and return `true` or `false` depending on whether you want the field to be required or not. The function can [inject utilities](#field-utility-injection) as parameters, so you can do things like check the value of another field:
@@ -1387,6 +1398,10 @@ TextInput::make('password')
     ->dehydrated(fn (?string $state): bool => filled($state))
     ->required(fn (string $operation): bool => $operation === 'create')
 ```
+
+<Aside variant="info">
+    In this example, `Hash::make($state)` shows how to use a [dehydration function](#field-dehydration). However, you don't need to do this if your Model uses `'password' => 'hashed'` in its [casts function — Laravel will handle hashing automatically](https://laravel.com/docs/eloquent-mutators#attribute-casting).
+</Aside>
 
 ## Saving data to relationships
 
