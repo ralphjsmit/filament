@@ -439,7 +439,8 @@ trait CanImportRecords
 
     protected function detectCsvEncoding(mixed $resource): ?string
     {
-        $fileHeader = fgets($resource);
+        rewind($resource);
+        $contentSample = fread($resource, 8192);
 
         // The encoding of a subset should be declared before the encoding of its superset.
         $encodings = [
@@ -454,7 +455,7 @@ trait CanImportRecords
         ];
 
         foreach ($encodings as $encoding) {
-            if (! mb_check_encoding($fileHeader, $encoding)) {
+            if (! mb_check_encoding($contentSample, $encoding)) {
                 continue;
             }
 
