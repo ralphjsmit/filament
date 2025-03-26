@@ -91,11 +91,11 @@ If you're looking to add an action to an infolist component in your app, [visit 
 
 ### Notification actions
 
-When you [send notifications](../notifications/sending-notifications), you can add actions. These buttons are rendered below the content of the notification. For example, a notification to alert the user that they have a new message should contain an action button that opens the conversation thread.
+When you [send notifications](../notifications/overview), you can add actions. These buttons are rendered below the content of the notification. For example, a notification to alert the user that they have a new message should contain an action button that opens the conversation thread.
 
 These actions use the `Filament\Notifications\Actions\Action` class. They aren't able to open modals, but they can open a URL or dispatch a Livewire event.
 
-If you're looking to add an action to a notification in your app, [visit this page](../notifications/sending-notifications#adding-actions-to-notifications) in the docs.
+If you're looking to add an action to a notification in your app, [visit this page](../notifications/overview#adding-actions-to-notifications) in the docs.
 
 ### Global search result actions
 
