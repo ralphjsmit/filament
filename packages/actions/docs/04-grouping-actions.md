@@ -42,6 +42,65 @@ ActionGroup::make([
 
 <AutoScreenshot name="actions/group/customized" alt="Action group with custom trigger style" version="4.x" />
 
+<AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="4.x" />
+
+### Setting the action group button icon
+
+You may set the [icon](../styling/icons) of the action group button using the `icon()` method:
+
+```php
+use Filament\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])->icon('heroicon-m-ellipsis-horizontal');
+```
+
+<AutoScreenshot name="tables/actions/group-icon" alt="Table with customized action group icon" version="4.x" />
+
+### Setting the action group button color
+
+You may set the color of the action group button using the `color()` method:
+
+```php
+use Filament\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])->color('info');
+```
+
+<AutoScreenshot name="tables/actions/group-color" alt="Table with customized action group color" version="4.x" />
+
+### Setting the action group button size
+
+Buttons come in 3 sizes - `sm`, `md` or `lg`. You may set the size of the action group button using the `size()` method:
+
+```php
+use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Size;
+
+ActionGroup::make([
+    // ...
+])->size(Size::Small);
+```
+
+<AutoScreenshot name="tables/actions/group-small" alt="Table with small action group" version="4.x" />
+
+### Setting the action group tooltip
+
+You may set the tooltip of the action group using the `tooltip()` method:
+
+```php
+use Filament\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])->tooltip('Actions');
+```
+
+<AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" version="4.x" />
+
 ## Setting the placement of the dropdown
 
 The dropdown may be positioned relative to the trigger button by using the `dropdownPlacement()` method:
