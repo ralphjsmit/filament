@@ -286,7 +286,7 @@ Select::make('role')
 Toggle::make('is_admin')
     ->hiddenJs(<<<'JS'
         $get('role') !== 'staff'
-    JS)
+        JS)
 ```
 
 Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on field to be `live()`.
@@ -306,7 +306,7 @@ Select::make('role')
 Toggle::make('is_admin')
     ->visibleJs(<<<'JS'
         $get('role') === 'staff'
-    JS)
+        JS)
 ```
 
 <Aside variant="info">
