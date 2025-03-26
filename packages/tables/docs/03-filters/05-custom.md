@@ -2,6 +2,7 @@
 title: Custom filters
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Custom filter schemas
 
@@ -29,6 +30,8 @@ Filter::make('created_at')
             );
     })
 ```
+
+<UtilityInjection set="formFields" version="4.x" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.||Data;;array<string, mixed>;;$data;;The data from the filter's form fields.">The `query()` function can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter schema" version="4.x" />
 
