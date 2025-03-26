@@ -9,7 +9,6 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use SplFileInfo;
 use Throwable;
 
 trait HasFileAttachments
@@ -109,7 +108,7 @@ trait HasFileAttachments
         return $this->evaluate($this->fileAttachmentsVisibility);
     }
 
-    protected function handleFileAttachmentUpload(SplFileInfo $file): mixed
+    protected function handleFileAttachmentUpload(TemporaryUploadedFile $file): mixed
     {
         $storeMethod = $this->getFileAttachmentsVisibility() === 'public' ? 'storePublicly' : 'store';
 
