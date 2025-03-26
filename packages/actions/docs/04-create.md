@@ -4,7 +4,7 @@ title: Create action
 
 ## Introduction
 
-Filament includes a prebuilt action that is able to create Eloquent records. When the trigger button is clicked, a modal will open with a form inside. The user fills the form, and that data is validated and saved into the database. You may use it like so:
+Filament includes an action that is able to create Eloquent records. When the trigger button is clicked, a modal will open with a form inside. The user fills the form, and that data is validated and saved into the database. You may use it like so:
 
 ```php
 use Filament\Actions\CreateAction;

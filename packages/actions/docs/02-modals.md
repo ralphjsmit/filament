@@ -391,7 +391,7 @@ Action::make('help')
     ->modalCancelAction(fn (Action $action) => $action->label('Close'))
 ```
 
-The [methods available to customize trigger buttons](trigger-button) will work to modify the `$action` instance inside the closure.
+The [methods available to customize trigger buttons](overview) will work to modify the `$action` instance inside the closure.
 
 ### Removing a default modal footer action button
 
@@ -422,7 +422,7 @@ Action::make('create')
     ])
 ```
 
-`$action->makeModalSubmitAction()` returns an action instance that can be customized using the [methods available to customize trigger buttons](trigger-button).
+`$action->makeModalSubmitAction()` returns an action instance that can be customized using the [methods available to customize trigger buttons](overview).
 
 The second parameter of `makeModalSubmitAction()` allows you to pass an array of arguments that will be accessible inside the action's `action()` closure as `$arguments`. These could be useful as flags to indicate that the action should behave differently based on the user's decision:
 

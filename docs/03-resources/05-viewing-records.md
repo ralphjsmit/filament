@@ -91,7 +91,7 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
-Alternatively, if you're viewing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/view#customizing-data-before-filling-the-form).
+Alternatively, if you're viewing records in a modal action, check out the [Actions documentation](../../actions/view#customizing-data-before-filling-the-form).
 
 ## Lifecycle hooks
 

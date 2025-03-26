@@ -143,7 +143,7 @@ public function table(Table $table): Table
 
 ### Customizing the apply filters action
 
-When deferring filters, you can customize the "Apply" button, using the `filtersApplyAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/trigger-button) can be used:
+When deferring filters, you can customize the "Apply" button, using the `filtersApplyAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;
@@ -202,7 +202,7 @@ TernaryFilter::make('trashed')
 
 ## Customizing the filters trigger action
 
-To customize the filters trigger buttons, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/trigger-button) can be used:
+To customize the filters trigger buttons, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;

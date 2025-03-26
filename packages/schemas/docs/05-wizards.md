@@ -257,7 +257,7 @@ Wizard::make([
 
 ## Customizing the wizard action objects
 
-This component uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/trigger-button). The following methods are available to customize the actions:
+This component uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/overview). The following methods are available to customize the actions:
 
 - `nextAction()`
 - `previousAction()`

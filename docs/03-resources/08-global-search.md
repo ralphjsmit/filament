@@ -92,7 +92,7 @@ public static function getGlobalSearchResultActions(Model $record): array
 }
 ```
 
-You can learn more about how to style action buttons [here](../../actions/trigger-button).
+You can learn more about how to style action buttons [here](../../actions/overview).
 
 ### Opening URLs from global search actions
 

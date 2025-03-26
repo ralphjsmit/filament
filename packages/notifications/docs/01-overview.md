@@ -223,7 +223,7 @@ new FilamentNotification()
 
 ## Adding actions to notifications
 
-Notifications support [Actions](../actions/trigger-button), which are buttons that render below the content of the notification. They can open a URL or dispatch a Livewire event. Actions can be defined as follows:
+Notifications support [Actions](../actions/overview), which are buttons that render below the content of the notification. They can open a URL or dispatch a Livewire event. Actions can be defined as follows:
 
 ```php
 use Filament\Actions\Action;
@@ -260,7 +260,7 @@ new FilamentNotification()
 
 <AutoScreenshot name="notifications/actions" alt="Notification with actions" version="4.x" />
 
-You can learn more about how to style action buttons [here](../actions/trigger-button).
+You can learn more about how to style action buttons [here](../actions/overview).
 
 ### Opening URLs from notification actions
 

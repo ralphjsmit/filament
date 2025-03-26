@@ -7,7 +7,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Filament's tables can use [Actions](../actions). They are buttons that can be added to the [end of any table row](#row-actions), or even in the [header](#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](#bulk-actions) can be used to execute code when records in the table are selected. Additionally, actions can be added to any [table column](#column-actions), such that each cell in that column is a trigger for your action.
 
-It's highly advised that you read the documentation about [customizing action trigger buttons](../actions/trigger-button) and [action modals](../actions/modals) to that you are aware of the full capabilities of actions.
+It's highly advised that you read the documentation about [customizing action trigger buttons](../actions/overview) and [action modals](../actions/modals) to that you are aware of the full capabilities of actions.
 
 ## Row actions
 
@@ -264,20 +264,6 @@ This is useful for things like "create" actions, which are not related to any sp
 ## Column actions
 
 Actions can be added to columns, such that when a cell in that column is clicked, it acts as the trigger for an action. You can learn more about [column actions](columns/overview#triggering-actions) in the documentation.
-
-## Prebuilt table actions
-
-Filament includes several prebuilt actions and bulk actions that you can add to a table. Their aim is to simplify the most common Eloquent-related actions:
-
-- [Create](../actions/prebuilt-actions/create)
-- [Edit](../actions/prebuilt-actions/edit)
-- [View](../actions/prebuilt-actions/view)
-- [Delete](../actions/prebuilt-actions/delete)
-- [Replicate](../actions/prebuilt-actions/replicate)
-- [Force-delete](../actions/prebuilt-actions/force-delete)
-- [Restore](../actions/prebuilt-actions/restore)
-- [Import](../actions/prebuilt-actions/import)
-- [Export](../actions/prebuilt-actions/export)
 
 ## Grouping actions
 

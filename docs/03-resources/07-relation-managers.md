@@ -208,7 +208,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `CreateAction`
 
-To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/create).
+To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/create).
 
 ## Editing related records
 
@@ -235,7 +235,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `EditAction`
 
-To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/edit).
+To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/edit).
 
 ## Attaching and detaching records
 
@@ -540,11 +540,11 @@ public function table(Table $table): Table
 
 ### Customizing the `DeleteAction`
 
-To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/delete).
+To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [Actions documentation](../../actions/delete).
 
 ## Importing related records
 
-The [`ImportAction`](../../actions/prebuilt-actions/import) can be added to the header of a relation manager to import records. In this case, you probably want to tell the importer which owner these new records belong to. You can use [import options](../../actions/prebuilt-actions/import#using-import-options) to pass through the ID of the owner record:
+The [`ImportAction`](../../actions/import) can be added to the header of a relation manager to import records. In this case, you probably want to tell the importer which owner these new records belong to. You can use [import options](../../actions/import#using-import-options) to pass through the ID of the owner record:
 
 ```php
 ImportAction::make()

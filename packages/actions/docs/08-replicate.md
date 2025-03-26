@@ -4,7 +4,7 @@ title: Replicate action
 
 ## Introduction
 
-Filament includes a prebuilt action that is able to [replicate](https://laravel.com/docs/eloquent#replicating-models) Eloquent records. You may use it like so:
+Filament includes an action that is able to [replicate](https://laravel.com/docs/eloquent#replicating-models) Eloquent records. You may use it like so:
 
 ```php
 use Filament\Actions\ReplicateAction;
