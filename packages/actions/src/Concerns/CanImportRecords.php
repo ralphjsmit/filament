@@ -440,7 +440,18 @@ trait CanImportRecords
     protected function detectCsvEncoding(mixed $resource): ?string
     {
         rewind($resource);
-        $contentSample = fread($resource, 8192);
+
+        $lineCount = 0;
+        $contentSample = '';
+
+        while (!feof($resource) && $lineCount < 20) {
+            $line = fgets($resource);
+            if ($line === false) {
+                break;
+            }
+            $contentSample .= $line;
+            $lineCount++;
+        }
 
         // The encoding of a subset should be declared before the encoding of its superset.
         $encodings = [
