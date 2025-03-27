@@ -25,7 +25,9 @@ class XlsxDownloader implements Downloader
 
         if ($disk->exists($filePath = $directory . DIRECTORY_SEPARATOR . $fileName)) {
             return response()->streamDownload(function () use ($disk, $filePath) {
-                if (ob_get_level()) ob_end_clean();
+                if (ob_get_level()) {
+                    ob_end_clean();
+                }
                 echo $disk->get($filePath);
                 flush();
             }, $fileName, [
