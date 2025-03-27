@@ -28,7 +28,9 @@ class XlsxDownloader implements Downloader
                 if (ob_get_level()) {
                     ob_end_clean();
                 }
+
                 echo $disk->get($filePath);
+
                 flush();
             }, $fileName, [
                 'Content-Type' => 'application/vnd.ms-excel',
