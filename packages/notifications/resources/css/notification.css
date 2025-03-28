@@ -26,7 +26,11 @@
     }
 
     & .fi-no-notification-body {
-        @apply overflow-hidden text-sm break-words text-gray-500 dark:text-gray-400;
+        @apply overflow-hidden text-sm text-pretty break-words text-gray-500 dark:text-gray-400;
+
+        & > p:not(:first-of-type) {
+            @apply mt-1;
+        }
     }
 
     &:not(.fi-inline) {

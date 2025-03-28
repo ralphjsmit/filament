@@ -297,7 +297,7 @@ class CreateRecord extends Page
             return $this->getResourceUrl('edit', $this->getRedirectUrlParameters());
         }
 
-        return $this->getResourceUrl();
+        return $this->getResourceUrl(parameters: $this->getRedirectUrlParameters());
     }
 
     /**

@@ -3,8 +3,6 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Schema;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;

@@ -233,28 +233,39 @@ trait CanNotify
 
     public function getFailureNotificationBody(): ?string
     {
-        return $this->evaluate($this->failureNotificationBody, $this->getFailureNotificationNamedInjections()) ?? implode(
-            ' ',
-            [
-                ...$this->bulkAuthorizationFailureMessages,
-                ...($this->bulkAuthorizationFailureWithoutMessageCount && filled($message = $this->evaluate(
-                    $this->missingBulkAuthorizationFailureNotificationMessage,
-                    [
-                        'count' => $this->bulkAuthorizationFailureWithoutMessageCount,
-                        'isAll' => $this->bulkAuthorizationFailureWithoutMessageCount === $this->totalSelectedRecordsCount,
-                        'total' => $this->totalSelectedRecordsCount,
-                    ],
-                )) ? [$message] : []),
-                ...$this->getBulkProcessingFailureMessages(),
-                ...($this->bulkProcessingFailureWithoutMessageCount && filled($message = $this->evaluate(
-                    $this->missingBulkProcessingFailureNotificationMessage,
-                    [
-                        'count' => $this->bulkProcessingFailureWithoutMessageCount,
-                        'isAll' => $this->bulkProcessingFailureWithoutMessageCount === $this->totalSelectedRecordsCount,
-                        'total' => $this->totalSelectedRecordsCount,
-                    ],
-                )) ? [$message] : []),
-            ],
+        $body = $this->evaluate($this->failureNotificationBody, $this->getFailureNotificationNamedInjections());
+
+        if (filled($body)) {
+            return $body;
+        }
+
+        $messages = [
+            ...$this->bulkAuthorizationFailureMessages,
+            ...($this->bulkAuthorizationFailureWithoutMessageCount && filled($message = $this->evaluate(
+                $this->missingBulkAuthorizationFailureNotificationMessage,
+                [
+                    'count' => $this->bulkAuthorizationFailureWithoutMessageCount,
+                    'isAll' => $this->bulkAuthorizationFailureWithoutMessageCount === $this->totalSelectedRecordsCount,
+                    'total' => $this->totalSelectedRecordsCount,
+                ],
+            )) ? [$message] : []),
+            ...$this->getBulkProcessingFailureMessages(),
+            ...($this->bulkProcessingFailureWithoutMessageCount && filled($message = $this->evaluate(
+                $this->missingBulkProcessingFailureNotificationMessage,
+                [
+                    'count' => $this->bulkProcessingFailureWithoutMessageCount,
+                    'isAll' => $this->bulkProcessingFailureWithoutMessageCount === $this->totalSelectedRecordsCount,
+                    'total' => $this->totalSelectedRecordsCount,
+                ],
+            )) ? [$message] : []),
+        ];
+
+        return implode(
+            '',
+            array_map(
+                fn (string $message): string => "<p>{$message}</p>",
+                $messages,
+            ),
         );
     }
 

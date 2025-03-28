@@ -23,9 +23,11 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 use function Filament\Support\is_app_url;
@@ -350,7 +352,29 @@ class EditRecord extends Page
 
     protected function getRedirectUrl(): ?string
     {
-        return null;
+        try {
+            $this->authorizeAccess();
+
+            return null;
+        } catch (AuthorizationException | HttpExceptionInterface) {
+            // Do nothing.
+        }
+
+        $resource = static::getResource();
+
+        if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
+            return $this->getResourceUrl('view', $this->getRedirectUrlParameters());
+        }
+
+        return $this->getResourceUrl(parameters: $this->getRedirectUrlParameters());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getRedirectUrlParameters(): array
+    {
+        return [];
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

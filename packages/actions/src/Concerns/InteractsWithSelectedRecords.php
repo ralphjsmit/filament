@@ -115,7 +115,7 @@ trait InteractsWithSelectedRecords
         if (filled($key)) {
             $this->bulkProcessingFailureMessages[$key] = [
                 'message' => $message,
-                'count' => $this->bulkProcessingFailureMessages[$key]['count'] ?? 0,
+                'count' => ($this->bulkProcessingFailureMessages[$key]['count'] ?? 0) + 1,
             ];
         } else {
             $this->bulkProcessingFailureWithoutMessageCount++;
