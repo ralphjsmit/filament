@@ -31,7 +31,7 @@ html.fi {
 }
 
 .fi-layout {
-    @apply flex min-h-screen w-full flex-row-reverse overflow-x-clip;
+    @apply flex h-full w-full flex-row-reverse overflow-x-clip;
 }
 
 .fi-main-ctn {
