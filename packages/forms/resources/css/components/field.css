@@ -16,6 +16,10 @@
         & > .fi-sc:nth-child(1) {
             @apply grow-0;
         }
+
+        &.fi-hidden {
+            @apply hidden;
+        }
     }
 
     & .fi-fo-field-label-content {
