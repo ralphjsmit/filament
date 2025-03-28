@@ -1362,7 +1362,9 @@
                         @if ($isColumnSearchVisible || count($records))
                             <tbody>
                                 @if ($isColumnSearchVisible)
-                                    <tr class="fi-ta-row fi-ta-row-not-reorderable">
+                                    <tr
+                                        class="fi-ta-row fi-ta-row-not-reorderable"
+                                    >
                                         @if (count($records))
                                             @if ($isReordering)
                                                 <td></td>
@@ -1658,7 +1660,9 @@
                                                 @endif
 
                                                 @if ($isSelectionEnabled && ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) && (! $isReordering))
-                                                    <td class="fi-ta-cell">
+                                                    <td
+                                                        class="fi-ta-cell fi-ta-selection-cell"
+                                                    >
                                                         @if ($isRecordSelectable($record))
                                                             <input
                                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
@@ -1781,7 +1785,9 @@
                                                 @endif
 
                                                 @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells && (! $isReordering))
-                                                    <td class="fi-ta-cell">
+                                                    <td
+                                                        class="fi-ta-cell fi-ta-selection-cell"
+                                                    >
                                                         @if ($isRecordSelectable($record))
                                                             <input
                                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"

@@ -13,6 +13,14 @@
     & .fi-fo-field-label {
         @apply flex items-start gap-x-3;
 
+        & > .fi-checkbox-input {
+            @apply mt-0.5;
+        }
+
+        & > .fi-toggle {
+            @apply -my-0.5;
+        }
+
         & > .fi-sc:nth-child(1) {
             @apply grow-0;
         }
