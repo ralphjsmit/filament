@@ -1,7 +1,9 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -39,6 +41,8 @@ Action::make('sendEmail')
     })
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as `$data`, the `action()` function can inject various utilities as parameters.</UtilityInjection>
+
 Usually, actions get executed without redirecting the user away from the page. This is because we extensively use Livewire. However, actions can be much simpler, and don't even need a modal. You can pass a URL to an action, and when the user clicks on the button, they are redirected to that page:
 
 ```php
@@ -47,6 +51,8 @@ use Filament\Actions\Action;
 Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `url()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 The entire look of the action's trigger button and the modal is customizable using fluent PHP methods. We provide a sensible and consistent styling for the UI, but all of this is customizable with CSS.
 
@@ -63,6 +69,8 @@ Filament includes several actions that you can add to your app. Their aim is to 
 - [Restore](restore)
 - [Import](import)
 - [Export](export)
+
+You can also create your own actions to do anything, these are just common ones that we include out of the box.
 
 ## Choosing a trigger style
 
@@ -138,6 +146,8 @@ Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Setting a color
 
 Buttons may have a [color](../styling/colors) to indicate their significance:
@@ -148,6 +158,8 @@ use Filament\Actions\Action;
 Action::make('delete')
     ->color('danger')
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="actions/trigger-button/danger" alt="Red trigger" version="4.x" />
 
@@ -163,6 +175,8 @@ Action::make('create')
     ->size(Size::Large)
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="actions/trigger-button/large" alt="Large trigger" version="4.x" />
 
 ## Setting an icon
@@ -177,6 +191,8 @@ Action::make('edit')
     ->icon('heroicon-m-pencil-square')
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="actions/trigger-button/icon" alt="Trigger with icon" version="4.x" />
 
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
@@ -190,6 +206,8 @@ Action::make('edit')
     ->icon('heroicon-m-pencil-square')
     ->iconPosition(IconPosition::After)
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `iconPosition()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="actions/trigger-button/icon-after" alt="Trigger with icon after the label" version="4.x" />
 
@@ -211,6 +229,8 @@ Action::make('edit')
 
 This is useful for authorization of certain actions to only users who have permission.
 
+<UtilityInjection set="actions" version="4.x">As well as allowing static values, the `visible()` and `hidden()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 ### Disabling a button
 
 If you want to disable a button instead of hiding it, you can use the `disabled()` method:
@@ -231,6 +251,8 @@ Action::make('delete')
     ->disabled(! auth()->user()->can('delete', $this->post))
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Registering keybindings
 
 You can attach keyboard shortcuts to trigger buttons. These use the same key codes as [Mousetrap](https://craig.is/killing/mice):
@@ -242,6 +264,8 @@ Action::make('save')
     ->action(fn () => $this->save())
     ->keyBindings(['command+s', 'ctrl+s'])
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `keyBindings()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding a badge to the corner of the button
 
@@ -256,6 +280,8 @@ Action::make('filter')
     ->badge(5)
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="actions/trigger-button/badged" alt="Trigger with badge" version="4.x" />
 
 You can also pass a [color](../styling/colors) to be used for the badge:
@@ -269,6 +295,8 @@ Action::make('filter')
     ->badge(5)
     ->badgeColor('success')
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="actions/trigger-button/success-badged" alt="Trigger with green badge" version="4.x" />
 
@@ -287,9 +315,22 @@ Action::make('edit')
 
 <AutoScreenshot name="actions/trigger-button/outlined" alt="Outlined trigger button" version="4.x" />
 
-## Adding extra HTML attributes
+Optionally, you may pass a boolean value to control if the label should be hidden or not:
 
-You can pass extra HTML attributes to the button which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->button()
+    ->outlined(FeatureFlag::active())
+```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `outlined()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Adding extra HTML attributes to an action
+
+You can pass extra HTML attributes to the action via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
 
 ```php
 use Filament\Actions\Action;
@@ -301,17 +342,11 @@ Action::make('edit')
     ])
 ```
 
-If you pass CSS classes in a string, they will be merged with the default classes that already apply to the other HTML element of the button:
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-```php
-use Filament\Actions\Action;
-
-Action::make('edit')
-    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
-    ->extraAttributes([
-        'class' => 'mx-auto my-8',
-    ])
-```
+<Aside variant="tip">
+    By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ## Rate limiting actions
 
@@ -328,6 +363,8 @@ If the action opens a modal, the rate limit will be applied when the modal is su
 
 If an action is opened with arguments or for a specific Eloquent record, the rate limit will apply to each unique combination of arguments or record for each action. The rate limit is also unique to the current Livewire component / page in a panel.
 
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `rateLimit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Customizing the rate limited notification
 
 When an action is rate limited, a notification is dispatched to the user, which indicates the rate limit.
@@ -341,6 +378,8 @@ DeleteAction::make()
     ->rateLimit(5)
     ->rateLimitedNotificationTitle('Slow down!')
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `rateLimitedNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may customize the entire notification using the `rateLimitedNotification()` method:
 
@@ -358,6 +397,8 @@ DeleteAction::make()
             ->body("You can try deleting again in {$exception->secondsUntilAvailable} seconds."),
     )
 ```
+
+<UtilityInjection set="actions" version="4.x" extras="Exception;;DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;;$exception;;The exception encountered when the rate limit was hit.||Minutes until available;;int;;$minutes;;The number of minutes until the rate limit will pass.||Seconds until available;;int;;$seconds;;The number of seconds until the rate limit will pass.||Notification;;Filament\Notifications\Notification;;$notification;;The default notification object for the rate limit, which could be a useful starting point for customization.">As well as allowing a static value, the `rateLimitedNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the rate limit behavior
 
@@ -447,6 +488,18 @@ function (array $data) {
 
 Be aware that this will be empty if the modal has not been submitted yet.
 
+### Injecting the Eloquent record
+
+If your action is associated with an Eloquent record, for example if it is on a table row, you can inject the record using a `$record` parameter:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+function (Model $record) {
+    // ...
+}
+```
+
 ### Injecting the current arguments
 
 If you wish to access the [current arguments](adding-an-action-to-a-livewire-component#passing-action-arguments) that have been passed to the action, define an `$arguments` parameter:
@@ -456,6 +509,19 @@ function (array $arguments) {
     // ...
 }
 ```
+
+### Injecting utilities from a schema
+
+You can access various additional utilities if your action is defined in a schema:
+
+- `$schema` - The schema instance that the action belongs to.
+- `$schemaComponent` - The schema component instance that the action belongs to.
+- `$schemaComponentState` - The current value of the schema component.
+- `$schemaGet` - A function for retrieving values from the schema data. Validation is not run on form fields.
+- `$schemaSet` - A function for setting values in the schema data.
+- `$schemaOperation` - The current operation being performed by the schema. Usually `create`, `edit`, or `view`.
+
+For more information, please visit the [Schemas section](../schemas/overview#component-utility-injection).
 
 ### Injecting the current Livewire component instance
 
