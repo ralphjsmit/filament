@@ -3,11 +3,11 @@
     "type": "module",
     "scripts": {
         "dev:js": "node bin/build.js --dev",
-        "dev:forms-css": "npx @tailwindcss/cli -i ./packages/forms/dist/index.css -o ./packages/forms/dist/index.css --watch",
+        "dev:forms-css": "cp ./packages/forms/dist/index.css ./packages/forms/dist/tmp.css && npx @tailwindcss/cli -i ./packages/forms/dist/tmp.css -o ./packages/forms/dist/index.css --watch && rm ./packages/forms/dist/tmp.css",
         "dev:panels-css": "npx @tailwindcss/cli -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --watch",
         "dev": "npm-run-all --parallel dev:*",
         "build:js": "node bin/build.js",
-        "build:forms-css": "npx @tailwindcss/cli -i ./packages/forms/dist/index.css -o ./packages/forms/dist/index.css --minify",
+        "build:forms-css": "cp ./packages/forms/dist/index.css ./packages/forms/dist/tmp.css && npx @tailwindcss/cli -i ./packages/forms/dist/tmp.css -o ./packages/forms/dist/index.css --minify && rm ./packages/forms/dist/tmp.css",
         "build:panels-css": "npx @tailwindcss/cli -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --minify",
         "build": "npm-run-all build:*",
         "build-demo": "npm run build && cd ../demo && php artisan filament:upgrade && cd ../filament && cd docs-assets/app && php artisan filament:upgrade && npm run build && cd ../../",
