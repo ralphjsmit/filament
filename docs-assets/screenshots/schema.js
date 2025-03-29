@@ -1186,6 +1186,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/overview': {
+        url: 'forms/overview',
+        selector: '#account-settings',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/overview/example': {
         url: 'schemas/overview',
         selector: '#example',
@@ -1396,6 +1405,15 @@ export default {
     'schemas/layout/actions/independent/vertically-aligned-end': {
         url: 'schemas/layout',
         selector: '#independentActionsVerticallyAlignedEnd',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/overview': {
+        url: 'infolists/overview',
+        selector: '#product_info',
         viewport: {
             width: 1920,
             height: 640,
