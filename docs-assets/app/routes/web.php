@@ -2,7 +2,9 @@
 
 use App\Livewire\ActionsDemo;
 use App\Livewire\Forms\FieldsDemo;
+use App\Livewire\Forms\FieldsOverview;
 use App\Livewire\Infolists\EntriesDemo;
+use App\Livewire\Infolists\EntriesOverview;
 use App\Livewire\NotificationsDemo;
 use App\Livewire\Panels\Navigation\ActiveIcon;
 use App\Livewire\Panels\Navigation\Badge;
@@ -39,10 +41,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/actions', ActionsDemo::class);
 
 Route::prefix('forms')->group(function (): void {
+    Route::get('overview', FieldsOverview::class);
     Route::get('fields', FieldsDemo::class);
 });
 
 Route::prefix('infolists')->group(function (): void {
+    Route::get('overview', EntriesOverview::class);
     Route::get('entries', EntriesDemo::class);
 });
 
