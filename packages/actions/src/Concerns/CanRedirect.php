@@ -39,11 +39,7 @@ trait CanRedirect
     {
         $url = $this->evaluate($url);
 
-        $useSpaNavigation = FilamentView::hasSpaMode()
-            ? ($navigate ?? is_app_url($url))
-            : false;
-
-        $this->getLivewire()->redirect($url, navigate: $useSpaNavigation);
+        $this->getLivewire()->redirect($url, navigate: $navigate ?? FilamentView::hasSpaMode($url));
     }
 
     public function failureRedirectUrl(string | Closure | null $url): static
