@@ -50,8 +50,10 @@ class Denial extends Response
         if ($this->getMessageUsing) {
             return app()->call($this->getMessageUsing, [
                 'count' => $count,
+                'failureCount' => $count,
                 'isAll' => $count === $total,
                 'total' => $total,
+                'totalCount' => $total,
             ])
                 ?? parent::message()
                 ?? (($count === 1) && ($total === 1)
