@@ -1,6 +1,6 @@
 name: Unexpected v4 breaking change
 description: If a breaking change is not documented in the upgrade guide and not automatically upgraded by the script, report it here
-labels: bug,unconfirmed,high priority
+labels: unexpected major version breaking change,unconfirmed,high priority
 projects: ['filamentphp/2']
 body:
   - type: markdown
