@@ -10,9 +10,9 @@ Route::middleware('filament.actions')
     ->name('filament.')
     ->prefix($prefix)
     ->group(function () {
-        Route::get("/exports/{export}/download", DownloadExport::class)
+        Route::get('/exports/{export}/download', DownloadExport::class)
             ->name('exports.download');
 
-        Route::get("/imports/{import}/failed-rows/download", DownloadImportFailureCsv::class)
+        Route::get('/imports/{import}/failed-rows/download', DownloadImportFailureCsv::class)
             ->name('imports.failed-rows.download');
     });
