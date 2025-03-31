@@ -1,6 +1,7 @@
 ---
 title: Replicate action
 ---
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -10,23 +11,6 @@ Filament includes an action that is able to [replicate](https://laravel.com/docs
 use Filament\Actions\ReplicateAction;
 
 ReplicateAction::make()
-    ->record($this->post)
-```
-
-If you want to replicate table rows, you may do so like this:
-
-```php
-use Filament\Actions\ReplicateAction;
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->actions([
-            ReplicateAction::make(),
-            // ...
-        ]);
-}
 ```
 
 ## Excluding attributes
@@ -66,17 +50,7 @@ ReplicateAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
 
-If you want to redirect using the replica, use the `$replica` parameter:
-
-```php
-use Filament\Actions\ReplicateAction;
-use Illuminate\Database\Eloquent\Model;
-
-ReplicateAction::make()
-    ->successRedirectUrl(fn (Model $replica): string => route('posts.edit', [
-        'post' => $replica,
-    ]))
-```
+<UtilityInjection set="actions" version="4.x" extras="Replica Eloquent record;;Illuminate\Database\Eloquent\Model;;$replica;;The Eloquent model instance that was just created as a replica of the original record.">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
 
 ## Customizing the replicate notification
 
@@ -91,6 +65,8 @@ ReplicateAction::make()
     ->successNotificationTitle('Category replicated')
 ```
 
+<UtilityInjection set="actions" version="4.x" extras="Replica Eloquent record;;Illuminate\Database\Eloquent\Model;;$replica;;The Eloquent model instance that was just created as a replica of the original record.">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 You may customize the entire notification using the `successNotification()` method:
 
 ```php
@@ -104,6 +80,17 @@ ReplicateAction::make()
             ->title('Category replicated')
             ->body('The category has been replicated successfully.'),
     )
+```
+
+<UtilityInjection set="actions" version="4.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.||Replica Eloquent record;;Illuminate\Database\Eloquent\Model;;$replica;;The Eloquent model instance that was just created as a replica of the original record.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+To disable the notification altogether, use the `successNotification(null)` method:
+
+```php
+use Filament\Actions\RestoreAction;
+
+ReplicateAction::make()
+    ->successNotification(null)
 ```
 
 ## Lifecycle hooks
@@ -125,6 +112,8 @@ ReplicateAction::make()
         // Runs after the replica has been saved to the database.
     })
 ```
+
+<UtilityInjection set="actions" version="4.x" extras="Replica Eloquent record;;Illuminate\Database\Eloquent\Model;;$replica;;The Eloquent model instance that was just created as a replica of the original record.">These hook functions can inject various utilities as parameters.</UtilityInjection>
 
 ## Halting the replication process
 

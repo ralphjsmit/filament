@@ -254,7 +254,7 @@ class CreateCategory extends CreateRecord
 }
 ```
 
-Inside the `getSteps()` array, return your [wizard steps](../../schemas/layouts/wizard):
+Inside the `getSteps()` array, return your [wizard steps](../../schemas/wizards):
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;

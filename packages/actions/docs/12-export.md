@@ -1,6 +1,8 @@
 ---
 title: Export action
 ---
+import Aside from "@components/Aside.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -22,9 +24,13 @@ php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
 
-> If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
+<Aside variant="info">
+    If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
+</Aside>
 
-> If you're using UUIDs for your `User` model, make sure that your `notifiable` column in the notifications migration is using `uuidMorphs()`: `$table->uuidMorphs('notifiable')`.
+<Aside variant="info">
+    If you're using UUIDs for your `User` model, make sure that your `notifiable` column in the notifications migration is using `uuidMorphs()`: `$table->uuidMorphs('notifiable')`.
+</Aside>
 
 You may use the `ExportAction` like so:
 
@@ -159,6 +165,8 @@ ExportColumn::make('amount_including_vat')
     })
 ```
 
+<UtilityInjection set="exportColumns" version="4.x">As well as `$record`, the `state()` function can inject various utilities as parameters.</UtilityInjection>
+
 ### Formatting the value of an export column
 
 You may instead pass a custom formatting callback to `formatStateUsing()`, which accepts the `$state` of the cell, and optionally the Eloquent `$record`:
@@ -169,6 +177,8 @@ use Filament\Actions\Exports\ExportColumn;
 ExportColumn::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
 ```
+
+<UtilityInjection set="exportColumns" version="4.x" extras="State;;mixed;;$state;;The state to format.">As well as `$state`, the `formatStateUsing()` function can inject various utilities as parameters.</UtilityInjection>
 
 If there are [multiple values](#exporting-multiple-values-in-a-cell) in the column, the function will be called for each value.
 
@@ -183,6 +193,8 @@ ExportColumn::make('description')
     ->limit(50)
 ```
 
+<UtilityInjection set="exportColumns" version="4.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 #### Limiting word count
 
 You may limit the number of `words()` displayed in the cell:
@@ -193,6 +205,8 @@ use Filament\Actions\Exports\ExportColumn;
 ExportColumn::make('description')
     ->words(10)
 ```
+
+<UtilityInjection set="exportColumns" version="4.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Adding a prefix or suffix
 
@@ -205,6 +219,8 @@ ExportColumn::make('domain')
     ->prefix('https://')
     ->suffix('.com')
 ```
+
+<UtilityInjection set="exportColumns" version="4.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Exporting multiple values in a cell
 
@@ -476,6 +492,8 @@ ExportAction::make()
     ])
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 Now, you can access the data from these options inside the exporter class, by injecting the `$options` argument into any closure function. For example, you might want to use it inside `formatStateUsing()` to [format a column's value](#formatting-the-value-of-an-export-column):
 
 ```php
@@ -561,7 +579,11 @@ ExportAction::make()
     ->chunkSize(250)
 ```
 
-If you are encountering memory or timeout issues when exporting large CSV files, you may wish to reduce the chunk size.
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="tip">
+    If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
+</Aside>
 
 ## Changing the CSV delimiter
 
@@ -573,6 +595,8 @@ public static function getCsvDelimiter(): string
     return ';';
 }
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You can only specify a single character, otherwise an exception will be thrown.
 

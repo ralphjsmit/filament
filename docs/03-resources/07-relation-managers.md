@@ -32,7 +32,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 > These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
 
-All layout form components ([Grid](../../schemas/layouts/grid#grid-component), [Section](../../schemas/layouts/section), [Fieldset](../../schemas/layouts/fieldset), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../../schemas/layouts#grid-component), [Section](../../schemas/sections), [Fieldset](../../schemas/layouts#fieldset-component), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -656,7 +656,7 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
 
 ### Customizing the content tab
 
-On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../../schemas/layouts/tabs) customization methods:
+On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../../schemas/tabs) customization methods:
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;
@@ -683,7 +683,7 @@ public function getContentTabPosition(): ?ContentTabPosition
 
 ## Customizing relation manager tabs
 
-To customize the tab for a relation manager, override the `getTabComponent()` method, and use any [Tab](../../schemas/layouts/tabs) customization methods:
+To customize the tab for a relation manager, override the `getTabComponent()` method, and use any [Tab](../../schemas/tabs) customization methods:
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;

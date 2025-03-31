@@ -139,10 +139,7 @@ abstract class Importer
                 continue;
             }
 
-            $this->data[$columnName] = $column->castState(
-                $this->data[$columnName],
-                $this->options,
-            );
+            $this->data[$columnName] = $column->castState($this->data[$columnName]);
         }
     }
 

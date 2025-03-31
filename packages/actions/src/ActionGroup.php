@@ -329,7 +329,16 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
-            'record' => [$this->getRecord()],
+            'livewire' => [$this->getLivewire()],
+            'model' => [$this->getModel() ?? $this->getSchemaContainer()?->getModel() ?? $this->getSchemaComponent()?->getModel()],
+            'mountedActions' => [$this->getLivewire()->getMountedActions()],
+            'record' => [$this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
+            'schema' => [$this->getSchemaContainer()],
+            'schemaComponent', 'component' => [$this->getSchemaComponent()],
+            'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
+            'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()],
+            'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
+            'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

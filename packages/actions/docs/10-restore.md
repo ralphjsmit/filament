@@ -1,6 +1,7 @@
 ---
 title: Restore action
 ---
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -10,25 +11,9 @@ Filament includes an action that is able to restore [soft deleted](https://larav
 use Filament\Actions\RestoreAction;
 
 RestoreAction::make()
-    ->record($this->post)
 ```
 
-If you want to add this action to a row of a table, you may do so like this:
-
-```php
-use Filament\Actions\RestoreAction;
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->actions([
-            RestoreAction::make()
-        ]);
-}
-```
-
-Or if you want to add it as a table bulk action, so that the user can choose which rows to restore, they can use `Filament\Actions\RestoreBulkAction`:
+Or if you want to add it as a table bulk action, so that the user can choose which rows to restore, use `Filament\Actions\RestoreBulkAction`:
 
 ```php
 use Filament\Actions\RestoreBulkAction;
@@ -54,6 +39,8 @@ RestoreAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
+
 ## Customizing the restore notification
 
 When the record is successfully restored, a notification is dispatched to the user, which indicates the success of their action.
@@ -66,6 +53,8 @@ use Filament\Actions\RestoreAction;
 RestoreAction::make()
     ->successNotificationTitle('User restored')
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may customize the entire notification using the `successNotification()` method:
 
@@ -81,6 +70,8 @@ RestoreAction::make()
             ->body('The user has been restored successfully.'),
     )
 ```
+
+<UtilityInjection set="actions" version="4.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 To disable the notification altogether, use the `successNotification(null)` method:
 
@@ -106,3 +97,5 @@ RestoreAction::make()
         // ...
     })
 ```
+
+<UtilityInjection set="actions" version="4.x">These hook functions can inject various utilities as parameters.</UtilityInjection>

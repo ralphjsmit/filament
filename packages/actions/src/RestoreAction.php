@@ -44,7 +44,7 @@ class RestoreAction extends Action
                 return;
             }
 
-            $result = $this->process(static fn () => $record->restore());
+            $result = $this->process(static fn (): ?bool => $record->restore());
 
             if (! $result) {
                 $this->failure();

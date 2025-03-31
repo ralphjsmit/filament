@@ -2,6 +2,7 @@
 title: Grouping actions
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -44,63 +45,6 @@ ActionGroup::make([
 
 <AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="4.x" />
 
-### Setting the action group button icon
-
-You may set the [icon](../styling/icons) of the action group button using the `icon()` method:
-
-```php
-use Filament\Actions\ActionGroup;
-
-ActionGroup::make([
-    // ...
-])->icon('heroicon-m-ellipsis-horizontal');
-```
-
-<AutoScreenshot name="tables/actions/group-icon" alt="Table with customized action group icon" version="4.x" />
-
-### Setting the action group button color
-
-You may set the color of the action group button using the `color()` method:
-
-```php
-use Filament\Actions\ActionGroup;
-
-ActionGroup::make([
-    // ...
-])->color('info');
-```
-
-<AutoScreenshot name="tables/actions/group-color" alt="Table with customized action group color" version="4.x" />
-
-### Setting the action group button size
-
-Buttons come in 3 sizes - `sm`, `md` or `lg`. You may set the size of the action group button using the `size()` method:
-
-```php
-use Filament\Actions\ActionGroup;
-use Filament\Support\Enums\Size;
-
-ActionGroup::make([
-    // ...
-])->size(Size::Small);
-```
-
-<AutoScreenshot name="tables/actions/group-small" alt="Table with small action group" version="4.x" />
-
-### Setting the action group tooltip
-
-You may set the tooltip of the action group using the `tooltip()` method:
-
-```php
-use Filament\Actions\ActionGroup;
-
-ActionGroup::make([
-    // ...
-])->tooltip('Actions');
-```
-
-<AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" version="4.x" />
-
 ## Setting the placement of the dropdown
 
 The dropdown may be positioned relative to the trigger button by using the `dropdownPlacement()` method:
@@ -113,6 +57,8 @@ ActionGroup::make([
 ])
     ->dropdownPlacement('top-start')
 ```
+
+<UtilityInjection set="actionGroups" version="4.x">The `dropdownPlacement()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="actions/group/placement" alt="Action group with top placement style" version="4.x" />
 
@@ -133,6 +79,8 @@ ActionGroup::make([
 
 The `dropdown(false)` method puts the actions inside the parent dropdown, instead of a new nested dropdown.
 
+<UtilityInjection set="actionGroups" version="4.x">The `dropdown()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="actions/group/nested" alt="Action groups nested with dividers" version="4.x" />
 
 ## Setting the width of the dropdown
@@ -149,18 +97,7 @@ ActionGroup::make([
     ->dropdownWidth(Width::ExtraSmall)
 ```
 
-## Controlling the maximum height of the dropdown
-
-The dropdown content can have a maximum height using the `maxHeight()` method, so that it scrolls. You can pass a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
-
-```php
-use Filament\Actions\ActionGroup;
-
-ActionGroup::make([
-    // Array of actions
-])
-    ->maxHeight('400px')
-```
+<UtilityInjection set="actionGroups" version="4.x">The `dropdownWidth()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Controlling the dropdown offset
 
@@ -174,3 +111,20 @@ ActionGroup::make([
 ])
     ->dropdownOffset(16)
 ```
+
+<UtilityInjection set="actionGroups" version="4.x">The `dropdownOffset()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Controlling the maximum height of the dropdown
+
+The dropdown content can have a maximum height using the `maxHeight()` method, so that it scrolls. You can pass a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
+
+```php
+use Filament\Actions\ActionGroup;
+
+ActionGroup::make([
+    // Array of actions
+])
+    ->maxHeight('400px')
+```
+
+<UtilityInjection set="actionGroups" version="4.x">The `maxHeight()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
