@@ -7,10 +7,10 @@ use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPosts;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
-use Illuminate\Support\Facades\DB;
-
 use function Filament\Tests\livewire;
+
 use function Pest\Laravel\assertSoftDeleted;
+use Illuminate\Support\Facades\DB;
 
 uses(TestCase::class);
 
