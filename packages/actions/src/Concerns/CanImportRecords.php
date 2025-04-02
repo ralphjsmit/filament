@@ -195,7 +195,7 @@ trait CanImportRecords
             }
 
             $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
-            $csvResults = Statement::create()->process($csvReader);
+            $csvResults = (new Statement)->process($csvReader);
 
             $totalRows = $csvResults->count();
             $maxRows = $action->getMaxRows() ?? $totalRows;
