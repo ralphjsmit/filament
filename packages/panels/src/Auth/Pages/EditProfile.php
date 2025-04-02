@@ -254,7 +254,7 @@ class EditProfile extends Page
 
         return FilamentNotification::make()
             ->success()
-            ->title($this->getSavedNotificationTitle());
+            ->title($title);
     }
 
     protected function getEmailChangeVerificationSentNotification(string $newEmail): ?FilamentNotification
