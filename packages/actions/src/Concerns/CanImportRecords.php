@@ -444,11 +444,13 @@ trait CanImportRecords
         $lineCount = 0;
         $contentSample = '';
 
-        while (!feof($resource) && $lineCount < 20) {
+        while ((! feof($resource)) && ($lineCount < 20)) {
             $line = fgets($resource);
+
             if ($line === false) {
                 break;
             }
+
             $contentSample .= $line;
             $lineCount++;
         }
