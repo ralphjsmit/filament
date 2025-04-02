@@ -166,7 +166,7 @@ abstract class EditTenantProfile extends Page
 
         return Notification::make()
             ->success()
-            ->title($this->getSavedNotificationTitle());
+            ->title($title);
     }
 
     protected function getSavedNotificationTitle(): ?string
