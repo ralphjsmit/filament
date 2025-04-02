@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Model;
 use Throwable;
 
 use function Filament\authorize;
-use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
@@ -91,8 +90,6 @@ abstract class RegisterTenant extends SimplePage
             $this->form->model($this->tenant)->saveRelationships();
 
             $this->callHook('afterRegister');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -105,8 +102,10 @@ abstract class RegisterTenant extends SimplePage
             throw $exception;
         }
 
+        $this->commitDatabaseTransaction();
+
         if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 
