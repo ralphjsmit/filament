@@ -5,7 +5,7 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-it('can macro a component', function () {
+test('component is macroable', function () {
     expect(Component::hasMacro('someMacro'))
         ->toBeFalse();
 
