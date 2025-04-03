@@ -74,7 +74,7 @@ trait HasCellState
         return $this->evaluate($this->defaultState);
     }
 
-    public function getState(): mixed
+    public function getState(bool $fresh = false): mixed
     {
         $record = $this->getRecord();
 
@@ -82,7 +82,7 @@ trait HasCellState
             return null;
         }
 
-        if (array_key_exists($record->getKey(), $this->cachedState)) {
+        if (! $fresh && array_key_exists($record->getKey(), $this->cachedState)) {
             return $this->cachedState[$record->getKey()];
         }
 
