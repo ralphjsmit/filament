@@ -180,7 +180,7 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            $state = $column->getState();
+            $state = $column->getState(fresh: true);
 
             if (is_array($state)) {
                 $state = json_encode($state);
@@ -216,7 +216,7 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            $state = $column->getState();
+            $state = $column->getState(fresh: true);
 
             if (is_array($state)) {
                 $state = json_encode($state);
@@ -254,7 +254,7 @@ class TestsColumns
 
             Assert::assertEquals(
                 $value,
-                $column->formatState($column->getState()),
+                $column->formatState($column->getState(fresh: true)),
                 message: "Failed asserting that a table column with name [{$name}] has a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
@@ -280,7 +280,7 @@ class TestsColumns
             $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
-                $column->formatState($column->getState()) == $value,
+                $column->formatState($column->getState(fresh: true)) == $value,
                 message: "Failed asserting that a table column with name [{$name}] does not have a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
