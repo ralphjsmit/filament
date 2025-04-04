@@ -122,8 +122,8 @@ TextInput::make('manufacturer')
         'Ford',
         'Mercedes-Benz',
         'Porsche',
-        'Toyota',
         'Tesla',
+        'Toyota',
         'Volkswagen',
     ])
 ```
@@ -292,7 +292,7 @@ TextInput::make('name')
 
 ## Text input validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to text inputs.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to text inputs.
 
 ### Length validation
 

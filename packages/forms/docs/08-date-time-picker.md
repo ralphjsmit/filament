@@ -300,7 +300,7 @@ DatePicker::make('date_of_birth')
 
 ## Date-time picker validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to date-time pickers.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to date-time pickers.
 
 ### Max date / min date validation
 
