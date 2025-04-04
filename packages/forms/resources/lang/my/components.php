@@ -228,10 +228,22 @@ return [
         ],
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Yes',
+            'false' => 'No',
+        ],
+
+    ],
+
     'repeater' => [
         'actions' => [
             'add' => [
                 'label' => ':label သို့ ထည့်သွင်းရန်',
+            ],
+            'add_between' => [
+                'label' => 'အပိုင်းများကြားတွင် ထည့်သွင်းရန်',
             ],
             'delete' => [
                 'label' => 'ဖျက်ရန်',
