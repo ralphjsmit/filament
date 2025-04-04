@@ -74,7 +74,7 @@ trait HasCellState
         return $this->evaluate($this->defaultState);
     }
 
-    public function getState(bool $fresh = false): mixed
+    public function getState(): mixed
     {
         $record = $this->getRecord();
 
@@ -82,7 +82,7 @@ trait HasCellState
             return null;
         }
 
-        if (! $fresh && array_key_exists($record->getKey(), $this->cachedState)) {
+        if (array_key_exists($record->getKey(), $this->cachedState)) {
             return $this->cachedState[$record->getKey()];
         }
 
@@ -138,6 +138,17 @@ trait HasCellState
         }
 
         return $state->all();
+    }
+
+    public function clearCache(): static
+    {
+        if (! app()->isRunningUnitTests()) {
+            throw new Exception('Clearing cache is only available in unit tests.');
+        }
+
+        $this->cachedState = [];
+
+        return $this;
     }
 
     public function separator(string | Closure | null $separator = ','): static
