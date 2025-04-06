@@ -101,6 +101,10 @@ trait HasCellState
             $state = $this->getDefaultState();
         }
 
+        if (!$record->getKey()) {
+            return $state;
+        }
+
         return $this->cachedState[$record->getKey()] = $state;
     }
 
