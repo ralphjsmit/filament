@@ -21,7 +21,7 @@ test('component is macroable', function () {
         ->toBeTrue();
 
     expect(Form::hasMacro('someMacro'))
-        ->toBeTrue(); // Decendant of `Component`...
+        ->toBeTrue(); // Descendant of `Component`...
 
     expect(Field::hasMacro('someMacro'))
         ->toBeFalse();
