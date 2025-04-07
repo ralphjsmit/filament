@@ -26,9 +26,9 @@ class SpatieTagsColumn extends TextColumn
     /**
      * @return array<string>
      */
-    public function getState(bool $isCached = true): array
+    public function getState(): array
     {
-        $state = parent::getState($isCached);
+        $state = parent::getState();
 
         if ($state && (! $state instanceof Collection)) {
             return $state;
