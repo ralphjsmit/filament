@@ -76,34 +76,24 @@ trait HasCellState
 
     public function getState(): mixed
     {
-        $record = $this->getRecord();
+        return $this->cacheState(function (): mixed {
+            $state = ($this->getStateUsing !== null) ?
+                $this->evaluate($this->getStateUsing) :
+                $this->getStateFromRecord();
 
-        if (! $record) {
-            return null;
-        }
+            if (is_string($state) && ($separator = $this->getSeparator())) {
+                $state = explode($separator, $state);
+                $state = (count($state) === 1 && blank($state[0])) ?
+                    [] :
+                    $state;
+            }
 
-        $recordKey = (string) $record->getKey();
+            if (blank($state)) {
+                $state = $this->getDefaultState();
+            }
 
-        if (array_key_exists($recordKey, $this->cachedState)) {
-            return $this->cachedState[$recordKey];
-        }
-
-        $state = ($this->getStateUsing !== null) ?
-            $this->evaluate($this->getStateUsing) :
-            $this->getStateFromRecord();
-
-        if (is_string($state) && ($separator = $this->getSeparator())) {
-            $state = explode($separator, $state);
-            $state = (count($state) === 1 && blank($state[0])) ?
-                [] :
-                $state;
-        }
-
-        if (blank($state)) {
-            $state = $this->getDefaultState();
-        }
-
-        return $this->cachedState[$recordKey] = $state;
+            return $state;
+        });
     }
 
     public function getStateFromRecord(): mixed
@@ -308,5 +298,22 @@ trait HasCellState
         }
 
         return (string) str($name)->beforeLast('.');
+    }
+
+    protected function cacheState(Closure $state): mixed
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return $state();
+        }
+
+        $recordKey = (string) $record->getKey();
+
+        if (array_key_exists($recordKey, $this->cachedState)) {
+            return $this->cachedState[$recordKey];
+        }
+
+        return $this->cachedState[$recordKey] = $state();
     }
 }
