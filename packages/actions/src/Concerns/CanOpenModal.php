@@ -35,7 +35,7 @@ trait CanOpenModal
     protected array $cachedModalActions;
 
     /**
-     * @var array<StaticAction>
+     * @var array<StaticAction|Closure>
      */
     protected array $modalActions = [];
 
@@ -215,7 +215,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<StaticAction>  $actions
+     * @param  array<StaticAction|Closure>  $actions
      */
     public function registerModalActions(array $actions): static
     {
@@ -399,7 +399,9 @@ trait CanOpenModal
         $actions = $this->getModalFooterActions();
 
         foreach ($this->modalActions as $action) {
-            $actions[$action->getName()] = $this->prepareModalAction($action);
+            foreach (Arr::wrap($this->evaluate($action)) as $modalAction) {
+                $actions[$modalAction->getName()] = $this->prepareModalAction($modalAction);
+            }
         }
 
         return $this->cachedModalActions = $actions;
