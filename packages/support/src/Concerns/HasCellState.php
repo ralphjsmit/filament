@@ -83,6 +83,7 @@ trait HasCellState
         }
 
         $recordKey = (string) $record->getKey();
+
         if (array_key_exists($recordKey, $this->cachedState)) {
             return $this->cachedState[$recordKey];
         }
