@@ -375,7 +375,7 @@ trait HasCellState
         $record = $this->getRecord();
 
         if (! $record) {
-            return $state();
+            return null;
         }
 
         if (is_array($record)) {
