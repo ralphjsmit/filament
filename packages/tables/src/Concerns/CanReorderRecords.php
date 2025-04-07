@@ -27,7 +27,7 @@ trait CanReorderRecords
                 in_array($orderColumn, $relationship->getPivotColumns())
             ) {
                 foreach ($order as $index => $recordKey) {
-                    $this->getTableRecord($recordKey)->{$relationship->getPivotAccessor()}->update([
+                    $this->getTableRecord($recordKey)->getRelationValue($relationship->getPivotAccessor())->update([
                         $orderColumn => $index + 1,
                     ]);
                 }
