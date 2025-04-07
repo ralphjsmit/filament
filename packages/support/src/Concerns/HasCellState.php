@@ -379,7 +379,7 @@ trait HasCellState
         }
 
         if (is_array($record)) { /** @phpstan-ignore function.impossibleType */
-            $recordKey = (string) ($record[ArrayRecord::getKeyName()] ?? null);
+            $recordKey = (string) ($record[ArrayRecord::getKeyName()] ?? null); /** @phpstan-ignore nullCoalesce.offset */
         } else {
             $recordKey = (string) $record->getKey();
         }
