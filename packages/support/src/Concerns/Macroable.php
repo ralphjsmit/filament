@@ -41,7 +41,7 @@ trait Macroable
 
     public static function hasMacro(string $name): bool
     {
-        return isset(static::$macros[$name]);
+        return (bool) static::getMacro($name);
     }
 
     /**

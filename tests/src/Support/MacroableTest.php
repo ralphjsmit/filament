@@ -1,19 +1,28 @@
 <?php
 
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Form;
 use Filament\Support\Components\Component;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
 test('component is macroable', function () {
-    expect(Component::hasMacro('someMacro'))
+    expect(ComponentContainer::hasMacro('someMacro'))
         ->toBeFalse();
 
-    expect(Component::hasMacro('someMacro'))
+    expect(ComponentContainer::hasMacro('someMacro'))
         ->toBeFalse();
 
-    Component::macro('someMacro', fn () => 'Hello');
+    ComponentContainer::macro('someMacro', fn () => 'Hello');
 
-    expect(Component::hasMacro('someMacro'))
+    expect(ComponentContainer::hasMacro('someMacro'))
         ->toBeTrue();
+
+    expect(Form::hasMacro('someMacro'))
+        ->toBeTrue(); // Decendant of `Component`...
+
+    expect(Field::hasMacro('someMacro'))
+        ->toBeFalse();
 });
