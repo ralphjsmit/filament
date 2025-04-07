@@ -2,7 +2,7 @@
     use Filament\Support\Enums\Alignment;
 
     $isDisabled = $isDisabled();
-    $state = $getState();
+    $state = $getCachedState();
     $mask = $getMask();
 
     $alignment = $getAlignment() ?? Alignment::Start;

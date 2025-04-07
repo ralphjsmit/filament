@@ -1,5 +1,5 @@
 @php
-    $state = $getState();
+    $state = $getCachedState();
 
     if ($state instanceof \Illuminate\Support\Collection) {
         $state = $state->all();

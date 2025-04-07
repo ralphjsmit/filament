@@ -2,7 +2,7 @@
     $canSelectPlaceholder = $canSelectPlaceholder();
     $isDisabled = $isDisabled();
 
-    $state = $getState();
+    $state = $getCachedState();
     if ($state instanceof \BackedEnum) {
         $state = $state->value;
     }

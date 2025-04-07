@@ -1,7 +1,7 @@
 @php
     use Filament\Tables\Columns\IconColumn\IconColumnSize;
 
-    $arrayState = $getState();
+    $arrayState = $getCachedState();
 
     if ($arrayState instanceof \Illuminate\Support\Collection) {
         $arrayState = $arrayState->all();

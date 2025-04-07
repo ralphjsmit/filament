@@ -15,7 +15,7 @@ trait CanBeCopied
             return true;
         }
 
-        $state = $this->getState();
+        $state = $this->getCachedState();
 
         if (! is_array($state)) {
             return $this->isCopyable($state);

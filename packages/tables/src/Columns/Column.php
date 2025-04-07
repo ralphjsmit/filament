@@ -80,7 +80,7 @@ class Column extends ViewComponent
             'livewire' => [$this->getLivewire()],
             'record' => [$this->getRecord()],
             'rowLoop' => [$this->getRowLoop()],
-            'state' => [$this->getState()],
+            'state' => [$this->getCachedState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };

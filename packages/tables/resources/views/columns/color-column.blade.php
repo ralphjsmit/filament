@@ -1,7 +1,7 @@
 @php
     $canWrap = $canWrap();
 
-    $arrayState = $getState();
+    $arrayState = $getCachedState();
 
     if ($arrayState instanceof \Illuminate\Support\Collection) {
         $arrayState = $arrayState->all();
