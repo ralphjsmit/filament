@@ -74,7 +74,7 @@ trait HasCellState
         return $this->evaluate($this->defaultState);
     }
 
-    public function getState(bool $isCached = true): mixed
+    public function getState(): mixed
     {
         $record = $this->getRecord();
 
@@ -84,7 +84,7 @@ trait HasCellState
 
         $recordKey = (string) $record->getKey();
 
-        if ($isCached && array_key_exists($recordKey, $this->cachedState)) {
+        if (array_key_exists($recordKey, $this->cachedState)) {
             return $this->cachedState[$recordKey];
         }
 
@@ -101,10 +101,6 @@ trait HasCellState
 
         if (blank($state)) {
             $state = $this->getDefaultState();
-        }
-
-        if (! $isCached) {
-            return $state;
         }
 
         return $this->cachedState[$recordKey] = $state;
@@ -144,6 +140,17 @@ trait HasCellState
         }
 
         return $state->all();
+    }
+
+    public function clearCache(): static
+    {
+        if (! app()->isRunningUnitTests()) {
+            throw new Exception('Clearing cache is only available in unit tests.');
+        }
+
+        $this->cachedState = [];
+
+        return $this;
     }
 
     public function separator(string | Closure | null $separator = ','): static
