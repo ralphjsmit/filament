@@ -571,7 +571,7 @@ The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, w
 
 ## Repeater validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to repeaters.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to repeaters.
 
 ### Number of items validation
 

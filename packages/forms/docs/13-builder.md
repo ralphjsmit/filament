@@ -527,7 +527,7 @@ The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, w
 
 ## Builder validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to builders.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to builders.
 
 ### Number of items validation
 

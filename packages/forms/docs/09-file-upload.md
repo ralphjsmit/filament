@@ -572,7 +572,7 @@ FileUpload::make('attachment')
 
 ## File upload validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to file uploads.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to file uploads.
 
 Since Filament is powered by Livewire and uses its file upload system, you will want to refer to the default Livewire file upload validation rules in the `config/livewire.php` file as well. This also controls the 12MB file size maximum.
 
@@ -649,7 +649,7 @@ Livewire also validates file size before uploading. To publish the Livewire conf
 php artisan livewire:publish --config
 ```
 
-The [max upload size can be adjusted in the `rules` key of `temporary_file_upload`]((https://livewire.laravel.com/docs/uploads#global-validation)). In this instance, KB are used in the rule, and 120MB is 122880KB:
+The [max upload size can be adjusted in the `rules` key of `temporary_file_upload`](https://livewire.laravel.com/docs/uploads#global-validation). In this instance, KB are used in the rule, and 120MB is 122880KB:
 
 ```php
 'temporary_file_upload' => [

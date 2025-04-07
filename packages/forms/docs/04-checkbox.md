@@ -61,7 +61,7 @@ Checkbox::make('is_admin')
 
 ## Checkbox validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to checkboxes.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to checkboxes.
 
 ### Accepted validation
 
