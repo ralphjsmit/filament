@@ -74,25 +74,20 @@ trait HasCellState
         return $this->evaluate($this->defaultState);
     }
 
-    public function getCachedState(): mixed
+    public function getState(bool $isCached = true): mixed
     {
         $record = $this->getRecord();
 
         if (! $record) {
-            return $this->getState();
+            return null;
         }
 
         $recordKey = (string) $record->getKey();
 
-        if (array_key_exists($recordKey, $this->cachedState)) {
+        if ($isCached && array_key_exists($recordKey, $this->cachedState)) {
             return $this->cachedState[$recordKey];
         }
 
-        return $this->cachedState[$recordKey] = $this->getState();
-    }
-
-    public function getState(): mixed
-    {
         $state = ($this->getStateUsing !== null) ?
             $this->evaluate($this->getStateUsing) :
             $this->getStateFromRecord();
@@ -108,7 +103,11 @@ trait HasCellState
             $state = $this->getDefaultState();
         }
 
-        return $state;
+        if (! $isCached) {
+            return $state;
+        }
+
+        return $this->cachedState[$recordKey] = $state;
     }
 
     public function getStateFromRecord(): mixed

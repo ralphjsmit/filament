@@ -1,6 +1,6 @@
 @php
     $isDisabled = $isDisabled();
-    $state = (bool) $getCachedState();
+    $state = (bool) $getState();
 @endphp
 
 <div

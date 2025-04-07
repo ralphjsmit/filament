@@ -20,7 +20,7 @@
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
 
-    $arrayState = $getCachedState();
+    $arrayState = $getState();
 
     if ($arrayState instanceof \Illuminate\Support\Collection) {
         $arrayState = $arrayState->all();
