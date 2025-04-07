@@ -8,6 +8,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
+use UnitEnum;
 
 trait HasSubNavigation
 {
@@ -74,6 +75,10 @@ trait HasSubNavigation
                 }
 
                 $itemGroup = $item->getGroup();
+
+                if ($itemGroup instanceof UnitEnum) {
+                    $itemGroup = $itemGroup->name;
+                }
 
                 if (array_key_exists($itemGroup, $navigationGroups)) {
                     $navigationGroups[$itemGroup]->items([

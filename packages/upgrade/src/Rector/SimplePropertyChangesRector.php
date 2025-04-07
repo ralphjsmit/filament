@@ -79,6 +79,9 @@ class SimplePropertyChangesRector extends AbstractRector
                     'navigationIcon' => function (Property $node): void {
                         $node->type = new Name('string | \BackedEnum | null');
                     },
+                    'navigationGroup' => function (Property $node): void {
+                        $node->type = new Name('string | \UnitEnum | null');
+                    },
                     'subNavigationPosition' => function (Property $node): void {
                         $node->type = new Name('?\Filament\Pages\Enums\SubNavigationPosition');
                     },

@@ -8,10 +8,11 @@ use Exception;
 use Filament\Support\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use UnitEnum;
 
 class NavigationItem extends Component
 {
-    protected string | Closure | null $group = null;
+    protected string | UnitEnum | Closure | null $group = null;
 
     protected string | Closure | null $parentItem = null;
 
@@ -73,7 +74,7 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function group(string | Closure | null $group): static
+    public function group(string | UnitEnum | Closure | null $group): static
     {
         $this->group = $group;
 
@@ -176,7 +177,7 @@ class NavigationItem extends Component
         return $this->evaluate($this->badgeTooltip);
     }
 
-    public function getGroup(): ?string
+    public function getGroup(): string | UnitEnum | null
     {
         return $this->evaluate($this->group);
     }

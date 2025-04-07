@@ -21,6 +21,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
+use UnitEnum;
 
 use function Filament\Support\original_request;
 
@@ -40,7 +41,7 @@ abstract class Page extends BasePage
 
     protected static bool $isDiscovered = true;
 
-    protected static ?string $navigationGroup = null;
+    protected static string | UnitEnum | null $navigationGroup = null;
 
     protected static ?string $navigationBadgeTooltip = null;
 
@@ -152,7 +153,7 @@ abstract class Page extends BasePage
         return [];
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string | UnitEnum | null
     {
         return static::$navigationGroup;
     }
