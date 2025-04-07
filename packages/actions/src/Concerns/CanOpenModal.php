@@ -11,6 +11,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
 
 trait CanOpenModal
 {
@@ -352,8 +353,8 @@ trait CanOpenModal
         if ($this->modalFooterActions) {
             $actions = [];
 
-            foreach ($this->evaluate($this->modalFooterActions) as $action) {
-                $actions[$action->getName()] = $this->prepareModalAction($action);
+            foreach (Arr::wrap($this->evaluate($this->modalFooterActions)) as $modalAction) {
+                $actions[$modalAction->getName()] = $this->prepareModalAction($modalAction);
             }
 
             return $this->cachedModalFooterActions = $actions;
