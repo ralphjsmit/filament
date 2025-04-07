@@ -180,7 +180,7 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            $column->clearCache();
+            $column->clearStateCache();
 
             $state = $column->getState();
 
@@ -218,7 +218,7 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            $column->clearCache();
+            $column->clearStateCache();
 
             $state = $column->getState();
 
@@ -256,7 +256,7 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            $column->clearCache();
+            $column->clearStateCache();
 
             Assert::assertEquals(
                 $value,
@@ -285,7 +285,7 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            $column->clearCache();
+            $column->clearStateCache();
 
             Assert::assertFalse(
                 $column->formatState($column->getState()) == $value,

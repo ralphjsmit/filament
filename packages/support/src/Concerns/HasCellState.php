@@ -142,15 +142,9 @@ trait HasCellState
         return $state->all();
     }
 
-    public function clearCache(): static
+    public function clearStateCache(): void
     {
-        if (! app()->isRunningUnitTests()) {
-            throw new Exception('Clearing cache is only available in unit tests.');
-        }
-
         $this->cachedState = [];
-
-        return $this;
     }
 
     public function separator(string | Closure | null $separator = ','): static
