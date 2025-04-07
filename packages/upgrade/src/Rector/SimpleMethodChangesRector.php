@@ -7,6 +7,7 @@ use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Contracts\HasColor;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
@@ -85,6 +86,16 @@ class SimpleMethodChangesRector extends AbstractRector
                 'changes' => [
                     'getColumns' => function (ClassMethod $node): void {
                         $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    HasColor::class,
+                ],
+                'changes' => [
+                    'getColor' => function (ClassMethod $node): void {
+                        $node->returnType = new Identifier('?string');
                     },
                 ],
             ],
