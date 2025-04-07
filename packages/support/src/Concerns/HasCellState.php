@@ -142,7 +142,7 @@ trait HasCellState
         return $state->all();
     }
 
-    public function clearStateCache(): void
+    public function clearCachedState(): void
     {
         $this->cachedState = [];
     }
