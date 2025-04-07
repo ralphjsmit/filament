@@ -122,7 +122,6 @@ TextInput::make('manufacturer')
         'Ford',
         'Mercedes-Benz',
         'Porsche',
-        'Tesla',
         'Toyota',
         'Volkswagen',
     ])
