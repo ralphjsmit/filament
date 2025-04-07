@@ -126,7 +126,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     /**
      * @return array<string>
      */
-    public function getState(): array
+    public function getState(bool $isCached = true): array
     {
         $record = $this->getRecord();
 
