@@ -353,7 +353,7 @@ trait CanOpenModal
         if ($this->modalFooterActions) {
             $actions = [];
 
-            foreach (Arr::wrap($this->evaluate($this->modalFooterActions)) as $modalAction) {
+            foreach ($this->evaluate($this->modalFooterActions) as $modalAction) {
                 $actions[$modalAction->getName()] = $this->prepareModalAction($modalAction);
             }
 
