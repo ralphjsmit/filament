@@ -4,6 +4,7 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -377,7 +378,11 @@ trait HasCellState
             return $state();
         }
 
-        $recordKey = (string) $record->getKey();
+        if (is_array($record)) {
+            $recordKey = (string) $record[ArrayRecord::getKeyName()] ?? null;
+        } else {
+            $recordKey = (string) $record->getKey();
+        }
 
         if (blank($recordKey)) {
             return $state();
