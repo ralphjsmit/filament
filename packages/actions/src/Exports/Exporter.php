@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\XLSX\Options;
+use OpenSpout\Writer\XLSX\Writer;
 
 abstract class Exporter
 {
@@ -207,6 +208,11 @@ abstract class Exporter
     public function getXlsxWriterOptions(): ?Options
     {
         return null;
+    }
+
+    public function configureXlsxWriterBeforeClose(Writer &$writer): Writer
+    {
+        return $writer;
     }
 
     public static function modifyQuery(Builder $query): Builder
