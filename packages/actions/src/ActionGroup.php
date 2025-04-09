@@ -60,6 +60,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public const BUTTON_VIEW = 'filament::components.button.index';
 
+    public const BUTTON_GROUP_VIEW = 'filament::components.button.group';
+
     public const GROUPED_VIEW = 'filament::components.dropdown.list.item';
 
     public const ICON_BUTTON_VIEW = 'filament::components.icon-button';
@@ -166,9 +168,19 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return $this->triggerView(static::BUTTON_VIEW);
     }
 
+    public function buttonGroup(): static
+    {
+        return $this->triggerView(static::BUTTON_GROUP_VIEW);
+    }
+
     public function isButton(): bool
     {
         return $this->getTriggerView() === static::BUTTON_VIEW;
+    }
+
+    public function isButtonGroup(): bool
+    {
+        return $this->getTriggerView() === static::BUTTON_GROUP_VIEW;
     }
 
     public function grouped(): static
@@ -209,7 +221,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     public function getActions(): array
     {
         return array_map(
-            fn (Action | ActionGroup $action) => $action->defaultView($action::GROUPED_VIEW),
+            fn (Action | ActionGroup $action) => $action->defaultView($this->isButtonGroup() ? $action::BUTTON_VIEW : $action::GROUPED_VIEW),
             $this->actions,
         );
     }
@@ -355,6 +367,20 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
+        if ($this->isButtonGroup()) {
+            ob_start(); ?>
+
+            <div class="fi-btn-group">
+                <?php foreach ($this->getActions() as $action) { ?>
+                    <?php if ($action->isVisible()) { ?>
+                        <?= $action->toHtml() ?>
+                    <?php } ?>
+                <?php } ?>
+            </div>
+
+            <?php return ob_get_clean();
+        }
+
         if (! $this->hasDropdown()) {
             return collect($this->getActions())
                 ->filter(fn (Action | ActionGroup $action): bool => $action->isVisible())
