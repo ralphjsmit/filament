@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Providers\Filament;
+
+use Filament\Forms\Components\Radio;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Tables\Table;
+use Illuminate\Support\ServiceProvider;
+
+class Filament4BackwardsCompatibilityProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        // In Filament 3, fieldsets spanned all columns in a grid by default.
+        // In Filament 4, they only span one column.
+        Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
+            ->columnSpanFull());
+
+        // In Filament 3, grids spanned all columns in a grid by default.
+        // In Filament 4, they only span one column.
+        Grid::configureUsing(fn (Grid $grid) => $grid
+            ->columnSpanFull());
+
+        // In Filament 3, inline radio buttons also had inline labels.
+        // In Filament 4, inline labels are not enabled by default.
+        Radio::configureUsing(fn (Radio $radio) => $radio
+            ->inlineLabel(fn (): bool => $radio->isInline()));
+
+        // In Filament 3, sections spanned all columns in a grid by default.
+        // In Filament 4, they only span one column.
+        Section::configureUsing(fn (Section $section) => $section
+            ->columnSpanFull());
+
+        // In Filament 3, tables had an "all" pagination option by default.
+        // In Filament 4, this option was removed by default to prevent performance issues with large datasets.
+        Table::configureUsing(fn (Table $table) => $table
+            ->paginationPageOptions([5, 10, 25, 50, 'all']));
+    }
+}

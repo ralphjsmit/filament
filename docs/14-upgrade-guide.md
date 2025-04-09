@@ -2,6 +2,7 @@
 title: Upgrade Guide
 contents: false
 ---
+import Aside from "@components/Aside.astro"
 import Checkbox from "@components/Checkbox.astro"
 import Checkboxes from "@components/Checkboxes.astro"
 import Disclosure from "@components/Disclosure.astro"
@@ -135,6 +136,10 @@ Grid::make()
 Section::make()
     ->columnSpanFull()
 ```
+
+<Aside variant="tip">
+    When running the automated upgrade script, it will ask you if you wish to create a new service provider to preserve old behaviour from Filament 3. If you did that, these changes will not affect your project.
+</Aside>
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -154,15 +159,9 @@ public function table(Table $table): Table
 
 Be aware when using `all` as it will cause performance issues when dealing with a large number of records.
 
-Alternatively, you can do it for all tables at once using a global setting in the `boot()` method of a service provider:
-
-```php
-use Filament\Tables\Table;
-
-Table::configureUsing(function (Table $table): void {
-    $table->paginationPageOptions([5, 10, 25, 50, 'all']);
-});
-```
+<Aside variant="tip">
+    When running the automated upgrade script, it will ask you if you wish to create a new service provider to preserve old behaviour from Filament 3. If you did that, these changes will not affect your project.
+</Aside>
 </Disclosure>
 
 ### Medium-impact changes
@@ -183,6 +182,10 @@ In v3, the `inline()` method put the radio buttons inline with each other, and a
 In v4, the `inline()` method now only puts the radio buttons inline with each other, and not with the label. If you want the radio buttons to be inline with the label, you can use the `inlineLabel()` method as well.
 
 If you were previously using `inline()->inlineLabel(false)` to achieve the v4 behaviour, you can now simply use `inline()`.
+
+<Aside variant="tip">
+    When running the automated upgrade script, it will ask you if you wish to create a new service provider to preserve old behaviour from Filament 3. If you did that, these changes will not affect your project.
+</Aside>
 </Disclosure>
 
 <Disclosure x-show="packages.includes('actions')">
