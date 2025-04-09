@@ -8,7 +8,7 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-test('component is macroable', function () {
+test('component is macroable', function (): void {
     expect(ComponentContainer::hasMacro('someMacro'))
         ->toBeFalse();
 
