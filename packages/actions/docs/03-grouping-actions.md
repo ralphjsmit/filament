@@ -45,6 +45,28 @@ ActionGroup::make([
 
 <AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="4.x" />
 
+### Using a grouped button design
+
+Instead of a dropdown, an action group can render itself as a group of buttons. This design works with and without button labels. To use this feature, use the `buttonGroup()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Support\Icons\Heroicon;
+
+ActionGroup::make([
+    Action::make('edit')
+        ->color('gray')
+        ->icon(Heroicon::PencilSquare)
+        ->hiddenLabel(),
+    Action::make('delete')
+        ->color('gray')
+        ->icon(Heroicon::Trash)
+        ->hiddenLabel(),
+])
+    ->buttonGroup()
+```
+
 ## Setting the placement of the dropdown
 
 The dropdown may be positioned relative to the trigger button by using the `dropdownPlacement()` method:

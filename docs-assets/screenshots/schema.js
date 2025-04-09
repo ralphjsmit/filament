@@ -231,6 +231,15 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'actions/group/button-group': {
+        url: 'actions',
+        selector: '#actionButtonGroup',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'actions/group/placement': {
         url: 'actions',
         selector: '#actionGroupPlacement',
