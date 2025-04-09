@@ -67,7 +67,7 @@ ActionGroup::make([
     ->buttonGroup()
 ```
 
-<AutoScreenshot name="actions/group/button-group" alt="Action group using the button group design" />
+<AutoScreenshot name="actions/group/button-group" alt="Action group using the button group design" version="4.x" />
 
 ## Setting the placement of the dropdown
 
