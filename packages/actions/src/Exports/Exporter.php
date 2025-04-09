@@ -210,7 +210,7 @@ abstract class Exporter
         return null;
     }
 
-    public function configureXlsxWriterBeforeClose(Writer &$writer): Writer
+    public function configureXlsxWriterBeforeClose(Writer $writer): Writer
     {
         return $writer;
     }
