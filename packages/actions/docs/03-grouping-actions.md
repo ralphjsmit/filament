@@ -67,6 +67,8 @@ ActionGroup::make([
     ->buttonGroup()
 ```
 
+<AutoScreenshot name="actions/group/button-group" alt="Action group using the button group design" />
+
 ## Setting the placement of the dropdown
 
 The dropdown may be positioned relative to the trigger button by using the `dropdownPlacement()` method:
