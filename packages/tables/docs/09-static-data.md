@@ -1,12 +1,15 @@
 ---
 title: Static data
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
-Filament's table builder was originally designed to render data directly from a SQL database connected to a Laravel app. It uses Eloquent models to fetch the data, and each row in a Filament table is represented by a row in a database table, which has an Eloquent record. However, there are times when this is not possible or practical. For example, you may want to display data not stored in a database, or you may want to display data stored in a database but is not accessible via Eloquent.
+[Filament's table builder](overview/#introduction) was originally designed to render data directly from a SQL database using [Eloquent models](https://laravel.com/docs/eloquent) in a Laravel application. Each row in a Filament table corresponds to a row in the database, represented by an Eloquent model instance.
 
-To use static data in a table instead of it being fetched through an Eloquent model, you can pass a function to the `records()` method of the table builder that returns an array of data. This function will be called when the table is rendered, and the data will be used to populate the table.
+However, this setup isn't always possible or practical. You might need to display data that isn't stored in a database—or data that is stored, but not accessible via Eloquent.
+
+In such cases, you can use static data instead. Pass a function to the `records()` method of the table builder that returns an array of data. This function is called when the table renders, and the value it returns is used to populate the table.
 
 ```php
 use Filament\Tables\Columns\IconColumn;
@@ -16,56 +19,58 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->records(function (): array {
-            return [
-                1 => [
-                    'title' => 'First item',
-                    'slug' => 'first-item',
-                    'isFeatured' => true,
-                ],
-                2 => [
-                    'title' => 'Second item',
-                    'slug' => 'second-item',
-                    'isFeatured' => false,
-                ],
-                3 => [
-                    'title' => 'Third item',
-                    'slug' => 'third-item',
-                    'isFeatured' => true,
-                ],
-            ];
-        })
+        ->records(fn (): array => [
+            1 => [
+                'title' => 'First item',
+                'slug' => 'first-item',
+                'is_featured' => true,
+            ],
+            2 => [
+                'title' => 'Second item',
+                'slug' => 'second-item',
+                'is_featured' => false,
+            ],
+            3 => [
+                'title' => 'Third item',
+                'slug' => 'third-item',
+                'is_featured' => true,
+            ],
+        ])
         ->columns([
             TextColumn::make('title'),
             TextColumn::make('slug'),
-            IconColumn::make('isFeatured')
+            IconColumn::make('is_featured')
                 ->boolean(),
         ]);
 }
 ```
 
+<Aside variant="warning">
+    The array keys `(e.g., 1, 2, 3)` represent the record IDs. Use unique and consistent keys to ensure proper diffing and state tracking. This helps prevent issues with record integrity during Livewire interactions and updates.
+</Aside>
+
 ## Columns
 
-[Columns](columns) in the table work similarly to how they do when using Eloquent models. Instead of the column name representing an attribute or relationship on an Eloquent model, the column name represents a key in the array of data returned by the `records()` function.
+[Columns](columns) in the table work similarly to how they do when using [Eloquent models](https://laravel.com/docs/eloquent), but with one key difference: instead of referring to a model attribute or relationship, the column name represents a key in the array returned by the `records()` function.
 
-When accessing the current record in a column function, you should adjust the type of the `$record` parameter to be `array` instead of `Model`. For example, to define a column with a [`state()` function](columns#setting-the-state-of-a-column), you could do the following:
+When working with the current record inside a column function, set the `$record` type to `array` instead of `Model`. For example, to define a column using the [`state()`](columns#setting-the-state-of-a-column) function, you could do the following:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('isFeatured')
+TextColumn::make('is_featured')
     ->state(function (array $record): string {
-        return $record['isFeatured'] ? 'Featured' : 'Not featured';
-    });
+        return $record['is_featured'] ? 'Featured' : 'Not featured';
+    })
 ```
 
 ### Sorting
 
-Filament's built-in [sorting](columns#sorting) function uses SQL to sort the data. When using static data, you need to sort it yourself. This may sound like it should be handled automatically, but there are likely many situations where the sorting logic can be already handled by a layer of your data source, such as a custom database query or API call.
+Filament's built-in [sorting](columns#sorting) function uses SQL to sort data. When working with static data, you'll need to handle sorting yourself.
 
-To get the currently sorted column and direction, you can inject `$sortColumn` and `$sortDirection` into the `records()` function. These variables will be `null` if no column is currently being sorted.
+To access the currently sorted column and direction, you can inject `$sortColumn` and `$sortDirection` into the `records()` function. These variables are `null` if no sorting is applied.
 
-In this example, a [collection](https://laravel.com/docs/collections#method-sortby) is used to sort the data by key. The collection is returned instead of an array, and Filament can recognize it in the same way. However, using a collection like this is not necessary to be able to use this feature.
+In the example below, a [collection](https://laravel.com/docs/collections#method-sortby) is used to sort the data by key. The collection is returned instead of an array, and Filament handles it the same way. However, using a collection is not required to use this feature.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -75,36 +80,38 @@ use Illuminate\Support\Collection;
 public function table(Table $table): Table
 {
     return $table
-        ->records(function (?string $sortColumn, ?string $sortDirection): Collection {
-            return collect([
-                1 => [
-                    'title' => 'First item',
-                    'slug' => 'first-item',
-                    'isFeatured' => true,
-                ],
-                // ...
-            ])
-                ->when(
-                    filled($sortColumn),
-                    fn (Collection $data): Collection => $data->sortBy($sortColumn, SORT_REGULAR, $sortDirection === 'desc'),
-                )
-                ->all();
-        })
+        ->records(
+            fn (?string $sortColumn, ?string $sortDirection): Collection => collect([
+                1 => ['title' => 'First item'],
+                2 => ['title' => 'Second item'],
+                3 => ['title' => 'Third item'],
+            ])->when(
+                filled($sortColumn),
+                fn (Collection $data): Collection => $data->sortBy(
+                    $sortColumn,
+                    SORT_REGULAR,
+                    $sortDirection === 'desc',
+                ),
+            )
+        )
         ->columns([
             TextColumn::make('title')
                 ->sortable(),
-            // ...
         ]);
 }
 ```
 
+<Aside variant="info">
+    It might seem like Filament should sort the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the sorting instead.
+</Aside>
+
 ### Searching
 
-Filament's built-in [searching](columns#searching) function uses SQL to search the data. When using static data, you need to search it yourself. This may sound like it should be handled automatically, but there are likely many situations where the searching logic can be already handled by a layer of your data source, such as a custom database query or API call.
+Filament's built-in [searching](columns#searching) function uses SQL to search data. When working with static data, you'll need to handle searching yourself.
 
-To get the current search query, you can inject `$search` into the `records()` function. This variable will be `null` if no search query is currently being used.
+To access the current search query, you can inject `$search` into the `records()` function. This variable is `null` if no search query is currently being used.
 
-In this example, a [collection](https://laravel.com/docs/collections#method-filter) is used to filter the data by the search query. The collection is returned instead of an array, and Filament can recognize it in the same way. However, using a collection like this is not necessary to be able to use this feature.
+In the example below, a [collection](https://laravel.com/docs/collections#method-filter) is used to filter the data by the search query. The collection is returned instead of an array, and Filament handles it the same way. However, using a collection is not required to use this feature.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -115,34 +122,37 @@ use Illuminate\Support\Str;
 public function table(Table $table): Table
 {
     return $table
-        ->records(function (?string $search): Collection {
-            return collect([
-                1 => [
-                    'title' => 'First item',
-                    'slug' => 'first-item',
-                    'isFeatured' => true,
-                ],
-                // ...
-            ])
-                ->when(
-                    filled($search),
-                    fn (Collection $data) => $data->filter(fn (array $record): bool => str_contains(Str::lower($record['title']), Str::lower($search))),
-                )
-                ->all();
-        })
+        ->records(
+            fn (?string $search): Collection => collect([
+                1 => ['title' => 'First item'],
+                2 => ['title' => 'Second item'],
+                3 => ['title' => 'Third item'],
+            ])->when(
+                filled($search),
+                fn (Collection $data): Collection => $data->filter(
+                    fn (array $record): bool => str_contains(
+                        Str::lower($record['title']),
+                        Str::lower($search),
+                    ),
+                ),
+            )
+        )
         ->columns([
             TextColumn::make('title'),
-            // ...
         ])
         ->searchable();
 }
 ```
 
-In this example, specific columns like `title` do not need to be `searchable()` since the searching behaviour is defined within the `records()` function. However, if you want to enable the search field without enabling search for a specific column, you can use the `searchable()` method on the entire table.
+In this example, specific columns like `title` do not need to be `searchable()` because the search logic is handled inside the `records()` function. However, if you want to enable the search field without enabling search for a specific column, you can use the `searchable()` method on the entire table.
+
+<Aside variant="info">
+    It might seem like Filament should search the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the searching instead.
+</Aside>
 
 #### Searching individual columns
 
-The [individual column searches](#searching-individually) feature allows you to render a search field separately for each column, so the data can be filtered more precisely. When using static data, you need to implement this feature yourself.
+The [individual column searches](#searching-individually) feature provides a way to render a search field separately for each column, allowing more precise filtering. When using static data, you need to implement this feature yourself.
 
 Instead of injecting `$search` into the `records()` function, you can inject an array of `$columnSearches`, which contains the search queries for each column.
 
@@ -155,37 +165,44 @@ use Illuminate\Support\Str;
 public function table(Table $table): Table
 {
     return $table
-        ->records(function (array $columnSearches): Collection {
-            return collect([
-                1 => [
-                    'title' => 'First item',
-                    'slug' => 'first-item',
-                    'isFeatured' => true,
-                ],
-                // ...
-            ])
-                ->when(
-                    filled($columnSearches['title'] ?? null),
-                    fn (Collection $data) => $data->filter(fn (array $record): bool => str_contains(Str::lower($record['title']), Str::lower($columnSearches['title']))),
-                )
-                ->all();
-        })
+        ->records(
+            fn (array $columnSearches): Collection => collect([
+                1 => ['title' => 'First item'],
+                2 => ['title' => 'Second item'],
+                3 => ['title' => 'Third item'],
+            ])->when(
+                filled($columnSearches['title'] ?? null),
+                fn (Collection $data) => $data->filter(
+                    fn (array $record): bool => str_contains(
+                        Str::lower($record['title']),
+                        Str::lower($columnSearches['title'])
+                    ),
+                ),
+            )
+        )
         ->columns([
             TextColumn::make('title')
                 ->searchable(isIndividual: true),
-            // ...
         ]);
 }
 ```
 
+<Aside variant="info">
+    It might seem like Filament should search the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the searching instead.
+</Aside>
+
 ## Filters
 
-As well as [searching](#searching), Filament provides a way to filter data using [filters](filters). When using static data, you need to filter it yourself. Filament gives you access to an array of filter data by injecting `$filters` into the `records()` function. The array contains the names of the filters as keys and the values of the filter forms themselves.
+Filament also provides a way to filter data using [filters](filters). When working with static data, you'll need to handle filtering yourself. 
 
-In this example, a [collection](https://laravel.com/docs/collections#method-where) is used to filter the data. The collection is returned instead of an array, and Filament can recognize it in the same way. However, using a collection like this is not necessary to be able to use this feature.
+Filament gives you access to an array of filter data by injecting `$filters` into the `records()` function. The array contains the names of the filters as keys and the values of the filter forms themselves.
+
+In the example below, a [collection](https://laravel.com/docs/collections#method-where) is used to filter the data. The collection is returned instead of an array, and Filament handles it the same way. However, using a collection is not required to use this feature.
 
 ```php
-use Filament\Forms\Components\DatePicker;use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -194,43 +211,64 @@ use Illuminate\Support\Collection;
 public function table(Table $table): Table
 {
     return $table
-        ->records(function (array $filters): Collection {
-            return collect([
-                1 => [
-                    'title' => 'First item',
-                    'slug' => 'first-item',
-                    'author' => 'dan',
-                    'isFeatured' => true,
-                    'creationDate' => '2021-01-01',
-                ],
-                // ...
-            ])
-                ->when(
-                    filled($filters['isFeatured']['isActive'] ?? null),
-                    fn (Collection $data) => $data->where('isFeatured', true),
-                )
-                ->when(
-                    filled($filters['author']['value'] ?? null),
-                    fn (Collection $data) => $data->where('author', $filters['author']['value']),
-                )
-                ->when(
-                    filled($filters['creationDate']['date'] ?? null),
-                    fn (Collection $data) => $data->where('creationDate', $filters['creationDate']['date']),
-                )
-                ->all();
-        })
+        ->records(fn (array $filters): Collection => collect([
+            1 => [
+                'title' => 'What is Filament?',
+                'slug' => 'what-is-filament',
+                'author' => 'Dan Harrin',
+                'is_featured' => true,
+                'creation_date' => '2021-01-01',
+            ],
+            2 => [
+                'title' => 'Top 5 best features of Filament',
+                'slug' => 'top-5-features',
+                'author' => 'Ryan Chandler',
+                'is_featured' => false,
+                'creation_date' => '2021-03-01',
+            ],
+            3 => [
+                'title' => 'Tips for building a great Filament plugin',
+                'slug' => 'plugin-tips',
+                'author' => 'Zep Fietje',
+                'is_featured' => true,
+                'creation_date' => '2023-06-01',
+            ],
+        ])
+            ->when(
+                $filters['is_featured']['isActive'] ?? false,
+                fn (Collection $data): Collection => $data->where(
+                    'is_featured', true
+                ),
+            )
+            ->when(
+                filled($author = $filters['author']['value'] ?? null),
+                fn (Collection $data): Collection => $data->where(
+                    'author', $author
+                ),
+            )
+            ->when(
+                filled($date = $filters['creation_date']['date'] ?? null),
+                fn (Collection $data): Collection => $data->where(
+                    'creation_date', $date
+                ),
+            )
+        )
         ->columns([
             TextColumn::make('title'),
-            // ...
+            TextColumn::make('slug'),
+            IconColumn::make('is_featured')
+                ->boolean(),
+            TextColumn::make('author'),
         ])
         ->filters([
-            Filter::make('isFeatured'),
+            Filter::make('is_featured'),
             SelectFilter::make('author')
                 ->options([
-                    'dan' => 'Dan Harrin',
-                    'ryan' => 'Ryan Chandler',
+                    'Dan Harrin' => 'Dan Harrin',
+                    'Ryan Chandler' => 'Ryan Chandler',
+                    'Zep Fietje' => 'Zep Fietje',
                 ]),
-            Filter::make('creationDate')
+            Filter::make('creation_date')
                 ->schema([
                     DatePicker::make('date'),
                 ]),
@@ -238,15 +276,23 @@ public function table(Table $table): Table
 }
 ```
 
-Please note how the filter values are not easily accessible via `$filters['filterName']`, but instead through an additional key. This is because a filter can contain multiple form fields, each with their own name. The name of the form field is used as the key inside each filter's array of data. In this situation:
+Filter values aren't directly accessible via `$filters['filterName']`. Instead, each filter contains one or more form fields, and those field names are used as keys within the filter's data array. For example:
 
-- A simple checkbox or toggle filter without a custom schema, like the `featured` filter, will have a key of `isActive`. So accessing the checkbox value is done via `$filters['featured']['isActive']`.
-- A select filter, like the `author` filter, will have a key of `value`. So accessing the select value is done via `$filters['author']['value']`.
-- A filter with a custom schema, like the `creationDate` filter, will use the name of the form field/s in the array of data. In this example, there is a `date` field in the `creationDate` filter, so accessing the date value is done via `$filters['creationDate']['date']`.
+- [Checkbox](filters/overview#introduction) or [Toggle filters](filters/overview#using-a-toggle-button-instead-of-a-checkbox) without a custom schema (e.g., featured) use `isActive` as the `key`: `$filters['featured']['isActive']`
+
+- [Select filters](filters/select#introduction) (e.g., author) use `value`: `$filters['author']['value']`
+
+- [Custom schema filters](filters/custom#custom-filter-schemas) (e.g., creation_date) use the actual form field names. If the field is named `date`, access it like this: `$filters['creation_date']['date']`
+
+<Aside variant="info">
+    It might seem like Filament should filter the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the filtering instead.
+</Aside>
 
 ## Pagination
 
-Filament's built-in [pagination](overview#pagination) feature uses SQL to paginate the data. When using static data, you need to paginate it yourself. This may sound like it should be handled automatically, but there are likely many situations where the pagination logic can be already handled by a layer of your data source, such as a custom database query or API call. The `$page` and `$recordsPerPage` arguments are injected into the `records()` function, and you can use them to paginate the data. A `LengthAwarePaginator` should be returned from the `records()` function, and Filament will handle the pagination links and other pagination features for you:
+Filament's built-in [pagination](overview#pagination) feature uses SQL to paginate the data. When working with static data, you'll need to handle pagination yourself. 
+
+The `$page` and `$recordsPerPage` arguments are injected into the `records()` function, and you can use them to paginate the data. A `LengthAwarePaginator` should be returned from the `records()` function, and Filament will handle the pagination links and other pagination features for you:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -259,53 +305,67 @@ public function table(Table $table): Table
     return $table
         ->records(function (int $page, int $recordsPerPage): LengthAwarePaginator {
             $records = collect([
-                1 => [
-                    'title' => 'First item',
-                    'slug' => 'first-item',
-                    'isFeatured' => true,
-                ],
-                // ...
+                1 => ['title' => 'What is Filament?'],
+                2 => ['title' => 'Top 5 best features of Filament'],
+                3 => ['title' => 'Tips for building a great Filament plugin'],
             ])->forPage($page, $recordsPerPage);
-            
+
             return new LengthAwarePaginator(
                 $records,
-                total: 100, // Total number of records across pages
+                total: 30, // Total number of records across all pages
                 perPage: $recordsPerPage,
                 currentPage: $page,
             );
         })
         ->columns([
             TextColumn::make('title'),
-            // ...
         ]);
 }
 ```
 
-In this example, the `forPage()` method is used to paginate the data. This is very likely not the best way to efficiently paginate data from a query or API, but it is a simple way to demonstrate how to paginate data from a static array.
+In this example, the `forPage()` method is used to paginate the data. This probably isn't the most efficient way to paginate data from a query or API, but it is a simple way to demonstrate how to paginate data from a static array.
+
+<Aside variant="info">
+    It might seem like Filament should paginate the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the pagination instead.
+</Aside>
 
 ## Actions
 
-Actions work in the same way on static table data as they do on Eloquent models. The only difference is that the `$record` parameter in the action's callback function will be an array instead of a model.
+[Actions](actions) in the table work similarly to how they do when using [Eloquent models](https://laravel.com/docs/eloquent). The only difference is that the `$record` parameter in the action's callback function will be an `array` instead of a `Model`.
 
 ```php
 use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 public function table(Table $table): Table
 {
     return $table
-        ->records(function (): array {
-            // ...
-        })
+        ->records(fn (): Collection => collect([
+            1 => [
+                'title' => 'What is Filament?',
+                'slug' => 'what-is-filament',
+            ],
+            2 => [
+                'title' => 'Top 5 best features of Filament',
+                'slug' => 'top-5-features',
+            ],
+            3 => [
+                'title' => 'Tips for building a great Filament plugin',
+                'slug' => 'plugin-tips',
+            ],
+        ]))
         ->columns([
-            // ...
+            TextColumn::make('title'),
+            TextColumn::make('slug'),
         ])
         ->actions([
-            Action::make('feature')
-                ->requiresConfirmation()
-                ->action(function (array $record): void {
-                    // Do something with the array of `$record` data
-                }),
+            Action::make('view')
+                ->color('gray')
+                ->icon(Heroicon::Eye)
+                ->url(fn (array $record): string => route('posts.view', $record['slug'])),
         ]);
 }
 ```
@@ -331,17 +391,17 @@ public function table(Table $table): Table
                 1 => [
                     'title' => 'First item',
                     'slug' => 'first-item',
-                    'isFeatured' => true,
+                    'is_featured' => true,
                 ],
                 2 => [
                     'title' => 'Second item',
                     'slug' => 'second-item',
-                    'isFeatured' => false,
+                    'is_featured' => false,
                 ],
                 3 => [
                     'title' => 'Third item',
                     'slug' => 'third-item',
-                    'isFeatured' => true,
+                    'is_featured' => true,
                 ],
             ], $keys);
         })
