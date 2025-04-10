@@ -81,6 +81,8 @@ class CreateXlsxFile implements ShouldQueue
             $writeRowsFromFile($file, $cellStyle);
         }
 
+        $this->exporter->configureXlsxWriterBeforeClose($writer);
+
         $writer->close();
 
         $disk->putFileAs(

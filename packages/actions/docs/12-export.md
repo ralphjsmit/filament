@@ -652,6 +652,26 @@ public function getXlsxWriterOptions(): ?Options
 }
 ```
 
+If you want to customize the XLSX writer before it is closed, you can override the `configureXlsxWriterBeforeClosing()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before it is closed:
+
+```php
+use OpenSpout\Writer\XLSX\Entity\SheetView;
+use OpenSpout\Writer\XLSX\Writer;
+
+public function configureXlsxWriterBeforeClose(Writer $writer): Writer
+{
+    $sheetView = new SheetView();
+    $sheetView->setFreezeRow(2);
+    $sheetView->setFreezeColumn('B');
+    
+    $sheet = $writer->getCurrentSheet();
+    $sheet->setSheetView($sheetView);
+    $sheet->setName('export');
+    
+    return $writer;
+}
+```
+
 ## Customizing the export job
 
 The default job for processing exports is `Filament\Actions\Exports\Jobs\PrepareCsvExport`. If you want to extend this class and override any of its methods, you may replace the original class in the `register()` method of a service provider:
