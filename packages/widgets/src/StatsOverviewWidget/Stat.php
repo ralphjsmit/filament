@@ -24,10 +24,7 @@ class Stat extends Component
      */
     protected ?array $chart = null;
 
-    /**
-     * @var string | array<int | string, string | int> | null
-     */
-    protected string | array | null $chartColor = null;
+    protected ?string $chartColor = null;
 
     protected string | BackedEnum | null $icon = null;
 
@@ -35,10 +32,7 @@ class Stat extends Component
 
     protected IconPosition | string | null $descriptionIconPosition = null;
 
-    /**
-     * @var string | array<int | string, string | int> | null
-     */
-    protected string | array | null $descriptionColor = null;
+    protected ?string $descriptionColor = null;
 
     /**
      * @var scalar | Htmlable | Closure
@@ -62,10 +56,7 @@ class Stat extends Component
         return app(static::class, ['label' => $label, 'value' => $value]);
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | null  $color
-     */
-    public function chartColor(string | array | null $color): static
+    public function chartColor(?string $color): static
     {
         $this->chartColor = $color;
 
@@ -79,10 +70,7 @@ class Stat extends Component
         return $this;
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | null  $color
-     */
-    public function descriptionColor(string | array | null $color): static
+    public function descriptionColor(?string $color): static
     {
         $this->descriptionColor = $color;
 
@@ -125,10 +113,7 @@ class Stat extends Component
         return $this->chart;
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getChartColor(): string | array | null
+    public function getChartColor(): ?string
     {
         return $this->chartColor ?? $this->getColor();
     }
@@ -138,10 +123,7 @@ class Stat extends Component
         return $this->icon;
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getDescriptionColor(): string | array | null
+    public function getDescriptionColor(): ?string
     {
         return $this->descriptionColor ?? $this->getColor();
     }

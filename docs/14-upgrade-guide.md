@@ -209,6 +209,92 @@ Be aware when using `all` as it will cause performance issues when dealing with 
 
 ### Medium-impact changes
 
+<Disclosure>
+<span slot="summary">Colors must be registered before they are used</span>
+
+In Filament v3, when using a color, for example in an action, table column or infolist entry `color()` method, or if an enum uses the `HasColor` trait, you could use an array of RGB values instead of a registered color name. Filament v4 introduces a more advanced color system, and now all colors must be registered before they are used.
+
+For example, v3 allowed this code:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('delete')
+    ->color([
+        50 => '254, 242, 242',
+        100 => '254, 226, 226',
+        200 => '254, 202, 202',
+        300 => '252, 165, 165',
+        400 => '248, 113, 113',
+        500 => '239, 68, 68',
+        600 => '220, 38, 38',
+        700 => '185, 28, 28',
+        800 => '153, 27, 27',
+        900 => '127, 29, 29',
+        950 => '69, 10, 10',
+    ])
+```
+
+In Filament v4, you should first register the color in the panel you are using the component in:
+
+```php
+use Filament\Panel;
+use Filament\Support\Colors\Color;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->colors([
+            'ruby' => [
+                50 => '254, 242, 242',
+                100 => '254, 226, 226',
+                200 => '254, 202, 202',
+                300 => '252, 165, 165',
+                400 => '248, 113, 113',
+                500 => '239, 68, 68',
+                600 => '220, 38, 38',
+                700 => '185, 28, 28',
+                800 => '153, 27, 27',
+                900 => '127, 29, 29',
+                950 => '69, 10, 10',
+            ],
+        ]);
+}
+```
+
+Or if you're not using a panel, you can register the color in the `boot()` method of a service provider like `AppServiceProvider`:
+
+```php
+use Filament\Support\Facades\FilamentColor;
+
+FilamentColor::register([
+    'ruby' => [
+        50 => '254, 242, 242',
+        100 => '254, 226, 226',
+        200 => '254, 202, 202',
+        300 => '252, 165, 165',
+        400 => '248, 113, 113',
+        500 => '239, 68, 68',
+        600 => '220, 38, 38',
+        700 => '185, 28, 28',
+        800 => '153, 27, 27',
+        900 => '127, 29, 29',
+        950 => '69, 10, 10',
+    ],
+]);
+```
+
+Then you can use the color in your component:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('delete')
+    ->color('ruby');
+```
+</Disclosure>
+
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Automatic tenancy global scoping and association</span>
 
@@ -241,7 +327,7 @@ If you were previously using `inline()->inlineLabel(false)` to achieve the v4 be
 <Disclosure x-show="packages.includes('actions')">
 <span slot="summary">Import and export job retries</span>
 
-In Filament v3, import and export jobs were retries continuously for 24 hours if they failed, with no backoff between tries by default.
+In Filament v3, import and export jobs were retries continuously for 24 hours if they failed, with no backoff between tries by default. This caused issues for some users, as there was no backoff period and the jobs could be retried too quickly, causing the queue to be flooded with continuously failing jobs.
 
 In v4, they are retried 3 times with a 60 second backoff between each retry.
 

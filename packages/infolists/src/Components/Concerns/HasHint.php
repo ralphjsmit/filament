@@ -19,10 +19,7 @@ trait HasHint
      */
     protected array $hintActions = [];
 
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $hintColor = null;
+    protected string | Closure | null $hintColor = null;
 
     protected string | BackedEnum | Closure | null $hintIcon = null;
 
@@ -61,10 +58,7 @@ trait HasHint
         return $this;
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
-     */
-    public function hintColor(string | array | Closure | null $color): static
+    public function hintColor(string | Closure | null $color): static
     {
         $this->hintColor = $color;
 
@@ -111,10 +105,7 @@ trait HasHint
         return $this->evaluate($this->hint);
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getHintColor(): string | array | null
+    public function getHintColor(): ?string
     {
         return $this->evaluate($this->hintColor);
     }

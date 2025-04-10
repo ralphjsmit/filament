@@ -88,10 +88,7 @@ trait CanOpenModal
 
     protected string | BackedEnum | Closure | null $modalIcon = null;
 
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $modalIconColor = null;
+    protected string | Closure | null $modalIconColor = null;
 
     public function closeModalByClickingAway(bool | Closure | null $condition = true): static
     {
@@ -147,10 +144,7 @@ trait CanOpenModal
         return $this;
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
-     */
-    public function modalIconColor(string | array | Closure | null $color = null): static
+    public function modalIconColor(string | Closure | null $color = null): static
     {
         $this->modalIconColor = $color;
 
@@ -694,10 +688,7 @@ trait CanOpenModal
         return null;
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getModalIconColor(): string | array | null
+    public function getModalIconColor(): ?string
     {
         return $this->evaluate($this->modalIconColor) ?? $this->getColor() ?? 'primary';
     }

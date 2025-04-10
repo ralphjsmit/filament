@@ -6,25 +6,16 @@ use Closure;
 
 trait HasIconColor
 {
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $iconColor = null;
+    protected string | Closure | null $iconColor = null;
 
-    /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
-     */
-    public function iconColor(string | array | Closure | null $color): static
+    public function iconColor(string | Closure | null $color): static
     {
         $this->iconColor = $color;
 
         return $this;
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getIconColor(): string | array | null
+    public function getIconColor(): ?string
     {
         return $this->evaluate($this->iconColor);
     }

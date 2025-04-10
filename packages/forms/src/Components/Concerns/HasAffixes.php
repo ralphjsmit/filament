@@ -37,17 +37,11 @@ trait HasAffixes
 
     protected string | BackedEnum | Closure | null $prefixIcon = null;
 
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $prefixIconColor = null;
+    protected string | Closure | null $prefixIconColor = null;
 
     protected string | BackedEnum | Closure | null $suffixIcon = null;
 
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $suffixIconColor = null;
+    protected string | Closure | null $suffixIconColor = null;
 
     protected bool | Closure $isPrefixInline = false;
 
@@ -138,10 +132,7 @@ trait HasAffixes
         return $this;
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
-     */
-    public function prefixIconColor(string | array | Closure | null $color = null): static
+    public function prefixIconColor(string | Closure | null $color = null): static
     {
         $this->prefixIconColor = $color;
 
@@ -156,10 +147,7 @@ trait HasAffixes
         return $this;
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
-     */
-    public function suffixIconColor(string | array | Closure | null $color = null): static
+    public function suffixIconColor(string | Closure | null $color = null): static
     {
         $this->suffixIconColor = $color;
 
@@ -242,18 +230,12 @@ trait HasAffixes
         return $this->evaluate($this->suffixIcon);
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getPrefixIconColor(): string | array | null
+    public function getPrefixIconColor(): ?string
     {
         return $this->evaluate($this->prefixIconColor);
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getSuffixIconColor(): string | array | null
+    public function getSuffixIconColor(): ?string
     {
         return $this->evaluate($this->suffixIconColor);
     }

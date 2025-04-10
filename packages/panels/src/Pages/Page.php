@@ -186,10 +186,7 @@ abstract class Page extends BasePage
         return null;
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public static function getNavigationBadgeColor(): string | array | null
+    public static function getNavigationBadgeColor(): ?string
     {
         return null;
     }

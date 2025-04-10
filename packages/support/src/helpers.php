@@ -80,49 +80,6 @@ if (! function_exists('Filament\Support\get_component_color_classes')) {
     }
 }
 
-if (! function_exists('Filament\Support\get_color_css_variables')) {
-    /**
-     * @param  string | array<int | string, string | int> | null  $color
-     * @param  array<int>  $shades
-     */
-    function get_color_css_variables(string | array | null $color, array $shades, ?string $alias = null): ?string
-    {
-        if ($color === null) {
-            return null;
-        }
-
-        if ($alias !== null) {
-            if (($overridingShades = FilamentColor::getOverridingShades($alias)) !== null) {
-                $shades = $overridingShades;
-            }
-
-            if ($addedShades = FilamentColor::getAddedShades($alias)) {
-                $shades = [...$shades, ...$addedShades];
-            }
-
-            if ($removedShades = FilamentColor::getRemovedShades($alias)) {
-                $shades = array_diff($shades, $removedShades);
-            }
-        }
-
-        $variables = [];
-
-        if (is_string($color)) {
-            foreach ($shades as $shade) {
-                $variables[] = "--color-{$shade}:var(--{$color}-{$shade})";
-            }
-        }
-
-        if (is_array($color)) {
-            foreach ($shades as $shade) {
-                $variables[] = "--color-{$shade}:{$color[$shade]}";
-            }
-        }
-
-        return implode(';', $variables);
-    }
-}
-
 if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
     function prepare_inherited_attributes(ComponentAttributeBag $attributes): ComponentAttributeBag
     {

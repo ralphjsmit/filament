@@ -31,21 +31,6 @@ class ColorManager
     protected array $cachedColors;
 
     /**
-     * @var array<string,array<int | string>>
-     */
-    protected array $overridingShades = [];
-
-    /**
-     * @var array<string,array<int | string>>
-     */
-    protected array $addedShades = [];
-
-    /**
-     * @var array<string,array<int | string>>
-     */
-    protected array $removedShades = [];
-
-    /**
      * @var array<class-string<HasColor>, array<string, array<string>>>
      */
     protected array $componentClasses = [];
@@ -97,54 +82,6 @@ class ColorManager
     public function getColor(string $color): ?array
     {
         return $this->getColors()[$color] ?? null;
-    }
-
-    /**
-     * @param  array<int | string>  $shades
-     */
-    public function overrideShades(string $alias, array $shades): void
-    {
-        $this->overridingShades[$alias] = $shades;
-    }
-
-    /**
-     * @return array<int | string> | null
-     */
-    public function getOverridingShades(string $alias): ?array
-    {
-        return $this->overridingShades[$alias] ?? null;
-    }
-
-    /**
-     * @param  array<int | string>  $shades
-     */
-    public function addShades(string $alias, array $shades): void
-    {
-        $this->addedShades[$alias] = $shades;
-    }
-
-    /**
-     * @return array<int | string> | null
-     */
-    public function getAddedShades(string $alias): ?array
-    {
-        return $this->addedShades[$alias] ?? null;
-    }
-
-    /**
-     * @param  array<int | string>  $shades
-     */
-    public function removeShades(string $alias, array $shades): void
-    {
-        $this->removedShades[$alias] = $shades;
-    }
-
-    /**
-     * @return array<int | string> | null
-     */
-    public function getRemovedShades(string $alias): ?array
-    {
-        return $this->removedShades[$alias] ?? null;
     }
 
     /**
