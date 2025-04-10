@@ -3,6 +3,7 @@
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\Operation;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -136,6 +137,57 @@ test('components can be hidden based on Livewire component', function () {
         ->toHaveLength(0);
 });
 
+test('components can be hidden based on Operation enum case', function () {
+    $components = ComponentContainer::make(Foo::make())
+        ->operation('create')
+        ->components([
+            TextInput::make('foo')
+                ->hiddenOn(Operation::Create),
+        ])
+        ->getComponents();
+
+    expect($components)
+        ->toHaveLength(0);
+
+    $components = ComponentContainer::make(Bar::make())
+        ->operation('edit')
+        ->components([
+            TextInput::make('foo')
+                ->hiddenOn(Operation::Create),
+        ])
+        ->getComponents();
+
+    expect($components)
+        ->toHaveLength(1)
+        ->each(
+            fn ($component) => $component
+                ->toBeInstanceOf(TextInput::class)
+                ->isHidden()->toBeFalse()
+        );
+
+    $components = ComponentContainer::make(Bar::make())
+        ->operation('edit')
+        ->components([
+            TextInput::make('foo')
+                ->hiddenOn([Operation::Create, Operation::Edit]),
+        ])
+        ->getComponents();
+
+    expect($components)
+        ->toHaveLength(0);
+
+    $components = ComponentContainer::make(Bar::make())
+        ->operation('view')
+        ->components([
+            TextInput::make('foo')
+                ->hiddenOn([Operation::Create, Operation::Edit]),
+        ])
+        ->getComponents();
+
+    expect($components)
+        ->toHaveLength(1);
+});
+
 test('components can be visible based on Livewire component', function () {
     $components = ComponentContainer::make(Foo::make())
         ->components([
@@ -171,6 +223,57 @@ test('components can be visible based on Livewire component', function () {
 
     expect($components)
         ->toHaveLength(1);
+});
+
+test('components can be visible based on Operation enum case', function () {
+    $components = ComponentContainer::make(Foo::make())
+        ->operation('create')
+        ->components([
+            TextInput::make('foo')
+                ->visibleOn(Operation::Create),
+        ])
+        ->getComponents();
+
+    expect($components)
+        ->toHaveLength(1);
+
+    $components = ComponentContainer::make(Bar::make())
+        ->operation('create')
+        ->components([
+            TextInput::make('foo')
+                ->visibleOn(Operation::Edit),
+        ])
+        ->getComponents();
+
+    expect($components)
+        ->toHaveLength(0)
+        ->each(
+            fn ($component) => $component
+                ->toBeInstanceOf(TextInput::class)
+                ->isHidden()->toBeFalse()
+        );
+
+    $components = ComponentContainer::make(Bar::make())
+        ->operation('create')
+        ->components([
+            TextInput::make('foo')
+                ->visibleOn([Operation::Create, Operation::Edit]),
+        ])
+        ->getComponents();
+
+    expect($components)
+        ->toHaveLength(1);
+
+    $components = ComponentContainer::make(Bar::make())
+        ->operation('view')
+        ->components([
+            TextInput::make('foo')
+                ->visibleOn([Operation::Create, Operation::Edit]),
+        ])
+        ->getComponents();
+
+    expect($components)
+        ->toHaveLength(0);
 });
 
 class Foo extends Livewire {}

@@ -149,23 +149,24 @@ The `hiddenOn()` method of form components allows you to dynamically hide fields
 In this example, we hide the `password` field on the `edit` page:
 
 ```php
-use Livewire\Component;
+use Filament\Support\Enums\Operation;
 
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->hiddenOn('edit'),
+    ->hiddenOn(Operation::Edit),
 ```
 
 Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page or action:
 
 ```php
+use Filament\Support\Enums\Operation;
 use Livewire\Component;
 
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->visibleOn('create'),
+    ->visibleOn(Operation::Create),
 ```
 
 ## Resource tables

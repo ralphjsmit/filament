@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
+use Filament\Support\Enums\Operation;
 use Illuminate\Support\Arr;
 
 trait CanBeHidden
@@ -22,12 +23,16 @@ trait CanBeHidden
     }
 
     /**
-     * @param  string | array<string>  $operations
+     * @param  string | array<string> | Operation | array<Operation>  $operations
      */
-    public function hiddenOn(string | array $operations): static
+    public function hiddenOn(string | array | Operation $operations): static
     {
         $this->hidden(static function (HasForms $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $hiddenOperation) {
+                if ($hiddenOperation instanceof Operation) {
+                    $hiddenOperation = $hiddenOperation->value;
+                }
+
                 if ($hiddenOperation === $operation || $livewire instanceof $hiddenOperation) {
                     return true;
                 }
@@ -102,12 +107,16 @@ trait CanBeHidden
     }
 
     /**
-     * @param  string | array<string>  $operations
+     * @param  string | array<string> | Operation | array<Operation>  $operations
      */
-    public function visibleOn(string | array $operations): static
+    public function visibleOn(string | array | Operation $operations): static
     {
         $this->visible(static function (string $operation, HasForms $livewire) use ($operations): bool {
             foreach (Arr::wrap($operations) as $visibleOperation) {
+                if ($visibleOperation instanceof Operation) {
+                    $visibleOperation = $visibleOperation->value;
+                }
+
                 if ($visibleOperation === $operation || $livewire instanceof $visibleOperation) {
                     return true;
                 }
