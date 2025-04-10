@@ -7,7 +7,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-<AutoScreenshot name="infolists/overview" alt="Example of a Product Infolist" version="4.x" />
+<AutoScreenshot name="infolists/overview" alt="Product infolist example" version="4.x" />
 
 Entry classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema array of components. Filament includes a number of entries built-in:
 

@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import laravel, {refreshPaths} from 'laravel-vite-plugin'
+import laravel, { refreshPaths } from 'laravel-vite-plugin'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({

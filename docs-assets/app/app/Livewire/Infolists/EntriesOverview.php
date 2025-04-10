@@ -38,7 +38,7 @@ class EntriesOverview extends Component implements HasSchemas
                         'class' => 'p-16 max-w-6xl',
                     ])
                     ->schema([
-                        Section::make('Product Information')
+                        Section::make('Product information')
                             ->description('Detailed information about the product')
                             ->icon(Heroicon::Wallet)
                             ->collapsible()
@@ -48,7 +48,7 @@ class EntriesOverview extends Component implements HasSchemas
                                 Grid::make(3)
                                     ->schema([
                                         TextEntry::make('name')
-                                            ->label('Product Name')
+                                            ->label('Product name')
                                             ->weight(FontWeight::Bold)
                                             ->size(TextSize::Large)
                                             ->state('Premium Ergonomic Office Chair')
@@ -68,20 +68,20 @@ class EntriesOverview extends Component implements HasSchemas
                                             ->color('gray'),
 
                                         TextEntry::make('status')
-                                            ->label('Stock Status')
+                                            ->label('Stock status')
                                             ->state('in_stock')
                                             ->badge()
-                                            ->formatStateUsing(fn(string $state) => str($state)
+                                            ->formatStateUsing(fn (string $state) => str($state)
                                                 ->replace('_', ' ')
                                                 ->title()
                                             )
-                                            ->icon(fn(string $state): string => match ($state) {
+                                            ->icon(fn (string $state): string => match ($state) {
                                                 'in_stock' => 'heroicon-o-check-circle',
                                                 'low_stock' => 'heroicon-o-exclamation-circle',
                                                 'out_of_stock' => 'heroicon-o-x-circle',
                                                 default => 'heroicon-o-question-mark-circle',
                                             })
-                                            ->color(fn(string $state): string => match ($state) {
+                                            ->color(fn (string $state): string => match ($state) {
                                                 'in_stock' => 'success',
                                                 'low_stock' => 'warning',
                                                 'out_of_stock' => 'danger',
@@ -98,36 +98,26 @@ class EntriesOverview extends Component implements HasSchemas
 
                                         ImageEntry::make('product_image')
                                             ->state('https://cdn.pixabay.com/photo/2021/09/26/11/44/chair-6657315_1280.jpg')
-                                            ->columnSpan(1)
-                                            ->extraImgAttributes([
-                                                'class' => 'rounded-lg max-w-[180px] shadow-md hover:shadow-xl transition-shadow duration-300',
-                                                'alt' => 'Premium Ergonomic Office Chair',
-                                            ]),
+                                            ->columnSpan(1),
                                     ]),
                             ]),
 
-                        Section::make('Pricing & Features')
+                        Section::make('Pricing & features')
                             ->icon(Heroicon::CurrencyDollar)
                             ->description('Information about pricing and features')
                             ->collapsible()
                             ->columnSpan(['lg' => 1])
-                            ->extraAttributes([
-                                'class' => 'rounded-xl',
-                            ])
                             ->schema([
                                 TextEntry::make('price')
                                     ->state('249.99')
                                     ->prefix('$')
                                     ->weight(FontWeight::Bold)
                                     ->size(TextSize::Large)
-                                    ->label('Price')
                                     ->suffix(' USD')
-                                    ->extraAttributes([
-                                        'class' => 'text-primary-600 dark:text-primary-400',
-                                    ]),
+                                    ->color('primary'),
 
                                 IconEntry::make('featured')
-                                    ->label('Featured Product')
+                                    ->label('Featured product')
                                     ->state(true)
                                     ->boolean()
                                     ->trueIcon(Heroicon::Star)
@@ -136,11 +126,8 @@ class EntriesOverview extends Component implements HasSchemas
                                     ->size(IconSize::Large),
 
                                 ColorEntry::make('color_options')
-                                    ->label('Available Colors')
+                                    ->label('Available colors')
                                     ->state(['#000000', '#0047AB', '#8B4513'])
-                                    ->extraAttributes([
-                                        'class' => 'mt-2',
-                                    ])
                                     ->afterStateHydrated(function (ColorEntry $component, array $state) {
                                         $component->tooltip(function (string $color) {
                                             return match ($color) {
@@ -162,11 +149,11 @@ class EntriesOverview extends Component implements HasSchemas
                                         KeyValueEntry::make('specifications')
                                             ->label(false)
                                             ->state([
-                                                'Material' => 'Mesh, Aluminum, High-grade Plastic',
-                                                'Weight Capacity' => '300 lbs',
-                                                'Height Adjustment' => '17" to 21"',
-                                                'Warranty' => '5 Years Limited',
-                                                'Assembly Required' => 'Yes (Tools Included)',
+                                                'Material' => 'Mesh, aluminum, high-grade plastic',
+                                                'Weight capacity' => '300 lbs',
+                                                'Height adjustment' => '17" to 21"',
+                                                'Warranty' => '5 years limited',
+                                                'Assembly required' => 'Yes (Tools Included)',
                                             ])
                                             ->keyLabel('Specification')
                                             ->valueLabel('Details'),
@@ -174,34 +161,9 @@ class EntriesOverview extends Component implements HasSchemas
 
                                 Tabs\Tab::make('Reviews')
                                     ->icon(Heroicon::OutlinedPencilSquare)
-                                    ->badge(fn() => 3)
-                                    ->schema([
-                                        RepeatableEntry::make('reviews')
-                                            ->label(false)
-                                            ->schema([
-                                                TextEntry::make('name')
-                                                    ->label('Reviewer')
-                                                    ->weight(FontWeight::Medium),
-
-                                                TextEntry::make('stars')
-                                                    ->label('Rating')
-                                                    ->formatStateUsing(fn(string $state): string => str_repeat('★', (int)$state) . str_repeat('☆', 5 - (int)$state))
-                                                    ->color(fn(string $state) => (int)$state >= 4 ? 'success' : ((int)$state >= 3 ? 'warning' : 'danger')),
-
-                                                TextEntry::make('comment')
-                                                    ->label('Review')
-                                                    ->markdown(),
-                                            ])
-                                            ->contained()
-                                            ->extraAttributes([
-                                                'class' => 'space-y-4',
-                                            ]),
-                                    ]),
+                                    ->badge(fn () => 3),
                             ])
-                            ->columnSpan(['lg' => 3])
-                            ->extraAttributes([
-                                'class' => 'mt-6',
-                            ]),
+                            ->columnSpan(['lg' => 3]),
                     ])
             ])
             ->constantState([

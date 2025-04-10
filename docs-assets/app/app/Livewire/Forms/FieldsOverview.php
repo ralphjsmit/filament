@@ -41,7 +41,7 @@ class FieldsOverview extends Component implements HasActions, HasSchemas
                         'class' => 'p-16 max-w-5xl',
                     ])
                     ->schema([
-                        Section::make('Account Settings')
+                        Section::make('Account settings')
                             ->description('Manage your account preferences')
                             ->columns([
                                 'sm' => 1,
@@ -51,28 +51,21 @@ class FieldsOverview extends Component implements HasActions, HasSchemas
                             ->collapsible()
                             ->schema([
                                 TextInput::make('username')
-                                    ->label('Username')
-                                    ->required()
-                                    ->unique()
-                                    ->minLength(3)
-                                    ->maxLength(30),
+                                    ->required(),
 
                                 TextInput::make('password')
-                                    ->label('Password')
                                     ->password()
-                                    ->revealable()
-                                    ->minLength(8)
-                                    ->dehydrated(false),
+                                    ->revealable(),
 
                                 Toggle::make('two_factor_auth')
-                                    ->label('Enable Two-Factor Authentication')
+                                    ->label('Enable two-factor authentication')
                                     ->helperText('Increase your account security by enabling 2FA')
                                     ->onColor('success')
                                     ->offColor('danger')
                                     ->inline(),
 
                                 ToggleButtons::make('theme_preference')
-                                    ->label('Theme Preference')
+                                    ->label('Theme preference')
                                     ->options([
                                         'light' => 'Light',
                                         'dark' => 'Dark',
@@ -87,15 +80,14 @@ class FieldsOverview extends Component implements HasActions, HasSchemas
                                     ]),
 
                                 ColorPicker::make('accent_color')
-                                    ->label('Accent Color')
                                     ->default('#3490dc'),
 
                                 CheckboxList::make('notifications')
-                                    ->label('Notification Preferences')
+                                    ->label('Notification preferences')
                                     ->options([
-                                        'email' => 'Email Notifications',
-                                        'push' => 'Push Notifications',
-                                        'sms' => 'SMS Notifications',
+                                        'email' => 'Email notifications',
+                                        'push' => 'Push notifications',
+                                        'sms' => 'SMS notifications',
                                     ])
                                     ->descriptions([
                                         'email' => 'Receive updates via email',
