@@ -542,7 +542,7 @@
                     <span
                         x-text="
                             window.pluralize(@js(__('filament-tables::table.selection_indicator.selected_count')), selectedRecords.length, {
-                                count: new Intl.NumberFormat(@js(app()->getLocale())).format(selectedRecords.length),
+                                count: new Intl.NumberFormat(@js(str_replace('_', '-', app()->getLocale()))).format(selectedRecords.length),
                             })
                         "
                     ></span>

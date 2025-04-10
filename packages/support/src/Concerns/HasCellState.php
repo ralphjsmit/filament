@@ -4,6 +4,7 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,6 +25,11 @@ trait HasCellState
     protected bool | Closure $isDistinctList = false;
 
     protected ?string $inverseRelationshipName = null;
+
+    /**
+     * @var array<string, mixed>
+     */
+    protected array $cachedState = [];
 
     public function inverseRelationship(?string $name): static
     {
@@ -72,26 +78,24 @@ trait HasCellState
 
     public function getState(): mixed
     {
-        if (! $this->getRecord()) {
-            return null;
-        }
+        return $this->cacheState(function (): mixed {
+            $state = ($this->getStateUsing !== null) ?
+                $this->evaluate($this->getStateUsing) :
+                $this->getStateFromRecord();
 
-        $state = ($this->getStateUsing !== null) ?
-            $this->evaluate($this->getStateUsing) :
-            $this->getStateFromRecord();
+            if (is_string($state) && ($separator = $this->getSeparator())) {
+                $state = explode($separator, $state);
+                $state = (count($state) === 1 && blank($state[0])) ?
+                    [] :
+                    $state;
+            }
 
-        if (is_string($state) && ($separator = $this->getSeparator())) {
-            $state = explode($separator, $state);
-            $state = (count($state) === 1 && blank($state[0])) ?
-                [] :
-                $state;
-        }
+            if (blank($state)) {
+                $state = $this->getDefaultState();
+            }
 
-        if (blank($state)) {
-            $state = $this->getDefaultState();
-        }
-
-        return $state;
+            return $state;
+        });
     }
 
     public function getStateFromRecord(): mixed
@@ -129,6 +133,11 @@ trait HasCellState
         }
 
         return $state->all();
+    }
+
+    public function clearCachedState(): void
+    {
+        $this->cachedState = [];
     }
 
     public function separator(string | Closure | null $separator = ','): static
@@ -359,5 +368,30 @@ trait HasCellState
         }
 
         return implode('.', $relationshipParts);
+    }
+
+    protected function cacheState(Closure $state): mixed
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return null;
+        }
+
+        if (is_array($record)) { /** @phpstan-ignore function.impossibleType */
+            $recordKey = (string) ($record[ArrayRecord::getKeyName()] ?? null); /** @phpstan-ignore nullCoalesce.offset */
+        } else {
+            $recordKey = (string) $record->getKey();
+        }
+
+        if (blank($recordKey)) {
+            return $state();
+        }
+
+        if (array_key_exists($recordKey, $this->cachedState)) {
+            return $this->cachedState[$recordKey];
+        }
+
+        return $this->cachedState[$recordKey] = $state();
     }
 }

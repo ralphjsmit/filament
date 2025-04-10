@@ -1,7 +1,9 @@
 ---
 title: Modals
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -22,13 +24,72 @@ Action::make('delete')
 
 <AutoScreenshot name="actions/modal/confirmation" alt="Confirmation modal" version="4.x" />
 
-> The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
+<Aside variant="warning">
+    The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
+</Aside>
 
-## Modal forms
+## Controlling modal content
 
-You may also render a form in the modal to collect extra information from the user before the action runs.
+### Customizing the modal's heading, description, and submit action label
 
-You may use components from the [Form Builder](../forms) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` closure:
+You may customize the heading, description and label of the submit button in the modal:
+
+```php
+use App\Models\Post;
+use Filament\Actions\Action;
+
+Action::make('delete')
+    ->action(fn (Post $record) => $record->delete())
+    ->requiresConfirmation()
+    ->modalHeading('Delete post')
+    ->modalDescription('Are you sure you\'d like to delete this post? This cannot be undone.')
+    ->modalSubmitActionLabel('Yes, delete it')
+```
+
+<AutoScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="4.x" />
+
+### Rendering a schema in a modal
+
+Filament allows you to render a [schema](../schemas) in a modal, which allows you to render any of the available components to build a UI. Usually, it is useful to build a form in the schema that can collect extra information from the user before the action runs, but any UI can be rendered:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+
+Action::make('viewUser')
+    ->schema([
+        Grid::make(2)
+            ->schema([
+                Section::make('Details')
+                    ->schema([
+                        TextInput::make('name'),
+                        Select::make('position')
+                            ->options([
+                                'developer' => 'Developer',
+                                'designer' => 'Designer',
+                            ]),
+                        Checkbox::make('is_admin'),
+                    ]),
+                Section::make('Auditing')
+                    ->schema([
+                        TextEntry::make('created_at')
+                            ->dateTime(),
+                        TextEntry::make('updated_at')
+                            ->dateTime(),
+                    ]),
+            ]),
+    ])
+```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `schema()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+#### Rendering a form in a modal
+
+You may use [form field](../forms) to create action modal forms. The data from the form is available in the `$data` array of the `action()` closure:
 
 ```php
 use App\Models\Post;
@@ -37,7 +98,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 
 Action::make('updateAuthor')
-    ->form([
+    ->schema([
         Select::make('authorId')
             ->label('Author')
             ->options(User::query()->pluck('name', 'id'))
@@ -51,7 +112,7 @@ Action::make('updateAuthor')
 
 <AutoScreenshot name="actions/modal/form" alt="Modal with form" version="4.x" />
 
-### Filling the form with existing data
+##### Filling the form with existing data
 
 You may fill the form with existing data, using the `fillForm()` method:
 
@@ -65,7 +126,7 @@ Action::make('updateAuthor')
     ->fillForm(fn (Post $record): array => [
         'authorId' => $record->author->id,
     ])
-    ->form([
+    ->schema([
         Select::make('authorId')
             ->label('Author')
             ->options(User::query()->pluck('name', 'id'))
@@ -77,9 +138,32 @@ Action::make('updateAuthor')
     })
 ```
 
-### Using a wizard as a modal form
+<UtilityInjection set="actions" version="4.x">The `fillForm()` method also accepts a function to dynamically calculate the data to fill the form with. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-You may create a [multistep form wizard](../schemas/layouts/wizard) inside a modal. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
+##### Disabling all form fields
+
+You may wish to disable all form fields in the modal, ensuring the user cannot edit them. You may do so using the `disabledForm()` method:
+
+```php
+use App\Models\Post;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+
+Action::make('approvePost')
+    ->schema([
+        TextInput::make('title'),
+        Textarea::make('content'),
+    ])
+    ->disabledForm()
+    ->action(function (Post $record): void {
+        $record->approve();
+    })
+```
+
+#### Rendering a wizard in a modal
+
+You may create a [multistep form wizard](../schemas/wizards) inside a modal. Instead of using a `schema()`, define a `steps()` array and pass your `Step` objects:
 
 ```php
 use Filament\Actions\Action;
@@ -120,51 +204,7 @@ Action::make('create')
 
 <AutoScreenshot name="actions/modal/wizard" alt="Modal with wizard" version="4.x" />
 
-### Disabling all form fields
-
-You may wish to disable all form fields in the modal, ensuring the user cannot edit them. You may do so using the `disabledForm()` method:
-
-```php
-use App\Models\Post;
-use App\Models\User;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-
-Action::make('approvePost')
-    ->form([
-        TextInput::make('title'),
-        Textarea::make('content'),
-    ])
-    ->fillForm(fn (Post $record): array => [
-        'title' => $record->title,
-        'content' => $record->content,
-    ])
-    ->disabledForm()
-    ->action(function (Post $record): void {
-        $record->approve();
-    })
-```
-
-## Customizing the modal's heading, description, and submit action label
-
-You may customize the heading, description and label of the submit button in the modal:
-
-```php
-use App\Models\Post;
-use Filament\Actions\Action;
-
-Action::make('delete')
-    ->action(fn (Post $record) => $record->delete())
-    ->requiresConfirmation()
-    ->modalHeading('Delete post')
-    ->modalDescription('Are you sure you\'d like to delete this post? This cannot be undone.')
-    ->modalSubmitActionLabel('Yes, delete it')
-```
-
-<AutoScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="4.x" />
-
-## Adding an icon inside the modal
+### Adding an icon inside the modal
 
 You may add an [icon](../styling/icons) inside the modal using the `modalIcon()` method:
 
@@ -177,6 +217,8 @@ Action::make('delete')
     ->requiresConfirmation()
     ->modalIcon('heroicon-o-trash')
 ```
+
+<UtilityInjection set="actions" version="4.x">The `modalIcon()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="actions/modal/icon" alt="Confirmation modal with icon" version="4.x" />
 
@@ -194,7 +236,9 @@ Action::make('delete')
     ->modalIconColor('warning')
 ```
 
-## Customizing the alignment of modal content
+<UtilityInjection set="actions" version="4.x">The `modalIconColor()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Customizing the alignment of modal content
 
 By default, modal content will be aligned to the start, or centered if the modal is `xs` or `sm` in [width](#changing-the-modal-width). If you wish to change the alignment of content in a modal, you can use the `modalAlignment()` method and pass it `Alignment::Start` or `Alignment::Center`:
 
@@ -203,7 +247,7 @@ use Filament\Actions\Action;
 use Filament\Support\Enums\Alignment;
 
 Action::make('updateAuthor')
-    ->form([
+    ->schema([
         // ...
     ])
     ->action(function (array $data): void {
@@ -212,7 +256,43 @@ Action::make('updateAuthor')
     ->modalAlignment(Alignment::Center)
 ```
 
-## Custom modal content
+<UtilityInjection set="actions" version="4.x">The `modalAlignment()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Making the modal header sticky
+
+The header of a modal scrolls out of view with the modal content when it overflows the modal size. However, slide-overs have a sticky header that's always visible. You may control this behavior using `stickyModalHeader()`:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('updateAuthor')
+    ->schema([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->stickyModalHeader()
+```
+
+### Making the modal footer sticky
+
+The footer of a modal is rendered inline after the content by default. Slide-overs, however, have a sticky footer that always shows when scrolling the content. You may enable this for a modal too using `stickyModalFooter()`:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('updateAuthor')
+    ->schema([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->stickyModalFooter()
+```
+
+### Custom modal content
 
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
 
@@ -225,7 +305,9 @@ Action::make('advance')
     ->modalContent(view('filament.pages.actions.advance'))
 ```
 
-### Passing data to the custom modal content
+<UtilityInjection set="actions" version="4.x">The `modalContent()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+#### Passing data to the custom modal content
 
 You can pass data to the view by returning it from a function. For example, if the `$record` of an action is set, you can pass that through to the view:
 
@@ -241,7 +323,7 @@ Action::make('advance')
     ))
 ```
 
-### Adding custom modal content below the form
+#### Adding custom modal content below the form
 
 By default, the custom content is displayed above the modal form if there is one, but you can add content below using `modalContentFooter()` if you wish:
 
@@ -254,7 +336,9 @@ Action::make('advance')
     ->modalContentFooter(view('filament.pages.actions.advance'))
 ```
 
-### Adding an action to custom modal content
+<UtilityInjection set="actions" version="4.x">The `modalContentFooter()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+#### Adding an action to custom modal content
 
 You can add an action button to your custom modal content, which is useful if you want to add a button that performs an action other than the main action. You can do this by registering an action with the `registerModalActions()` method, and then passing it to the view:
 
@@ -292,7 +376,7 @@ You can open a "slide-over" dialog instead of a modal by using the `slideOver()`
 use Filament\Actions\Action;
 
 Action::make('updateAuthor')
-    ->form([
+    ->schema([
         // ...
     ])
     ->action(function (array $data): void {
@@ -305,40 +389,6 @@ Action::make('updateAuthor')
 
 Instead of opening in the center of the screen, the modal content will now slide in from the right and consume the entire height of the browser.
 
-## Making the modal header sticky
-
-The header of a modal scrolls out of view with the modal content when it overflows the modal size. However, slide-overs have a sticky header that's always visible. You may control this behavior using `stickyModalHeader()`:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('updateAuthor')
-    ->form([
-        // ...
-    ])
-    ->action(function (array $data): void {
-        // ...
-    })
-    ->stickyModalHeader()
-```
-
-## Making the modal footer sticky
-
-The footer of a modal is rendered inline after the content by default. Slide-overs, however, have a sticky footer that always shows when scrolling the content. You may enable this for a modal too using `stickyModalFooter()`:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('updateAuthor')
-    ->form([
-        // ...
-    ])
-    ->action(function (array $data): void {
-        // ...
-    })
-    ->stickyModalFooter()
-```
-
 ## Changing the modal width
 
 You can change the width of the modal by using the `modalWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge`, `SevenExtraLarge`, and `Screen`:
@@ -348,7 +398,7 @@ use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 
 Action::make('updateAuthor')
-    ->form([
+    ->schema([
         // ...
     ])
     ->action(function (array $data): void {
@@ -356,6 +406,8 @@ Action::make('updateAuthor')
     })
     ->modalWidth(Width::FiveExtraLarge)
 ```
+
+<UtilityInjection set="actions" version="4.x">The `modalWidth()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Executing code when the modal opens
 
@@ -373,13 +425,13 @@ Action::make('create')
     })
 ```
 
-> The `mountUsing()` method, by default, is used by Filament to initialize the [form](#modal-forms). If you override this method, you will need to call `$form->fill()` to ensure the form is initialized correctly. If you wish to populate the form with data, you can do so by passing an array to the `fill()` method, instead of [using `fillForm()` on the action itself](#filling-the-form-with-existing-data).
+> The `mountUsing()` method, by default, is used by Filament to initialize the [form](#rendering-a-form-in-a-modal). If you override this method, you will need to call `$form->fill()` to ensure the form is initialized correctly. If you wish to populate the form with data, you can do so by passing an array to the `fill()` method, instead of [using `fillForm()` on the action itself](#filling-the-form-with-existing-data).
 
 ## Customizing the action buttons in the footer of the modal
 
 By default, there are two actions in the footer of a modal. The first is a button to submit, which executes the `action()`. The second button closes the modal and cancels the action.
 
-### Modifying a default modal footer action button
+### Modifying the default modal footer action button
 
 To modify the action instance that is used to render one of the default action buttons, you may pass a closure to the `modalSubmitAction()` and `modalCancelAction()` methods:
 
@@ -413,7 +465,7 @@ You may pass an array of extra actions to be rendered, between the default actio
 use Filament\Actions\Action;
 
 Action::make('create')
-    ->form([
+    ->schema([
         // ...
     ])
     // ...
@@ -421,6 +473,8 @@ Action::make('create')
         $action->makeModalSubmitAction('createAnother', arguments: ['another' => true]),
     ])
 ```
+
+<UtilityInjection set="actions" version="4.x">The `extraModalFooterActions()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 `$action->makeModalSubmitAction()` returns an action instance that can be customized using the [methods available to customize trigger buttons](overview).
 
@@ -430,7 +484,7 @@ The second parameter of `makeModalSubmitAction()` allows you to pass an array of
 use Filament\Actions\Action;
 
 Action::make('create')
-    ->form([
+    ->schema([
         // ...
     ])
     // ...
@@ -524,7 +578,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 
 Action::make('first')
-    ->form([
+    ->schema([
         TextInput::make('foo'),
     ])
     ->action(function () {
@@ -549,7 +603,7 @@ Even if you have multiple layers of nesting, the `$mountedActions` array will co
 use Filament\Actions\Action;
 
 Action::make('first')
-    ->form([
+    ->schema([
         TextInput::make('foo'),
     ])
     ->action(function () {
@@ -557,7 +611,7 @@ Action::make('first')
     })
     ->extraModalFooterActions([
         Action::make('second')
-            ->form([
+            ->schema([
                 TextInput::make('bar'),
             ])
             ->arguments(['number' => 2])
@@ -566,7 +620,7 @@ Action::make('first')
             })
             ->extraModalFooterActions([
                 Action::make('third')
-                    ->form([
+                    ->schema([
                         TextInput::make('baz'),
                     ])
                     ->arguments(['number' => 3])
@@ -592,7 +646,9 @@ Action::make('first')
     ])
 ```
 
-## Closing the modal by clicking away
+## Closing the modal
+
+### Closing the modal by clicking away
 
 By default, when you click away from a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closeModalByClickingAway(false)` method:
 
@@ -600,7 +656,7 @@ By default, when you click away from a modal, it will close itself. If you wish 
 use Filament\Actions\Action;
 
 Action::make('updateAuthor')
-    ->form([
+    ->schema([
         // ...
     ])
     ->action(function (array $data): void {
@@ -608,6 +664,8 @@ Action::make('updateAuthor')
     })
     ->closeModalByClickingAway(false)
 ```
+
+<UtilityInjection set="actions" version="4.x">The `closeModalByClickingAway()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you'd like to change the behavior for all modals in the application, you can do so by calling `Modal::closedByClickingAway()` inside a service provider or middleware:
 
@@ -617,7 +675,7 @@ use Filament\Support\View\Components\ModalComponent;
 ModalComponent::closedByClickingAway(false);
 ```
 
-## Closing the modal by escaping
+### Closing the modal by escaping
 
 By default, when you press escape on a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closeModalByEscaping(false)` method:
 
@@ -625,7 +683,7 @@ By default, when you press escape on a modal, it will close itself. If you wish 
 use Filament\Actions\Action;
 
 Action::make('updateAuthor')
-    ->form([
+    ->schema([
         // ...
     ])
     ->action(function (array $data): void {
@@ -633,6 +691,8 @@ Action::make('updateAuthor')
     })
     ->closeModalByEscaping(false)
 ```
+
+<UtilityInjection set="actions" version="4.x">The `closeModalByEscaping()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you'd like to change the behavior for all modals in the application, you can do so by calling `Modal::closedByEscaping()` inside a service provider or middleware:
 
@@ -642,7 +702,7 @@ use Filament\Support\View\Components\ModalComponent;
 ModalComponent::closedByEscaping(false);
 ```
 
-## Hiding the modal close button
+### Hiding the modal close button
 
 By default, modals have a close button in the top right corner. If you wish to hide the close button, you can use the `modalCloseButton(false)` method:
 
@@ -650,7 +710,7 @@ By default, modals have a close button in the top right corner. If you wish to h
 use Filament\Actions\Action;
 
 Action::make('updateAuthor')
-    ->form([
+    ->schema([
         // ...
     ])
     ->action(function (array $data): void {
@@ -658,6 +718,8 @@ Action::make('updateAuthor')
     })
     ->modalCloseButton(false)
 ```
+
+<UtilityInjection set="actions" version="4.x">The `modalCloseButton()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you'd like to hide the close button for all modals in the application, you can do so by calling `Modal::closeButton(false)` inside a service provider or middleware:
 
@@ -675,7 +737,7 @@ By default, modals will autofocus on the first focusable element when opened. If
 use Filament\Actions\Action;
 
 Action::make('updateAuthor')
-    ->form([
+    ->schema([
         // ...
     ])
     ->action(function (array $data): void {
@@ -683,6 +745,8 @@ Action::make('updateAuthor')
     })
     ->modalAutofocus(false)
 ```
+
+<UtilityInjection set="actions" version="4.x">The `modalAutofocus()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you'd like to disable autofocus for all modals in the application, you can do so by calling `Modal::autofocus(false)` inside a service provider or middleware:
 
@@ -696,7 +760,7 @@ ModalComponent::autofocus(false);
 
 When you use database queries or other heavy operations inside modal configuration methods like `modalHeading()`, they can be executed more than once. This is because Filament uses these methods to decide whether to render the modal or not, and also to render the modal's content.
 
-To skip the check that Filament does to decide whether to render the modal, you can use the `modal()` method, which will inform Filament that the modal exists for this action and it does not need to check again:
+To skip the check that Filament does to decide whether to render the modal, you can use the `modal()` method, which will inform Filament that the modal exists for this action, and it does not need to check again:
 
 ```php
 use Filament\Actions\Action;
@@ -716,13 +780,15 @@ Action::make('create')
     ->action(function (array $data): void {
         // ...
     })
-    ->modalHidden(fn (): bool => $this->role !== 'admin')
+    ->modalHidden($this->role !== 'admin')
     ->modalContent(view('filament.pages.actions.create'))
 ```
 
+<UtilityInjection set="actions" version="4.x">The `modalHidden()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Adding extra attributes to the modal window
 
-You may also pass extra HTML attributes to the modal window using `extraModalWindowAttributes()`:
+You can pass extra HTML attributes to the modal window via the `extraModalWindowAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
 
 ```php
 use Filament\Actions\Action;
@@ -730,3 +796,9 @@ use Filament\Actions\Action;
 Action::make('updateAuthor')
     ->extraModalWindowAttributes(['class' => 'update-author-modal'])
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `extraModalWindowAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="tip">
+    By default, calling `extraModalWindowAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>

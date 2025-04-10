@@ -138,8 +138,10 @@ trait InteractsWithSelectedRecords
 
                 $carry[] = $this->evaluate($failure['message'], [
                     'count' => $failure['count'],
+                    'failureCount' => $failure['count'],
                     'isAll' => $failure['count'] === $this->totalSelectedRecordsCount,
                     'total' => $this->totalSelectedRecordsCount,
+                    'totalCount' => $this->totalSelectedRecordsCount,
                 ]);
 
                 return $carry;

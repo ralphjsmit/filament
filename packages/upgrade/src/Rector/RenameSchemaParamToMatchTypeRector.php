@@ -18,7 +18,6 @@ use Rector\Naming\ValueObject\ParamRename;
 use Rector\Naming\ValueObjectFactory\ParamRenameFactory;
 use Rector\Rector\AbstractRector;
 use Rector\ValueObject\MethodName;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see RenameParamToMatchTypeRector
@@ -59,11 +58,6 @@ class RenameSchemaParamToMatchTypeRector extends AbstractRector
         $this->matchParamTypeExpectedNameResolver = $matchParamTypeExpectedNameResolver;
         $this->paramRenameFactory = $paramRenameFactory;
         $this->paramRenamer = $paramRenamer;
-    }
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Rename param to match ClassType', []);
     }
 
     /**

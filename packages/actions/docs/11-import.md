@@ -1,6 +1,8 @@
 ---
 title: Import action
 ---
+import Aside from "@components/Aside.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -24,9 +26,13 @@ php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
 
-> If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
+<Aside variant="info">
+    If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
+</Aside>
 
-> If you're using UUIDs for your `User` model, make sure that your `notifiable` column in the notifications migration is using `uuidMorphs()`: `$table->uuidMorphs('notifiable')`.
+<Aside variant="info">
+    If you're using UUIDs for your `User` model, make sure that your `notifiable` column in the notifications migration is using `uuidMorphs()`: `$table->uuidMorphs('notifiable')`.
+</Aside>
 
 You may use the `ImportAction` like so:
 
@@ -161,6 +167,8 @@ ImportColumn::make('sku')
 
 Any rows that do not pass validation will not be imported. Instead, they will be compiled into a new CSV of "failed rows", which the user can download after the import has finished. The user will be shown a list of validation errors for each row that failed.
 
+<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `rules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Casting state
 
 Before [validation](#validating-csv-data), data from the CSV can be cast. This is useful for converting strings into the correct data type, otherwise validation may fail. For example, if you have a `price` column in your CSV, you may want to cast it to a float:
@@ -181,9 +189,13 @@ ImportColumn::make('price')
     })
 ```
 
+<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
+
 In this example, we pass in a function that is used to cast the `$state`. This function removes any non-numeric characters from the string, casts it to a float, and rounds it to two decimal places.
 
-> Please note: if a column is not [required by validation](#validating-csv-data), and it is empty, it will not be cast.
+<Aside variant="info">
+    If a column is not [required by validation](#validating-csv-data), and it is empty, it will not be cast.
+</Aside>
 
 Filament also ships with some built-in casting methods:
 
@@ -233,6 +245,8 @@ ImportColumn::make('price')
     })
 ```
 
+<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Handling multiple values in a single column
 
 You may use the `multiple()` method to cast the values in a column to an array. It accepts a delimiter as its first argument, which is used to split the values in the column into an array. For example, if you have a `documentation_urls` column in your CSV, you may want to cast it to an array of URLs:
@@ -243,6 +257,8 @@ use Filament\Actions\Imports\ImportColumn;
 ImportColumn::make('documentation_urls')
     ->multiple(',')
 ```
+
+<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 In this example, we pass in a comma as the delimiter, so the values in the column will be split by commas, and cast to an array.
 
@@ -271,6 +287,8 @@ ImportColumn::make('customer_ratings')
     ->rules(['array'])
     ->nestedRecursiveRules(['integer', 'min:1', 'max:5'])
 ```
+
+<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `nestedRecursiveRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Importing relationships
 
@@ -332,6 +350,8 @@ ImportColumn::make('author')
     })
 ```
 
+<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to resolve into a record.">The function passed to `resolveUsing` allows you to inject various utilities into the function as parameters.</UtilityInjection>
+
 If you are using a `BelongsToMany` relationship, the `$state` will be an array, and you should return a collection of records that you have resolved:
 
 ```php
@@ -383,6 +403,7 @@ If you want to customize how column state is filled into a record, you can pass 
 
 ```php
 use App\Models\Product;
+use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('sku')
     ->fillRecordUsing(function (Product $record, string $state): void {
@@ -390,12 +411,14 @@ ImportColumn::make('sku')
     })
 ```
 
+<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to fill into the record.">The function passed to the `fillRecordUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Adding helper text below the import column
 
 Sometimes, you may wish to provide extra information for the user before validation. You can do this by adding `helperText()` to a column, which gets displayed below the mapping select:
 
 ```php
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('skus')
     ->multiple(',')
@@ -621,6 +644,8 @@ ImportAction::make()
     ->maxRows(100000)
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `maxRows()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Changing the import chunk size
 
 Filament will chunk the CSV, and process each chunk in a different queued job. By default, chunks are 100 rows at a time. You can change this by calling the `chunkSize()` method on the action:
@@ -634,7 +659,11 @@ ImportAction::make()
     ->chunkSize(250)
 ```
 
-If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="tip">
+    If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
+</Aside>
 
 ## Changing the CSV delimiter
 
@@ -648,6 +677,8 @@ ImportAction::make()
     ->importer(ProductImporter::class)
     ->csvDelimiter(';')
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You can only specify a single character, otherwise an exception will be thrown.
 
@@ -663,6 +694,8 @@ ImportAction::make()
     ->importer(ProductImporter::class)
     ->headerOffset(5)
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `headerOffset()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the import job
 
@@ -821,6 +854,8 @@ ImportAction::make()
         File::types(['csv', 'txt'])->max(1024),
     ]),
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `fileRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Lifecycle hooks
 

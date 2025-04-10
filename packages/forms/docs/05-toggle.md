@@ -96,7 +96,7 @@ Toggle::make('is_admin')
 
 ## Toggle validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to toggles.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to toggles.
 
 ### Accepted validation
 

@@ -171,6 +171,7 @@
                 x-on:click="requestNextStep()"
             @endif
             x-bind:class="{ 'fi-hidden': isLastStep() }"
+            wire:loading.class="fi-disabled"
         >
             {{ $nextAction }}
         </div>

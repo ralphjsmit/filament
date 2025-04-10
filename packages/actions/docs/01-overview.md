@@ -478,7 +478,7 @@ These injected utilities require specific parameter names to be used. Otherwise,
 
 ### Injecting the current modal form data
 
-If you wish to access the current [modal form data](modals#modal-forms), define a `$data` parameter:
+If you wish to access the current [modal form data](modals#rendering-a-form-in-a-modal), define a `$data` parameter:
 
 ```php
 function (array $data) {

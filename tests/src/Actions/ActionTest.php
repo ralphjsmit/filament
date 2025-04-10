@@ -417,7 +417,7 @@ it('will assert that a notification was not sent', function (): void {
         ->assertNotNotified('An incorrect notification');
 
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
-    $this->expectExceptionMessage('The notification with the given configration was sent');
+    $this->expectExceptionMessage('The notification with the given configuration was sent');
 
     livewire(Actions::class)
         ->callAction('shows-notification-with-id')

@@ -44,7 +44,7 @@ class DetachAction extends Action
                 $relationship = $table->getRelationship();
 
                 if ($table->allowsDuplicates()) {
-                    $record->{$relationship->getPivotAccessor()}->delete();
+                    $record->getRelationValue($relationship->getPivotAccessor())->delete();
                 } else {
                     $relationship->detach($record);
                 }

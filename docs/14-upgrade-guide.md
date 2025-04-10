@@ -2,6 +2,7 @@
 title: Upgrade Guide
 contents: false
 ---
+import Aside from "@components/Aside.astro"
 import Checkbox from "@components/Checkbox.astro"
 import Checkboxes from "@components/Checkboxes.astro"
 import Disclosure from "@components/Disclosure.astro"
@@ -17,7 +18,7 @@ import Disclosure from "@components/Disclosure.astro"
 
 ## Running the automated upgrade script
 
-The first set tp upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
+The first set to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
 
 ```bash
 composer require filament/upgrade:"^4.0" -W --dev
@@ -135,6 +136,46 @@ Grid::make()
 Section::make()
     ->columnSpanFull()
 ```
+
+<Aside variant="tip">
+    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Forms\Components\Fieldset;
+    use Filament\Forms\Components\Grid;
+    use Filament\Forms\Components\Section;
+
+    Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
+        ->columnSpanFull());
+
+    Grid::configureUsing(fn (Grid $grid) => $grid
+        ->columnSpanFull());
+
+    Section::configureUsing(fn (Section $section) => $section
+        ->columnSpanFull());
+    ```
+</Aside>
+
+<Disclosure x-show="packages.includes('forms')">
+<span slot="summary">The `unique()` validation rule behavior for ignoring Eloquent records</span>
+
+In v3, the `unique()` method did not ignore the current form's Eloquent record when validating by default. This behavior was enabled by the `ignoreRecord: true` parameter, or by passing a custom `ignorable` record.
+
+In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
+
+If you were previously using `unqiue()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
+
+<Aside variant="tip">
+    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Forms\Components\Field;
+
+    Field::configureUsing(fn (Field $field) => $field
+        ->uniqueValidationIgnoresRecordByDefault(false));
+    ```
+</Aside>
+</Disclosure>
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -148,24 +189,111 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->paginated([5, 10, 25, 50, 'all']);
+        ->paginationPageOptions([5, 10, 25, 50, 'all']);
 }
 ```
 
 Be aware when using `all` as it will cause performance issues when dealing with a large number of records.
 
-Alternatively, you can do it for all tables at once using a global setting in the `boot()` method of a service provider:
+<Aside variant="tip">
+    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
-```php
-use Filament\Tables\Table;
+    ```php
+    use Filament\Tables\Table;
 
-Table::configureUsing(function (Table $table): void {
-    $table->paginationPageOptions([5, 10, 25, 50, 'all']);
-});
-```
+    Table::configureUsing(fn (Table $table) => $table
+        ->paginationPageOptions([5, 10, 25, 50, 'all']));
+    ```
+</Aside>
 </Disclosure>
 
 ### Medium-impact changes
+
+<Disclosure>
+<span slot="summary">Colors must be registered before they are used</span>
+
+In Filament v3, when using a color, for example in an action, table column or infolist entry `color()` method, or if an enum uses the `HasColor` trait, you could use an array of RGB values instead of a registered color name. Filament v4 introduces a more advanced color system, and now all colors must be registered before they are used.
+
+For example, v3 allowed this code:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('delete')
+    ->color([
+        50 => '254, 242, 242',
+        100 => '254, 226, 226',
+        200 => '254, 202, 202',
+        300 => '252, 165, 165',
+        400 => '248, 113, 113',
+        500 => '239, 68, 68',
+        600 => '220, 38, 38',
+        700 => '185, 28, 28',
+        800 => '153, 27, 27',
+        900 => '127, 29, 29',
+        950 => '69, 10, 10',
+    ])
+```
+
+In Filament v4, you should first register the color in the panel you are using the component in:
+
+```php
+use Filament\Panel;
+use Filament\Support\Colors\Color;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->colors([
+            'ruby' => [
+                50 => '254, 242, 242',
+                100 => '254, 226, 226',
+                200 => '254, 202, 202',
+                300 => '252, 165, 165',
+                400 => '248, 113, 113',
+                500 => '239, 68, 68',
+                600 => '220, 38, 38',
+                700 => '185, 28, 28',
+                800 => '153, 27, 27',
+                900 => '127, 29, 29',
+                950 => '69, 10, 10',
+            ],
+        ]);
+}
+```
+
+Or if you're not using a panel, you can register the color in the `boot()` method of a service provider like `AppServiceProvider`:
+
+```php
+use Filament\Support\Facades\FilamentColor;
+
+FilamentColor::register([
+    'ruby' => [
+        50 => '254, 242, 242',
+        100 => '254, 226, 226',
+        200 => '254, 202, 202',
+        300 => '252, 165, 165',
+        400 => '248, 113, 113',
+        500 => '239, 68, 68',
+        600 => '220, 38, 38',
+        700 => '185, 28, 28',
+        800 => '153, 27, 27',
+        900 => '127, 29, 29',
+        950 => '69, 10, 10',
+    ],
+]);
+```
+
+Then you can use the color in your component:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('delete')
+    ->color('ruby');
+```
+</Disclosure>
 
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Automatic tenancy global scoping and association</span>
@@ -183,12 +311,23 @@ In v3, the `inline()` method put the radio buttons inline with each other, and a
 In v4, the `inline()` method now only puts the radio buttons inline with each other, and not with the label. If you want the radio buttons to be inline with the label, you can use the `inlineLabel()` method as well.
 
 If you were previously using `inline()->inlineLabel(false)` to achieve the v4 behaviour, you can now simply use `inline()`.
+
+<Aside variant="tip">
+    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Forms\Components\Radio;
+    
+    Radio::configureUsing(fn (Radio $radio) => $radio
+        ->inlineLabel(fn (): bool => $radio->isInline()));
+    ```
+</Aside>
 </Disclosure>
 
 <Disclosure x-show="packages.includes('actions')">
 <span slot="summary">Import and export job retries</span>
 
-In Filament v3, import and export jobs were retries continuously for 24 hours if they failed, with no backoff between tries by default.
+In Filament v3, import and export jobs were retries continuously for 24 hours if they failed, with no backoff between tries by default. This caused issues for some users, as there was no backoff period and the jobs could be retried too quickly, causing the queue to be flooded with continuously failing jobs.
 
 In v4, they are retried 3 times with a 60 second backoff between each retry.
 
@@ -217,22 +356,40 @@ public function getStats(): array
 ```
 </Disclosure>
 
+<Disclosure x-show="packages.includes('panels')">
+<span slot="summary">`getCurrentPanel()` no longer returns the default panel as a fallback</span>
+
+In v4, the `getCurrentPanel()` method returned the default panel if no panel was set. While this was useful behaviour internally in Filament core, it was unexpected for developers. In v4, `getCurrentPanel()` will return `null` if no panel is set, and you should handle this case in your code.
+
+```php
+use Filament\Facades\Filament;
+
+Filament::getCurrentPanel();
+filament()->getCurrentPanel();
+```
+
+If you are a plugin author and would like to get the default panel if no panel is set, you can use the `getCurrentOrDefaultPanel()` method instead:
+
+```php
+use Filament\Facades\Filament;
+
+Filament::getCurrentOrDefaultPanel();
+filament()->getCurrentOrDefaultPanel();
+```
+</Disclosure>
+
 ### Low-impact changes
+
+<Disclosure>
+<span slot="summary">The color shade customization API has been removed</span>
+
+The API to customize color shades, `FilamentColor::addShades()`, `FilamentColor::overrideShades()`, and `FilamentColor::removeShades()` has been removed. This API was replaced with a more advanced color system in v4 which uses different shades for components based on their contrast, to ensure that components are accessible.
+</Disclosure>
 
 <Disclosure x-show="packages.includes('tables') || packages.includes('infolists')">
 <span slot="summary">The `isSeparate` parameter of `ImageColumn::limitedRemainingText()` and `ImageEntry::limitedRemainingText()` has been removed</span>
 
 Previously, users were able to display the number of limited images separately to an image stack using the `isSeparate` parameter. Now the parameter has been removed, and if a stack exists, the text will always be stacked on top and not separate. If the images are not stacked, the text will be separate.
-</Disclosure>
-
-<Disclosure x-show="packages.includes('forms')">
-<span slot="summary">The `unique()` validation rule behavior for ignoring Eloquent records</span>
-
-In v3, the `unique()` method did not ignore the current form's Eloquent record when validating by default. This behavior was enabled by the `ignoreRecord: true` parameter, or by passing a custom `ignorable` record.
-
-In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
-
-If you were previously using `unqiue()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">
@@ -391,28 +548,6 @@ The Nepalese translations have been moved from `np` to `ne`, which appears to be
 <span slot="summary">Norwegian translations</span>
 
 The Norwegian translations have been moved from `no` to `nb`, which appears to be the more commonly used language code for the language within the Laravel community.
-</Disclosure>
-
-<Disclosure x-show="packages.includes('panels')">
-<span slot="summary">`getCurrentPanel()` no longer returns the default panel as a fallback</span>
-
-In v4, the `getCurrentPanel()` method returned the default panel if no panel was set. While this was useful behaviour internally in Filament core, it was unexpected for developers. In v4, `getCurrentPanel()` will return `null` if no panel is set, and you should handle this case in your code.
-
-```php
-use Filament\Facades\Filament;
-
-Filament::getCurrentPanel();
-filament()->getCurrentPanel();
-```
-
-If you are a plugin author and would like to get the default panel if no panel is set, you can use the `getCurrentOrDefaultPanel()` method instead:
-
-```php
-use Filament\Facades\Filament;
-
-Filament::getCurrentOrDefaultPanel();
-filament()->getCurrentOrDefaultPanel();
-```
 </Disclosure>
 
 </div>

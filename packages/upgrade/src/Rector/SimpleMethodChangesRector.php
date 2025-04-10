@@ -7,6 +7,7 @@ use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Contracts\HasColor;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
@@ -15,20 +16,10 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\UnionType;
 use PHPStan\Type\ObjectType;
-use Rector\Naming\VariableRenamer;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class SimpleMethodChangesRector extends AbstractRector
 {
-    protected VariableRenamer $variableRenamer;
-
-    public function __construct(VariableRenamer $variableRenamer)
-    {
-        $this->variableRenamer = $variableRenamer;
-    }
-
     /**
      * @return array<array{
      *     class: class-string | array<class-string>,
@@ -88,6 +79,16 @@ class SimpleMethodChangesRector extends AbstractRector
                     },
                 ],
             ],
+            [
+                'class' => [
+                    HasColor::class,
+                ],
+                'changes' => [
+                    'getColor' => function (ClassMethod $node): void {
+                        $node->returnType = new Identifier('?string');
+                    },
+                ],
+            ],
         ];
     }
 
@@ -122,19 +123,6 @@ class SimpleMethodChangesRector extends AbstractRector
         }
 
         return $touched ? $node : null;
-    }
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition(
-            'Fix method definitions',
-            [
-                new CodeSample(
-                    'public static function form(Form $form): Form',
-                    'public function form(Form $form): Form',
-                ),
-            ]
-        );
     }
 
     /**

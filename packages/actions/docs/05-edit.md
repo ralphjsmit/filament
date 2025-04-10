@@ -1,6 +1,7 @@
 ---
 title: Edit action
 ---
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -11,35 +12,12 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 
 EditAction::make()
-    ->record($this->post)
-    ->form([
+    ->schema([
         TextInput::make('title')
             ->required()
             ->maxLength(255),
         // ...
     ])
-```
-
-If you want to edit table rows, you may do so like this:
-
-```php
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->actions([
-            EditAction::make()
-                ->form([
-                    TextInput::make('title')
-                        ->required()
-                        ->maxLength(255),
-                    // ...
-                ]),
-        ]);
-}
 ```
 
 ## Customizing data before filling the form
@@ -57,6 +35,8 @@ EditAction::make()
     })
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as `$data`, the `mutateRecordDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
+
 ## Customizing data before saving
 
 Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateFormDataUsing()` method, which has access to the `$data` as an array, and returns the modified version:
@@ -71,6 +51,8 @@ EditAction::make()
         return $data;
     })
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as `$data`, the `mutateDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
 
 ## Customizing the saving process
 
@@ -87,6 +69,8 @@ EditAction::make()
         return $record;
     })
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as `$record` and `$data`, the `using()` function can inject various utilities as parameters.</UtilityInjection>
 
 ## Redirecting after saving
 
@@ -111,6 +95,8 @@ EditAction::make()
     ]))
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
+
 ## Customizing the save notification
 
 When the record is successfully updated, a notification is dispatched to the user, which indicates the success of their action.
@@ -123,6 +109,8 @@ use Filament\Actions\EditAction;
 EditAction::make()
     ->successNotificationTitle('User updated')
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may customize the entire notification using the `successNotification()` method:
 
@@ -138,6 +126,8 @@ EditAction::make()
             ->body('The user has been saved successfully.'),
     )
 ```
+
+<UtilityInjection set="actions" version="4.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 To disable the notification altogether, use the `successNotification(null)` method:
 
@@ -177,6 +167,8 @@ EditAction::make()
         // Runs after the form fields are saved to the database.
     })
 ```
+
+<UtilityInjection set="actions" version="4.x">These hook functions can inject various utilities as parameters.</UtilityInjection>
 
 ## Halting the saving process
 

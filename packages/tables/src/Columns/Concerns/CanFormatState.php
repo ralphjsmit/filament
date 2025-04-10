@@ -7,7 +7,6 @@ use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
@@ -59,8 +58,6 @@ trait CanFormatState
     {
         $this->isDate = true;
 
-        $format ??= Table::$defaultDateDisplayFormat;
-
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -68,7 +65,7 @@ trait CanFormatState
 
             return Carbon::parse($state)
                 ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->translatedFormat($column->evaluate($format));
+                ->translatedFormat($column->evaluate($format) ?? $column->getTable()->getDefaultDateDisplayFormat());
         });
 
         return $this;
@@ -78,7 +75,7 @@ trait CanFormatState
     {
         $this->isDateTime = true;
 
-        $format ??= Table::$defaultDateTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultDateTimeDisplayFormat();
 
         $this->date($format, $timezone);
 
@@ -89,8 +86,6 @@ trait CanFormatState
     {
         $this->isDate = true;
 
-        $format ??= Table::$defaultIsoDateDisplayFormat;
-
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -98,7 +93,7 @@ trait CanFormatState
 
             return Carbon::parse($state)
                 ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->isoFormat($column->evaluate($format));
+                ->isoFormat($column->evaluate($format) ?? $column->getTable()->getDefaultIsoDateDisplayFormat());
         });
 
         return $this;
@@ -108,7 +103,7 @@ trait CanFormatState
     {
         $this->isDateTime = true;
 
-        $format ??= Table::$defaultIsoDateTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoDateTimeDisplayFormat();
 
         $this->isoDate($format, $timezone);
 
@@ -134,8 +129,6 @@ trait CanFormatState
 
     public function dateTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $format ??= Table::$defaultDateDisplayFormat;
-
         $this->tooltip(static function (TextColumn $column, mixed $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -143,7 +136,7 @@ trait CanFormatState
 
             return Carbon::parse($state)
                 ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->translatedFormat($column->evaluate($format));
+                ->translatedFormat($column->evaluate($format) ?? $column->getTable()->getDefaultDateDisplayFormat());
         });
 
         return $this;
@@ -151,7 +144,7 @@ trait CanFormatState
 
     public function dateTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $format ??= Table::$defaultDateTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultDateTimeDisplayFormat();
 
         $this->dateTooltip($format, $timezone);
 
@@ -160,7 +153,7 @@ trait CanFormatState
 
     public function timeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $format ??= Table::$defaultTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultTimeDisplayFormat();
 
         $this->dateTooltip($format, $timezone);
 
@@ -184,8 +177,6 @@ trait CanFormatState
 
     public function isoDateTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
-        $format ??= Table::$defaultIsoDateDisplayFormat;
-
         $this->tooltip(static function (TextColumn $column, mixed $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -193,7 +184,7 @@ trait CanFormatState
 
             return Carbon::parse($state)
                 ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->isoFormat($column->evaluate($format));
+                ->isoFormat($column->evaluate($format) ?? $column->getTable()->getDefaultIsoDateDisplayFormat());
         });
 
         return $this;
@@ -201,7 +192,7 @@ trait CanFormatState
 
     public function isoDateTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
-        $format ??= Table::$defaultIsoDateTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoDateTimeDisplayFormat();
 
         $this->isoDateTooltip($format, $timezone);
 
@@ -210,7 +201,7 @@ trait CanFormatState
 
     public function isoTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
-        $format ??= Table::$defaultIsoTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoTimeDisplayFormat();
 
         $this->isoDateTooltip($format, $timezone);
 
@@ -230,8 +221,8 @@ trait CanFormatState
                 return $state;
             }
 
-            $currency = $column->evaluate($currency) ?? Table::$defaultCurrency;
-            $locale = $column->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+            $currency = $column->evaluate($currency) ?? $column->getTable()->getDefaultCurrency();
+            $locale = $column->evaluate($locale) ?? $column->getTable()->getDefaultNumberLocale() ?? config('app.locale');
             $decimalPlaces = $column->evaluate($decimalPlaces);
 
             if ($divideBy = $column->evaluate($divideBy)) {
@@ -273,7 +264,7 @@ trait CanFormatState
                 );
             }
 
-            $locale = $column->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+            $locale = $column->evaluate($locale) ?? $column->getTable()->getDefaultNumberLocale() ?? config('app.locale');
 
             return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces), $locale);
         });
@@ -285,7 +276,7 @@ trait CanFormatState
     {
         $this->isTime = true;
 
-        $format ??= Table::$defaultTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultTimeDisplayFormat();
 
         $this->date($format, $timezone);
 
@@ -296,7 +287,7 @@ trait CanFormatState
     {
         $this->isTime = true;
 
-        $format ??= Table::$defaultIsoTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoTimeDisplayFormat();
 
         $this->isoDate($format, $timezone);
 

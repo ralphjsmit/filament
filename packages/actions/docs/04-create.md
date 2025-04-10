@@ -1,6 +1,7 @@
 ---
 title: Create action
 ---
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -11,35 +12,12 @@ use Filament\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
 
 CreateAction::make()
-    ->model(Post::class)
-    ->form([
+    ->schema([
         TextInput::make('title')
             ->required()
             ->maxLength(255),
         // ...
     ])
-```
-
-If you want to add this action to the header of a table, you may do so like this:
-
-```php
-use Filament\Actions\CreateAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->headerActions([
-            CreateAction::make()
-                ->form([
-                    TextInput::make('title')
-                        ->required()
-                        ->maxLength(255),
-                    // ...
-                ]),
-        ]);
-}
 ```
 
 ## Customizing data before saving
@@ -57,6 +35,8 @@ CreateAction::make()
     })
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as `$data`, the `mutateDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
+
 ## Customizing the creation process
 
 You can tweak how the record is created with the `using()` method:
@@ -72,6 +52,8 @@ CreateAction::make()
 ```
 
 `$model` is the class name of the model, but you can replace this with your own hard-coded class if you wish.
+
+<UtilityInjection set="actions" version="4.x">As well as `$data` and `$model`, the `using()` function can inject various utilities as parameters.</UtilityInjection>
 
 ## Redirecting after creation
 
@@ -96,6 +78,8 @@ CreateAction::make()
     ]))
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
+
 ## Customizing the save notification
 
 When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
@@ -108,6 +92,8 @@ use Filament\Actions\CreateAction;
 CreateAction::make()
     ->successNotificationTitle('User registered')
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may customize the entire notification using the `successNotification()` method:
 
@@ -123,6 +109,8 @@ CreateAction::make()
             ->body('The user has been created successfully.'),
     )
 ```
+
+<UtilityInjection set="actions" version="4.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 To disable the notification altogether, use the `successNotification(null)` method:
 
@@ -163,6 +151,8 @@ CreateAction::make()
     })
 ```
 
+<UtilityInjection set="actions" version="4.x">These hook functions can inject various utilities as parameters.</UtilityInjection>
+
 ## Halting the creation process
 
 At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
@@ -201,7 +191,7 @@ $action->cancel();
 
 ## Using a wizard
 
-You may easily transform the creation process into a multistep wizard. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
+You may easily transform the creation process into a multistep wizard. Instead of using a `schema()`, define a `steps()` array and pass your `Step` objects:
 
 ```php
 use Filament\Actions\CreateAction;
@@ -267,6 +257,8 @@ CreateAction::make()
     ->createAnother(false)
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `createAnother()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Preserving data when creating another
 
 By default, when the user uses the "create and create another" feature, all the form data is cleared so the user can start fresh. If you'd like to preserve some of the data in the form, you may use the `preserveFormDataWhenCreatingAnother()` method, passing an array of fields to preserve:
@@ -296,3 +288,5 @@ use Filament\Actions\CreateAction;
 CreateAction::make()
     ->preserveFormDataWhenCreatingAnother(fn (array $data): array => $data)
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `preserveFormDataWhenCreatingAnother()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

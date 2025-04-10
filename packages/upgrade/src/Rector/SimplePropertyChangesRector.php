@@ -19,8 +19,6 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class SimplePropertyChangesRector extends AbstractRector
 {
@@ -78,6 +76,9 @@ class SimplePropertyChangesRector extends AbstractRector
                     },
                     'navigationIcon' => function (Property $node): void {
                         $node->type = new Name('string | \BackedEnum | null');
+                    },
+                    'navigationGroup' => function (Property $node): void {
+                        $node->type = new Name('string | \UnitEnum | null');
                     },
                     'subNavigationPosition' => function (Property $node): void {
                         $node->type = new Name('?\Filament\Pages\Enums\SubNavigationPosition');
@@ -161,19 +162,6 @@ class SimplePropertyChangesRector extends AbstractRector
         }
 
         return $touched ? $node : null;
-    }
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition(
-            'Fix property definitions',
-            [
-                new CodeSample(
-                    'protected static string | array $middlewares = [];',
-                    'protected static string | array $routeMiddleware = [];',
-                ),
-            ]
-        );
     }
 
     /**

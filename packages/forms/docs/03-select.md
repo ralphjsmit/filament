@@ -776,7 +776,7 @@ Select::make('feedback')
 
 ## Select validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to selects.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to selects.
 
 ### Selected items validation
 

@@ -12,6 +12,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\ModalComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
 
 trait CanOpenModal
 {
@@ -35,7 +36,7 @@ trait CanOpenModal
     protected array $cachedModalActions;
 
     /**
-     * @var array<Action>
+     * @var array<Action | Closure>
      */
     protected array $modalActions = [];
 
@@ -87,10 +88,7 @@ trait CanOpenModal
 
     protected string | BackedEnum | Closure | null $modalIcon = null;
 
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $modalIconColor = null;
+    protected string | Closure | null $modalIconColor = null;
 
     public function closeModalByClickingAway(bool | Closure | null $condition = true): static
     {
@@ -146,10 +144,7 @@ trait CanOpenModal
         return $this;
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
-     */
-    public function modalIconColor(string | array | Closure | null $color = null): static
+    public function modalIconColor(string | Closure | null $color = null): static
     {
         $this->modalIconColor = $color;
 
@@ -215,7 +210,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<Action>  $actions
+     * @param  array<Action | Closure>  $actions
      */
     public function registerModalActions(array $actions): static
     {
@@ -353,8 +348,8 @@ trait CanOpenModal
         if ($this->modalFooterActions) {
             $actions = [];
 
-            foreach ($this->evaluate($this->modalFooterActions) as $action) {
-                $actions[$action->getName()] = $this->prepareModalAction($action);
+            foreach ($this->evaluate($this->modalFooterActions) as $modalAction) {
+                $actions[$modalAction->getName()] = $this->prepareModalAction($modalAction);
             }
 
             return $this->cachedModalFooterActions = $actions;
@@ -407,7 +402,9 @@ trait CanOpenModal
         $actions = $this->getModalFooterActions();
 
         foreach ($this->modalActions as $action) {
-            $actions[$action->getName()] = $this->prepareModalAction($action);
+            foreach (Arr::wrap($this->evaluate($action)) as $modalAction) {
+                $actions[$modalAction->getName()] = $this->prepareModalAction($modalAction);
+            }
         }
 
         return $this->cachedModalActions = $actions;
@@ -691,10 +688,7 @@ trait CanOpenModal
         return null;
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getModalIconColor(): string | array | null
+    public function getModalIconColor(): ?string
     {
         return $this->evaluate($this->modalIconColor) ?? $this->getColor() ?? 'primary';
     }

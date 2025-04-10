@@ -245,8 +245,10 @@ trait CanNotify
                 $this->missingBulkAuthorizationFailureNotificationMessage,
                 [
                     'count' => $this->bulkAuthorizationFailureWithoutMessageCount,
+                    'failureCount' => $this->bulkAuthorizationFailureWithoutMessageCount,
                     'isAll' => $this->bulkAuthorizationFailureWithoutMessageCount === $this->totalSelectedRecordsCount,
                     'total' => $this->totalSelectedRecordsCount,
+                    'totalCount' => $this->totalSelectedRecordsCount,
                 ],
             )) ? [$message] : []),
             ...$this->getBulkProcessingFailureMessages(),
@@ -254,8 +256,10 @@ trait CanNotify
                 $this->missingBulkProcessingFailureNotificationMessage,
                 [
                     'count' => $this->bulkProcessingFailureWithoutMessageCount,
+                    'failureCount' => $this->bulkProcessingFailureWithoutMessageCount,
                     'isAll' => $this->bulkProcessingFailureWithoutMessageCount === $this->totalSelectedRecordsCount,
                     'total' => $this->totalSelectedRecordsCount,
+                    'totalCount' => $this->totalSelectedRecordsCount,
                 ],
             )) ? [$message] : []),
         ];

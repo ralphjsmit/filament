@@ -37,8 +37,6 @@ use Illuminate\Validation\Rules\Password;
 use League\Uri\Components\Query;
 use Throwable;
 
-use function Filament\Support\is_app_url;
-
 /**
  * @property-read Schema $form
  */
@@ -198,7 +196,7 @@ class EditProfile extends Page
         $this->getSavedNotification()?->send();
 
         if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 
@@ -254,7 +252,7 @@ class EditProfile extends Page
 
         return FilamentNotification::make()
             ->success()
-            ->title($this->getSavedNotificationTitle());
+            ->title($title);
     }
 
     protected function getEmailChangeVerificationSentNotification(string $newEmail): ?FilamentNotification

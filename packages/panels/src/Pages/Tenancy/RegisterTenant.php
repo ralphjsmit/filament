@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
 use Throwable;
 
 use function Filament\authorize;
-use function Filament\Support\is_app_url;
 
 /**
  * @property-read Schema $form
@@ -103,7 +102,7 @@ abstract class RegisterTenant extends SimplePage
         $this->commitDatabaseTransaction();
 
         if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 

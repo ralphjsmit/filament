@@ -1,6 +1,7 @@
 ---
 title: View action
 ---
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -11,35 +12,12 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 
 ViewAction::make()
-    ->record($this->post)
-    ->form([
+    ->schema([
         TextInput::make('title')
             ->required()
             ->maxLength(255),
         // ...
     ])
-```
-
-If you want to view table rows, you may do so like this:
-
-```php
-use Filament\Actions\ViewAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->actions([
-            ViewAction::make()
-                ->form([
-                    TextInput::make('title')
-                        ->required()
-                        ->maxLength(255),
-                    // ...
-                ]),
-        ]);
-}
 ```
 
 ## Customizing data before filling the form
@@ -56,3 +34,5 @@ ViewAction::make()
         return $data;
     })
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as `$data`, the `mutateRecordDataUsing()` function can inject various utilities as parameters.</UtilityInjection>

@@ -1,6 +1,7 @@
 ---
 title: Delete action
 ---
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -10,25 +11,9 @@ Filament includes an action that is able to delete Eloquent records. When the tr
 use Filament\Actions\DeleteAction;
 
 DeleteAction::make()
-    ->record($this->post)
 ```
 
-If you want to add this action to a row of a table, you may do so like this:
-
-```php
-use Filament\Actions\DeleteAction;
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->actions([
-            DeleteAction::make()
-        ]);
-}
-```
-
-Or if you want to add it as a table bulk action, so that the user can choose which rows to delete, they can use `Filament\Actions\DeleteBulkAction`:
+Or if you want to add it as a table bulk action, so that the user can choose which rows to delete, use `Filament\Actions\DeleteBulkAction`:
 
 ```php
 use Filament\Actions\DeleteBulkAction;
@@ -54,6 +39,8 @@ DeleteAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
 
+<UtilityInjection set="actions" version="4.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
+
 ## Customizing the delete notification
 
 When the record is successfully deleted, a notification is dispatched to the user, which indicates the success of their action.
@@ -66,6 +53,8 @@ use Filament\Actions\DeleteAction;
 DeleteAction::make()
     ->successNotificationTitle('User deleted')
 ```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may customize the entire notification using the `successNotification()` method:
 
@@ -81,6 +70,8 @@ DeleteAction::make()
             ->body('The user has been deleted successfully.'),
     )
 ```
+
+<UtilityInjection set="actions" version="4.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 To disable the notification altogether, use the `successNotification(null)` method:
 
@@ -106,3 +97,5 @@ DeleteAction::make()
         // ...
     })
 ```
+
+<UtilityInjection set="actions" version="4.x">These hook functions can inject various utilities as parameters.</UtilityInjection>
