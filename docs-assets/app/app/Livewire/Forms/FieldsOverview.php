@@ -46,7 +46,7 @@ class FieldsOverview extends Component implements HasActions, HasSchemas
                             ->columns([
                                 'sm' => 1,
                                 'md' => 2,
-                                'lg' => 2
+                                'lg' => 2,
                             ])
                             ->collapsible()
                             ->schema([

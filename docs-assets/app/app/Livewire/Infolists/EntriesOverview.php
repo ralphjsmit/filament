@@ -2,12 +2,10 @@
 
 namespace App\Livewire\Infolists;
 
-use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
-use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
@@ -71,9 +69,10 @@ class EntriesOverview extends Component implements HasSchemas
                                             ->label('Stock status')
                                             ->state('in_stock')
                                             ->badge()
-                                            ->formatStateUsing(fn (string $state) => str($state)
-                                                ->replace('_', ' ')
-                                                ->title()
+                                            ->formatStateUsing(
+                                                fn (string $state) => str($state)
+                                                    ->replace('_', ' ')
+                                                    ->title()
                                             )
                                             ->icon(fn (string $state): string => match ($state) {
                                                 'in_stock' => 'heroicon-o-check-circle',
@@ -128,7 +127,7 @@ class EntriesOverview extends Component implements HasSchemas
                                 ColorEntry::make('color_options')
                                     ->label('Available colors')
                                     ->state(['#000000', '#0047AB', '#8B4513'])
-                                    ->afterStateHydrated(function (ColorEntry $component, array $state) {
+                                    ->afterStateHydrated(function (ColorEntry $component, array $state): void {
                                         $component->tooltip(function (string $color) {
                                             return match ($color) {
                                                 '#000000' => 'Midnight Black',
@@ -164,7 +163,7 @@ class EntriesOverview extends Component implements HasSchemas
                                     ->badge(fn () => 3),
                             ])
                             ->columnSpan(['lg' => 3]),
-                    ])
+                    ]),
             ])
             ->constantState([
                 'reviews' => [
