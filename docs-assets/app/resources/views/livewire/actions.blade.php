@@ -1,5 +1,9 @@
-@php use Filament\Actions\ActionGroup; @endphp
-@php use Filament\Actions\Action; @endphp
+@php
+    use Filament\Actions\Action;
+    use Filament\Actions\ActionGroup;
+    use Filament\Support\Icons\Heroicon;
+@endphp
+
 <div class="min-h-screen">
     @if (! count($this->mountedActions))
         <div id="buttonAction" class="p-16 flex items-center justify-center max-w-xl">
@@ -80,33 +84,46 @@
 
         <div id="customizedActionGroup" class="pr-24 pt-8 pb-40 flex items-center justify-center max-w-xl">
             <x-filament-actions::group
-                    :actions="[
+                :actions="[
                     Action::make('view'),
                     Action::make('edit'),
                     Action::make('delete'),
                 ]"
-                    label="More actions"
-                    icon="heroicon-m-ellipsis-vertical"
-                    size="sm"
-                    color="primary"
-                    button
+                label="More actions"
+                :icon="Heroicon::EllipsisVertical"
+                size="sm"
+                color="primary"
+                button
             />
+        </div>
+
+        <div id="actionButtonGroup" class="p-16 flex items-center justify-center max-w-xl">
+            {{ ActionGroup::make([
+                Action::make('edit')
+                    ->color('gray')
+                    ->icon(Heroicon::PencilSquare)
+                    ->hiddenLabel(),
+                Action::make('delete')
+                    ->color('gray')
+                    ->icon(Heroicon::Trash)
+                    ->hiddenLabel(),
+            ])->buttonGroup() }}
         </div>
 
         <div id="actionGroupPlacement" class="pr-40 pb-8 pt-40 flex items-center justify-center max-w-xl">
             <x-filament-actions::group
-                    :actions="[
+                :actions="[
                     Action::make('view'),
                     Action::make('edit'),
                     Action::make('delete'),
                 ]"
-                    dropdown-placement="top-start"
+                dropdown-placement="top-start"
             />
         </div>
 
         <div id="nestedActionGroups" class="pr-40 pt-8 pb-40 flex items-center justify-center max-w-xl">
             <x-filament-actions::group
-                    :actions="[
+                :actions="[
                     ActionGroup::make([
                         Action::make('view'),
                         Action::make('edit'),

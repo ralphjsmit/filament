@@ -14,6 +14,9 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
 {
     public function __construct(protected string $activeLocale) {}
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     public function isAttributeTranslatable(string $model, string $attribute): bool
     {
         $model = app($model);
@@ -26,6 +29,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
     }
 
     /**
+     * @param  class-string<Model>  $model
      * @param  array<string, mixed>  $data
      */
     public function makeRecord(string $model, array $data): Model
@@ -108,7 +112,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         return $attributes;
     }
 
-    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, ?bool $isCaseInsensitivityForced = null): Builder
+    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, ?bool $isSearchForcedCaseInsensitive = null): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -119,7 +123,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         };
 
         return $query->{$whereClause}(
-            generate_search_column_expression($column, $isCaseInsensitivityForced, $databaseConnection),
+            generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection),
             'like',
             (string) str($search)->wrap('%'),
         );

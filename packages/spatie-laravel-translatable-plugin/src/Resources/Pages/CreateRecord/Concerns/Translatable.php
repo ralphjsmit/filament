@@ -2,14 +2,13 @@
 
 namespace Filament\Resources\Pages\CreateRecord\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Resources\Concerns\HasActiveLocaleSwitcher;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 
-trait Translatable
+trait Translatable /** @phpstan-ignore trait.unused */
 {
     use HasActiveLocaleSwitcher;
 
@@ -62,13 +61,6 @@ trait Translatable
         }
 
         $this->data = $originalData;
-
-        if (
-            static::getResource()::isScopedToTenant() &&
-            ($tenant = Filament::getTenant())
-        ) {
-            return $this->associateRecordWithTenant($record, $tenant);
-        }
 
         $record->save();
 

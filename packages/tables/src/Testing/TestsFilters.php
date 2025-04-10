@@ -10,10 +10,11 @@ use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 /**
- * @method HasTable instance()
+ * @method Component&HasTable instance()
  *
  * @mixin Testable
  */
@@ -93,7 +94,7 @@ class TestsFilters
             Assert::assertInstanceOf(
                 BaseFilter::class,
                 $filter,
-                message: "Failed asserting that a table filter with name [{$name}] exists on the [{$livewireClass}] component.",
+                "Failed asserting that a table filter with name [{$name}] exists on the [{$livewireClass}] component.",
             );
 
             if ($checkFilterUsing) {
@@ -121,7 +122,7 @@ class TestsFilters
 
             Assert::assertTrue(
                 $filter->isVisible(),
-                message: "Failed asserting that a table filter with name [{$name}] is visible on the [{$livewireClass}] component."
+                "Failed asserting that a table filter with name [{$name}] is visible on the [{$livewireClass}] component."
             );
 
             return $this;
@@ -142,7 +143,7 @@ class TestsFilters
 
             Assert::assertTrue(
                 $filter->isHidden(),
-                message: "Failed asserting that a table filter with name [{$name}] is hidden on the [{$livewireClass}] component."
+                "Failed asserting that a table filter with name [{$name}] is hidden on the [{$livewireClass}] component."
             );
 
             return $this;
