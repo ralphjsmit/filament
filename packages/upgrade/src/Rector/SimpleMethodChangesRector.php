@@ -16,20 +16,10 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\UnionType;
 use PHPStan\Type\ObjectType;
-use Rector\Naming\VariableRenamer;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class SimpleMethodChangesRector extends AbstractRector
 {
-    protected VariableRenamer $variableRenamer;
-
-    public function __construct(VariableRenamer $variableRenamer)
-    {
-        $this->variableRenamer = $variableRenamer;
-    }
-
     /**
      * @return array<array{
      *     class: class-string | array<class-string>,
@@ -133,19 +123,6 @@ class SimpleMethodChangesRector extends AbstractRector
         }
 
         return $touched ? $node : null;
-    }
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition(
-            'Fix method definitions',
-            [
-                new CodeSample(
-                    'public static function form(Form $form): Form',
-                    'public function form(Form $form): Form',
-                ),
-            ]
-        );
     }
 
     /**

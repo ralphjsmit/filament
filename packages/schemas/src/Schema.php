@@ -10,6 +10,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasAlignment;
+use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
@@ -43,27 +44,12 @@ class Schema extends ViewComponent implements HasEmbeddedView
     use Concerns\HasState;
     use Concerns\HasStateBindingModifiers;
     use HasAlignment;
+    use HasDefaultDataFormattingSettings;
     use HasExtraAttributes;
 
     protected string $evaluationIdentifier = 'schema';
 
     protected string $viewIdentifier = 'schema';
-
-    public static string $defaultCurrency = 'usd';
-
-    public static string $defaultDateDisplayFormat = 'M j, Y';
-
-    public static string $defaultIsoDateDisplayFormat = 'L';
-
-    public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
-
-    public static string $defaultIsoDateTimeDisplayFormat = 'LLL';
-
-    public static ?string $defaultNumberLocale = null;
-
-    public static string $defaultTimeDisplayFormat = 'H:i:s';
-
-    public static string $defaultIsoTimeDisplayFormat = 'LT';
 
     final public function __construct((LivewireComponent & HasSchemas) | null $livewire = null)
     {

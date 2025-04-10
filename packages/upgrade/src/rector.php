@@ -14,7 +14,6 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         RenameClassRector::class,
-        // @todo Alphabetical
         [
             'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeComponentCommand',
             'Filament\\Pages\\Actions\\Action' => 'Filament\\Actions\\Action',
@@ -267,6 +266,7 @@ return static function (RectorConfig $rectorConfig): void {
         Rector\SimpleMethodChangesRector::class,
         Rector\SimplePropertyChangesRector::class,
         Rector\RenameSchemaParamToMatchTypeRector::class,
+        Rector\ConvertStaticConfigurationToConfigureUsingFunction::class,
     ]);
 
     $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
