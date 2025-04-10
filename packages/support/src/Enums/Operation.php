@@ -7,5 +7,4 @@ enum Operation: string
     case Create = 'create';
     case View = 'view';
     case Edit = 'edit';
-    case Delete = 'delete';
 }
