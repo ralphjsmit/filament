@@ -140,7 +140,7 @@ test('components can be hidden based on Livewire component', function (): void {
         ->toHaveLength(0);
 });
 
-test('components can be hidden based on Operation enum case', function () {
+test('components can be hidden based on an `Operation` enum case', function (): void {
     $components = Schema::make(Foo::make())
         ->operation('create')
         ->components([
@@ -228,7 +228,7 @@ test('components can be visible based on Livewire component', function (): void 
         ->toHaveLength(1);
 });
 
-test('components can be visible based on Operation enum case', function () {
+test('components can be visible based on an `Operation` enum case', function (): void {
     $components = Schema::make(Foo::make())
         ->operation('create')
         ->components([

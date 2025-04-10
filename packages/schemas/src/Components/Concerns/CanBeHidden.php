@@ -28,9 +28,9 @@ trait CanBeHidden
     }
 
     /**
-     * @param  string | array<string> | Operation | array<Operation>  $operations
+     * @param  string | Operation | array<string | Operation>  $operations
      */
-    public function hiddenOn(string | array | Operation $operations): static
+    public function hiddenOn(string | Operation | array $operations): static
     {
         $this->hidden(static function (LivewireComponent & HasSchemas $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $hiddenOperation) {
@@ -112,9 +112,9 @@ trait CanBeHidden
     }
 
     /**
-     * @param  string | array<string> | Operation | array<Operation>  $operations
+     * @param  string | Operation | array<string | Operation>  $operations
      */
-    public function visibleOn(string | array | Operation $operations): static
+    public function visibleOn(string | Operation | array $operations): static
     {
         $this->visible(static function (LivewireComponent & HasSchemas $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $visibleOperation) {

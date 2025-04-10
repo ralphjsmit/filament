@@ -146,7 +146,6 @@ Alternatively, we have a `visibleOn()` shortcut method for only showing a field 
 
 ```php
 use Filament\Support\Enums\Operation;
-use Livewire\Component;
 
 Forms\Components\TextInput::make('password')
     ->password()
