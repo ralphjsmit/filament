@@ -18,7 +18,7 @@ import Disclosure from "@components/Disclosure.astro"
 
 ## Running the automated upgrade script
 
-The first set tp upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
+The first set to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
 
 ```bash
 composer require filament/upgrade:"^4.0" -W --dev
@@ -138,8 +138,44 @@ Section::make()
 ```
 
 <Aside variant="tip">
-    When running the automated upgrade script, it will ask you if you wish to create a new service provider to preserve old behaviour from Filament 3. If you did that, these changes will not affect your project.
+    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Forms\Components\Fieldset;
+    use Filament\Forms\Components\Grid;
+    use Filament\Forms\Components\Section;
+
+    Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
+        ->columnSpanFull());
+
+    Grid::configureUsing(fn (Grid $grid) => $grid
+        ->columnSpanFull());
+
+    Section::configureUsing(fn (Section $section) => $section
+        ->columnSpanFull());
+    ```
 </Aside>
+
+<Disclosure x-show="packages.includes('forms')">
+<span slot="summary">The `unique()` validation rule behavior for ignoring Eloquent records</span>
+
+In v3, the `unique()` method did not ignore the current form's Eloquent record when validating by default. This behavior was enabled by the `ignoreRecord: true` parameter, or by passing a custom `ignorable` record.
+
+In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
+
+If you were previously using `unqiue()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
+
+<Aside variant="tip">
+    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Forms\Components\Field;
+
+    Field::configureUsing(fn (Field $field) => $field
+        ->uniqueValidationIgnoresRecordByDefault(false));
+    ```
+</Aside>
+</Disclosure>
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -153,14 +189,21 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->paginated([5, 10, 25, 50, 'all']);
+        ->paginationPageOptions([5, 10, 25, 50, 'all']);
 }
 ```
 
 Be aware when using `all` as it will cause performance issues when dealing with a large number of records.
 
 <Aside variant="tip">
-    When running the automated upgrade script, it will ask you if you wish to create a new service provider to preserve old behaviour from Filament 3. If you did that, these changes will not affect your project.
+    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Tables\Table;
+
+    Table::configureUsing(fn (Table $table) => $table
+        ->paginationPageOptions([5, 10, 25, 50, 'all']));
+    ```
 </Aside>
 </Disclosure>
 
@@ -184,7 +227,14 @@ In v4, the `inline()` method now only puts the radio buttons inline with each ot
 If you were previously using `inline()->inlineLabel(false)` to achieve the v4 behaviour, you can now simply use `inline()`.
 
 <Aside variant="tip">
-    When running the automated upgrade script, it will ask you if you wish to create a new service provider to preserve old behaviour from Filament 3. If you did that, these changes will not affect your project.
+    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Forms\Components\Radio;
+    
+    Radio::configureUsing(fn (Radio $radio) => $radio
+        ->inlineLabel(fn (): bool => $radio->isInline()));
+    ```
 </Aside>
 </Disclosure>
 
@@ -220,22 +270,34 @@ public function getStats(): array
 ```
 </Disclosure>
 
+<Disclosure x-show="packages.includes('panels')">
+<span slot="summary">`getCurrentPanel()` no longer returns the default panel as a fallback</span>
+
+In v4, the `getCurrentPanel()` method returned the default panel if no panel was set. While this was useful behaviour internally in Filament core, it was unexpected for developers. In v4, `getCurrentPanel()` will return `null` if no panel is set, and you should handle this case in your code.
+
+```php
+use Filament\Facades\Filament;
+
+Filament::getCurrentPanel();
+filament()->getCurrentPanel();
+```
+
+If you are a plugin author and would like to get the default panel if no panel is set, you can use the `getCurrentOrDefaultPanel()` method instead:
+
+```php
+use Filament\Facades\Filament;
+
+Filament::getCurrentOrDefaultPanel();
+filament()->getCurrentOrDefaultPanel();
+```
+</Disclosure>
+
 ### Low-impact changes
 
 <Disclosure x-show="packages.includes('tables') || packages.includes('infolists')">
 <span slot="summary">The `isSeparate` parameter of `ImageColumn::limitedRemainingText()` and `ImageEntry::limitedRemainingText()` has been removed</span>
 
 Previously, users were able to display the number of limited images separately to an image stack using the `isSeparate` parameter. Now the parameter has been removed, and if a stack exists, the text will always be stacked on top and not separate. If the images are not stacked, the text will be separate.
-</Disclosure>
-
-<Disclosure x-show="packages.includes('forms')">
-<span slot="summary">The `unique()` validation rule behavior for ignoring Eloquent records</span>
-
-In v3, the `unique()` method did not ignore the current form's Eloquent record when validating by default. This behavior was enabled by the `ignoreRecord: true` parameter, or by passing a custom `ignorable` record.
-
-In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
-
-If you were previously using `unqiue()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">
@@ -394,28 +456,6 @@ The Nepalese translations have been moved from `np` to `ne`, which appears to be
 <span slot="summary">Norwegian translations</span>
 
 The Norwegian translations have been moved from `no` to `nb`, which appears to be the more commonly used language code for the language within the Laravel community.
-</Disclosure>
-
-<Disclosure x-show="packages.includes('panels')">
-<span slot="summary">`getCurrentPanel()` no longer returns the default panel as a fallback</span>
-
-In v4, the `getCurrentPanel()` method returned the default panel if no panel was set. While this was useful behaviour internally in Filament core, it was unexpected for developers. In v4, `getCurrentPanel()` will return `null` if no panel is set, and you should handle this case in your code.
-
-```php
-use Filament\Facades\Filament;
-
-Filament::getCurrentPanel();
-filament()->getCurrentPanel();
-```
-
-If you are a plugin author and would like to get the default panel if no panel is set, you can use the `getCurrentOrDefaultPanel()` method instead:
-
-```php
-use Filament\Facades\Filament;
-
-Filament::getCurrentOrDefaultPanel();
-filament()->getCurrentOrDefaultPanel();
-```
 </Disclosure>
 
 </div>

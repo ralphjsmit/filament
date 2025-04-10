@@ -1,10 +1,6 @@
 #!/usr/bin/env php
 <?php
 
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use function Termwind\{ask, render};
 
 require 'vendor/autoload.php';
@@ -59,83 +55,6 @@ if (! $isReady) {
     HTML);
 
     return;
-}
-
-$configFilePath = __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'filament.php';
-
-if (
-    (! file_exists($configFilePath)) ||
-    (! str_contains(file_get_contents($configFilePath), 'FILAMENT_FILESYSTEM_DISK'))
-) {
-    ask(<<<HTML
-        <span class="mr-1 mt-1">
-            The <strong>FILAMENT_FILESYSTEM_DISK</strong> has been removed, and the default configuration file now
-            references the <strong>FILESYSTEM_DISK</strong> environment variable. Please read the
-            <a href="https://filamentphp.com/docs/v4/upgrade-guide" class="underline font-bold">documentation</a>
-            for more information, and press any key to continue.
-        </span>
-    HTML);
-}
-
-$filesystem = new Filesystem();
-
-$appDirectory = $argv[1] ?? 'app';
-
-$backwardsCompatibilityProviderPath = getcwd() . "/{$appDirectory}/Providers/Filament/Filament4BackwardsCompatibilityProvider.php";
-
-if ((! $filesystem->exists($backwardsCompatibilityProviderPath)) && strtolower(trim(ask(<<<HTML
-    <div class="mr-1 mt-1">
-        <div>Filament 4 changes the default behaviour of some components. For example:</div>
-        <ul>
-            <li>Fieldsets, grids, and sections in schemas no longer span the full width of their parent layout by default</li>
-            <li>Inline radio form fields no longer have an inline label by default, this is a separate setting</li>
-            <li>Tables no longer have an "all" pagination option</li>
-        </ul>
-        <div>Would you like to publish a new service provider in your app to restore the old behaviours?</div>
-        <div>If you choose not to, you will need to manually update your code to preserve the old behaviours.</div>
-        <div>Once the service provider is published, you can edit it or move the code inside to a more appropriate place for your app.</div>
-        <div class="mr-1">Would you like to maintain behavioral backwards compatibility? y/n</div>
-    </div>
-HTML) ?? 'y')) === 'y') {
-    $hasBootstrapProvidersFile = file_exists($bootstrapProvidersPath = getcwd() . '/bootstrap/providers.php');
-    $backwardsCompatibilityProviderFqn = 'App\\Providers\\Filament\\Filament4BackwardsCompatibilityProvider';
-
-    $filesystem->ensureDirectoryExists(
-        pathinfo($backwardsCompatibilityProviderPath, PATHINFO_DIRNAME),
-    );
-
-    $filesystem->put($backwardsCompatibilityProviderPath, file_get_contents(__DIR__ . '/../stubs/BackwardsCompatibilityProvider.stub'));
-
-    if ($hasBootstrapProvidersFile) {
-        ServiceProvider::addProviderToBootstrapFile(
-            $backwardsCompatibilityProviderFqn,
-            $bootstrapProvidersPath,
-        );
-    } else {
-        $appConfig = file_get_contents(getcwd() . '/config/app.php');
-
-        if (! Str::contains($appConfig, "{$backwardsCompatibilityProviderFqn}::class")) {
-            file_put_contents(getcwd() . '/config/app.php', str_replace(
-                'App\\Providers\\RouteServiceProvider::class,',
-                "{$backwardsCompatibilityProviderFqn}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
-                $appConfig,
-            ));
-        }
-    }
-
-    if ($hasBootstrapProvidersFile) {
-        render(<<<HTML
-            <div class="mt-1">
-                We've attempted to register the Filament4BackwardsCompatibilityProvider in your [bootstrap/providers.php] file. If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the array.
-            </div>
-        HTML);
-    } else {
-        render(<<<HTML
-            <div class="mt-1">
-                We've attempted to register the Filament4BackwardsCompatibilityProvider in your [config/app.php] file as a service provider. If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.
-            </div>
-        HTML);
-    }
 }
 
 render(<<<HTML
