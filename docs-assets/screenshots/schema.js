@@ -1366,6 +1366,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/section/secondary': {
+        url: 'schemas/layout',
+        selector: '#sectionSecondary',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/section/without-header': {
         url: 'schemas/layout',
         selector: '#sectionWithoutHeader',

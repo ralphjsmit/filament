@@ -212,6 +212,36 @@ Section::make('Rate limiting')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Secondary section styling
+
+By default, sections have a contrasting background color, which makes them stand out against a gray background. Secondary styling gives the section a less contrasting background, so it is usually slightly darker. This is a better styling when the background color behind the section is the same color as the default section background color, for example when a section is nested inside another section. Secondary sections can be created using the `secondary()` method:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::make('Notes')
+    ->schema([
+        // ...
+    ])
+    ->secondary()
+    ->compact()
+```
+
+<AutoScreenshot name="schemas/layout/section/secondary" alt="Secondary section" version="4.x" />
+
+Optionally, the `secondary()` method accepts a boolean value to control if the section should be secondary or not:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::make('Rate limiting')
+    ->description('Prevent abuse by limiting the number of requests per period')
+    ->schema([
+        // ...
+    ])
+    ->secondary(FeatureFlag::active())
+```
+
 ## Inserting actions and other components in the header of a section
 
 You may insert [actions](../actions) and any other schema component (usually [prime components](primes)) into the header of a section by passing an array of components to the `afterHeader()` method:
