@@ -92,6 +92,10 @@ TextInput::make('name')
     ->label(__('fields.name'))
 ```
 
+<Aside variant="tip">
+    You can also [use a JavaScript expression](#using-javascript-to-determine-text-content) to determine the content of the label, which can read the current values of fields in the form.
+</Aside>
+
 ### Hiding a field's label
 
 It may be tempting to set the label to an empty string to hide it, but this is not recommended. Setting the label to an empty string will not communicate the purpose of the field to screen readers, even if the purpose is clear visually. Instead, you should use the `hiddenLabel()` method, so it is hidden visually but still accessible to screen readers:
@@ -1007,6 +1011,23 @@ function (Request $request, Set $set) {
 }
 ```
 
+### Using JavaScript to determine text content
+
+Methods that allow HTML to be rendered, such as [`label()`](#setting-a-fields-label) and [`Text::make()` passed to a `belowContent()` method](#adding-extra-content-to-a-field) can use JavaScript to calculate their content instead. This is achieved by passing a `JsContent` object to the method, which is `Htmlable`:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\JsContent;
+
+TextInput::make('greetingResponse')
+    ->label(JsContent::make(<<<'JS'
+        ($get('name') === 'John Doe') ? 'Hello, John!' : 'Hello, stranger!'
+        JS
+    ))
+```
+
+The [`$state`](#injecting-the-current-state-of-the-field) and [`$get`](#injecting-the-state-of-another-field) utilities are available in this JavaScript context, so you can use them to access the state of the field and other fields in the schema.
+
 ## The basics of reactivity
 
 [Livewire](https://livewire.laravel.com) is a tool that allows Blade-rendered HTML to dynamically re-render without requiring a full page reload. Filament schemas are built on top of Livewire, so they are able to re-render dynamically, allowing their content to adapt after they are initially rendered.
@@ -1097,7 +1118,11 @@ TextInput::make('name')
 
 <UtilityInjection set="formFields" version="4.x" extras="Old state;;mixed;;$old;;The old value of the field, before it was updated.||Old raw state;;mixed;;$oldRaw;;The old value of the field, before state casts were applied.||Set function;;Filament\Schemas\Components\Utilities\Set;;$set;;A function to set values in the current form data.">The `afterStateUpdated()` method injects various utilities into the function as parameters.</UtilityInjection>
 
-### Setting the state of another field
+<Aside variant="tip">
+    When using `afterStateUpdated()` on a reactive field, interactions will not feel instant since a network request is made. There are a few ways you can [optimize and avoid rendering](#field-rendering) which will make the interaction feel faster.
+</Aside>
+
+#### Setting the state of another field
 
 In a similar way to `$get`, you may also set the value of another field from within `afterStateUpdated()`, using a `$set` parameter:
 
@@ -1154,6 +1179,82 @@ If your schema auto-saves data to the database, like in a [resource](../resource
 <Aside variant="info">
     Even when a field is not dehydrated, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-dehydrated) section.
 </Aside>
+
+### Field rendering
+
+Each time a reactive field is updated, the HTML entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
+
+#### Field partial rendering
+
+In this example, the value of the "name" input is used in the label of the "email" input. The "name" input is [`live()`](#the-basics-of-reactivity), so when the user types in the "name" input, the entire schema is re-rendered. This is not ideal, since only the "email" input needs to be re-rendered:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+
+TextInput::make('name')
+    ->live()
+    
+TextInput::make('email')
+    ->label(fn (Get $get): string => filled($get('name')) ? "Email address for {$get('name')}" : 'Email address')
+```
+
+In this case, a simple call to `partiallyRenderComponentsAfterStateUpdated()`, passing the names of other fields to re-render, will make the schema re-render only the specified fields [after the state is updated](#field-updates):
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->live()
+    ->partiallyRenderComponentsAfterStateUpdated(['email'])
+```
+
+Alternatively, you can instruct Filament to re-render the current component only, using `partiallyRenderAfterStateUpdated()`. This is useful if the reactive component is the only one that depends on its current state:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->live()
+    ->partiallyRenderAfterStateUpdated()
+    ->belowContent(fn (Get $get): ?string => filled($get('name')) ? "Hi, {$get('name')}!" : null)
+```
+
+#### Preventing the Livewire component from rendering after a field is updated
+
+If you wish to prevent the Livewire component from re-rendering when a field is [updated](#field-updates), you can use the `skipRenderAfterStateUpdated()` method. This is useful if you want to perform some action when the field is updated, but you don't want the Livewire component to re-render:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->live()
+    ->skipRenderAfterStateUpdated()
+    ->afterStateUpdated(function (string $state) {
+        // Do something with the state, but don't re-render the Livewire component.
+    })
+```
+
+Since [setting the state of another field](#setting-the-state-of-another-field) from an `afterStateUpdated()` function using the `$set()` method will actually just mutate the frontend state of fields, you don't even need a network request in the first place. The `afterStateUpdatedJs()` method accepts a JavaScript expression that runs each time the value of the field changes. The [`$state`](#injecting-the-current-state-of-the-field), [`$get()`](#injecting-the-state-of-another-field) and [`$set()`](#setting-the-state-of-another-field) utilities are available in the JavaScript context, so you can use them to set the state of other fields:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Set;
+
+// Old name input that is `live()`, so it makes a network request and render each time it is updated.
+TextInput::make('name')
+    ->live()
+    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('email', ((string) str($state)->replace(' ', '.')->lower()) . '@example.com'))
+
+// New name input that uses `afterStateUpdatedJs()` to set the state of the email field and doesn't make a network request.
+TextInput::make('name')
+    ->afterStateUpdatedJs(<<<'JS'
+        $set('email', ($state ?? '').replace(' ', '.').toLowerCase() + '@example.com')
+        JS)
+    
+TextInput::make('email')
+    ->label('Email address')
+```
 
 ## Reactive forms cookbook
 

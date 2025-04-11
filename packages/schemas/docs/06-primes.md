@@ -243,6 +243,21 @@ Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
 
 <AutoScreenshot name="primes/text/tooltip" alt="Text with a tooltip" version="4.x" />
 
+### Using JavaScript to determine the content of the text
+
+You can use JavaScript to determine the content of the text. This is useful if you want to display a different message depending on the state of a [form field](../forms/fields), without making a request to the server to re-render the schema. To allow this, you can use the `js()` method:
+
+```php
+use Filament\Schemas\Components\Text;
+
+Text::make(<<<'JS'
+    $get('name') ? `Hello, ${$get('name')}` : 'Please enter your name.'
+    JS)
+    ->js()
+```
+
+The [`$state`](../forms/fields#injecting-the-current-state-of-the-field) and [`$get()`](../forms/fields#injecting-the-state-of-another-field) utilities are available in the JavaScript context, so you can use them to get the state of fields in the schema.
+
 ## Icon component
 
 Icons can be inserted into a schema using the `Icon` component. [Icons](../styling/icons) are passed to the `make()` method:
