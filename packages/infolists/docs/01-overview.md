@@ -274,9 +274,9 @@ Select::make('role')
 
 IconEntry::make('is_admin')
     ->boolean()
-    ->hiddenJs(>>>JS
-        \$get('role') !== 'staff'
-    JS)
+    ->hiddenJs(<<<'JS'
+        $get('role') !== 'staff'
+        JS)
 ```
 
 Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on entry to be `live()`.
@@ -295,9 +295,9 @@ Select::make('role')
     
 IconEntry::make('is_admin')
     ->boolean()
-    ->visibleJs(>>>JS
-        \$get('role') === 'staff'
-    JS)
+    ->visibleJs(<<<'JS'
+        $get('role') === 'staff'
+        JS)
 ```
 
 <Aside variant="info">
