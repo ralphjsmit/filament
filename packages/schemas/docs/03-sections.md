@@ -234,8 +234,7 @@ Optionally, the `secondary()` method accepts a boolean value to control if the s
 ```php
 use Filament\Schemas\Components\Section;
 
-Section::make('Rate limiting')
-    ->description('Prevent abuse by limiting the number of requests per period')
+Section::make('Notes')
     ->schema([
         // ...
     ])
