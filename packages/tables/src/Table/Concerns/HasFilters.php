@@ -39,7 +39,7 @@ trait HasFilters
 
     protected bool | Closure $shouldDeselectAllRecordsWhenFiltered = true;
 
-    protected bool | Closure $hasDeferredFilters = false;
+    protected bool | Closure $hasDeferredFilters = true;
 
     protected ?Closure $modifyFiltersApplyActionUsing = null;
 

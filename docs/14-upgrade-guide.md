@@ -109,7 +109,7 @@ If you have not published the Filament configuration file, or you have removed t
 
 - If you do not have a `FILAMENT_FILESYSTEM_DISK` environment variable set:
     - If the `FILESYSTEM_DISK` environment variable is set to `public`, you can ignore this change, since `public` was the default value for `FILAMENT_FILESYSTEM_DISK` before.
-    - If the `FILESYSTEM_DISK` environment variable is set to something else, you can ignore this change if you are happy with the `FILESYSTEM_DISK` value being used to upload files in Filament. Please be aware that not using a `public` or `s3` disk may lead to unexpected behaviour, as the `local` disk stores private files but is unable to generate public URLs for previews or downloads.
+    - If the `FILESYSTEM_DISK` environment variable is set to something else, you can ignore this change if you are happy with the `FILESYSTEM_DISK` value being used to upload files in Filament. Please be aware that not using a `public` or `s3` disk may lead to unexpected behavior, as the `local` disk stores private files but is unable to generate public URLs for previews or downloads.
 - If you do have a `FILAMENT_FILESYSTEM_DISK` environment variable set:
     - If it is the same as `FILESYSTEM_DISK`, you can remove it completely.
     - If it is different from `FILESYSTEM_DISK`, and it should be, you can [publish the Filament configuration file](installation#publishing-configuration) and set the `default_filesystem_disk` to reference the old `FILAMENT_FILESYSTEM_DISK` environment variable like it was before.
@@ -118,7 +118,7 @@ If you have not published the Filament configuration file, or you have removed t
 <Disclosure open x-show="packages.includes('forms') || packages.includes('infolists')">
 <span slot="summary">The `Grid`, `Section` and `Fieldset` layout components now do not span all columns by default</span>
 
-In v3, the `Grid`, `Section` and `Fieldset` layout components consumed the full width of their parent grid by default. This was inconsistent with the behaviour of every other component in Filament, which only consumes one column of the grid by default. The intention was to make these components easier to integrate into the default Filament resource form and infolist, which uses a two column grid out of the box.
+In v3, the `Grid`, `Section` and `Fieldset` layout components consumed the full width of their parent grid by default. This was inconsistent with the behavior of every other component in Filament, which only consumes one column of the grid by default. The intention was to make these components easier to integrate into the default Filament resource form and infolist, which uses a two column grid out of the box.
 
 In v4, the `Grid`, `Section` and `Fieldset` layout components now only consume one column of the grid by default. If you want them to span all columns, you can use the `columnSpanFull()` method:
 
@@ -138,7 +138,7 @@ Section::make()
 ```
 
 <Aside variant="tip">
-    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
     use Filament\Forms\Components\Fieldset;
@@ -166,7 +166,7 @@ In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
 If you were previously using `unqiue()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
 
 <Aside variant="tip">
-    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
     use Filament\Forms\Components\Field;
@@ -176,6 +176,33 @@ If you were previously using `unqiue()` validation rule without the `ignoreRecor
     ```
 </Aside>
 </Disclosure>
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Changes to table filters are not deferred by default</span>
+
+The `deferFilters()` method from Filament v3 is now the default behavior in Filament v4, so users must click a button before the filters are applied to the table. To disable this behavior, you can use the `deferFilters(false)` method.
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->deferFilters(false);
+}
+```
+
+<Aside variant="tip">
+    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Tables\Table;
+
+    Table::configureUsing(fn (Table $table) => $table
+        ->deferFilters(false));
+    ```
+</Aside>
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -196,7 +223,7 @@ public function table(Table $table): Table
 Be aware when using `all` as it will cause performance issues when dealing with a large number of records.
 
 <Aside variant="tip">
-    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
     use Filament\Tables\Table;
@@ -310,10 +337,10 @@ In v3, the `inline()` method put the radio buttons inline with each other, and a
 
 In v4, the `inline()` method now only puts the radio buttons inline with each other, and not with the label. If you want the radio buttons to be inline with the label, you can use the `inlineLabel()` method as well.
 
-If you were previously using `inline()->inlineLabel(false)` to achieve the v4 behaviour, you can now simply use `inline()`.
+If you were previously using `inline()->inlineLabel(false)` to achieve the v4 behavior, you can now simply use `inline()`.
 
 <Aside variant="tip">
-    You can preserve the old default behaviour across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
     use Filament\Forms\Components\Radio;
@@ -331,7 +358,7 @@ In Filament v3, import and export jobs were retries continuously for 24 hours if
 
 In v4, they are retried 3 times with a 60 second backoff between each retry.
 
-This behaviour can be customized in the [importer](import#customizing-the-import-job-retries) and [exporter](export#customizing-the-export-job-retries) classes.
+This behavior can be customized in the [importer](import#customizing-the-import-job-retries) and [exporter](export#customizing-the-export-job-retries) classes.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('widgets')">
@@ -359,7 +386,7 @@ public function getStats(): array
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">`getCurrentPanel()` no longer returns the default panel as a fallback</span>
 
-In v4, the `getCurrentPanel()` method returned the default panel if no panel was set. While this was useful behaviour internally in Filament core, it was unexpected for developers. In v4, `getCurrentPanel()` will return `null` if no panel is set, and you should handle this case in your code.
+In v4, the `getCurrentPanel()` method returned the default panel if no panel was set. While this was useful behavior internally in Filament core, it was unexpected for developers. In v4, `getCurrentPanel()` will return `null` if no panel is set, and you should handle this case in your code.
 
 ```php
 use Filament\Facades\Filament;

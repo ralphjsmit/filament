@@ -124,9 +124,9 @@ public function table(Table $table): Table
 }
 ```
 
-## Deferring filters
+## Live filters
 
-You can defer filter changes from affecting the table, until the user clicks an "Apply" button. To do this, use the `deferFilters()` method:
+By default, filter changes are deferred and do not affect the table, until the user clicks an "Apply" button. To disable this and make the filters "live" instead, use the `deferFilters(false)` method:
 
 ```php
 use Filament\Tables\Table;
@@ -137,7 +137,7 @@ public function table(Table $table): Table
         ->filters([
             // ...
         ])
-        ->deferFilters();
+        ->deferFilters(false);
 }
 ```
 
