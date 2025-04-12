@@ -177,9 +177,9 @@ Fieldset::make('Label')
 
 ## Using container queries
 
-As well as traditional breakpoints based on the size of the viewport, you can also use [container queries](https://tailwindcss.com/docs/responsive-design#container-queries) to create responsive layouts based on the size of a parent container. This is useful when the size of the parent container is not directly related to the size of the viewport, such as when using a collapsible sidebar aside from the content, which would make the content area dynamically smaller or larger depending on the collapse state of the sidebar.
+In addition to traditional breakpoints based on the size of the viewport, you can also use [container queries](https://tailwindcss.com/docs/responsive-design#container-queries) to create responsive layouts based on the size of a parent container. This is particularly useful when the size of the parent container is not directly tied to the size of the viewport. For example, when using a collapsible sidebar alongside the content, the content area dynamically adjusts its size depending on the collapse state of the sidebar.
 
-The basis of a container query is the container itself. The container is the element that the width is based upon. To specify an element as a container, use the `gridContainer()` method on it. For example, if you want to dictate the number of grid columns in a [`Grid` component] based on its width:
+The foundation of a container query is the container itself. The container is the element whose width determines the layout. To designate an element as a container, use the `gridContainer()` method on it. For instance, if you want to define the number of grid columns in a [`Grid` component] based on its width:
 
 ```php
 use Filament\Schemas\Components\Grid;
@@ -194,7 +194,7 @@ Grid::make()
     ])
 ```
 
-Once you have specified an element as a grid container, the element or any of its children can use [container breakpoints](https://tailwindcss.com/docs/responsive-design#container-size-reference) instead of normal breakpoints. For example, you could use `@md` to define the number of grid columns once the width of the container is at least `448px`, and `@xl` to define the number of grid columns once the width of the container is at least `576px`.
+Once an element is specified as a grid container, the element or any of its children can utilize [container breakpoints](https://tailwindcss.com/docs/responsive-design#container-size-reference) instead of standard breakpoints. For example, you could use `@md` to define the number of grid columns when the container's width is at least `448px`, and `@xl` for when the width is at least `576px`.
 
 ```php
 use Filament\Schemas\Components\Grid;
@@ -210,7 +210,7 @@ Grid::make()
     ])
 ```
 
-You may also use container breakpoints in the `columnSpan()` and `columnStart()` methods:
+You can also use container breakpoints in the `columnSpan()` and `columnStart()` methods:
 
 ```php
 use Filament\Schemas\Components\Grid;
@@ -234,7 +234,9 @@ Grid::make()
 
 ### Supporting container queries on older browsers
 
-Container queries are not as well [supported in browsers](https://caniuse.com/css-container-queries) as traditional breakpoints. If you want to support older browsers, you can specify another layer of breakpoints alongside the container breakpoints. By prefixing the traditional breakpoint with `!@`, you can specify that the breakpoint should be used when container queries are not supported in the browser. For example, if you want to use the `@md` container breakpoint for the grid columns, but also want to support older browsers, you can specify the `!@md` breakpoint as well, which will be used when container queries are not supported:
+Container queries are not yet widely [supported in browsers](https://caniuse.com/css-container-queries) compared to traditional breakpoints. To support older browsers, you can define an additional layer of breakpoints alongside the container breakpoints. By prefixing the traditional breakpoint with `!@`, you can specify that the fallback breakpoint should be used when container queries are not supported in the browser. 
+
+For example, if you want to use the `@md` container breakpoint for the grid columns but also support older browsers, you can define the `!@md` fallback breakpoint, which will be applied when container queries are unavailable:
 
 ```php
 use Filament\Schemas\Components\Grid;
@@ -252,7 +254,7 @@ Grid::make()
     ])
 ```
 
-You may also use `!@` fallback breakpoints in the `columnSpan()` and `columnStart()` methods.
+You can also use `!@` fallback breakpoints in the `columnSpan()` and `columnStart()` methods.
 
 ## Adding extra HTML attributes to a layout component
 
