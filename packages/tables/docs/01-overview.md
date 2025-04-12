@@ -8,7 +8,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Tables are a common UI pattern for displaying lists of records in web applications. Filament provides a PHP-based API for defining tables with many features, while also being incredibly customizable.
 
-## Defining table columns
+### Defining table columns
 
 The basis of any table is rows and columns. Filament uses Eloquent to get the data for rows in the table, and you are responsible for defining the columns that are used in that row.
 
@@ -37,7 +37,7 @@ public function table(Table $table): Table
 
 In this example, there are 3 columns in the table. The first two display [text](columns/text) - the title and slug of each row in the table. The third column displays an [icon](columns/icon), either a green check or a red cross depending on if the row is featured or not.
 
-### Making columns sortable and searchable
+#### Making columns sortable and searchable
 
 You can easily modify columns by chaining methods onto them. For example, you can make a column [searchable](columns/overview#searching) using the `searchable()` method. Now, there will be a search field in the table, and you will be able to filter rows by the value of that column:
 
@@ -63,7 +63,7 @@ TextColumn::make('title')
 
 <AutoScreenshot name="tables/overview/sortable-columns" alt="Table with sortable column" version="4.x" />
 
-### Accessing related data from columns
+#### Accessing related data from columns
 
 You can also display data in a column that belongs to a relationship. For example, if you have a `Post` model that belongs to a `User` model (the author of the post), you can display the user's name in the table:
 
@@ -79,7 +79,7 @@ In this case, Filament will search for an `author` relationship on the `Post` mo
 
 For more information about column relationships, visit the [Relationships section](columns/overview#displaying-data-from-relationships).
 
-## Defining table filters
+### Defining table filters
 
 As well as making columns `searchable()`, which allows the user to filter the table by searching the content of columns, you can also allow the users to filter rows in the table in other ways. [Filters](filters) can be defined in the `$table->filters()` method:
 
@@ -118,7 +118,7 @@ The second filter is rendered as a select dropdown. When a user selects an optio
 
 You can use any [schema component](../schemas) to build the UI for a filter. For example, you could create [a custom date range filter](filters/custom).
 
-## Defining table actions
+### Defining table actions
 
 Filament's tables can use [actions](../actions/overview). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
 
