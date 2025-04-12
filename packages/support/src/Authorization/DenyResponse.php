@@ -5,7 +5,7 @@ namespace Filament\Support\Authorization;
 use Closure;
 use Illuminate\Auth\Access\Response;
 
-class Denial extends Response
+class DenyResponse extends Response
 {
     protected ?string $key = null;
 
