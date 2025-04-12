@@ -175,6 +175,85 @@ Fieldset::make('Label')
 
 <AutoScreenshot name="schemas/layout/fieldset/simple" alt="Fieldset" version="4.x" />
 
+## Using container queries
+
+As well as traditional breakpoints based on the size of the viewport, you can also use [container queries](https://tailwindcss.com/docs/responsive-design#container-queries) to create responsive layouts based on the size of a parent container. This is useful when the size of the parent container is not directly related to the size of the viewport, such as when using a collapsible sidebar aside from the content, which would make the content area dynamically smaller or larger depending on the collapse state of the sidebar.
+
+The basis of a container query is the container itself. The container is the element that the width is based upon. To specify an element as a container, use the `gridContainer()` method on it. For example, if you want to dictate the number of grid columns in a [`Grid` component] based on its width:
+
+```php
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->gridContainer()
+    ->columns([
+        // ...
+    ])
+    ->schema([
+        // ...
+    ])
+```
+
+Once you have specified an element as a grid container, the element or any of its children can use [container breakpoints](https://tailwindcss.com/docs/responsive-design#container-size-reference) instead of normal breakpoints. For example, you could use `@md` to define the number of grid columns once the width of the container is at least `448px`, and `@xl` to define the number of grid columns once the width of the container is at least `576px`.
+
+```php
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->gridContainer()
+    ->columns([
+        '@md' => 3,
+        '@xl' => 4,
+    ])
+    ->schema([
+        // ...
+    ])
+```
+
+You may also use container breakpoints in the `columnSpan()` and `columnStart()` methods:
+
+```php
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\TextInput;
+
+Grid::make()
+    ->gridContainer()
+    ->columns([
+        '@md' => 3,
+        '@xl' => 4,
+    ])
+    ->schema([
+        TextInput::make('name')
+            ->columnSpan([
+                '@md' => 2,
+                '@xl' => 3,
+            ]),
+        // ...
+    ])
+```
+
+### Supporting container queries on older browsers
+
+Container queries are not as well [supported in browsers](https://caniuse.com/css-container-queries) as traditional breakpoints. If you want to support older browsers, you can specify another layer of breakpoints alongside the container breakpoints. By prefixing the traditional breakpoint with `!@`, you can specify that the breakpoint should be used when container queries are not supported in the browser. For example, if you want to use the `@md` container breakpoint for the grid columns, but also want to support older browsers, you can specify the `!@md` breakpoint as well, which will be used when container queries are not supported:
+
+```php
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->gridContainer()
+    ->columns([
+        '@md' => 3,
+        '@xl' => 4,
+        '!@md' => 2,
+        '!@xl' => 3,
+    ])
+    ->schema([
+        // ...
+    ])
+```
+
+You may also use `!@` fallback breakpoints in the `columnSpan()` and `columnStart()` methods.
+
 ## Adding extra HTML attributes to a layout component
 
 You can pass extra HTML attributes to the component via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
