@@ -231,6 +231,44 @@ This is useful for authorization of certain actions to only users who have permi
 
 <UtilityInjection set="actions" version="4.x">As well as allowing static values, the `visible()` and `hidden()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
+### Authorization using a policy
+
+You can use a policy to authorize an action. To do this, pass the name of the policy method to the `authorize()` method, and Filament will use the current Eloquent model for that action to find the correct policy:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->authorize('update')
+```
+
+<Aside variant="info">
+    If you're using an action in a panel resource or relation manager, you don't need to use the `authorize()` method, since Filament will automatically read the policy based on the resource model for the built-in actions like `CreateAction`, `EditAction` and `DeleteAction`. For more information, visit the [resource authorization](../resources/overview#authorization) section.
+</Aside>
+
+If your policy method returns a [response message](https://laravel.com/docs/authorization#policy-responses), you can disable the action instead of hiding it, and add a tooltip containing the message, using the `authorizationTooltip()` method:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->authorize('update')
+    ->authorizationTooltip()
+```
+
+You may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->authorize('update')
+    ->authorizationNotification()
+```
+
 ### Disabling a button
 
 If you want to disable a button instead of hiding it, you can use the `disabled()` method:

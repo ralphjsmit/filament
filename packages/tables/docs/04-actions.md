@@ -145,6 +145,132 @@ The function allows you to access the current table `$records` that are selected
 
 <AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" version="4.x" />
 
+### Authorizing bulk actions
+
+When using a bulk action, you may check a policy method for each record that is selected. This is useful for checking if the user has permission to perform the action on each record. You can use the `authorizeIndividualRecords()` method, passing the name of a policy method, which will be called for each record. If the policy denies authorization, the record will not be present in the bulk action's `$records` parameter:
+
+```php
+use Filament\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Collection;
+
+BulkAction::make('delete')
+    ->requiresConfirmation()
+    ->authorizeIndividualRecords('delete')
+    ->action(fn (Collection $records) => $records->each->delete())
+```
+
+### Bulk action notifications
+
+After a bulk action is completed, you may want to send a notification to the user with a summary of the action's success. This is especially useful if you're using [authorization](#authorizing-bulk-actions) for individual records, as the user may not know how many records were actually affected.
+
+To send a notification after the bulk action is completed, you should set the `successNotificationTitle()` and `failureNotificationTitle()`:
+
+- The `successNotificationTitle()` is used as the title of the notification when all records have been successfully processed.
+- The `failureNotificationTitle()` is used as the title of the notification when some or all of the records failed to be processed. By passing a function to this methods, you can inject the `$successCount` and `$failureCount` parameters, to provide this information to the user.
+
+For example:
+
+```php
+use Filament\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Collection;
+
+BulkAction::make('delete')
+    ->requiresConfirmation()
+    ->authorizeIndividualRecords('delete')
+    ->action(fn (Collection $records) => $records->each->delete())
+    ->successNotificationTitle('Deleted users')
+    ->failureNotificationTitle(function (int $successCount, int $totalCount): string {
+        if ($successCount) {
+            return "{$successCount} of {$totalCount} users deleted";
+        }
+
+        return 'Failed to delete any users';
+    })
+```
+
+You can also use a special [authorization response object](https://laravel.com/docs/authorization#policy-responses) in a policy method to provide a custom message about why the authorization failed. The special object is called `DenyResponse` and replaces `Response::deny()`, allowing the developer to pass a function as the message which can receive information about how many records were denied by that authorization check:
+
+```php
+use App\Models\User;
+use Filament\Support\Authorization\DenyResponse;
+use Illuminate\Auth\Access\Response;
+
+class UserPolicy
+{
+    public function delete(User $user, User $model): bool | Response
+    {
+        if (! $model->is_admin) {
+            return true;
+        }
+
+        return DenyResponse::make('cannot_delete_admin', message: function (int $failureCount, int $totalCount): string {
+            if (($failureCount === 1) && ($totalCount === 1)) {
+                return 'You cannot delete an admin user.';
+            }
+
+            if ($failureCount === $totalCount) {
+                return 'All users selected were admin users.';
+            }
+
+            if ($failureCount === 1) {
+                return 'One of the selected users was an admin user.';
+            }
+
+            return "{$failureCount} of the selected users were admin users.";
+        });
+    }
+}
+```
+
+The first argument to the `make()` method is a unique key to identify that failure type. If multiple failures of that key are detected, they are grouped together and only one message is generated. If there are multiple points of failure in the policy method, each response object can have its own key, and the messages will be concatenated together in the notification.
+
+#### Reporting failures in bulk action processing
+
+Alongside [individual record authorization](#authorizing-bulk-actions) messages, you can also report failures in the bulk action processing itself. This is useful if you want to provide a message for each record that failed to be processed for a particular reason, even after authorization passes. This is done by injecting the `Action` instance into the `action()` function, and calling the `reportBulkProcessingFailure()` method on it, passing a key and message function similar to `DenyResponse`:
+
+```php
+use Filament\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Collection;
+
+BulkAction::make('delete')
+    ->requiresConfirmation()
+    ->authorizeIndividualRecords('delete')
+    ->action(function (BulkAction $action, Collection $records) {
+        $records->each(function (Model $record) use ($action) {
+            $record->delete() || $action->reportBulkProcessingFailure(
+                'deletion_failed',
+                message: function (int $failureCount, int $totalCount): string {
+                    if (($failureCount === 1) && ($totalCount === 1)) {
+                        return 'One user failed to delete.';
+                    }
+        
+                    if ($failureCount === $totalCount) {
+                        return 'All users failed to delete.';
+                    }
+        
+                    if ($failureCount === 1) {
+                        return 'One of the selected users failed to delete.';
+                    }
+        
+                    return "{$failureCount} of the selected users failed to delete.";
+                },
+            );
+        });
+    })
+    ->successNotificationTitle('Deleted users')
+    ->failureNotificationTitle(function (int $successCount, int $totalCount): string {
+        if ($successCount) {
+            return "{$successCount} of {$totalCount} users deleted";
+        }
+
+        return 'Failed to delete any users';
+    })
+```
+
+The `delete()` method on an Eloquent model returns `false` if the deletion fails, so you can use that to determine if the record was deleted successfully. The `reportBulkProcessingFailure()` method will then add a failure message to the notification, which will be displayed when the action is completed.
+
+The `reportBulkProcessingFailure()` method can be called at multiple points during the action execution for different reasons, but you should only call it once per record. You should not proceed with the action for that particular record once you have called the method for it.
+
 ### Grouping bulk actions
 
 You may use a `BulkActionGroup` object to [group multiple bulk actions together](../actions/grouping-actions) in a dropdown. Any bulk actions that remain outside the `BulkActionGroup` will be rendered next to the dropdown's trigger button:
