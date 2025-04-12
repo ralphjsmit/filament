@@ -8,12 +8,12 @@ While Filament comes with virtually any tool you'll need to build great apps, so
 
 Before we dive in, it's important to understand the different contexts in which plugins can be used. There are two main contexts:
 
-1. **Panel Plugins**: These are plugins that are used with [Panel Builders](../panels/installation). They are typically used only to add functionality when used inside a Panel or as a complete Panel in and of itself. Examples of this are:
+1. **Panel Plugins**: These are plugins that are used with [Panel Builders](../introduction/installation). They are typically used only to add functionality when used inside a Panel or as a complete Panel in and of itself. Examples of this are:
    1. A plugin that adds specific functionality to the dashboard in the form of Widgets.
    2. A plugin that adds a set of Resources / functionality to an app like a Blog or User Management feature.
 2. **Standalone Plugins**: These are plugins that are used in any context outside a Panel Builder. Examples of this are:
-   1. A plugin that adds custom fields to be used with the [Form Builders](..//forms/installation/).
-   2. A plugin that adds custom columns or filters to the [Table Builders](..//tables/installation/).
+   1. A plugin that adds custom fields to be used with the [Form Builders](../forms/installation/).
+   2. A plugin that adds custom columns or filters to the [Table Builders](../tables/installation/).
 
 Although these are two different mental contexts to keep in mind when building plugins, they can be used together inside the same plugin. They do not have to be mutually exclusive.
 
