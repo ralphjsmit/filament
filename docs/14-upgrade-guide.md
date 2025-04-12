@@ -115,6 +115,33 @@ If you have not published the Filament configuration file, or you have removed t
     - If it is different from `FILESYSTEM_DISK`, and it should be, you can [publish the Filament configuration file](installation#publishing-configuration) and set the `default_filesystem_disk` to reference the old `FILAMENT_FILESYSTEM_DISK` environment variable like it was before.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Changes to table filters are not deferred by default</span>
+
+The `deferFilters()` method from Filament v3 is now the default behavior in Filament v4, so users must click a button before the filters are applied to the table. To disable this behavior, you can use the `deferFilters(false)` method.
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->deferFilters(false);
+}
+```
+
+<Aside variant="tip">
+    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Tables\Table;
+
+    Table::configureUsing(fn (Table $table) => $table
+        ->deferFilters(false));
+    ```
+</Aside>
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('forms') || packages.includes('infolists')">
 <span slot="summary">The `Grid`, `Section` and `Fieldset` layout components now do not span all columns by default</span>
 
@@ -176,33 +203,6 @@ If you were previously using `unqiue()` validation rule without the `ignoreRecor
     ```
 </Aside>
 </Disclosure>
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('tables')">
-<span slot="summary">Changes to table filters are not deferred by default</span>
-
-The `deferFilters()` method from Filament v3 is now the default behavior in Filament v4, so users must click a button before the filters are applied to the table. To disable this behavior, you can use the `deferFilters(false)` method.
-
-```php
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->deferFilters(false);
-}
-```
-
-<Aside variant="tip">
-    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
-
-    ```php
-    use Filament\Tables\Table;
-
-    Table::configureUsing(fn (Table $table) => $table
-        ->deferFilters(false));
-    ```
-</Aside>
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -557,6 +557,14 @@ Ideally, you should avoid overriding the `make()` method altogether as there are
 <span slot="summary">Authenticating the user inside the import and export jobs</span>
 
 In v3, the `Illuminate\Auth\Events\Login` event was fired from the import and export jobs, to set the current user. This is no longer the case in v4: the user is authenticated, but that event is not fired, to avoid running any listeners that should only run for actual user logins.
+</Disclosure>
+
+<Disclosure x-show="packages.includes('panels')">
+<span slot="summary">Overriding the `can*()` authorization methods on a `Resource`, `RelationManager` or `ManageRelatedRecords` class</span>
+
+Although these methods, such as `canCreate()`, `canViewAny()` and `canDelete()` were not documented, if you are overriding those to provide custom authorization logic in v3, you should be aware that they are not always called in v4. The authorization logic has been improved to properly support [policy response objects](https://laravel.com/docs/authorization#policy-responses), and these methods were too simple as they are just able to return booleans.
+
+If you can make the authorization customization inside the policy of the model instead, you should do that. If you need to customize the authorization logic in the resource or relation manager class, you should override the `get*AuthorizationResponse()` methods instead, such as `getCreateAuthorizationResponse()`, `getViewAnyAuthorizationResponse()` and `getDeleteAuthorizationResponse()`. These methods are called when the authorization logic is executed, and they return a [policy response object](https://laravel.com/docs/authorization#policy-responses). If you remove the override for the `can*()` methods, the `get*AuthorizationResponse()` methods will be used to determine the authorization response boolean, so you don't have to maintain the logic twice.
 </Disclosure>
 
 <Disclosure>
