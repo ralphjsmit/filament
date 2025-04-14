@@ -175,7 +175,7 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 ### High-impact changes
 
 <Disclosure open x-show="packages.includes('tables')">
-<span slot="summary">Changes to table filters are not deferred by default</span>
+<span slot="summary">Changes to table filters are deferred by default</span>
 
 The `deferFilters()` method from Filament v3 is now the default behavior in Filament v4, so users must click a button before the filters are applied to the table. To disable this behavior, you can use the `deferFilters(false)` method.
 
