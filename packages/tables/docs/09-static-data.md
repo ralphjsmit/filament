@@ -417,3 +417,77 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+## Using an External API as a Table Data Source
+
+[Filament's table builder](overview/#introduction) allows you to populate tables with data fetched from any external source—not just [Eloquent models](https://laravel.com/docs/eloquent). This is particularly useful when you want to display data from a REST API or a third-party service.
+
+### Fetching Data from a Laravel API
+
+Below is a demonstrative example of how to consume data from a [Laravel-based API](https://laravel.com/docs/installation#laravel-the-api-backend) and display it in a [Filament table](overview/#introduction):
+
+```php
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(fn (): array => Http::baseUrl('https://laravel-api.test/api')
+            ->get('posts')
+            ->collect()
+            ->get('data')
+        )
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('slug'),
+            IconColumn::make('is_featured')
+                ->boolean(),
+        ]);
+}
+```
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+### Example Laravel API Endpoint
+
+Here's an example of how you could define a [Laravel API route](https://laravel.com/docs/routing#api-routes) that returns a list of posts using a [Resource Collection](https://laravel.com/docs/eloquent-resources#resource-collections):
+
+```php
+use App\Models\Post;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/posts', function () {
+    return Post::all()->toResourceCollection();
+});
+```
+
+The [PostResource](https://laravel.com/docs/eloquent-resources#introduction) transforms your Post Model into a clean JSON structure:
+
+```php
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class PostResource extends JsonResource
+{
+    public function toArray($request): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'is_featured' => $this->is_featured,
+        ];
+    }
+}
+```
+
+This is a simplified example intended to demonstrate the use of [Laravel Resource Collections](https://laravel.com/docs/eloquent-resources#resource-collections). **It is not ready for production**.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
