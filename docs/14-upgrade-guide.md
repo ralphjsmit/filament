@@ -32,6 +32,83 @@ You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 > Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
+### Cleaning up your code style after upgrading to v4
+
+The automated upgrade script uses [Rector](https://getrector.org) to make changes to your code. Sometimes, the tool may change how your code is formatted, or introduce references to classes that are not yet imported.
+
+Filament suggests using [Laravel Pint](https://laravel.com/docs/12.x/pint) or [PHP CS Fixer](https://cs.symfony.com) to clean up your code style after running the upgrade script.
+
+Specifically, the [`fully_qualified_strict_types` rule](https://cs.symfony.com/doc/rules/import/fully_qualified_strict_types.html) and [`global_namespace_import` rule](https://cs.symfony.com/doc/rules/import/global_namespace_import.html) in these tools will fix any references to classes that are not yet imported, which is a common issue after running the upgrade script.
+
+This is the Laravel Pint configuration that Filament uses for its own codebase if you would like a good starting point:
+
+```json
+{
+    "preset": "laravel",
+    "rules": {
+        "blank_line_before_statement": true,
+        "concat_space": {
+            "spacing": "one"
+        },
+        "fully_qualified_strict_types": {
+            "import_symbols": true
+        },
+        "global_namespace_import": true,
+        "method_argument_space": true,
+        "single_trait_insert_per_statement": true,
+        "types_spaces": {
+            "space": "single"
+        }
+    }
+}
+```
+
+## Publish the configuration file
+
+Some changes in Filament v4 can be reverted using the configuration file. If you haven't published the configuration file yet, you can do so by running the following command:
+
+```bash
+php artisan vendor:publish --tag=filament-config
+```
+
+Firstly, the `default_filesystem_disk` in v4 is set to the `FILESYSTEM_DISK` variable instead of `FILAMENT_FILESYSTEM_DISK`. To preserve the v3 behaviour, make sure you use this setting:
+
+```php
+return [
+
+    // ...
+
+    'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DISK', 'public'),
+
+    // ...
+
+]
+```
+
+v4 introduces some changes to how Filament generates files. A new `file_generation` section has been added to the v4 configuration file, so that you can revert back to the v3 style if you would like to keep new code consistent with how it looked before upgrading. If your configuration file doesn't already have a `file_generation` section, you should add it yourself, or re-publish the configuration file and tweak it to your liking:
+
+```php
+use Filament\Support\Commands\FileGenerators\FileGenerationFlag;
+
+return [
+
+    // ...
+
+    'file_generation' => [
+        'flags' => [
+            FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS, // Define new forms and infolists inside the resource class instead of a separate schema class.
+            FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_TABLES, // Define new tables inside the resource class instead of a separate table class.
+            FileGenerationFlag::PANEL_CLUSTER_CLASSES_OUTSIDE_DIRECTORIES, // Create new cluster classes outside of their directories.
+            FileGenerationFlag::PANEL_RESOURCE_CLASSES_OUTSIDE_DIRECTORIES, // Create new resource classes outside of their directories.
+            FileGenerationFlag::PARTIAL_IMPORTS, // Partially import components such as form fields and table columns instead of importing each component explicitly.
+        ],
+    ],
+
+    // ...
+
+]
+```
+
 ## Breaking changes that must be handled manually
 
 <div x-data="{ packages: ['panels', 'forms', 'infolists', 'tables', 'actions', 'notifications', 'widgets', 'support'] }">
@@ -97,23 +174,6 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 </Checkboxes>
 
 ### High-impact changes
-
-<Disclosure open>
-<span slot="summary">The `FILAMENT_FILESYSTEM_DISK` environment variable</span>
-
-If you hadn't published the Filament configuration file to `config/filament.php`, Filament will now reference the `FILESYSTEM_DISK` environment variable instead of `FILAMENT_FILESYSTEM_DISK` when uploading files. Laravel also uses this environment variable to represent the default filesystem disk, so this change aims to bring Filament in line to avoid potential confusion.
-
-If you have published the Filament configuration file, and you have a `default_filesystem_disk` key set, you can ignore this change as your app will continue to use the old configuration value.
-
-If you have not published the Filament configuration file, or you have removed the `default_filesystem_disk` key from it:
-
-- If you do not have a `FILAMENT_FILESYSTEM_DISK` environment variable set:
-    - If the `FILESYSTEM_DISK` environment variable is set to `public`, you can ignore this change, since `public` was the default value for `FILAMENT_FILESYSTEM_DISK` before.
-    - If the `FILESYSTEM_DISK` environment variable is set to something else, you can ignore this change if you are happy with the `FILESYSTEM_DISK` value being used to upload files in Filament. Please be aware that not using a `public` or `s3` disk may lead to unexpected behavior, as the `local` disk stores private files but is unable to generate public URLs for previews or downloads.
-- If you do have a `FILAMENT_FILESYSTEM_DISK` environment variable set:
-    - If it is the same as `FILESYSTEM_DISK`, you can remove it completely.
-    - If it is different from `FILESYSTEM_DISK`, and it should be, you can [publish the Filament configuration file](installation#publishing-configuration) and set the `default_filesystem_disk` to reference the old `FILAMENT_FILESYSTEM_DISK` environment variable like it was before.
-</Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Changes to table filters are not deferred by default</span>
