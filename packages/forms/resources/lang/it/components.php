@@ -12,7 +12,7 @@ return [
 
             'add' => [
                 'label' => 'Aggiungi a :label',
-                
+
                 'modal' => [
 
                     'heading' => 'Aggiungi a :label',
@@ -30,7 +30,7 @@ return [
 
             'add_between' => [
                 'label' => 'Inserisci tra i blocchi',
-                
+
                 'modal' => [
 
                     'heading' => 'Aggiungi a :label',
@@ -49,7 +49,7 @@ return [
             'delete' => [
                 'label' => 'Elimina',
             ],
-            
+
             'edit' => [
 
                 'label' => 'Modifica',
