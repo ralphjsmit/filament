@@ -545,3 +545,61 @@ Route::get('/posts', function (Request $request) {
 <Aside variant="warning">
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
 </Aside>
+
+### Searching with an External API
+
+You can enable [searching](columns#searching) in [columns](columns) even when the data source is an external API. Below is an example of how to pass a `search` parameter to a [Laravel API](https://laravel.com/docs/installation#laravel-the-api-backend) and filter the results on the backend.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(function (?string $search): array {
+            $response = Http::baseUrl('https://laravel-api.test/api')
+                ->get('posts', [
+                    'search' => $search,
+                ]);
+
+            return $response
+                ->collect()
+                ->get('data', []);
+        })
+        ->columns([
+            TextColumn::make('title')
+                ->searchable(),
+        ]);
+}
+```
+
+On the backend, your Laravel API needs to receive and apply the `search` parameter to the query. In the example below, the `/posts` endpoint dynamically filters the records by title:
+
+```php
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/posts', function (Request $request) {
+    $query = Post::query();
+
+    if ($search = $request->query('search')) {
+        $query->where('title', 'like', "%{$search}%");
+    }
+
+    return $query
+        ->get()
+        ->toResourceCollection();
+});
+```
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="info">
+    This example uses the [Example Laravel API Endpoint](#example-laravel-api-endpoint) along with a corresponding [API Resource](https://laravel.com/docs/eloquent-resources#introduction) to return structured data from the API.  
+    The response includes a `data` key that contains the formatted items displayed in the Filament table.
+</Aside>
