@@ -546,6 +546,11 @@ Route::get('/posts', function (Request $request) {
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
 </Aside>
 
+<Aside variant="info">
+    This example uses the [Example Laravel API Endpoint](#example-laravel-api-endpoint) along with a corresponding [API Resource](https://laravel.com/docs/eloquent-resources#introduction) to return structured data from the API.  
+    The response includes a `data` key that contains the formatted items displayed in the Filament table.
+</Aside>
+
 ### External API Searching
 
 You can enable [searching](columns#searching) in [columns](columns) even when the data source is an external API. Below is an example of how to pass a `search` parameter to a [Laravel API](https://laravel.com/docs/installation#laravel-the-api-backend) and filter the results on the backend.
