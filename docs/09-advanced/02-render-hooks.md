@@ -108,10 +108,10 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::TOPBAR_BEFORE` - Above the topbar
 - `PanelsRenderHook::TOPBAR_END` - End of the topbar container
 - `PanelsRenderHook::TOPBAR_START` - Start of the topbar container
-- `PanelsRenderHook::USER_MENU_AFTER` - After the [user menu](../panels/navigation#customizing-the-user-menu)
-- `PanelsRenderHook::USER_MENU_BEFORE` - Before the [user menu](../panels/navigation#customizing-the-user-menu)
-- `PanelsRenderHook::USER_MENU_PROFILE_AFTER` - After the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
-- `PanelsRenderHook::USER_MENU_PROFILE_BEFORE` - Before the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
+- `PanelsRenderHook::USER_MENU_AFTER` - After the [user menu](../navigation/user-menu)
+- `PanelsRenderHook::USER_MENU_BEFORE` - Before the [user menu](../navigation/user-menu)
+- `PanelsRenderHook::USER_MENU_PROFILE_AFTER` - After the profile item in the [user menu](../navigation/user-menu)
+- `PanelsRenderHook::USER_MENU_PROFILE_BEFORE` - Before the profile item in the [user menu](../navigation/user-menu)
 
 
 ### Table Builder render hooks

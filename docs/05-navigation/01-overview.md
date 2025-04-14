@@ -470,100 +470,6 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Customizing the user menu
-
-The user menu is featured in the top right corner of the admin layout. It's fully customizable.
-
-To register new items to the user menu, you can use the [configuration](configuration):
-
-```php
-use App\Filament\Pages\Settings;
-use Filament\Navigation\MenuItem;
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->userMenuItems([
-            MenuItem::make()
-                ->label('Settings')
-                ->url(fn (): string => Settings::getUrl())
-                ->icon('heroicon-o-cog-6-tooth'),
-            // ...
-        ]);
-}
-```
-
-<AutoScreenshot name="panels/navigation/user-menu" alt="User menu with custom menu item" version="3.x" />
-
-### Customizing the profile link
-
-To customize the user profile link at the start of the user menu, register a new item with the `profile` array key:
-
-```php
-use Filament\Navigation\MenuItem;
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->userMenuItems([
-            'profile' => MenuItem::make()->label('Edit profile'),
-            // ...
-        ]);
-}
-```
-
-For more information on creating a profile page, check out the [authentication features documentation](users#authentication-features).
-
-### Customizing the logout link
-
-To customize the user logout link at the end of the user menu, register a new item with the `logout` array key:
-
-```php
-use Filament\Navigation\MenuItem;
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->userMenuItems([
-            'logout' => MenuItem::make()->label('Log out'),
-            // ...
-        ]);
-}
-```
-
-### Conditionally hiding user menu items
-
-You can also conditionally hide a user menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
-
-```php
-use App\Models\Payment;
-use Filament\Navigation\MenuItem;
-
-MenuItem::make()
-    ->label('Payments')
-    ->visible(fn (): bool => auth()->user()->can('viewAny', Payment::class))
-    // or
-    ->hidden(fn (): bool => ! auth()->user()->can('viewAny', Payment::class))
-```
-
-### Sending a `POST` HTTP request from a user menu item
-
-You can send a `POST` HTTP request from a user menu item by passing a URL to the `postAction()` method:
-
-```php
-use Filament\Navigation\MenuItem;
-
-MenuItem::make()
-    ->label('Lock session')
-    ->postAction(fn (): string => route('lock-session'))
-```
-
 ## Disabling breadcrumbs
 
 The default layout will show breadcrumbs to indicate the location of the current page within the hierarchy of the app.
@@ -579,4 +485,40 @@ public function panel(Panel $panel): Panel
         // ...
         ->breadcrumbs(false);
 }
+```
+
+## Reloading the sidebar and topbar
+
+Once a page in the panel is loaded, the sidebar and topbar are not reloaded until you navigate away from the page, or until a menu item is clicked to trigger an action. You can manually reload these components to update them by dispatching a `refresh-sidebar` or `refresh-topbar` browser event.
+
+To dispatch an event from PHP, you can call the `$this->dispatch()` method from any Livewire component, such as a page class, relation manager class, or widget class:
+
+```php
+$this->dispatch('refresh-sidebar');
+```
+
+When your code does not live inside a Livewire component, such as when you have a custom action class, you can inject the `$livewire` argument into a closure function, and call `dispatch()` on that:
+
+```php
+use Filament\Actions\Action;
+use Livewire\Component;
+
+Action::make('create')
+    ->action(function (Component $livewire) {
+        // ...
+    
+        $livewire->dispatch('refresh-sidebar');
+    })
+```
+
+Alternatively, you can dispatch an event from JavaScript using the `$dispatch()` Alpine.js helper method, or the native browser `window.dispatchEvent()` method:
+
+```html
+<button x-on:click="$dispatch('refresh-sidebar')" type="button">
+    Refresh Sidebar
+</button>
+```
+
+```javascript
+window.dispatchEvent(new CustomEvent('refresh-sidebar'));
 ```
