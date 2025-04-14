@@ -68,7 +68,6 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
         $this->scan('spatie-laravel-media-library-plugin');
         $this->scan('spatie-laravel-settings-plugin');
         $this->scan('spatie-laravel-tags-plugin');
-        $this->scan('spatie-laravel-translatable-plugin');
         $this->scan('support');
         $this->scan('tables');
         $this->scan('widgets');
