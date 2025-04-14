@@ -13,7 +13,7 @@ return [
             'file' => [
                 'label' => 'File',
                 'placeholder' => 'Carica un file CSV',
-                
+
                 'rules' => [
                     'duplicate_columns' => '{0} Il file non deve contenere più di un\'intestazione di colonna vuota.|{1,*} Il file non deve contenere intestazioni di colonna duplicate: :columns.',
                 ],
