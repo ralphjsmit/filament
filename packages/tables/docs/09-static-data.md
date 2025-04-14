@@ -673,3 +673,61 @@ Route::get('/posts', function (Request $request) {
     This example uses the [Example Laravel API Endpoint](#example-laravel-api-endpoint) along with a corresponding [API Resource](https://laravel.com/docs/eloquent-resources#introduction) to return structured data from the API.  
     The response includes a `data` key that contains the formatted items displayed in the Filament table.
 </Aside>
+
+### External API Pagination
+
+You can enable [pagination](overview#pagination) when using an external API as the table data source. Filament will pass the current page and the number of records per page to your `records()` function. In this example, you can use these parameters to your [Laravel API](https://laravel.com/docs/installation#laravel-the-api-backend) and construct a `LengthAwarePaginator` manually.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(function (int $page, int $recordsPerPage): LengthAwarePaginator {
+            $response = Http::baseUrl('https://laravel-api.test/api')
+                ->get('posts', [
+                    'page' => $page,
+                    'per_page' => $recordsPerPage,
+                ])
+                ->collect();
+
+            return new LengthAwarePaginator(
+                items: $response['data'],
+                total: $response['meta']['total'],
+                perPage: $response['meta']['per_page'],
+                currentPage: $response['meta']['current_page']
+            );
+        })
+        ->columns([
+            TextColumn::make('title'),
+        ]);
+}
+```
+
+On the backend, your Laravel API should receive the `page` and `per_page` parameters, apply pagination using [paginate()](https://laravel.com/docs/eloquent-resources#pagination) method, and return a [Resource Collection](https://laravel.com/docs/eloquent-resources#resource-collections) that includes the pagination metadata:
+
+```php
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/posts', function (Request $request) {
+    $perPage = $request->query('per_page', 10);
+
+    return Post::paginate($perPage)
+        ->toResourceCollection();
+});
+```
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="info">
+    This example uses the [Example Laravel API Endpoint](#example-laravel-api-endpoint) and a corresponding [API Resource](https://laravel.com/docs/eloquent-resources#concept-overview) to return structured paginated data.  
+    The response includes a `data` key containing the records, and a `meta` key with pagination information used to construct the `LengthAwarePaginator`.
+</Aside>
