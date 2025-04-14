@@ -119,7 +119,7 @@ class BoringAvatarsProvider implements Contracts\AvatarProvider
 }
 ```
 
-Now, register this new avatar provider in the [configuration](configuration):
+Now, register this new avatar provider in the [configuration](../panel-configuration):
 
 ```php
 use App\Filament\AvatarProviders\BoringAvatarsProvider;
@@ -268,7 +268,7 @@ public function panel(Panel $panel): Panel
 
 ### Customizing the authentication route slugs
 
-You can customize the URL slugs used for the authentication routes in the [configuration](configuration):
+You can customize the URL slugs used for the authentication routes in the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -290,7 +290,7 @@ public function panel(Panel $panel): Panel
 
 ### Setting the authentication guard
 
-To set the authentication guard that Filament uses, you can pass in the guard name to the `authGuard()` [configuration](configuration) method:
+To set the authentication guard that Filament uses, you can pass in the guard name to the `authGuard()` [configuration](../panel-configuration) method:
 
 ```php
 use Filament\Panel;
@@ -305,7 +305,7 @@ public function panel(Panel $panel): Panel
 
 ### Setting the password broker
 
-To set the password broker that Filament uses, you can pass in the broker name to the `authPasswordBroker()` [configuration](configuration) method:
+To set the password broker that Filament uses, you can pass in the broker name to the `authPasswordBroker()` [configuration](../panel-configuration) method:
 
 ```php
 use Filament\Panel;
@@ -320,7 +320,7 @@ public function panel(Panel $panel): Panel
 
 ### Disabling revealable password inputs
 
-By default, all password inputs in authentication forms are [`revealable()`](../forms/fields/text-input#revealable-password-inputs). This allows the user can see a plain text version of the password they're typing by clicking a button. To disable this feature, you can pass `false` to the `revealablePasswords()` [configuration](configuration) method:
+By default, all password inputs in authentication forms are [`revealable()`](../forms/fields/text-input#revealable-password-inputs). This allows the user can see a plain text version of the password they're typing by clicking a button. To disable this feature, you can pass `false` to the `revealablePasswords()` [configuration](../panel-configuration) method:
 
 ```php
 use Filament\Panel;

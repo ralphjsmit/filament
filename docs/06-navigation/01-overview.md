@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
-By default, Filament will register navigation items for each of your [resources](resources), [custom pages](pages), and [clusters](clusters). These classes contain static properties and methods that you can override, to configure that navigation item.
+By default, Filament will register navigation items for each of your [resources](../resources), [custom pages](custom-pages), and [clusters](clusters). These classes contain static properties and methods that you can override, to configure that navigation item.
 
 If you're looking to add a second layer of navigation to your app, you can use [clusters](clusters). These are useful for grouping resources and pages together.
 
@@ -105,7 +105,7 @@ public static function getNavigationBadgeTooltip(): ?string
 
 ## Grouping navigation items
 
-You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources) and [custom page](pages):
+You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources) and [custom page](custom-pages):
 
 ```php
 protected static ?string $navigationGroup = 'Settings';
@@ -140,7 +140,7 @@ As seen above, if the parent item has a navigation group, that navigation group 
 
 ### Customizing navigation groups
 
-You may customize navigation groups by calling `navigationGroups()` in the [configuration](configuration), and passing `NavigationGroup` objects in order:
+You may customize navigation groups by calling `navigationGroups()` in the [configuration](../panel-configuration), and passing `NavigationGroup` objects in order:
 
 ```php
 use Filament\Navigation\NavigationGroup;
@@ -199,7 +199,7 @@ NavigationGroup::make()
 
 <AutoScreenshot name="panels/navigation/group-not-collapsible" alt="Not collapsible navigation groups" version="3.x" />
 
-Or, you can do it globally for all groups in the [configuration](configuration):
+Or, you can do it globally for all groups in the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -226,7 +226,7 @@ The `extraSidebarAttributes()` will be applied to navigation group elements cont
 
 ## Collapsible sidebar on desktop
 
-To make the sidebar collapsible on desktop as well as mobile, you can use the [configuration](configuration):
+To make the sidebar collapsible on desktop as well as mobile, you can use the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -268,7 +268,7 @@ When passing an icon to a navigation group, even if the items also have icons, t
 
 ## Registering custom navigation items
 
-To register new navigation items, you can use the [configuration](configuration):
+To register new navigation items, you can use the [configuration](../panel-configuration):
 
 ```php
 use Filament\Navigation\NavigationItem;
@@ -325,11 +325,11 @@ public static function shouldRegisterNavigation(): bool
 }
 ```
 
-Please note that these methods do not control direct access to the resource or page. They only control whether the resource or page will show up in the navigation. If you want to also control access, then you should use [resource authorization](resources#authorization) or [page authorization](pages#authorization).
+Please note that these methods do not control direct access to the resource or page. They only control whether the resource or page will show up in the navigation. If you want to also control access, then you should use [resource authorization](../resources#authorization) or [page authorization](custom-pages#authorization).
 
 ## Using top navigation
 
-By default, Filament will use a sidebar navigation. You may use a top navigation instead by using the [configuration](configuration):
+By default, Filament will use a sidebar navigation. You may use a top navigation instead by using the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -346,7 +346,7 @@ public function panel(Panel $panel): Panel
 
 ## Customizing the width of the sidebar
 
-You can customize the width of the sidebar by passing it to the `sidebarWidth()` method in the [configuration](configuration):
+You can customize the width of the sidebar by passing it to the `sidebarWidth()` method in the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -359,7 +359,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Additionally, if you are using the `sidebarCollapsibleOnDesktop()` method, you can customize width of the collapsed icons by using the `collapsedSidebarWidth()` method in the [configuration](configuration):
+Additionally, if you are using the `sidebarCollapsibleOnDesktop()` method, you can customize width of the collapsed icons by using the `collapsedSidebarWidth()` method in the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -375,7 +375,7 @@ public function panel(Panel $panel): Panel
 
 ## Advanced navigation customization
 
-The `navigation()` method can be called from the [configuration](configuration). It allows you to build a custom navigation that overrides Filament's automatically generated items. This API is designed to give you complete control over the navigation.
+The `navigation()` method can be called from the [configuration](../panel-configuration). It allows you to build a custom navigation that overrides Filament's automatically generated items. This API is designed to give you complete control over the navigation.
 
 ### Registering custom navigation items
 
@@ -474,7 +474,7 @@ public function panel(Panel $panel): Panel
 
 The default layout will show breadcrumbs to indicate the location of the current page within the hierarchy of the app.
 
-You may disable breadcrumbs in your [configuration](configuration):
+You may disable breadcrumbs in your [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;

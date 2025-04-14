@@ -102,8 +102,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::SIDEBAR_FOOTER` - Pinned to the bottom of the sidebar, below the content
 - `PanelsRenderHook::STYLES_AFTER` - After styles are defined
 - `PanelsRenderHook::STYLES_BEFORE` - Before styles are defined
-- `PanelsRenderHook::TENANT_MENU_AFTER` - After the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
-- `PanelsRenderHook::TENANT_MENU_BEFORE` - Before the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
+- `PanelsRenderHook::TENANT_MENU_AFTER` - After the [tenant menu](../users/tenancy#customizing-the-tenant-menu)
+- `PanelsRenderHook::TENANT_MENU_BEFORE` - Before the [tenant menu](../users/tenancy#customizing-the-tenant-menu)
 - `PanelsRenderHook::TOPBAR_AFTER` - Below the topbar
 - `PanelsRenderHook::TOPBAR_BEFORE` - Above the topbar
 - `PanelsRenderHook::TOPBAR_END` - End of the topbar container

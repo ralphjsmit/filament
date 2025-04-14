@@ -318,4 +318,4 @@ FilamentAsset::register([
 ]);
 ```
 
-You can find out more about [asset registration](../support/assets), and even [register assets for a specific panel](../panels/configuration#registering-assets-for-a-panel).
+You can find out more about [asset registration](../support/assets), and even [register assets for a specific panel](../panel-configuration#registering-assets-for-a-panel).

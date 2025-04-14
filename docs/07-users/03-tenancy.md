@@ -52,7 +52,7 @@ class PostObserver
 
 ## Setting up tenancy
 
-To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](configuration):
+To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](../panel-configuration):
 
 ```php
 use App\Models\Team;
@@ -153,7 +153,7 @@ class RegisterTeam extends RegisterTenant
 
 You may add any [form components](../forms/getting-started) to the `form()` method, and create the team inside the `handleRegistration()` method.
 
-Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
+Now, we need to tell Filament to use this page. We can do this in the [configuration](../panel-configuration):
 
 ```php
 use App\Filament\Pages\Tenancy\RegisterTeam;
@@ -204,7 +204,7 @@ class EditTeamProfile extends EditTenantProfile
 
 You may add any [form components](../forms/getting-started) to the `form()` method. They will get saved directly to the tenant model.
 
-Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
+Now, we need to tell Filament to use this page. We can do this in the [configuration](../panel-configuration):
 
 ```php
 use App\Filament\Pages\Tenancy\EditTeamProfile;
@@ -246,7 +246,7 @@ Now, you can install the Filament billing provider for Spark using Composer:
 composer require filament/spark-billing-provider
 ```
 
-In the [configuration](configuration), set Spark as the `tenantBillingProvider()`:
+In the [configuration](../panel-configuration), set Spark as the `tenantBillingProvider()`:
 
 ```php
 use Filament\Billing\Providers\SparkBillingProvider;
@@ -281,7 +281,7 @@ Now, users will be redirected to the billing page if they don't have an active s
 
 #### Requiring a subscription for specific resources and pages
 
-Sometimes, you may wish to only require a subscription for certain [resources](resources) and [custom pages](pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
+Sometimes, you may wish to only require a subscription for certain [resources](resources) and [custom pages](../navigation/custom-pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
 
 ```php
 public static function isTenantSubscriptionRequired(Panel $panel): bool
@@ -325,7 +325,7 @@ class ExampleBillingProvider implements BillingProvider
 
 ### Customizing the billing route slug
 
-You can customize the URL slug used for the billing route using the `tenantBillingRouteSlug()` method in the [configuration](configuration):
+You can customize the URL slug used for the billing route using the `tenantBillingRouteSlug()` method in the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -342,7 +342,7 @@ public function panel(Panel $panel): Panel
 
 The tenant-switching menu is featured in the admin layout. It's fully customizable.
 
-To register new items to the tenant menu, you can use the [configuration](configuration):
+To register new items to the tenant menu, you can use the [configuration](../panel-configuration):
 
 ```php
 use App\Filament\Pages\Settings;
@@ -489,7 +489,7 @@ class Team extends Model implements HasAvatar
 
 The `getFilamentAvatarUrl()` method is used to retrieve the avatar of the current user. If `null` is returned from this method, Filament will fall back to [ui-avatars.com](https://ui-avatars.com).
 
-You can easily swap out [ui-avatars.com](https://ui-avatars.com) for a different service, by creating a new avatar provider. [You can learn how to do this here.](users#using-a-different-avatar-provider)
+You can easily swap out [ui-avatars.com](https://ui-avatars.com) for a different service, by creating a new avatar provider. [You can learn how to do this here.](overview#using-a-different-avatar-provider)
 
 ## Configuring the tenant relationships
 
@@ -641,7 +641,7 @@ class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 
 ## Applying middleware to tenant-aware routes
 
-You can apply extra middleware to all tenant-aware routes by passing an array of middleware classes to the `tenantMiddleware()` method in the [panel configuration file](configuration):
+You can apply extra middleware to all tenant-aware routes by passing an array of middleware classes to the `tenantMiddleware()` method in the [panel configuration file](../panel-configuration):
 
 ```php
 use Filament\Panel;

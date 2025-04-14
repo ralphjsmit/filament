@@ -24,7 +24,7 @@ php artisan notifications:table
 
 ## Enabling database notifications in a panel
 
-If you'd like to receive database notifications in a panel, you can enable them in the [configuration](configuration):
+If you'd like to receive database notifications in a panel, you can enable them in the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;

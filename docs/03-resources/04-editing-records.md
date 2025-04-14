@@ -301,7 +301,7 @@ class EditUser extends EditRecord
 }
 ```
 
-To view the entire actions API, please visit the [pages section](../pages#adding-actions-to-pages).
+To view the entire actions API, please visit the [pages section](../navigation/custom-pages#adding-actions-to-pages).
 
 ### Adding a save action button to the header
 
