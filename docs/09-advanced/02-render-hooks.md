@@ -146,8 +146,8 @@ use Filament\Tables\View\TablesRenderHook;
 use Filament\Widgets\View\WidgetsRenderHook;
 ```
 
-- `WidgetsRenderHook::TABLE_WIDGET_END` - End of the [table widget](../panels/dashboard#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
-- `WidgetsRenderHook::TABLE_WIDGET_START` - Start of the [table widget](../panels/dashboard#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+- `WidgetsRenderHook::TABLE_WIDGET_END` - End of the [table widget](../widgets/overview#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+- `WidgetsRenderHook::TABLE_WIDGET_START` - Start of the [table widget](../widgets/overview#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
 
 
 ## Scoping render hooks

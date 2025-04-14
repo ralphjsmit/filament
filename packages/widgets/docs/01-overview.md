@@ -1,22 +1,25 @@
 ---
-title: Dashboard
+title: Overview
 ---
 
 ## Introduction
 
-Filament allows you to build dynamic dashboards, comprised of "widgets", very easily.
+Filament allows you to build dynamic dashboards, comprised of "widgets". Each widget is an element on the dashboard that displays data in a specific way. For example, you can display [stats](stats-overview), [chart](charts), or a [table](#table-widgets).
 
-The following document will explain how to use these widgets to assemble a dashboard using the panel.
+## Creating a widget
 
-## Available widgets
+To create a widget, you can use the `make:filament-widget` command:
 
-Filament ships with these widgets:
+```bash
+php artisan make:filament-widget MyWidget
+```
 
-- [Stats overview](../widgets/stats-overview) widgets display any data, often numeric data, as stats in a row.
-- [Chart](../widgets/charts) widgets display numeric data in a visual chart.
-- [Table](#table-widgets) widgets which display a [table](../tables) on your dashboard.
+This command will ask you which type of widget you want to create. You can choose from the following options:
 
-You may also [create your own custom widgets](#custom-widgets) which can then have a consistent design with Filament's prebuilt widgets.
+- **Custom**: A custom widget that you can build from scratch.
+- **Chart**: A widget that displays a [chart](charts).
+- **Stats overview**: A widget that displays [statistics](stats-overview).
+- **Table**: A widget that displays a [table](#table-widgets).
 
 ## Sorting widgets
 
@@ -26,28 +29,78 @@ Each widget class contains a `$sort` property that may be used to change its ord
 protected static ?int $sort = 2;
 ```
 
-## Customizing widget width
+## Customizing the dashboard page
 
-You may customize the width of a widget using the `$columnSpan` property. You may use a number between 1 and 12 to indicate how many columns the widget should span, or `full` to make it occupy the full width of the page:
-
-```php
-protected int | string | array $columnSpan = 'full';
-```
-
-### Responsive widget widths
-
-You may wish to change the widget width based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. You can do this using an array that contains the number of columns that the widget should occupy at each breakpoint:
+If you want to customize the dashboard class, for example, to [change the number of widget columns](#customizing-the-widgets-grid), create a new file at `app/Filament/Pages/Dashboard.php`:
 
 ```php
-protected int | string | array $columnSpan = [
-    'md' => 2,
-    'xl' => 3,
-];
+<?php
+
+namespace App\Filament\Pages;
+
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+    // ...
+}
 ```
 
-This is especially useful when using a [responsive widgets grid](#responsive-widgets-grid).
+Finally, remove the original `Dashboard` class from [configuration file](configuration):
 
-## Customizing the widgets' grid
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+        ->pages([]);
+}
+```
+
+If you don't discover pages with `discoverPages()` in the directory you created the new dashboard class, you should manually register the class in the `pages()` method:
+
+```php
+use App\Filament\Pages\Dashboard;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->pages([
+            Dashboard::class,
+        ]);
+}
+```
+
+### Creating multiple dashboards
+
+If you want to create multiple dashboards, you can do so by repeating [the process described above](#customizing-the-dashboard-page). Creating new pages that extend the `Dashboard` class will allow you to create as many dashboards as you need.
+
+You will also need to define the URL path to the extra dashboard, otherwise it will be at `/`:
+
+```php
+protected static string $routePath = 'finance';
+```
+
+You may also customize the title of the dashboard by overriding the `$title` property:
+
+```php
+protected static ?string $title = 'Finance dashboard';
+```
+
+The primary dashboard shown to a user is the first one they have access to (controlled by [`canAccess()` method](pages#authorization)), according to the defined navigation sort order.
+
+The default sort order for dashboards is `-2`. You can control the sort order of custom dashboards with `$navigationSort`:
+
+```php
+protected static ?int $navigationSort = 15;
+```
+
+### Customizing the widgets' grid
 
 You may change how many grid columns are used to display widgets.
 
@@ -62,7 +115,7 @@ public function getColumns(): int | string | array
 }
 ```
 
-### Responsive widgets grid
+#### Responsive widgets grid
 
 You may wish to change the number of widget grid columns based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. You can do this using an array that contains the number of columns that should be used at each breakpoint:
 
@@ -77,6 +130,27 @@ public function getColumns(): int | string | array
 ```
 
 This pairs well with [responsive widget widths](#responsive-widget-widths).
+
+#### Customizing widget width
+
+You may customize the width of a widget using the `$columnSpan` property. You may use a number between 1 and 12 to indicate how many columns the widget should span, or `full` to make it occupy the full width of the page:
+
+```php
+protected int | string | array $columnSpan = 'full';
+```
+
+##### Responsive widget widths
+
+You may wish to change the widget width based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. You can do this using an array that contains the number of columns that the widget should occupy at each breakpoint:
+
+```php
+protected int | string | array $columnSpan = [
+    'md' => 2,
+    'xl' => 3,
+];
+```
+
+This is especially useful when using a [responsive widgets grid](#responsive-widgets-grid).
 
 ## Conditionally hiding widgets
 
@@ -108,6 +182,8 @@ php artisan make:filament-widget BlogPostsOverview
 ```
 
 This command will create two files - a widget class in the `/Widgets` directory of the Filament directory, and a view in the `/widgets` directory of the Filament views directory.
+
+The class is a [Livewire component](https://livewire.laravel.com/docs/components), so any Livewire features are available to you. The Blade view can contain any HTML you like, and you can access any public Livewire properties in the view. You can also access the Livewire component instance in the view using `$this`.
 
 ## Filtering widget data
 
@@ -227,56 +303,4 @@ public function panel(Panel $panel): Panel
         // ...
         ->widgets([]);
 }
-```
-
-## Customizing the dashboard page
-
-If you want to customize the dashboard class, for example, to [change the number of widget columns](#customizing-widget-width), create a new file at `app/Filament/Pages/Dashboard.php`:
-
-```php
-<?php
-
-namespace App\Filament\Pages;
-
-class Dashboard extends \Filament\Pages\Dashboard
-{
-    // ...
-}
-```
-
-Finally, remove the original `Dashboard` class from [configuration file](configuration):
-
-```php
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->pages([]);
-}
-```
-
-### Creating multiple dashboards
-
-If you want to create multiple dashboards, you can do so by repeating [the process described above](#customizing-the-dashboard-page). Creating new pages that extend the `Dashboard` class will allow you to create as many dashboards as you need.
-
-You will also need to define the URL path to the extra dashboard, otherwise it will be at `/`:
-
-```php
-protected static string $routePath = 'finance';
-```
-
-You may also customize the title of the dashboard by overriding the `$title` property:
-
-```php
-protected static ?string $title = 'Finance dashboard';
-```
-
-The primary dashboard shown to a user is the first one they have access to (controlled by [`canAccess()` method](pages#authorization)), according to the defined navigation sort order.
-
-The default sort order for dashboards is `-2`. You can control the sort order of custom dashboards with `$navigationSort`:
-
-```php
-protected static ?int $navigationSort = 15;
 ```

@@ -7,7 +7,7 @@ import Checkbox from "@components/Checkbox.astro"
 import Checkboxes from "@components/Checkboxes.astro"
 import Disclosure from "@components/Disclosure.astro"
 
-> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/09-upgrade-guide.md) to our repository! Any help is appreciated!
+> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
 
 ## New requirements
 
@@ -327,7 +327,7 @@ Action::make('delete')
 
 When using tenancy in v3, Filament only scoped resource queries to the current tenant: to render the resource table, resolve URL parameters, and fetch global search results. There were many situations where other queries in the panel were not scoped by default, and the developer had to manually scope them. While this was a documented feature, it created a lot of additional work for developers.
 
-In v4, Filament automatically scopes all queries in a panel to the current tenant, and automatically associates new records with the current tenant using model events. This means that you no longer need to manually scope queries or associate new Eloquent records in most cases. There are still some important points to consider, so the [documentation](panels/tenancy#tenancy-security) has been updated to reflect this.
+In v4, Filament automatically scopes all queries in a panel to the current tenant, and automatically associates new records with the current tenant using model events. This means that you no longer need to manually scope queries or associate new Eloquent records in most cases. There are still some important points to consider, so the [documentation](tenancy/overview#tenancy-security) has been updated to reflect this.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">
@@ -359,50 +359,6 @@ In Filament v3, import and export jobs were retries continuously for 24 hours if
 In v4, they are retried 3 times with a 60 second backoff between each retry.
 
 This behavior can be customized in the [importer](import#customizing-the-import-job-retries) and [exporter](export#customizing-the-export-job-retries) classes.
-</Disclosure>
-
-<Disclosure x-show="packages.includes('widgets')">
-<span slot="summary">The `InteractsWithPageFilters` `$filters` property is now `$pageFilters`</span>
-
-In v3, the `$this->filters` property from the `InteractsWithPageFilters` trait was used to access the raw data from the filters form. In v4, this property has been renamed to `$this->pageFilters`, to avoid conflicts with the new `$filters` property that can be used to access filter values from a chart widget's filter form.
-
-```diff
-use InteractsWithPageFilters;
-
-public function getStats(): array
-{
--    $startDate = $this->filters['startDate'] ?? null;
--    $endDate = $this->filters['endDate'] ?? null;
-+    $startDate = $this->pageFilters['startDate'] ?? null;
-+    $endDate = $this->pageFilters['endDate'] ?? null;
-
-    return [
-        // ...
-    ];
-}
-```
-</Disclosure>
-
-<Disclosure x-show="packages.includes('panels')">
-<span slot="summary">`getCurrentPanel()` no longer returns the default panel as a fallback</span>
-
-In v4, the `getCurrentPanel()` method returned the default panel if no panel was set. While this was useful behavior internally in Filament core, it was unexpected for developers. In v4, `getCurrentPanel()` will return `null` if no panel is set, and you should handle this case in your code.
-
-```php
-use Filament\Facades\Filament;
-
-Filament::getCurrentPanel();
-filament()->getCurrentPanel();
-```
-
-If you are a plugin author and would like to get the default panel if no panel is set, you can use the `getCurrentOrDefaultPanel()` method instead:
-
-```php
-use Filament\Facades\Filament;
-
-Filament::getCurrentOrDefaultPanel();
-filament()->getCurrentOrDefaultPanel();
-```
 </Disclosure>
 
 ### Low-impact changes

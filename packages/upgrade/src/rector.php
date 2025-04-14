@@ -1,15 +1,22 @@
 <?php
 
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\FilamentManager;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Upgrade\Rector;
+use Filament\Widgets\Widget;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
+use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
+use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
+use Rector\Renaming\ValueObject\RenameProperty;
+use Rector\Renaming\ValueObject\RenameStaticMethod;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
@@ -262,6 +269,13 @@ return static function (RectorConfig $rectorConfig): void {
         ],
     );
 
+    $rectorConfig->ruleWithConfiguration(
+        RenamePropertyRector::class,
+        [
+            new RenameProperty(Widget::class, 'filters', 'pageFilters'),
+        ],
+    );
+
     $rectorConfig->rules([
         Rector\SimpleMethodChangesRector::class,
         Rector\SimplePropertyChangesRector::class,
@@ -277,5 +291,7 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodCallRename(Component::class, 'getChildComponentContainers', 'getChildSchemas'),
         new MethodCallRename(BaseFilter::class, 'form', 'schema'),
         new MethodCallRename(Schema::class, 'schema', 'components'),
+        new MethodCallRename(FilamentManager::class, 'getCurrentPanel', 'getCurrentOrDefaultPanel'),
+        new MethodCallRename(Filament::class, 'getCurrentPanel', 'getCurrentOrDefaultPanel'),
     ]);
 };

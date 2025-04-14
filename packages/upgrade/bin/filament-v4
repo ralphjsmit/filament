@@ -41,21 +41,11 @@ render(<<<'HTML'
     </div>
 HTML);
 
-$isReady = strtolower(trim(ask(<<<HTML
+$directories = $argv[1] ?? ask(<<<HTML
     <span class="bg-amber-600 text-amber-50 mr-1">
-        Are you ready to continue? y/n
+        Please provide a comma-separated list of directories to process breaking changes in (e.g. app, app-modules, src):
     </span>
-HTML) ?? 'y')) === 'y';
-
-if (! $isReady) {
-    render(<<<HTML
-        <p class="bg-rose-600 text-rose-50">
-            Aborting upgrade process.
-        </p>
-    HTML);
-
-    return;
-}
+    HTML) ?: 'app';
 
 render(<<<HTML
     <p class="bg-green-600 text-green-50">
@@ -63,21 +53,25 @@ render(<<<HTML
     </p>
 HTML);
 
-render(<<<HTML
-    <p>
-        Start processing <strong>/{$appDirectory}</strong> to fix code affected by breaking changes.
-    </p>
-HTML);
-
 $rectorScriptPath = implode(DIRECTORY_SEPARATOR, ['vendor', 'bin', 'rector']);
 
-exec("{$rectorScriptPath} process {$appDirectory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
+foreach (explode(',', $directories) as $directory) {
+    $directory = trim($directory);
 
-render(<<<HTML
-    <p class="pt-2">
-        Finished processing <strong>/{$appDirectory}</strong>.
-    </p>
-HTML);
+    render(<<<HTML
+        <p>
+            Start processing <strong>/{$directory}</strong> to fix code affected by breaking changes.
+        </p>
+        HTML);
+
+    exec("{$rectorScriptPath} process {$directory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
+
+    render(<<<HTML
+        <p class="pt-2">
+            Finished processing <strong>/{$directory}</strong>.
+        </p>
+        HTML);
+}
 
 $requireCommands = [];
 

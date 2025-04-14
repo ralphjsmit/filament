@@ -1,5 +1,5 @@
 ---
-title: Nesting
+title: Nested resources
 ---
 
 - Define `getParentResource()` on the child, returning the parent class name or `ParentResource::asParent()`, which then allows you to chain `->relationship()` or `->inverseRelationship()` to customize those names

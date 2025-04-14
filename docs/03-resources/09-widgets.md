@@ -6,7 +6,7 @@ title: Widgets
 
 Filament allows you to display widgets inside pages, below the header and above the footer.
 
-You can use an existing [dashboard widget](../dashboard), or create one specifically for the resource.
+You can use an existing [dashboard widget](../widgets), or create one specifically for the resource.
 
 ## Creating a resource widget
 
@@ -31,7 +31,7 @@ public static function getWidgets(): array
 }
 ```
 
-If you'd like to learn how to build and customize widgets, check out the [Dashboard](../dashboard) documentation section.
+If you'd like to learn how to build and customize widgets, check out the [Dashboard](../widgets) documentation section.
 
 ## Displaying a widget on a resource page
 
