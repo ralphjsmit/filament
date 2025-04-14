@@ -491,7 +491,7 @@ This is a simplified example intended to demonstrate the use of [Laravel Resourc
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
 </Aside>
 
-### Sorting with an External API
+### External API Sorting
 
 You can enable [sorting](columns#sorting) in [columns](columns) even when the data source is an external API. Below is an example of how to pass sorting parameters (`sort_column` and `sort_direction`) to a [Laravel API](https://laravel.com/docs/installation#laravel-the-api-backend) and handle them on the backend.
 
@@ -546,7 +546,7 @@ Route::get('/posts', function (Request $request) {
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
 </Aside>
 
-### Searching with an External API
+### External API Searching
 
 You can enable [searching](columns#searching) in [columns](columns) even when the data source is an external API. Below is an example of how to pass a `search` parameter to a [Laravel API](https://laravel.com/docs/installation#laravel-the-api-backend) and filter the results on the backend.
 
@@ -587,6 +587,71 @@ Route::get('/posts', function (Request $request) {
 
     if ($search = $request->query('search')) {
         $query->where('title', 'like', "%{$search}%");
+    }
+
+    return $query
+        ->get()
+        ->toResourceCollection();
+});
+```
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="info">
+    This example uses the [Example Laravel API Endpoint](#example-laravel-api-endpoint) along with a corresponding [API Resource](https://laravel.com/docs/eloquent-resources#introduction) to return structured data from the API.  
+    The response includes a `data` key that contains the formatted items displayed in the Filament table.
+</Aside>
+
+### External API Filtering
+
+You can enable [filtering](filters) in your table even when the data source is an external API. Below is an example of how to pass a `filter` parameter (`is_featured`) to a [Laravel API](https://laravel.com/docs/installation#laravel-the-api-backend) and filter the results on the backend.
+
+```php
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(function (array $filters): array {
+            $response = Http::baseUrl('https://laravel-api.test/api')
+                ->get('posts', [
+                    'is_featured' => $filters['is_featured']['isActive'] ?? false,
+                ]);
+
+            return $response
+                ->collect()
+                ->get('data', []);
+        })
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('slug'),
+            IconColumn::make('is_featured')
+                ->boolean(),
+        ])
+        ->filters([
+            Filter::make('is_featured'),
+        ]);
+}
+```
+
+On the backend, your Laravel API needs to receive and apply the `is_featured` parameter to the query. In the example below, the `/posts` endpoint dynamically filters the records to return only featured items:
+
+```php
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/posts', function (Request $request) {
+    $query = Post::query();
+
+    if ($request->boolean('is_featured')) {
+        $query->where('is_featured', true);
     }
 
     return $query
