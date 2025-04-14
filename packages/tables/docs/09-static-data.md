@@ -430,7 +430,6 @@ Below is a demonstrative example of how to consume data from a [Laravel-based AP
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 public function table(Table $table): Table
@@ -439,7 +438,7 @@ public function table(Table $table): Table
         ->records(fn (): array => Http::baseUrl('https://laravel-api.test/api')
             ->get('posts')
             ->collect()
-            ->get('data')
+            ->get('data', [])
         )
         ->columns([
             TextColumn::make('title'),
@@ -487,6 +486,61 @@ class PostResource extends JsonResource
 ```
 
 This is a simplified example intended to demonstrate the use of [Laravel Resource Collections](https://laravel.com/docs/eloquent-resources#resource-collections). **It is not ready for production**.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+### Sorting with an External API
+
+You can enable [sorting](columns#sorting) in [columns](columns) even when the data source is an external API. Below is an example of how to pass sorting parameters (`sort_column` and `sort_direction`) to a [Laravel API](https://laravel.com/docs/installation#laravel-the-api-backend) and handle them on the backend.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(function (?string $sortColumn, ?string $sortDirection): array {
+            $response = Http::baseUrl('https://laravel-api.test/api')
+                ->get('posts', [
+                    'sort_column' => $sortColumn,
+                    'sort_direction' => $sortDirection,
+                ]);
+
+            return $response
+                ->collect()
+                ->get('data', []);
+        })
+        ->columns([
+            TextColumn::make('title')
+                ->sortable(),
+        ]);
+}
+```
+
+On the backend, your Laravel API needs to receive and process the `sort_column` and `sort_direction` parameters sent by the frontend. In the example below, the `/posts` endpoint dynamically applies ordering to the query based on those parameters:
+
+```php
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/posts', function (Request $request) {
+    $query = Post::query();
+
+    if ($sortColumn = $request->query('sort_column')) {
+        $sortDirection = $request->query('sort_direction', 'asc');
+        $query->orderBy($sortColumn, $sortDirection);
+    }
+
+    return $query
+        ->get()
+        ->toResourceCollection();
+});
+```
 
 <Aside variant="warning">
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
