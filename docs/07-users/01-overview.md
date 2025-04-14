@@ -174,6 +174,7 @@ public function panel(Panel $panel): Panel
         ->registration()
         ->passwordReset()
         ->emailVerification()
+        ->emailChangeVerification()
         ->profile();
 }
 ```
@@ -249,6 +250,12 @@ protected function getPasswordFormComponent(): Component
 }
 ```
 
+### Email change verification
+
+If you're using the `profile()` feature with the `emailChangeVerification()` feature, users that change their email address from the profile form will be required to verify their new email address before they can log in with it. This is done by sending a verification email to the new address, which contains a link that the user must click to verify their new email address. The email address in the database is not updated until the user clicks the link in the email.
+
+The link that a user is sent is valid for 60 minutes. At the same time as the email to the new address is sent, an email to the old address is also sent, with a link to block the change. This is a security feature to potentially prevent a user from being affected by a malicious actor.
+
 ### Using a sidebar on the profile page
 
 By default, the profile page does not use the standard page layout with a sidebar. This is so that it works with the [tenancy](tenancy) feature, otherwise it would not be accessible if the user had no tenants, since the sidebar links are routed to the current tenant.
@@ -284,7 +291,9 @@ public function panel(Panel $panel): Panel
         ->passwordResetRouteSlug('reset')
         ->emailVerificationRoutePrefix('email-verification')
         ->emailVerificationPromptRouteSlug('prompt')
-        ->emailVerificationRouteSlug('verify');
+        ->emailVerificationRouteSlug('verify')
+        ->emailChangeVerificationRoutePrefix('email-change-verification')
+        ->emailChangeVerificationRouteSlug('verify');
 }
 ```
 
