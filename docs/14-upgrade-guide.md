@@ -62,7 +62,7 @@ This is the Laravel Pint configuration that Filament uses for its own codebase i
 }
 ```
 
-## Publish the configuration file
+## Publishing the configuration file
 
 Some changes in Filament v4 can be reverted using the configuration file. If you haven't published the configuration file yet, you can do so by running the following command:
 
