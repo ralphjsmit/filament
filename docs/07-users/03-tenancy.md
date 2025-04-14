@@ -342,11 +342,11 @@ public function panel(Panel $panel): Panel
 
 The tenant-switching menu is featured in the admin layout. It's fully customizable.
 
-To register new items to the tenant menu, you can use the [configuration](../panel-configuration):
+Each menu item is represented by an [action](../actions), and can be customized in the same way. To register new items, you can pass the actions to the `tenantMenuItems()` method of the [configuration](../panel-configuration):
 
 ```php
 use App\Filament\Pages\Settings;
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -354,8 +354,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenantMenuItems([
-            MenuItem::make()
-                ->label('Settings')
+            Action::make('settings')
                 ->url(fn (): string => Settings::getUrl())
                 ->icon('heroicon-m-cog-8-tooth'),
             // ...
@@ -365,10 +364,10 @@ public function panel(Panel $panel): Panel
 
 ### Customizing the registration link
 
-To customize the registration link on the tenant menu, register a new item with the `register` array key:
+To customize the [registration](#adding-a-tenant-registration-page) link in the tenant menu, register a new item with the `register` array key, and pass a function that [customizes the action](../actions) object:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -376,7 +375,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenantMenuItems([
-            'register' => MenuItem::make()->label('Register new team'),
+            'register' => fn (Action $action) => $action->label('Register new team'),
             // ...
         ]);
 }
@@ -384,10 +383,10 @@ public function panel(Panel $panel): Panel
 
 ### Customizing the profile link
 
-To customize the profile link on the tenant menu, register a new item with the `profile` array key:
+To customize the user profile link at the start of the tenant menu, register a new item with the `profile` array key, and pass a function that [customizes the action](../actions) object:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -395,7 +394,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenantMenuItems([
-            'profile' => MenuItem::make()->label('Edit team profile'),
+            'profile' => fn (Action $action) => $action->label('Edit team profile'),
             // ...
         ]);
 }
@@ -403,10 +402,10 @@ public function panel(Panel $panel): Panel
 
 ### Customizing the billing link
 
-To customize the billing link on the tenant menu, register a new item with the `billing` array key:
+To customize the billing link in the tenant menu, register a new item with the `profile` array key, and pass a function that [customizes the action](../actions) object:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -414,7 +413,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenantMenuItems([
-            'billing' => MenuItem::make()->label('Manage subscription'),
+            'billing' => fn (Action $action) => $action->label('Manage subscription'),
             // ...
         ]);
 }
@@ -425,10 +424,9 @@ public function panel(Panel $panel): Panel
 You can also conditionally hide a tenant menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 
-MenuItem::make()
-    ->label('Settings')
+Action::make('settings')
     ->visible(fn (): bool => auth()->user()->can('manage-team'))
     // or
     ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
@@ -439,10 +437,9 @@ MenuItem::make()
 You can send a `POST` HTTP request from a tenant menu item by passing a URL to the `postAction()` method:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 
-MenuItem::make()
-    ->label('Lock session')
+Action::make('lockSession')
     ->postAction(fn (): string => route('lock-session'))
 ```
 
