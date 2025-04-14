@@ -4,7 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Support\Authorization\Denial;
+use Filament\Support\Authorization\DenyResponse;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
@@ -68,7 +68,7 @@ trait InteractsWithSelectedRecords
                 continue;
             }
 
-            if ($response instanceof Denial) {
+            if ($response instanceof DenyResponse) {
                 $responseKey = $response->getKey();
 
                 $authorizationResponses[$responseKey] ??= $response;
@@ -96,7 +96,7 @@ trait InteractsWithSelectedRecords
 
         if ($this->totalSelectedRecordsCount > $this->successfulSelectedRecordsCount) {
             foreach ($authorizationResponses as $responseKey => $response) {
-                if ($response instanceof Denial) {
+                if ($response instanceof DenyResponse) {
                     $failureMessages[] = $response->message($failureCountsByAuthorizationResponse[$responseKey], $this->totalSelectedRecordsCount);
                 } else {
                     $failureMessages[] = $response;

@@ -15,7 +15,7 @@ class DenyResponse extends Response
     {
         $static = static::deny(is_string($message) ? $message : null);
 
-        if ($static instanceof Denial) {
+        if ($static instanceof DenyResponse) {
             $static->key($key);
 
             if ($message instanceof Closure) {
