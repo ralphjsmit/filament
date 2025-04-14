@@ -241,8 +241,9 @@ Section::make()
         ->columnSpanFull());
     ```
 </Aside>
+</Disclosure>
 
-<Disclosure x-show="packages.includes('forms')">
+<Disclosure open x-show="packages.includes('forms')">
 <span slot="summary">The `unique()` validation rule behavior for ignoring Eloquent records</span>
 
 In v3, the `unique()` method did not ignore the current form's Eloquent record when validating by default. This behavior was enabled by the `ignoreRecord: true` parameter, or by passing a custom `ignorable` record.
@@ -261,7 +262,6 @@ If you were previously using `unqiue()` validation rule without the `ignoreRecor
         ->uniqueValidationIgnoresRecordByDefault(false));
     ```
 </Aside>
-</Disclosure>
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
