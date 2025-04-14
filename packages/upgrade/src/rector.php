@@ -285,6 +285,7 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodCallRename(Action::class, 'infolist', 'schema'),
         new MethodCallRename(Action::class, 'form', 'schema'),
         new MethodCallRename(Action::class, 'mutateFormDataUsing', 'mutateDataUsing'),
+        new MethodCallRename(Component::class, 'getChildComponents', 'getDefaultChildComponents'),
         new MethodCallRename(Component::class, 'getChildComponentContainer', 'getChildSchema'),
         new MethodCallRename(Component::class, 'getChildComponentContainers', 'getChildSchemas'),
         new MethodCallRename(BaseFilter::class, 'form', 'schema'),

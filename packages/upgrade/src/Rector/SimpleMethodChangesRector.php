@@ -8,12 +8,14 @@ use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Contracts\HasColor;
+use Illuminate\Validation\Rules\Enum;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\UnionType;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
@@ -94,11 +96,11 @@ class SimpleMethodChangesRector extends AbstractRector
 
     public function getNodeTypes(): array
     {
-        return [Class_::class];
+        return [Class_::class, Enum_::class];
     }
 
     /**
-     * @param  Class_  $node
+     * @param  Class_ | Enum_  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -131,7 +133,7 @@ class SimpleMethodChangesRector extends AbstractRector
      *     classIdentifier: string,
      * } $change
      */
-    public function isClassMatchingChange(Class_ $class, array $change): bool
+    public function isClassMatchingChange(Class_ | Enum_ $class, array $change): bool
     {
         if (! array_key_exists('class', $change)) {
             return true;
@@ -144,6 +146,16 @@ class SimpleMethodChangesRector extends AbstractRector
         $classes = array_map(fn (string $class): string => ltrim($class, '\\'), $classes);
 
         foreach ($classes as $classToCheck) {
+            if ($class instanceof Enum_) {
+                foreach ($class->implements as $enumInterface) {
+                    if ($enumInterface->toString() === $classToCheck) {
+                        return true;
+                    }
+                }
+
+                continue;
+            }
+
             if ($this->isObjectType($class, new ObjectType($classToCheck))) {
                 return true;
             }
