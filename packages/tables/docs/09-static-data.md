@@ -459,7 +459,7 @@ public function table(Table $table): Table
 
 ### External API Sorting
 
-You can enable [sorting](columns#sorting) in [columns](columns) even when the data source is an external API. Below is an example of how to pass sorting parameters (`sort_column` and `sort_direction`) to the [DummyJSON](https://dummyjson.com/docs/products#products-sort) API and handle them on that API.
+You can enable [sorting](columns#sorting) in [columns](columns) even when using an external API as the data source. The example below demonstrates how to pass sorting parameters (`sort_column` and `sort_direction`) to the [DummyJSON](https://dummyjson.com/docs/products#products-sort) API and how they are handled by the API.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
