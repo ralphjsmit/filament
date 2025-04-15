@@ -664,3 +664,118 @@ These values are passed to a `LengthAwarePaginator`, which Filament uses to rend
 <Aside variant="warning">
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
 </Aside>
+
+### External API full example
+
+This example demonstrates how to combine [sorting](#external-api-sorting), [search](#external-api-searching), [category filtering](#external-api-filtering), and [pagination](#external-api-pagination) when using an external API as the data source. The API used here is [DummyJSON](https://dummyjson.com/), which supports these features individually but **does not allow combining all of them in a single request**. This is because each feature uses a different endpoint:
+
+- [Search](#external-api-searching) is performed through the `/products/search` endpoint using the `q` parameter.
+- [Category filtering](#external-api-filtering) uses the `/products/category/{category}` endpoint.
+- [Sorting](#external-api-sorting) is handled by sending `sortBy` and `order` parameters to the `/products` endpoint.
+
+The only feature that can be combined with each of the above is [pagination](#external-api-pagination), since the `limit` and `skip` parameters are supported across all three endpoints.
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+
+protected string $baseUrl = 'https://dummyjson.com/';
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(function (
+            ?string $sortColumn,
+            ?string $sortDirection,
+            ?string $search,
+            array $filters,
+            int $page,
+            int $recordsPerPage
+        ): LengthAwarePaginator {
+
+            // Get the selected category from filters (if any)
+            $category = $filters['category']['value'] ?? null;
+
+            // Choose endpoint depending on search or filter
+            $endpoint = match (true) {
+                filled($search) => 'products/search',
+                filled($category) => "products/category/{$category}",
+                default => 'products',
+            };
+
+            // Determine skip offset
+            $skip = ($page - 1) * $recordsPerPage;
+
+            // Base query parameters for all requests
+            $params = [
+                'limit' => $recordsPerPage,
+                'skip' => $skip,
+                'select' => 'id,title,brand,category,thumbnail,price,sku,stock',
+            ];
+
+            // Add search query if applicable
+            if ($search) {
+                $params['q'] = $search;
+            }
+
+            // Add sorting parameters
+            if ($endpoint === 'products' && $sortColumn) {
+                $params['sortBy'] = $sortColumn;
+                $params['order'] = $sortDirection ?? 'asc';
+            }
+
+            $response = Http::baseUrl($this->baseUrl)
+                ->get($endpoint, $params)
+                ->collect();
+
+            return new LengthAwarePaginator(
+                items: $response['products'],
+                total: $response['total'],
+                perPage: $recordsPerPage,
+                currentPage: $page
+            );
+        })
+        ->columns([
+            ImageColumn::make('thumbnail')
+                ->label('Image'),
+            TextColumn::make('title')
+                ->searchable()
+                ->sortable(),
+            TextColumn::make('brand')
+                ->state(fn (array $record): string => Str::title(
+                    data_get($record, 'brand', 'Unknown')
+                )),
+            TextColumn::make('category')
+                ->formatStateUsing(fn (string $state): string => Str::headline($state)),
+            TextColumn::make('price')
+                ->money(),
+            TextColumn::make('sku'),
+            TextColumn::make('stock')
+                ->label('Stock')
+                ->sortable(),
+        ])
+        ->filters([
+            SelectFilter::make('category')
+                ->label('Category')
+                ->options(fn (): Collection => Http::baseUrl($this->baseUrl)
+                    ->get('products/categories')
+                    ->collect()
+                    ->pluck('name', 'slug')
+                ),
+        ]);
+}
+```
+
+<Aside variant="warning">
+    The [DummyJSON](https://dummyjson.com/) API does not support combining sorting, search, and category filtering in a single request.
+</Aside>
+
+<Aside variant="info">
+    The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.
+</Aside>
