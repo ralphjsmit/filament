@@ -468,8 +468,14 @@ When working with the current record inside a column function, set the `$record`
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Str;
 
-TextColumn::make('category')
-    ->state(fn (array $record): string => Str::headline($record['category'])),
+TextColumn::make('category_brand')
+    ->label('Category - Brand')
+    ->state(function (array $record): string {
+        $category = Str::headline($record['category']);
+        $brand = Str::title(data_get($record, 'brand', 'Unknown'));
+
+        return "{$category} - {$brand}";
+    })
 ```
 
 <Aside variant="tip">
