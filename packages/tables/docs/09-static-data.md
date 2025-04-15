@@ -448,7 +448,7 @@ public function table(Table $table): Table
         ]);
 }
 ```
-`get('products')` makes a `GET` request to [`https://dummyjson.com/product`](https://dummyjson.com/product). The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
+`get('products')` makes a `GET` request to [`https://dummyjson.com/products`](https://dummyjson.com/products). The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
 
 <Aside variant="warning">
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
@@ -508,6 +508,7 @@ public function table(Table $table): Table
         ]);
 }
 ```
+`get('products')` makes a `GET` request to [`https://dummyjson.com/products`](https://dummyjson.com/products). The request includes two parameters: `sortBy`, which specifies the column to sort by (e.g., category), and `order`, which specifies the direction of the sort (e.g., asc or desc). The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
 
 <Aside variant="warning">
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
@@ -548,6 +549,8 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+`get('products/search')` makes a `GET` request to [`https://dummyjson.com/products/search`](https://dummyjson.com/products/search). The request includes the `q` parameter, which is used to filter the results based on the `search` query. The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
 
 <Aside variant="warning">
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
@@ -602,6 +605,8 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+If a category filter is selected, the request is made to `/products/category/{category}`; otherwise, it defaults to `/products`. The `get()` method sends a `GET` request to the appropriate endpoint. The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
 
 <Aside variant="warning">
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
