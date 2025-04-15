@@ -448,6 +448,7 @@ public function table(Table $table): Table
         ]);
 }
 ```
+`get('products')` makes a `GET` request to [`https://dummyjson.com/product`](https://dummyjson.com/product). The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
 
 <Aside variant="warning">
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
