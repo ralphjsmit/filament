@@ -37,6 +37,7 @@ trait CanReorderRecords
 
             $model = app($this->getTable()->getModel());
             $modelKeyName = $model->getKeyName();
+            $wrappedModelKeyName = $model->getConnection()->getSchemaGrammar()->wrap($modelKeyName);
 
             $model
                 ->newModelQuery()
@@ -44,7 +45,7 @@ trait CanReorderRecords
                 ->update([
                     $orderColumn => new Expression(
                         'case ' . collect($order)
-                            ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $modelKeyName . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($recordIndex + 1))
+                            ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $wrappedModelKeyName . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($recordIndex + 1))
                             ->implode(' ') . ' end'
                     ),
                 ]);
