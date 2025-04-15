@@ -418,7 +418,7 @@ public function table(Table $table): Table
 }
 ```
 
-## Using an External API as a Table Data Source
+## Using an external API as a table data source
 
 [Filament's table builder](overview/#introduction) allows you to populate tables with data fetched from any external source—not just [Eloquent models](https://laravel.com/docs/eloquent). This is particularly useful when you want to display data from a REST API or a third-party service.
 
@@ -476,7 +476,7 @@ TextColumn::make('category')
     You can use the [`formatStateUsing()`](columns/text#formatting) method to format the state of a text column without changing the state itself.
 </Aside>
 
-### External API Sorting
+### External API sorting
 
 You can enable [sorting](columns#sorting) in [columns](columns) even when using an external API as the data source. The example below demonstrates how to pass sorting parameters (`sort_column` and `sort_direction`) to the [DummyJSON](https://dummyjson.com/docs/products#products-sort) API and how they are handled by the API.
 
@@ -518,7 +518,7 @@ public function table(Table $table): Table
     DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
 </Aside>
 
-### External API Searching
+### External API searching
 
 You can enable [searching](columns#searching) in [columns](columns) even when using an external API as the data source. The example below demonstrates how to pass the `search` parameter to the [DummyJSON](https://dummyjson.com/docs/products#products-search) API and how it is handled by the API.
 
@@ -560,7 +560,7 @@ public function table(Table $table): Table
     DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
 </Aside>
 
-### External API Filtering
+### External API filtering
 
 You can enable [filtering](filters) in your table even when using an external API as the data source. The example below demonstrates how to pass the `filter` parameter to the [DummyJSON](https://dummyjson.com/docs/products#products-search) API and how it is handled by the API.
 
@@ -616,7 +616,7 @@ If a category filter is selected, the request is made to `/products/category/{ca
     DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
 </Aside>
 
-### External API Pagination
+### External API pagination
 
 You can enable [pagination](overview#pagination) when using an external API as the table data source. Filament will pass the current page and the number of records per page to your `records()` function. The example below demonstrates how to construct a `LengthAwarePaginator` manually and fetch paginated data from the [DummyJSON](https://dummyjson.com/docs/products#products-limit_skip) API, which uses `limit` and `skip` parameters for pagination:
 
