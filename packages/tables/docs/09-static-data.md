@@ -457,6 +457,24 @@ public function table(Table $table): Table
     DummyJSON returns 30 items by default. You can use the [limit and skip]() query parameters to paginate through all items.
 </Aside>
 
+### Setting the state of a column
+
+[Columns](#columns) map to the array keys returned by the `records()` function.
+
+When working with the current record inside a column function, set the `$record` type to `array` instead of `Model`. For example, to define a column using the [`state()`](columns/overview#setting-the-state-of-a-column) function, you could do the following:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Str;
+
+TextColumn::make('category')
+    ->state(fn (array $record): string => Str::headline($record['category'])),
+```
+
+<Aside variant="tip">
+    You can use the [`formatStateUsing()`](columns/text#formatting) method to format the state of a text column without changing the state itself.
+</Aside>
+
 ### External API Sorting
 
 You can enable [sorting](columns#sorting) in [columns](columns) even when using an external API as the data source. The example below demonstrates how to pass sorting parameters (`sort_column` and `sort_direction`) to the [DummyJSON](https://dummyjson.com/docs/products#products-sort) API and how they are handled by the API.
@@ -594,58 +612,43 @@ public function table(Table $table): Table
 
 ### External API Pagination
 
-You can enable [pagination](overview#pagination) when using an external API as the table data source. Filament will pass the current page and the number of records per page to your `records()` function. In this example, you can use these parameters to your [Laravel API](https://laravel.com/docs/installation#laravel-the-api-backend) and construct a `LengthAwarePaginator` manually.
+You can enable [pagination](overview#pagination) when using an external API as the table data source. Filament will pass the current page and the number of records per page to your `records()` function. The example below demonstrates how to construct a `LengthAwarePaginator` manually and fetch paginated data from the [DummyJSON](https://dummyjson.com/docs/products#products-limit_skip) API, which uses `limit` and `skip` parameters for pagination:
 
 ```php
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Http;
-
 public function table(Table $table): Table
 {
     return $table
         ->records(function (int $page, int $recordsPerPage): LengthAwarePaginator {
-            $response = Http::baseUrl('https://laravel-api.test/api')
-                ->get('posts', [
-                    'page' => $page,
-                    'per_page' => $recordsPerPage,
+            $skip = ($page - 1) * $recordsPerPage;
+
+            $response = Http::baseUrl('https://dummyjson.com')
+                ->get('products', [
+                    'limit' => $recordsPerPage,
+                    'skip' => $skip,
                 ])
                 ->collect();
 
             return new LengthAwarePaginator(
-                items: $response['data'],
-                total: $response['meta']['total'],
-                perPage: $response['meta']['per_page'],
-                currentPage: $response['meta']['current_page']
+                items: $response['products'],
+                total: $response['total'],
+                perPage: $recordsPerPage,
+                currentPage: $page
             );
         })
         ->columns([
             TextColumn::make('title'),
+            TextColumn::make('category'),
+            TextColumn::make('price')
+                ->money(),
         ]);
 }
 ```
 
-On the backend, your Laravel API should receive the `page` and `per_page` parameters, apply pagination using [paginate()](https://laravel.com/docs/eloquent-resources#pagination) method, and return a [Resource Collection](https://laravel.com/docs/eloquent-resources#resource-collections) that includes the pagination metadata:
-
-```php
-use App\Models\Post;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-
-Route::get('/posts', function (Request $request) {
-    $perPage = $request->query('per_page', 10);
-
-    return Post::paginate($perPage)
-        ->toResourceCollection();
-});
-```
+`$page` and `$recordsPerPage` are automatically injected by Filament based on the current pagination state.
+The calculated `skip` value tells the API how many records to skip before returning results for the current page.
+The response contains `products` (the paginated items) and `total` (the total number of available items).
+These values are passed to a `LengthAwarePaginator`, which Filament uses to render pagination controls correctly.
 
 <Aside variant="warning">
     This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
-
-<Aside variant="info">
-    This example uses the [Example Laravel API Endpoint](#example-laravel-api-endpoint) and a corresponding [API Resource](https://laravel.com/docs/eloquent-resources#concept-overview) to return structured paginated data.  
-    The response includes a `data` key containing the records, and a `meta` key with pagination information used to construct the `LengthAwarePaginator`.
 </Aside>
