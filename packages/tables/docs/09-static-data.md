@@ -540,58 +540,48 @@ public function table(Table $table): Table
 
 ### External API Filtering
 
-You can enable [filtering](filters) in your table even when the data source is an external API. Below is an example of how to pass a `filter` parameter (`is_featured`) to a [Laravel API](https://laravel.com/docs/installation#laravel-the-api-backend) and filter the results on the backend.
+You can enable [filtering](filters) in your table even when using an external API as the data source. The example below demonstrates how to pass the `filter` parameter to the [DummyJSON](https://dummyjson.com/docs/products#products-search) API and how it is handled by the API.
 
 ```php
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 public function table(Table $table): Table
 {
     return $table
         ->records(function (array $filters): array {
-            $response = Http::baseUrl('https://laravel-api.test/api')
-                ->get('posts', [
-                    'is_featured' => $filters['is_featured']['isActive'] ?? false,
-                ]);
+            $category = $filters['category']['value'] ?? null;
+
+            $endpoint = $category
+                ? "products/category/{$category}"
+                : 'products';
+
+            $response = Http::baseUrl('https://dummyjson.com/')
+                ->get($endpoint);
 
             return $response
                 ->collect()
-                ->get('data', []);
+                ->get('products', []);
         })
         ->columns([
             TextColumn::make('title'),
-            TextColumn::make('slug'),
-            IconColumn::make('is_featured')
-                ->boolean(),
+            TextColumn::make('category'),
+            TextColumn::make('price')
+                ->money(),
         ])
         ->filters([
-            Filter::make('is_featured'),
+            SelectFilter::make('category')
+                ->label('Category')
+                ->options(fn (): Collection => Http::baseUrl('https://dummyjson.com/')
+                    ->get('products/categories')
+                    ->collect()
+                    ->pluck('name', 'slug')
+                ),
         ]);
 }
-```
-
-On the backend, your Laravel API needs to receive and apply the `is_featured` parameter to the query. In the example below, the `/posts` endpoint dynamically filters the records to return only featured items:
-
-```php
-use App\Models\Post;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-
-Route::get('/posts', function (Request $request) {
-    $query = Post::query();
-
-    if ($request->boolean('is_featured')) {
-        $query->where('is_featured', true);
-    }
-
-    return $query
-        ->get()
-        ->toResourceCollection();
-});
 ```
 
 <Aside variant="warning">
@@ -599,8 +589,7 @@ Route::get('/posts', function (Request $request) {
 </Aside>
 
 <Aside variant="info">
-    This example uses the [Example Laravel API Endpoint](#example-laravel-api-endpoint) along with a corresponding [API Resource](https://laravel.com/docs/eloquent-resources#introduction) to return structured data from the API.  
-    The response includes a `data` key that contains the formatted items displayed in the Filament table.
+    DummyJSON returns 30 items by default. You can use the [limit and skip]() query parameters to paginate through all items.
 </Aside>
 
 ### External API Pagination
