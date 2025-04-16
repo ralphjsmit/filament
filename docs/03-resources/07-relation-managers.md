@@ -116,7 +116,7 @@ public function isReadOnly(): bool
 }
 ```
 
-Alternatively, if you hate this functionality, you can disable it for all relation managers at once in the panel [configuration](../configuration):
+Alternatively, if you hate this functionality, you can disable it for all relation managers at once in the panel [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;

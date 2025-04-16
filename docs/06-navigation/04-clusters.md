@@ -4,19 +4,19 @@ title: Clusters
 
 ## Introduction
 
-Clusters are a hierarchical structure in panels that allow you to group [resources](../resources) and [custom pages](../pages) together. They are useful for organizing your panel into logical sections, and can help reduce the size of your panel's sidebar.
+Clusters are a hierarchical structure in panels that allow you to group [resources](../resources) and [custom pages](custom-pages) together. They are useful for organizing your panel into logical sections, and can help reduce the size of your panel's sidebar.
 
 When using a cluster, a few things happen:
 
 - A new navigation item is added to the navigation, which is a link to the first resource or page in the cluster.
 - The individual navigation items for the resources or pages are no longer visible in the main navigation.
 - A new sub-navigation UI is added to each resource or page in the cluster, which contains the navigation items for the resources or pages in the cluster.
-- Resources and pages in the cluster get a new URL, prefixed with the name of the cluster. If you are generating URLs to [resources](../resources#generating-urls-to-resource-pages) and [pages](../pages#generating-urls-to-pages) correctly, then this change should be handled for you automatically.
+- Resources and pages in the cluster get a new URL, prefixed with the name of the cluster. If you are generating URLs to [resources](../resources#generating-urls-to-resource-pages) and [pages](custom-pages#generating-urls-to-pages) correctly, then this change should be handled for you automatically.
 - The cluster's name is in the breadcrumbs of all resources and pages in the cluster. When clicking it, you are taken to the first resource or page in the cluster.
 
 ## Creating a cluster
 
-Before creating your first cluster, you must tell the panel where cluster classes should be located. Alongside methods like `discoverResources()` and `discoverPages()` in the [configuration](../advanced/configuration), you can use `discoverClusters()`:
+Before creating your first cluster, you must tell the panel where cluster classes should be located. Alongside methods like `discoverResources()` and `discoverPages()` in the [configuration](../panel-configuration), you can use `discoverClusters()`:
 
 ```php
 public function panel(Panel $panel): Panel

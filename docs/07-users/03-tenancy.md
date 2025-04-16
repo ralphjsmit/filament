@@ -52,7 +52,7 @@ class PostObserver
 
 ## Setting up tenancy
 
-To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](configuration):
+To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](../panel-configuration):
 
 ```php
 use App\Models\Team;
@@ -153,7 +153,7 @@ class RegisterTeam extends RegisterTenant
 
 You may add any [form components](../forms/getting-started) to the `form()` method, and create the team inside the `handleRegistration()` method.
 
-Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
+Now, we need to tell Filament to use this page. We can do this in the [configuration](../panel-configuration):
 
 ```php
 use App\Filament\Pages\Tenancy\RegisterTeam;
@@ -204,7 +204,7 @@ class EditTeamProfile extends EditTenantProfile
 
 You may add any [form components](../forms/getting-started) to the `form()` method. They will get saved directly to the tenant model.
 
-Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
+Now, we need to tell Filament to use this page. We can do this in the [configuration](../panel-configuration):
 
 ```php
 use App\Filament\Pages\Tenancy\EditTeamProfile;
@@ -246,7 +246,7 @@ Now, you can install the Filament billing provider for Spark using Composer:
 composer require filament/spark-billing-provider
 ```
 
-In the [configuration](configuration), set Spark as the `tenantBillingProvider()`:
+In the [configuration](../panel-configuration), set Spark as the `tenantBillingProvider()`:
 
 ```php
 use Filament\Billing\Providers\SparkBillingProvider;
@@ -281,7 +281,7 @@ Now, users will be redirected to the billing page if they don't have an active s
 
 #### Requiring a subscription for specific resources and pages
 
-Sometimes, you may wish to only require a subscription for certain [resources](resources) and [custom pages](pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
+Sometimes, you may wish to only require a subscription for certain [resources](resources) and [custom pages](../navigation/custom-pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
 
 ```php
 public static function isTenantSubscriptionRequired(Panel $panel): bool
@@ -325,7 +325,7 @@ class ExampleBillingProvider implements BillingProvider
 
 ### Customizing the billing route slug
 
-You can customize the URL slug used for the billing route using the `tenantBillingRouteSlug()` method in the [configuration](configuration):
+You can customize the URL slug used for the billing route using the `tenantBillingRouteSlug()` method in the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -342,11 +342,11 @@ public function panel(Panel $panel): Panel
 
 The tenant-switching menu is featured in the admin layout. It's fully customizable.
 
-To register new items to the tenant menu, you can use the [configuration](configuration):
+Each menu item is represented by an [action](../actions), and can be customized in the same way. To register new items, you can pass the actions to the `tenantMenuItems()` method of the [configuration](../panel-configuration):
 
 ```php
 use App\Filament\Pages\Settings;
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -354,8 +354,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenantMenuItems([
-            MenuItem::make()
-                ->label('Settings')
+            Action::make('settings')
                 ->url(fn (): string => Settings::getUrl())
                 ->icon('heroicon-m-cog-8-tooth'),
             // ...
@@ -365,10 +364,10 @@ public function panel(Panel $panel): Panel
 
 ### Customizing the registration link
 
-To customize the registration link on the tenant menu, register a new item with the `register` array key:
+To customize the [registration](#adding-a-tenant-registration-page) link in the tenant menu, register a new item with the `register` array key, and pass a function that [customizes the action](../actions) object:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -376,7 +375,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenantMenuItems([
-            'register' => MenuItem::make()->label('Register new team'),
+            'register' => fn (Action $action) => $action->label('Register new team'),
             // ...
         ]);
 }
@@ -384,10 +383,10 @@ public function panel(Panel $panel): Panel
 
 ### Customizing the profile link
 
-To customize the profile link on the tenant menu, register a new item with the `profile` array key:
+To customize the user profile link at the start of the tenant menu, register a new item with the `profile` array key, and pass a function that [customizes the action](../actions) object:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -395,7 +394,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenantMenuItems([
-            'profile' => MenuItem::make()->label('Edit team profile'),
+            'profile' => fn (Action $action) => $action->label('Edit team profile'),
             // ...
         ]);
 }
@@ -403,10 +402,10 @@ public function panel(Panel $panel): Panel
 
 ### Customizing the billing link
 
-To customize the billing link on the tenant menu, register a new item with the `billing` array key:
+To customize the billing link in the tenant menu, register a new item with the `profile` array key, and pass a function that [customizes the action](../actions) object:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -414,7 +413,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenantMenuItems([
-            'billing' => MenuItem::make()->label('Manage subscription'),
+            'billing' => fn (Action $action) => $action->label('Manage subscription'),
             // ...
         ]);
 }
@@ -425,10 +424,9 @@ public function panel(Panel $panel): Panel
 You can also conditionally hide a tenant menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 
-MenuItem::make()
-    ->label('Settings')
+Action::make('settings')
     ->visible(fn (): bool => auth()->user()->can('manage-team'))
     // or
     ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
@@ -439,10 +437,9 @@ MenuItem::make()
 You can send a `POST` HTTP request from a tenant menu item by passing a URL to the `postAction()` method:
 
 ```php
-use Filament\Navigation\MenuItem;
+use Filament\Actions\Action;
 
-MenuItem::make()
-    ->label('Lock session')
+Action::make('lockSession')
     ->postAction(fn (): string => route('lock-session'))
 ```
 
@@ -489,7 +486,7 @@ class Team extends Model implements HasAvatar
 
 The `getFilamentAvatarUrl()` method is used to retrieve the avatar of the current user. If `null` is returned from this method, Filament will fall back to [ui-avatars.com](https://ui-avatars.com).
 
-You can easily swap out [ui-avatars.com](https://ui-avatars.com) for a different service, by creating a new avatar provider. [You can learn how to do this here.](users#using-a-different-avatar-provider)
+You can easily swap out [ui-avatars.com](https://ui-avatars.com) for a different service, by creating a new avatar provider. [You can learn how to do this here.](overview#using-a-different-avatar-provider)
 
 ## Configuring the tenant relationships
 
@@ -641,7 +638,7 @@ class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 
 ## Applying middleware to tenant-aware routes
 
-You can apply extra middleware to all tenant-aware routes by passing an array of middleware classes to the `tenantMiddleware()` method in the [panel configuration file](configuration):
+You can apply extra middleware to all tenant-aware routes by passing an array of middleware classes to the `tenantMiddleware()` method in the [panel configuration file](../panel-configuration):
 
 ```php
 use Filament\Panel;

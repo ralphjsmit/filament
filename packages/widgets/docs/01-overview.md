@@ -46,7 +46,7 @@ class Dashboard extends BaseDashboard
 }
 ```
 
-Finally, remove the original `Dashboard` class from [configuration file](configuration):
+Finally, remove the original `Dashboard` class from [configuration file](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -92,7 +92,7 @@ You may also customize the title of the dashboard by overriding the `$title` pro
 protected static ?string $title = 'Finance dashboard';
 ```
 
-The primary dashboard shown to a user is the first one they have access to (controlled by [`canAccess()` method](pages#authorization)), according to the defined navigation sort order.
+The primary dashboard shown to a user is the first one they have access to (controlled by [`canAccess()` method](../navigation/custom-pages#authorization)), according to the defined navigation sort order.
 
 The default sort order for dashboards is `-2`. You can control the sort order of custom dashboards with `$navigationSort`:
 
@@ -292,7 +292,7 @@ Handling data from the filter action is the same as handling data from the filte
 
 ## Disabling the default widgets
 
-By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets()` array of the [configuration](configuration):
+By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets()` array of the [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;

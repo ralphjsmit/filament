@@ -6,7 +6,11 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
-Schemas allow you to build UIs using an array of "component" PHP objects as configuration. They are used throughout Filament to render UI. Filament packages provide you with various components. You can find a full list in the [available components section](#available-components):
+Schemas form the foundation of Filament's Server-Driven UI approach. They allow you to build user interfaces declaratively using PHP configuration objects. These configuration objects represent components that define the structure and behavior of your UI, such as forms, tables, or lists. Rather than manually writing HTML or JavaScript, you create these schemas to control what gets rendered on the server, streamlining development and ensuring consistency across your app.
+
+Schemas are used extensively across Filament to render UI elements dynamically. Whether you're defining a form field, the layout of your page, or an action button, the schema object defines both the component's configuration and how it interacts with your data. In essence, schemas are the building blocks of Filament UIs.
+
+Filament packages provide you with various components. You can find a full list in the [available components section](#available-components):
 
 - [Form fields](../forms) accept input from the user, for example, a text input, a select, or a checkbox. They come with integrated validation.
 - [Infolist entries](../infolists) are components for rendering "description lists." Entries are key-value UI elements that can present read-only information like text, icons, and images. The data for an infolist can be sourced from anywhere but commonly comes from an individual Eloquent record.

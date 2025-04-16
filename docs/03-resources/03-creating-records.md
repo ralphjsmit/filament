@@ -443,7 +443,7 @@ class CreateUser extends CreateRecord
 }
 ```
 
-To view the entire actions API, please visit the [pages section](../pages#adding-actions-to-pages).
+To view the entire actions API, please visit the [pages section](../navigation/custom-pages#adding-actions-to-pages).
 
 ### Adding a create action button to the header
 

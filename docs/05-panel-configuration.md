@@ -1,5 +1,5 @@
 ---
-title: Configuration
+title: Panel configuration
 ---
 
 ## Introduction
@@ -8,7 +8,7 @@ By default, the configuration file is located at `app/Providers/Filament/AdminPa
 
 ## Introducing panels
 
-By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources), [custom pages](pages), and [dashboard widgets](dashboard) you create get registered to this panel.
+By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources), [custom pages](navigation/custom-pages), and [dashboard widgets](dashboard) you create get registered to this panel.
 
 However, you can create as many panels as you want, and each can have its own set of resources, pages and widgets.
 
@@ -64,7 +64,7 @@ Make sure your `routes/web.php` file doesn't already define the `''` or `'/'` ro
 
 ## Render hooks
 
-[Render hooks](../support/render-hooks) allow you to render Blade content at various points in the framework views. You can [register global render hooks](../support/render-hooks#registering-render-hooks) in a service provider or middleware, but it also allows you to register render hooks that are specific to a panel. To do that, you can use the `renderHook()` method on the panel configuration object. Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:
+[Render hooks](../advanced/render-hooks) allow you to render Blade content at various points in the framework views. You can [register global render hooks](../support/render-hooks#registering-render-hooks) in a service provider or middleware, but it also allows you to register render hooks that are specific to a panel. To do that, you can use the `renderHook()` method on the panel configuration object. Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:
 
 ```php
 use Filament\Panel;
@@ -82,7 +82,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-A full list of available render hooks can be found [here](../support/render-hooks#available-render-hooks).
+A full list of available render hooks can be found [here](../advanced/render-hooks#available-render-hooks).
 
 ## Setting a domain
 
@@ -291,7 +291,7 @@ class CreatePost extends CreateRecord
 
 ## Registering assets for a panel
 
-You can register [assets](../support/assets) that will only be loaded on pages within a specific panel, and not in the rest of the app. To do that, pass an array of assets to the `assets()` method:
+You can register [assets](../advanced/assets) that will only be loaded on pages within a specific panel, and not in the rest of the app. To do that, pass an array of assets to the `assets()` method:
 
 ```php
 use Filament\Panel;
@@ -309,7 +309,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Before these [assets](../support/assets) can be used, you'll need to run `php artisan filament:assets`.
+Before these [assets](../advanced/assets) can be used, you'll need to run `php artisan filament:assets`.
 
 ## Applying middleware
 
