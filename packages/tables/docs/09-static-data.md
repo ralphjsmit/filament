@@ -417,3 +417,364 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+## Using an external API as a table data source
+
+[Filament's table builder](overview/#introduction) allows you to populate tables with data fetched from any external source—not just [Eloquent models](https://laravel.com/docs/eloquent). This is particularly useful when you want to display data from a REST API or a third-party service.
+
+### Fetching data from an external API
+
+The example below demonstrates how to consume data from [DummyJSON](https://dummyjson.com), a free fake REST API for placeholder JSON, and display it in a [Filament table](overview/#introduction):
+
+```php
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(fn (): array => Http::baseUrl('https://dummyjson.com')
+            ->get('products')
+            ->collect()
+            ->get('products', [])
+        )
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('category'),
+            TextColumn::make('price')
+                ->money(),
+        ]);
+}
+```
+
+`get('products')` makes a `GET` request to [`https://dummyjson.com/products`](https://dummyjson.com/products). The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="info">
+    DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
+</Aside>
+
+#### Setting the state of a column using API data
+
+[Columns](#columns) map to the array keys returned by the `records()` function.
+
+When working with the current record inside a column function, set the `$record` type to `array` instead of `Model`. For example, to define a column using the [`state()`](columns/overview#setting-the-state-of-a-column) function, you could do the following:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Str;
+
+TextColumn::make('category_brand')
+    ->label('Category - Brand')
+    ->state(function (array $record): string {
+        $category = Str::headline($record['category']);
+        $brand = Str::title($record['brand'] ?? 'Unknown');
+
+        return "{$category} - {$brand}";
+    })
+```
+
+<Aside variant="tip">
+    You can use the [`formatStateUsing()`](columns/text#formatting) method to format the state of a text column without changing the state itself.
+</Aside>
+
+### External API sorting
+
+You can enable [sorting](columns#sorting) in [columns](columns) even when using an external API as the data source. The example below demonstrates how to pass sorting parameters (`sort_column` and `sort_direction`) to the [DummyJSON](https://dummyjson.com/docs/products#products-sort) API and how they are handled by the API.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(function (?string $sortColumn, ?string $sortDirection): array {
+            $response = Http::baseUrl('https://dummyjson.com/')
+                ->get('products', [
+                    'sortBy' => $sortColumn,
+                    'order' => $sortDirection,
+                ]);
+
+            return $response
+                ->collect()
+                ->get('products', []);
+        })
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('category')
+                ->sortable(),
+            TextColumn::make('price')
+                ->money(),
+        ]);
+}
+```
+`get('products')` makes a `GET` request to [`https://dummyjson.com/products`](https://dummyjson.com/products). The request includes two parameters: `sortBy`, which specifies the column to sort by (e.g., category), and `order`, which specifies the direction of the sort (e.g., asc or desc). The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="info">
+    DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
+</Aside>
+
+### External API searching
+
+You can enable [searching](columns#searching) in [columns](columns) even when using an external API as the data source. The example below demonstrates how to pass the `search` parameter to the [DummyJSON](https://dummyjson.com/docs/products#products-search) API and how it is handled by the API.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(function (?string $search): array {
+            $response = Http::baseUrl('https://dummyjson.com/')
+                ->get('products/search', [
+                    'q' => $search,
+                ]);
+
+            return $response
+                ->collect()
+                ->get('products', []);
+        })
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('category'),
+            TextColumn::make('price')
+                ->money(),
+        ])
+        ->searchable();
+}
+```
+
+`get('products/search')` makes a `GET` request to [`https://dummyjson.com/products/search`](https://dummyjson.com/products/search). The request includes the `q` parameter, which is used to filter the results based on the `search` query. The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="info">
+    DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
+</Aside>
+
+### External API filtering
+
+You can enable [filtering](filters) in your table even when using an external API as the data source. The example below demonstrates how to pass the `filter` parameter to the [DummyJSON](https://dummyjson.com/docs/products#products-search) API and how it is handled by the API.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->records(function (array $filters): array {
+            $category = $filters['category']['value'] ?? null;
+
+            $endpoint = filled($category)
+                ? "products/category/{$category}"
+                : 'products';
+
+            $response = Http::baseUrl('https://dummyjson.com/')
+                ->get($endpoint);
+
+            return $response
+                ->collect()
+                ->get('products', []);
+        })
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('category'),
+            TextColumn::make('price')
+                ->money(),
+        ])
+        ->filters([
+            SelectFilter::make('category')
+                ->label('Category')
+                ->options(fn (): Collection => Http::baseUrl('https://dummyjson.com/')
+                    ->get('products/categories')
+                    ->collect()
+                    ->pluck('name', 'slug')
+                ),
+        ]);
+}
+```
+
+If a category filter is selected, the request is made to `/products/category/{category}`; otherwise, it defaults to `/products`. The `get()` method sends a `GET` request to the appropriate endpoint. The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="info">
+    DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
+</Aside>
+
+### External API pagination
+
+You can enable [pagination](overview#pagination) when using an external API as the table data source. Filament will pass the current page and the number of records per page to your `records()` function. The example below demonstrates how to construct a `LengthAwarePaginator` manually and fetch paginated data from the [DummyJSON](https://dummyjson.com/docs/products#products-limit_skip) API, which uses `limit` and `skip` parameters for pagination:
+
+```php
+public function table(Table $table): Table
+{
+    return $table
+        ->records(function (int $page, int $recordsPerPage): LengthAwarePaginator {
+            $skip = ($page - 1) * $recordsPerPage;
+
+            $response = Http::baseUrl('https://dummyjson.com')
+                ->get('products', [
+                    'limit' => $recordsPerPage,
+                    'skip' => $skip,
+                ])
+                ->collect();
+
+            return new LengthAwarePaginator(
+                items: $response['products'],
+                total: $response['total'],
+                perPage: $recordsPerPage,
+                currentPage: $page
+            );
+        })
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('category'),
+            TextColumn::make('price')
+                ->money(),
+        ]);
+}
+```
+
+`$page` and `$recordsPerPage` are automatically injected by Filament based on the current pagination state.
+The calculated `skip` value tells the API how many records to skip before returning results for the current page.
+The response contains `products` (the paginated items) and `total` (the total number of available items).
+These values are passed to a `LengthAwarePaginator`, which Filament uses to render pagination controls correctly.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+### External API full example
+
+This example demonstrates how to combine [sorting](#external-api-sorting), [search](#external-api-searching), [category filtering](#external-api-filtering), and [pagination](#external-api-pagination) when using an external API as the data source. The API used here is [DummyJSON](https://dummyjson.com), which supports these features individually but **does not allow combining all of them in a single request**. This is because each feature uses a different endpoint:
+
+- [Search](#external-api-searching) is performed through the `/products/search` endpoint using the `q` parameter.
+- [Category filtering](#external-api-filtering) uses the `/products/category/{category}` endpoint.
+- [Sorting](#external-api-sorting) is handled by sending `sortBy` and `order` parameters to the `/products` endpoint.
+
+The only feature that can be combined with each of the above is [pagination](#external-api-pagination), since the `limit` and `skip` parameters are supported across all three endpoints.
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+
+public function table(Table $table): Table
+{
+    $baseUrl = 'https://dummyjson.com/';
+
+    return $table
+        ->records(function (
+            ?string $sortColumn,
+            ?string $sortDirection,
+            ?string $search,
+            array $filters,
+            int $page,
+            int $recordsPerPage
+        ) use ($baseUrl): LengthAwarePaginator {
+            // Get the selected category from filters (if any)
+            $category = $filters['category']['value'] ?? null;
+
+            // Choose endpoint depending on search or filter
+            $endpoint = match (true) {
+                filled($search) => 'products/search',
+                filled($category) => "products/category/{$category}",
+                default => 'products',
+            };
+
+            // Determine skip offset
+            $skip = ($page - 1) * $recordsPerPage;
+
+            // Base query parameters for all requests
+            $params = [
+                'limit' => $recordsPerPage,
+                'skip' => $skip,
+                'select' => 'id,title,brand,category,thumbnail,price,sku,stock',
+            ];
+
+            // Add search query if applicable
+            if (filled($search)) {
+                $params['q'] = $search;
+            }
+
+            // Add sorting parameters
+            if ($endpoint === 'products' && $sortColumn) {
+                $params['sortBy'] = $sortColumn;
+                $params['order'] = $sortDirection ?? 'asc';
+            }
+
+            $response = Http::baseUrl($baseUrl)
+                ->get($endpoint, $params)
+                ->collect();
+
+            return new LengthAwarePaginator(
+                items: $response['products'],
+                total: $response['total'],
+                perPage: $recordsPerPage,
+                currentPage: $page
+            );
+        })
+        ->columns([
+            ImageColumn::make('thumbnail')
+                ->label('Image'),
+            TextColumn::make('title')
+                ->sortable(),
+            TextColumn::make('brand')
+                ->state(fn (array $record): string => Str::title($record['brand'] ?? 'Unknown')),
+            TextColumn::make('category')
+                ->formatStateUsing(fn (string $state): string => Str::headline($state)),
+            TextColumn::make('price')
+                ->money(),
+            TextColumn::make('sku')
+                ->label('SKU'),
+            TextColumn::make('stock')
+                ->label('Stock')
+                ->sortable(),
+        ])
+        ->filters([
+            SelectFilter::make('category')
+                ->label('Category')
+                ->options(fn (): Collection => Http::baseUrl($baseUrl)
+                    ->get('products/categories')
+                    ->collect()
+                    ->pluck('name', 'slug')
+                ),
+        ])
+        ->searchable();
+}
+```
+
+<Aside variant="warning">
+    The [DummyJSON](https://dummyjson.com) API does not support combining sorting, search, and category filtering in a single request.
+</Aside>
+
+<Aside variant="info">
+    The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.
+</Aside>
