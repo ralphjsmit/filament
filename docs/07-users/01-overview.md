@@ -179,6 +179,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+Filament also supports multi-factor authentication, which you can learn about in the [Multi-factor authentication](multi-factor-authentication) section.
+
 ### Customizing the authentication features
 
 If you'd like to replace these pages with your own, you can pass in any Filament page class to these methods.

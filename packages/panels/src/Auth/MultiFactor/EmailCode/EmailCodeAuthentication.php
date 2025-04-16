@@ -88,7 +88,13 @@ class EmailCodeAuthentication implements HasBeforeChallengeHook, MultiFactorAuth
 
     public function getSecret(HasEmailCodeAuthentication $user): string
     {
-        return $user->getEmailCodeAuthenticationSecret();
+        $secret = $user->getEmailCodeAuthenticationSecret();
+
+        if (blank($secret)) {
+            throw new Exception('The user does not have an email code authentication secret.');
+        }
+
+        return $secret;
     }
 
     public function saveSecret(HasEmailCodeAuthentication $user, ?string $secret): void

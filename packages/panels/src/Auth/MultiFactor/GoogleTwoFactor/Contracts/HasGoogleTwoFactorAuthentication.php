@@ -6,7 +6,7 @@ interface HasGoogleTwoFactorAuthentication
 {
     public function hasGoogleTwoFactorAuthentication(): bool;
 
-    public function getGoogleTwoFactorAuthenticationSecret(): string;
+    public function getGoogleTwoFactorAuthenticationSecret(): ?string;
 
     public function saveGoogleTwoFactorAuthenticationSecret(?string $secret): void;
 

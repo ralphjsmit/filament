@@ -3,14 +3,19 @@ title: What is Filament?
 contents: false
 ---
 import Aside from "@components/Aside.astro"
+import Disclosure from "@components/Disclosure.astro"
 
 ## Introduction
 
 **Filament is a Server-Driven UI (SDUI) framework for Laravel.** It allows you to define user interfaces entirely in PHP using structured configuration objects, rather than traditional templating. Built on top of Livewire, Alpine.js, and Tailwind CSS, Filament empowers you to build full-featured interfaces like admin panels, dashboards, and form-based apps, all without writing custom JavaScript or frontend code.
 
-SDUI is a proven architecture used by companies like Meta, Airbnb, and Shopify. It moves control of the UI to the server, allowing for faster iteration, greater consistency, and centralized logic. Filament embraces this pattern for web development, letting you define interfaces declaratively using PHP classes that are rendered into HTML by the server.
+<Disclosure>
+    <span slot="summary">What is Server-Driven UI?</span>
 
-One key distinction to note is the difference between Server-Driven UI (SDUI) and Server-Rendered UI. While both approaches involve rendering content on the server, Server-Rendered UI relies on static templates (like traditional Blade views), where the structure and behavior of the UI are defined upfront in HTML or PHP files. In contrast, SDUI gives the server the power to dynamically generate the UI based on real-time configurations and business logic, allowing for more flexibility and reactivity without needing to modify frontend templates directly.
+    SDUI is a proven architecture used by companies like Meta, Airbnb, and Shopify. It moves control of the UI to the server, allowing for faster iteration, greater consistency, and centralized logic. Filament embraces this pattern for web development, letting you define interfaces declaratively using PHP classes that are rendered into HTML by the server.
+    
+    One key distinction to note is the difference between Server-Driven UI (SDUI) and Server-Rendered UI. While both approaches involve rendering content on the server, Server-Rendered UI relies on static templates (like traditional Blade views), where the structure and behavior of the UI are defined upfront in HTML or PHP files. In contrast, SDUI gives the server the power to dynamically generate the UI based on real-time configurations and business logic, allowing for more flexibility and reactivity without needing to modify frontend templates directly.
+</Disclosure>
 
 Thousands of developers use Filament to add admin panels to their Laravel applications, but it goes far beyond that. You can use Filament to build custom dashboards, user portals, CRMs, or even full applications with multiple panels. It integrates seamlessly with any frontend stack and works especially well alongside tools like Inertia.js, Livewire, and Blade.
 
