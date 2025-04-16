@@ -6,13 +6,15 @@ import Aside from "@components/Aside.astro"
 
 ## Introduction
 
-Filament is a meta-framework for Laravel that provides a set of components and conventions to simplify building frontend interfaces using Livewire, Alpine.js, and Tailwind CSS. It's designed to be flexible and extensible, allowing you to use as much or as little of it as needed while customizing it to fit your requirements.
+**Filament is a Server-Driven UI (SDUI) framework for Laravel.** It allows you to define user interfaces entirely in PHP using structured configuration objects, rather than traditional templating. Built on top of Livewire, Alpine.js, and Tailwind CSS, Filament empowers you to build full-featured interfaces like admin panels, dashboards, and form-based apps, all without writing custom JavaScript or frontend code.
 
-Thousands of developers choose Filament to add an admin panel interface to their applications. You can implement this regardless of your app's frontend technology stack - it's commonly paired with tools like Inertia.js that integrate Laravel with full frontend frameworks such as Vue.js, React, or Svelte.
+SDUI is a proven architecture used by companies like Meta, Airbnb, and Shopify. It moves control of the UI to the server, allowing for faster iteration, greater consistency, and centralized logic. Filament embraces this pattern for web development, letting you define interfaces declaratively using PHP classes that are rendered into HTML by the server.
 
-When building your app's frontend with Blade (whether using Livewire or not), you can enhance your views with framework components to improve development efficiency. For instance, the same form builder and table builder that power our admin panel tool can be installed into a Livewire component. These Livewire components can be inserted into any Blade view or rendered from a route, regardless of whether you're using Livewire elsewhere in your application.
+One key distinction to note is the difference between Server-Driven UI (SDUI) and Server-Rendered UI. While both approaches involve rendering content on the server, Server-Rendered UI relies on static templates (like traditional Blade views), where the structure and behavior of the UI are defined upfront in HTML or PHP files. In contrast, SDUI gives the server the power to dynamically generate the UI based on real-time configurations and business logic, allowing for more flexibility and reactivity without needing to modify frontend templates directly.
 
-Beyond admin panels, Filament panels can be used to create various interfaces in your application. You might build a user dashboard for a SaaS application or develop a CRM system for a specific department in your organization. A single Laravel application can host multiple panels, each with its own distinct configuration for branding, navigation, and routing.
+Thousands of developers use Filament to add admin panels to their Laravel applications, but it goes far beyond that. You can use Filament to build custom dashboards, user portals, CRMs, or even full applications with multiple panels. It integrates seamlessly with any frontend stack and works especially well alongside tools like Inertia.js, Livewire, and Blade.
+
+If you're already using Blade views in your Laravel app, Filament components can enhance them too. You can drop Livewire components powered by Filament into any Blade view or route, and use the same schema-based builders for forms, tables, and more, all without switching your entire stack.
 
 ## Packages
 
