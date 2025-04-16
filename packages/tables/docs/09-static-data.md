@@ -424,7 +424,7 @@ public function table(Table $table): Table
 
 ### Fetching data from an external API
 
-The example below demonstrates how to consume data from [DummyJSON](https://dummyjson.com/), a free fake REST API for placeholder JSON, and display it in a [Filament table](overview/#introduction):
+The example below demonstrates how to consume data from [DummyJSON](https://dummyjson.com), a free fake REST API for placeholder JSON, and display it in a [Filament table](overview/#introduction):
 
 ```php
 use Filament\Tables\Columns\IconColumn;
@@ -448,6 +448,7 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
 `get('products')` makes a `GET` request to [`https://dummyjson.com/products`](https://dummyjson.com/products). The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
 
 <Aside variant="warning">
@@ -458,7 +459,7 @@ public function table(Table $table): Table
     DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
 </Aside>
 
-### Setting the state of a column
+### Setting the state of a column using API data
 
 [Columns](#columns) map to the array keys returned by the `records()` function.
 
@@ -472,7 +473,7 @@ TextColumn::make('category_brand')
     ->label('Category - Brand')
     ->state(function (array $record): string {
         $category = Str::headline($record['category']);
-        $brand = Str::title(data_get($record, 'brand', 'Unknown'));
+        $brand = Str::title($record['brand'] ?? 'Unknown');
 
         return "{$category} - {$brand}";
     })
@@ -547,12 +548,12 @@ public function table(Table $table): Table
                 ->get('products', []);
         })
         ->columns([
-            TextColumn::make('title')
-                ->searchable(),
+            TextColumn::make('title'),
             TextColumn::make('category'),
             TextColumn::make('price')
                 ->money(),
-        ]);
+        ])
+        ->searchable();
 }
 ```
 
@@ -583,7 +584,7 @@ public function table(Table $table): Table
         ->records(function (array $filters): array {
             $category = $filters['category']['value'] ?? null;
 
-            $endpoint = $category
+            $endpoint = filled($category)
                 ? "products/category/{$category}"
                 : 'products';
 
@@ -667,7 +668,7 @@ These values are passed to a `LengthAwarePaginator`, which Filament uses to rend
 
 ### External API full example
 
-This example demonstrates how to combine [sorting](#external-api-sorting), [search](#external-api-searching), [category filtering](#external-api-filtering), and [pagination](#external-api-pagination) when using an external API as the data source. The API used here is [DummyJSON](https://dummyjson.com/), which supports these features individually but **does not allow combining all of them in a single request**. This is because each feature uses a different endpoint:
+This example demonstrates how to combine [sorting](#external-api-sorting), [search](#external-api-searching), [category filtering](#external-api-filtering), and [pagination](#external-api-pagination) when using an external API as the data source. The API used here is [DummyJSON](https://dummyjson.com), which supports these features individually but **does not allow combining all of them in a single request**. This is because each feature uses a different endpoint:
 
 - [Search](#external-api-searching) is performed through the `/products/search` endpoint using the `q` parameter.
 - [Category filtering](#external-api-filtering) uses the `/products/category/{category}` endpoint.
@@ -685,10 +686,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-protected string $baseUrl = 'https://dummyjson.com/';
-
 public function table(Table $table): Table
 {
+    $baseUrl = 'https://dummyjson.com/';
+
     return $table
         ->records(function (
             ?string $sortColumn,
@@ -697,8 +698,7 @@ public function table(Table $table): Table
             array $filters,
             int $page,
             int $recordsPerPage
-        ): LengthAwarePaginator {
-
+        ) use ($baseUrl): LengthAwarePaginator {
             // Get the selected category from filters (if any)
             $category = $filters['category']['value'] ?? null;
 
@@ -720,7 +720,7 @@ public function table(Table $table): Table
             ];
 
             // Add search query if applicable
-            if ($search) {
+            if (filled($search)) {
                 $params['q'] = $search;
             }
 
@@ -730,7 +730,7 @@ public function table(Table $table): Table
                 $params['order'] = $sortDirection ?? 'asc';
             }
 
-            $response = Http::baseUrl($this->baseUrl)
+            $response = Http::baseUrl($baseUrl)
                 ->get($endpoint, $params)
                 ->collect();
 
@@ -745,17 +745,15 @@ public function table(Table $table): Table
             ImageColumn::make('thumbnail')
                 ->label('Image'),
             TextColumn::make('title')
-                ->searchable()
                 ->sortable(),
             TextColumn::make('brand')
-                ->state(fn (array $record): string => Str::title(
-                    data_get($record, 'brand', 'Unknown')
-                )),
+                ->state(fn (array $record): string => Str::title($record['brand'] ?? 'Unknown')),
             TextColumn::make('category')
                 ->formatStateUsing(fn (string $state): string => Str::headline($state)),
             TextColumn::make('price')
                 ->money(),
-            TextColumn::make('sku'),
+            TextColumn::make('sku')
+                ->label('SKU'),
             TextColumn::make('stock')
                 ->label('Stock')
                 ->sortable(),
@@ -763,17 +761,18 @@ public function table(Table $table): Table
         ->filters([
             SelectFilter::make('category')
                 ->label('Category')
-                ->options(fn (): Collection => Http::baseUrl($this->baseUrl)
+                ->options(fn (): Collection => Http::baseUrl($baseUrl)
                     ->get('products/categories')
                     ->collect()
                     ->pluck('name', 'slug')
                 ),
-        ]);
+        ])
+        ->searchable();
 }
 ```
 
 <Aside variant="warning">
-    The [DummyJSON](https://dummyjson.com/) API does not support combining sorting, search, and category filtering in a single request.
+    The [DummyJSON](https://dummyjson.com) API does not support combining sorting, search, and category filtering in a single request.
 </Aside>
 
 <Aside variant="info">
