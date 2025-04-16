@@ -76,7 +76,13 @@ class GoogleTwoFactorAuthentication implements MultiFactorAuthenticationProvider
 
     public function getSecret(HasGoogleTwoFactorAuthentication $user): string
     {
-        return $user->getGoogleTwoFactorAuthenticationSecret();
+        $secret = $user->getGoogleTwoFactorAuthenticationSecret();
+
+        if (blank($secret)) {
+            throw new Exception('The user does not have a Google two-factor authentication secret.');
+        }
+
+        return $secret;
     }
 
     public function saveSecret(HasGoogleTwoFactorAuthentication $user, ?string $secret): void
@@ -89,7 +95,13 @@ class GoogleTwoFactorAuthentication implements MultiFactorAuthenticationProvider
      */
     public function getRecoveryCodes(HasGoogleTwoFactorAuthenticationRecovery $user): array
     {
-        return $user->getGoogleTwoFactorAuthenticationRecoveryCodes();
+        $codes = $user->getGoogleTwoFactorAuthenticationRecoveryCodes();
+
+        if (blank($codes)) {
+            throw new Exception('The user does not have any Google two-factor authentication recovery codes.');
+        }
+
+        return $codes;
     }
 
     /**

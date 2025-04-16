@@ -71,8 +71,7 @@ it('can save the secret and recovery codes to the user when the action is submit
         ->toBeEmpty();
 
     expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toBeEmpty();
+        ->toBeNull();
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
@@ -115,8 +114,7 @@ it('will not set up authentication when an invalid code is used', function (): v
         ->toBeEmpty();
 
     expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toBeEmpty();
+        ->toBeNull();
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
@@ -139,8 +137,7 @@ it('will not set up authentication when an invalid code is used', function (): v
         ->toBeEmpty();
 
     expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toBeEmpty();
+        ->toBeNull();
 });
 
 test('codes are required', function (): void {
@@ -153,8 +150,7 @@ test('codes are required', function (): void {
         ->toBeEmpty();
 
     expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toBeEmpty();
+        ->toBeNull();
 
     livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
@@ -172,8 +168,7 @@ test('codes are required', function (): void {
         ->toBeEmpty();
 
     expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toBeEmpty();
+        ->toBeNull();
 });
 
 test('codes must be 6 digits', function (): void {
@@ -188,8 +183,7 @@ test('codes must be 6 digits', function (): void {
         ->toBeEmpty();
 
     expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toBeEmpty();
+        ->toBeNull();
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
@@ -214,6 +208,5 @@ test('codes must be 6 digits', function (): void {
         ->toBeEmpty();
 
     expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toBeEmpty();
+        ->toBeNull();
 });

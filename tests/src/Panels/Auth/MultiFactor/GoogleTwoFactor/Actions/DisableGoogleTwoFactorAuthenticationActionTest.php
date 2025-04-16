@@ -55,8 +55,7 @@ it('can disable authentication when valid challenge code is used', function (): 
         ->toBeEmpty();
 
     expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toBeEmpty();
+        ->toBeNull();
 });
 
 it('can disable authentication when a valid recovery code is used', function (): void {
@@ -90,8 +89,7 @@ it('can disable authentication when a valid recovery code is used', function ():
         ->toBeEmpty();
 
     expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toBeEmpty();
+        ->toBeNull();
 });
 
 it('will not disable authentication when an invalid code is used', function (): void {
