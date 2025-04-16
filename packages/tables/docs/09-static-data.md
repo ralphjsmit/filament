@@ -459,7 +459,7 @@ public function table(Table $table): Table
     DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
 </Aside>
 
-### Setting the state of a column using API data
+#### Setting the state of a column using API data
 
 [Columns](#columns) map to the array keys returned by the `records()` function.
 
