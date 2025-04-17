@@ -1,5 +1,5 @@
 ---
-title: Adding a form to a Livewire component
+title: Rendering a form in a Blade view
 ---
 
 ## Setting up the Livewire component

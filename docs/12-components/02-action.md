@@ -1,5 +1,5 @@
 ---
-title: Adding an action to a Livewire component
+title: Rendering an action in a Livewire component
 ---
 
 ## Setting up the Livewire component

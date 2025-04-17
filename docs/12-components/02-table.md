@@ -1,5 +1,5 @@
 ---
-title: Adding a table to a Livewire component
+title: Rendering a table in a Blade view
 ---
 
 ## Setting up the Livewire component

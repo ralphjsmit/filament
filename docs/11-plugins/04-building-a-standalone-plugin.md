@@ -22,12 +22,11 @@ Next, we'll clean up the plugin to remove the boilerplate code we don't need. Th
 
 Remove the following directories and files:
 1. `bin`
-1. `config`
-1. `database`
-1. `src/Commands`
-1. `src/Facades`
-1. `stubs`
-1. `tailwind.config.js`
+2. `config`
+3. `database`
+4. `src/Commands`
+5. `src/Facades`
+6. `stubs`
 
 Now we can clean up our `composer.json` file to remove unneeded options.
 
@@ -48,7 +47,7 @@ Now we can clean up our `composer.json` file to remove unneeded options.
 },
 ```
 
-Normally, Filament v3 recommends that users style their plugins with a custom filament theme, but for the sake of example let's provide our own stylesheet that can be loaded asynchronously using the new `x-load` features in Filament v3. So, let's update our `package.json` file to include cssnano, postcss, postcss-cli and postcss-nesting to build our stylesheet.
+Normally, Filament recommends that users style their plugins with a custom filament theme, but for the sake of example let's provide our own stylesheet that can be loaded asynchronously using the new `x-load` features in Filament v3. So, let's update our `package.json` file to include `cssnano`, `postcss`, `postcss-cli` and `postcss-nesting` to build our stylesheet.
 
 ```json
 {
@@ -226,7 +225,7 @@ We are using x-load to asynchronously load stylesheet, so it's only loaded when 
 
 ## Step 6: Adding some styles
 
-Next, let's provide some custom styling for our field. We'll add the following to `resources/css/index.css`. And run `npm run build` to compile our css.
+Next, let's provide some custom styling for our field. We'll add the following to `resources/css/index.css`. And run `npm run build` to compile our CSS.
 
 ```css
 .headings-component {

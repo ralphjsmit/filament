@@ -1,5 +1,5 @@
 ---
-title: Adding an infolist to a Livewire component
+title: Rendering an infolist in a Blade view
 ---
 
 ## Setting up the Livewire component

@@ -28,7 +28,7 @@ Each icon comes with an "outlined" and "solid" variant, with the "outlined" vari
 
 The Heroicons set includes multiple sizes (16px, 20px and 24px) of solid icon, and when using the `Heroicon` enum class, Filament will automatically use the correct size for the context in which you are using it.
 
-If you would like to use an icon in a [Blade component](../components/blade/overview), you can pass it as an attribute:
+If you would like to use an icon in a [Blade component](../components), you can pass it as an attribute:
 
 ```blade
 @php
@@ -55,7 +55,7 @@ Toggle::make('is_starred')
     ->onIcon('iconic-check-circle')
 ```
 
-If you would like to use an icon in a [Blade component](../components/blade/overview), you can pass it as an attribute:
+If you would like to use an icon in a [Blade component](../components), you can pass it as an attribute:
 
 ```blade
 <x-filament::badge icon="iconic-star">

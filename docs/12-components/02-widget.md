@@ -1,5 +1,5 @@
 ---
-title: Adding a widget to a Blade view
+title: Rendering a widget in a Blade view
 ---
 
 ## Introduction

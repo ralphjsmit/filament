@@ -31,11 +31,10 @@ Since our plugin doesn't have any settings or additional methods needed for func
 
 1. `ClockWidgetPlugin.php`
 
-Since Filament v3 recommends that users style their plugins with a custom filament theme, we'll remove the files needed for using css in the plugin. This is optional, and you can still use css if you want, but it is not recommended.
+Since Filament recommends that users style their plugins with a custom filament theme, we'll remove the files needed for using CSS in the plugin. This is optional, and you can still use CSS if you want, but it is not recommended.
 
 1. `resources/css`
-1. `postcss.config.js`
-1. `tailwind.config.js`
+2. `postcss.config.js`
 
 Now we can clean up our `composer.json` file to remove unneeded options.
 
