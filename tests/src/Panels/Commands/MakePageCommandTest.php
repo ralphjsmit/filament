@@ -414,7 +414,6 @@ it('can generate a manage related records page class in a resource with a genera
         ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['isGenerated'], true)
         ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
-        ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
         ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['hasTableClass'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
