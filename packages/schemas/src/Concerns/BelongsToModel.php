@@ -86,7 +86,7 @@ trait BelongsToModel
     /**
      * @return Model | array<string, mixed> | null
      */
-    public function getRecord(bool $withParentRecord = true): Model | array | null
+    public function getRecord(bool $withParentComponentRecord = true): Model | array | null
     {
         $model = $this->model;
 
@@ -98,7 +98,7 @@ trait BelongsToModel
             return null;
         }
 
-        if (! $withParentRecord) {
+        if (! $withParentComponentRecord) {
             return null;
         }
 

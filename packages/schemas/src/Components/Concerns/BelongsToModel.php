@@ -173,7 +173,7 @@ trait BelongsToModel
     /**
      * @return Model | array<string, mixed> | null
      */
-    public function getRecord(): Model | array | null
+    public function getRecord(bool $withContainerRecord = true): Model | array | null
     {
         $model = $this->evaluate($this->model);
 
@@ -182,6 +182,10 @@ trait BelongsToModel
         }
 
         if (is_string($model)) {
+            return null;
+        }
+
+        if (! $withContainerRecord) {
             return null;
         }
 
