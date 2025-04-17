@@ -21,7 +21,7 @@ You can [learn how to change these colors and register new ones](#customizing-th
 
 A registered "color" in Filament is not just one shade. In fact, it is an entire color palette made of [11 shades](https://tailwindcss.com/docs/customizing-colors): `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, and `950`. When you use a color in Filament, the framework will decide which shade to use based on the context. For example, it might use the `600` shade for a component's background, `500` when it is hovered, and `400` for its border. If the user has dark mode enabled, it might use `700`, `800`, or `900` instead.
 
-On one hand, this means that you can specify a color in Filament without having to worry about the exact shade to use, or to specify a shade for each part of the component. Filament takes care of selecting a shade that should create an accessible contrast with other elements where possible. On the other hand, it means that you can't use a specific shade of a color in Filament without [overriding the shade](#overriding-a-component-shade) manually for all instances of that component.
+On one hand, this means that you can specify a color in Filament without having to worry about the exact shade to use, or to specify a shade for each part of the component. Filament takes care of selecting a shade that should create an accessible contrast with other elements where possible.
 
 To customize the color that something is in Filament, you can use its name. For example, if you wanted to use the `success` color, you could pass it to a color method of a PHP component like so:
 
@@ -36,7 +36,7 @@ Toggle::make('is_active')
     ->onColor('success')
 ```
 
-If you would like to use a color in a [Blade component](../ui/overview), you can pass it as an attribute:
+If you would like to use a color in a [Blade component](../components/blade/overview), you can pass it as an attribute:
 
 ```blade
 <x-filament::badge color="success">
@@ -83,193 +83,42 @@ FilamentColor::register([
 
 You will now be able to use `secondary` as a color in any Filament component.
 
-However, if you want to use a custom color via a Tailwind class, such as in a custom Blade view or passing it in the `class` HTML attribute of a component, you will have to also register it in your Tailwind config file via the `extend` syntax, so that the class is available in your Tailwind CSS build:
-
-```js
-import colors from 'tailwindcss/colors'
-import preset from './vendor/filament/support/tailwind.config.preset'
-
-export default {
-    presets: [preset],
-    content: [
-        // ...
-    ],
-    theme: {
-        extend: {
-            colors: {
-                secondary: colors.indigo,
-            },
-        },
-    },
-}
-```
-
 ## Using a non-Tailwind color
 
-You can use custom colors that are not included in the [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference) palette by passing an array of color shades from `50` to `950` in RGB format:
+You can use custom colors that are not included in the [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference) palette by passing an array of color shades from `50` to `950` in OKLCH format:
 
 ```php
 use Filament\Support\Facades\FilamentColor;
 
 FilamentColor::register([
     'danger' => [
-        50 => '254, 242, 242',
-        100 => '254, 226, 226',
-        200 => '254, 202, 202',
-        300 => '252, 165, 165',
-        400 => '248, 113, 113',
-        500 => '239, 68, 68',
-        600 => '220, 38, 38',
-        700 => '185, 28, 28',
-        800 => '153, 27, 27',
-        900 => '127, 29, 29',
-        950 => '69, 10, 10',
+        50 => 'oklch(0.969 0.015 12.422)',
+        100 => 'oklch(0.941 0.03 12.58)',
+        200 => 'oklch(0.892 0.058 10.001)',
+        300 => 'oklch(0.81 0.117 11.638)',
+        400 => 'oklch(0.712 0.194 13.428)',
+        500 => 'oklch(0.645 0.246 16.439)',
+        600 => 'oklch(0.586 0.253 17.585)',
+        700 => 'oklch(0.514 0.222 16.935)',
+        800 => 'oklch(0.455 0.188 13.697)',
+        900 => 'oklch(0.41 0.159 10.272)',
+        950 => 'oklch(0.271 0.105 12.094)',
     ],
 ]);
 ```
 
-### Generating a custom color from a hex code
+### Generating a custom color palette
 
-You can use the `Color::hex()` method to generate a custom color palette from a hex code:
+If you want us to attempt to generate a palette for you based on a singular hex or RGB value, you can pass that in:
 
 ```php
-use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 
 FilamentColor::register([
-    'danger' => Color::hex('#ff0000'),
+    'danger' => '#ff0000',
 ]);
-```
-
-### Generating a custom color from an RGB value
-
-You can use the `Color::rgb()` method to generate a custom color palette from an RGB value:
-
-```php
-use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
 
 FilamentColor::register([
-    'danger' => Color::rgb('rgb(255, 0, 0)'),
+    'danger' => 'rgb(255, 0, 0)',
 ]);
 ```
-
-## Overriding a component shade
-
-The shade in which a component uses for a particular property such as its background color, text color or border color is defined within the element's CSS definition. If you inspect a particular element, you may see that its CSS contains something such as:
-
-```css
-.fi-btn.fi-color {
-    background-color: rgba(var(--c-600), var(--tw-bg-opacity));
-}
-
-.fi-btn.fi-color:hover {
-    background-color: rgba(var(--c-500), var(--tw-bg-opacity));
-}
-```
-
-This is compiled from the Tailwind CSS `@apply` statements that Filament uses in its base CSS file:
-
-```css
-.fi-btn.fi-color {
-    @apply bg-custom-600 hover:bg-custom-500;
-}
-```
-
-The `custom` part of those Tailwind classes translates to those `--c-500` and `--c-600` CSS variables that are used in the CSS definition. Since the color for an element in Filament is defined within PHP, Filament needs a way to pass the color to the CSS when the element is rendered. This is done through an inline `style` attribute that is added to the element, mapping the unknown "custom" color to a real color that has been defined using `FilamentColor::register()`:
-
-```html
-<button
-    style="
-        --c-500: var(--primary-500);
-        --c-600: var(--primary-600);
-    "
-    class="fi-btn fi-color"
->
-    <!-- ... -->
-</button>
-```
-
-Imagine you wanted to swap the background shades for this element, so that the `600` shade is used when the element is hovered, and the `500` shade is used when it is not. You can do this using [CSS hooks](css-hooks) in the same way as any other CSS property. In this case, you want to target the `.fi-btn.fi-color` selector in your CSS file:
-
-```css
-.fi-btn.fi-color {
-    @apply bg-custom-500 hover:bg-custom-600;
-}
-```
-
-This will override the default shades that Filament uses for the `custom` color in this particular component.
-
-However, what about if you wanted to access a shade that is not defined within the `style` attribute of that element? If you attempted to do so, the CSS property would not be defined, and the element would not have the correct color. For example, maybe you want to use the `800` shade for the background color when the element is not hovered, and the `700` shade when it is. You can do this by telling Filament to inject those new shades into all instances of that element. Each element that uses custom colors has an "alias", which is an identifier that you can target in the `boot()` method of a service provider, or in a middleware, using the `FilamentColor::addShades()` method:
-
-```php
-use Filament\Support\Facades\FilamentColor;
-
-FilamentColor::addShades('button', [700, 800]);
-```
-
-This will add the `700` and `800` shades to the `style` attribute of all elements that use the `button` alias. You can now use those shades in your CSS:
-
-```css
-.fi-btn.fi-color {
-    @apply bg-custom-800 hover:bg-custom-700;
-}
-```
-
-### Available color aliases
-
-#### Forms color aliases
-
-- `forms::components.toggle.off` - Toggle field in the "off" state
-- `forms::components.toggle.on` - Toggle field in the "on" state
-
-#### Infolists color aliases
-
-- `infolists::components.icon-entry.item` - Icon entry icon
-- `infolists::components.text-entry.item.icon` - Text entry icon
-- `infolists::components.text-entry.item.label` - Text entry text
-
-#### Notifications color aliases
-
-- `notifications::notification` - Notification container
-- `notifications::notification.icon` - Notification icon
-
-#### Schema color aliases
-
-- `schema::components.decorations.icon-decoration.icon` - Icon decoration icon
-- `schema::components.decorations.text-decoration` - Text decoration
-
-#### Tables color aliases
-
-- `tables::columns.icon-column.item` - Icon column icon
-- `tables::columns.summaries.icon-count.icon` - Icon in a count column summary
-- `tables::columns.text-column.item.icon` - Text column icon
-- `tables::columns.text-column.item.label` - Text column text
-- `tables::columns.toggle-column.on` - Toggle column in the "on" state
-- `tables::columns.toggle-column.off` - Toggle column in the "off" state
-
-#### UI components color aliases
-
-- `badge` - Badge container
-- `badge.delete-button` - Badge delete button
-- `badge.icon` - Badge icon
-- `button` - Button
-- `dropdown.header.icon` - Dropdown header icon
-- `dropdown.header.label` - Dropdown header text
-- `dropdown.list.item` - Dropdown list item container
-- `dropdown.list.item.icon` - Dropdown list item icon
-- `dropdown.list.item.label` - Dropdown list item text
-- `icon-button` - Icon button
-- `input-wrapper.icon` - Input wrapper icon
-- `link.icon` - Link icon
-- `link.label` - Link text
-- `modal.icon` - Modal icon
-- `section.header.icon` - Section header icon
-
-#### Widgets color aliases
-
-- `widgets::chart-widget.background` - Chart widget background
-- `widgets::chart-widget.border` - Chart widget border
-- `widgets::stats-overview-widget.stat.chart` - Stats overview widget stat chart
-- `widgets::stats-overview-widget.stat.description` - Stats overview widget stat description text
-- `widgets::stats-overview-widget.stat.description.icon` - Stats overview widget stat description icon

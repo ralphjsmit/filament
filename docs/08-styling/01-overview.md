@@ -29,23 +29,23 @@ The `Filament\Support\Colors\Color` class contains color options for all [Tailwi
 
 You can also pass in a function to `register()` which will only get called when the app is getting rendered. This is useful if you are calling `register()` from a service provider, and want to access objects like the currently authenticated user, which are initialized later in middleware.
 
-Alternatively, you may pass your own palette in as an array of RGB values:
+Alternatively, you may pass your own palette in as an array of OKLCH colors:
 
 ```php
 $panel
     ->colors([
         'primary' => [
-            50 => '238, 242, 255',
-            100 => '224, 231, 255',
-            200 => '199, 210, 254',
-            300 => '165, 180, 252',
-            400 => '129, 140, 248',
-            500 => '99, 102, 241',
-            600 => '79, 70, 229',
-            700 => '67, 56, 202',
-            800 => '55, 48, 163',
-            900 => '49, 46, 129',
-            950 => '30, 27, 75',
+            50 => 'oklch(0.969 0.015 12.422)',
+            100 => 'oklch(0.941 0.03 12.58)',
+            200 => 'oklch(0.892 0.058 10.001)',
+            300 => 'oklch(0.81 0.117 11.638)',
+            400 => 'oklch(0.712 0.194 13.428)',
+            500 => 'oklch(0.645 0.246 16.439)',
+            600 => 'oklch(0.586 0.253 17.585)',
+            700 => 'oklch(0.514 0.222 16.935)',
+            800 => 'oklch(0.455 0.188 13.697)',
+            900 => 'oklch(0.41 0.159 10.272)',
+            950 => 'oklch(0.271 0.105 12.094)',
         ],
     ])
 ```
@@ -136,6 +136,19 @@ The command will create a CSS file and Tailwind Configuration file in the `/reso
 ```
 
 Please reference the command to see the exact file names that you need to register, they may not be `admin/theme.css`.
+
+## Using Tailwind CSS classes in your Blade views or PHP files
+
+Even though Filament uses Tailwind CSS to compile the framework, it is not set up to automatically scan for any Tailwind classes you use in your project, so these classes will not be included in the compiled CSS.
+
+To use Tailwind CSS classes in your project, you need to set up a [custom theme](#creating-a-custom-theme) to customize the compiled CSS file in the panel. In the `theme.css` file of the theme, you will find two lines:
+
+```css
+@source '../../../../app/Filament';
+@source '../../../../resources/views/filament';
+```
+
+These lines tell Tailwind to scan the `app/Filament` and `resources/views/filament` directories for any Tailwind classes you use in your project. You can [add any other directories](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources) you want to scan for Tailwind classes here.
 
 ## Disabling dark mode
 

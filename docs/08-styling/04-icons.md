@@ -8,25 +8,57 @@ Icons are used throughout the entire Filament UI to visually communicate core pa
 
 They have a website where you can [search all the available icons](https://blade-ui-kit.com/blade-icons?set=1#search) from various Blade Icons packages. Each package contains a different icon set that you can choose from. Filament installs the "Heroicons" icon set by default, so if you are using icons from this set you do not need to install any additional packages.
 
-## How to pass an icon to Filament
+## Using Heroicons in Filament
 
-Once you have [found an icon](https://blade-ui-kit.com/blade-icons?set=1#search), installed the icon set (if it's not a Heroicon) you would like to use in Filament, you need to use its name. For example, if you wanted to use the [`heroicon-m-star`](https://blade-ui-kit.com/blade-icons/heroicon-m-star) icon, you could pass it to an icon method of a PHP component like so:
+Filament includes the [Heroicons](https://heroicons.com) icon set by default. You can use any of the icons from this set in your Filament application without installing any additional packages. The `Heroicon` enum class allows you to leverage your IDE's autocompletion features to find the icon you want to use:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\Toggle;
+use Filament\Support\Icons\Heroicon;
+
+Action::make('star')
+    ->icon(Heroicon::OutlinedStar)
+    
+Toggle::make('is_starred')
+    ->onIcon(Heroicon::Star)
+```
+
+Each icon comes with an "outlined" and "solid" variant, with the "outlined" variant's name being prefixed with `Outlined`. For example, the `Heroicon::Star` icon is the solid variant, while the `Heroicon::OutlinedStar` icon is the outlined variant.
+
+The Heroicons set includes multiple sizes (16px, 20px and 24px) of solid icon, and when using the `Heroicon` enum class, Filament will automatically use the correct size for the context in which you are using it.
+
+If you would like to use an icon in a [Blade component](../components/blade/overview), you can pass it as an attribute:
+
+```blade
+@php
+    use Filament\Support\Icons\Heroicon;
+@endphp
+
+<x-filament::badge :icon="Heroicon::Star">
+    Star
+</x-filament::badge>
+```
+
+## Using other icon sets in Filament
+
+Once you have [found an icon](https://blade-ui-kit.com/blade-icons?set=1#search), installed the icon set (if it's not a Heroicon) you would like to use in Filament, you need to use its name. For example, if you wanted to use the [`iconic-star`](https://blade-ui-kit.com/blade-icons/iconic-star) icon, you could pass it to an icon method of a PHP component like so:
 
 ```php
 use Filament\Actions\Action;
 use Filament\Forms\Components\Toggle;
 
 Action::make('star')
-    ->icon('heroicon-m-star')
+    ->icon('iconic-star')
     
 Toggle::make('is_starred')
-    ->onIcon('heroicon-m-star')
+    ->onIcon('iconic-check-circle')
 ```
 
-If you would like to use an icon in a [Blade component](../ui/overview), you can pass it as an attribute:
+If you would like to use an icon in a [Blade component](../components/blade/overview), you can pass it as an attribute:
 
 ```blade
-<x-filament::badge icon="heroicon-m-star">
+<x-filament::badge icon="iconic-star">
     Star
 </x-filament::badge>
 ```
@@ -65,33 +97,6 @@ FilamentIcon::register([
     'panels::topbar.global-search.field' => 'fas-magnifying-glass',
     'panels::sidebar.group.collapse-button' => view('icons.chevron-up'),
 ]);
-```
-
-### Allowing users to customize icons from your plugin
-
-If you have built a Filament plugin, your users may want to be able to customize icons in the same way that they can with any core Filament package. This is possible if you replace any manual `@svg()` usages with the `<x-filament::icon>` Blade component. This component allows you to pass in an icon alias, the name of the SVG icon that should be used by default, and any classes or HTML attributes:
-
-```blade
-<x-filament::icon
-    alias="panels::topbar.global-search.field"
-    icon="heroicon-m-magnifying-glass"
-    wire:target="search"
-    class="h-5 w-5 text-gray-500 dark:text-gray-400"
-/>
-```
-
-Alternatively, you may pass an SVG element into the component's slot instead of defining a default icon name:
-
-```blade
-<x-filament::icon
-    alias="panels::topbar.global-search.field"
-    wire:target="search"
-    class="h-5 w-5 text-gray-500 dark:text-gray-400"
->
-    <svg>
-        <!-- ... -->
-    </svg>
-</x-filament::icon>
 ```
 
 ## Available icon aliases
