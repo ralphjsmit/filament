@@ -1,4 +1,4 @@
 ---
-title: Deploying to Production
+title: Deploying to production
 ---
 

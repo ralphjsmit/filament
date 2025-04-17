@@ -1,5 +1,5 @@
 ---
-title: Upgrade Guide
+title: Upgrade guide
 ---
 import Aside from "@components/Aside.astro"
 import Checkbox from "@components/Checkbox.astro"
