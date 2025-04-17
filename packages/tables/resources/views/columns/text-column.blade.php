@@ -281,7 +281,7 @@
                     @if ($isLimitedListExpandable)
                         <x-filament::link
                             color="gray"
-                            role="button"
+                            tag="div"
                             x-on:click.prevent.stop="isLimited = false"
                             x-show="isLimited"
                         >
@@ -290,7 +290,7 @@
 
                         <x-filament::link
                             color="gray"
-                            role="button"
+                            tag="div"
                             x-cloak
                             x-on:click.prevent.stop="isLimited = true"
                             x-show="! isLimited"
