@@ -859,7 +859,7 @@ trait HasState
 
             $state = $containerState instanceof Model ?
                 $this->getConstantStateFromRecord($containerState) :
-                data_get($containerState, $this->getStatePath());
+                data_get($containerState, $this->getStatePath(isAbsolute: false));
         }
 
         if (is_string($state) && ($separator = $this->getSeparator())) {
@@ -890,7 +890,7 @@ trait HasState
 
     public function getConstantStateFromRecord(Model $record): mixed
     {
-        $state = data_get($record, $this->getStatePath());
+        $state = data_get($record, $this->getStatePath(isAbsolute: false));
 
         if ($state !== null) {
             return $state;

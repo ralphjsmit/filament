@@ -72,6 +72,10 @@ trait BelongsToModel
             return $model::class;
         }
 
+        if (is_array($model)) {
+            return null;
+        }
+
         if (filled($model)) {
             return $model;
         }
@@ -82,7 +86,7 @@ trait BelongsToModel
     /**
      * @return Model | array<string, mixed> | null
      */
-    public function getRecord(): Model | array | null
+    public function getRecord(bool $withParentRecord = true): Model | array | null
     {
         $model = $this->model;
 
@@ -94,6 +98,10 @@ trait BelongsToModel
             return null;
         }
 
+        if (! $withParentRecord) {
+            return null;
+        }
+
         return $this->getParentComponent()?->getRecord();
     }
 
@@ -101,7 +109,7 @@ trait BelongsToModel
     {
         $model = $this->model;
 
-        if ($model === null) {
+        if (($model === null) || is_array($model)) {
             return $this->getParentComponent()?->getModelInstance();
         }
 

@@ -344,19 +344,7 @@ trait HasState
      */
     public function getConstantState(): Model | array
     {
-        $state = $this->constantState ?? $this->getParentComponent()?->getContainer()->getConstantState();
-
-        if ($state !== null) {
-            return $state;
-        }
-
-        $record = $this->getRecord();
-
-        if (! $record) {
-            throw new Exception('Infolist has no [record()] or [state()] set.');
-        }
-
-        return $record;
+        return $this->constantState ?? $this->getRecord(withParentRecord: false) ?? $this->getParentComponent()?->getContainer()->getConstantState() ?? $this->getRecord() ?? throw new Exception('Schema has no [record()] or [state()] set.');
     }
 
     /**
