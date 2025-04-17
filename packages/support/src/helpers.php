@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
+use Throwable;
 
 if (! function_exists('Filament\Support\format_money')) {
     /**
@@ -287,5 +288,34 @@ if (! function_exists('Filament\Support\original_request')) {
     function original_request(): Request
     {
         return app('originalRequest');
+    }
+}
+
+if (! function_exists('Filament\Support\discover_app_classes')) {
+    /**
+     * @return array<class-string>
+     */
+    function discover_app_classes(?string $parentClass = null): array
+    {
+        $classLoader = require 'vendor/autoload.php';
+
+        return collect($classLoader->getClassMap())
+            ->filter(function (string $file, string $class) use ($parentClass): bool {
+                if (! str($file)->startsWith(base_path('vendor/composer/../../'))) {
+                    return false;
+                }
+
+                if (blank($parentClass)) {
+                    return true;
+                }
+
+                try {
+                    return is_subclass_of($class, $parentClass);
+                } catch (Throwable) {
+                    return false;
+                }
+            })
+            ->keys()
+            ->all();
     }
 }

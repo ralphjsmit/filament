@@ -14,8 +14,10 @@ use Spatie\LaravelSettings\Settings;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
+use function Filament\Support\discover_app_classes;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\search;
+use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
 class MakeSettingsPageCommand extends Command
@@ -168,17 +170,14 @@ class MakeSettingsPageCommand extends Command
             return;
         }
 
-        $settingsFqns = array_filter(
-            get_declared_classes(),
-            fn (string $class): bool => is_subclass_of($class, Settings::class),
-        );
+        $settingsFqns = discover_app_classes(parentClass: Settings::class);
 
         $settingsFqns = array_combine(
             $settingsFqns,
             $settingsFqns,
         );
 
-        $this->settingsFqn = search(
+        $this->settingsFqn = suggest(
             label: 'What is the fully qualified class name of the settings class?',
             options: function (?string $search) use ($settingsFqns): array {
                 if (blank($search)) {
