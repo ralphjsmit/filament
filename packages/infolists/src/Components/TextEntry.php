@@ -453,24 +453,24 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 <?php if ($stateOverListLimitCount) { ?>
                     <p class="fi-in-text-list-limited-message">
                         <?php if ($isLimitedListExpandable) { ?>
-                            <button
-                                type="button"
-                                x-on:click.prevent="isLimited = false"
+                            <div
+                                role="button"
+                                x-on:click.prevent.stop="isLimited = false"
                                 x-show="isLimited"
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-infolists::components.entries.text.actions.expand_list', $stateOverListLimitCount) ?>
-                            </button>
+                            </div>
 
-                            <button
-                                type="button"
-                                x-on:click.prevent="isLimited = true"
+                            <div
+                                role="button"
+                                x-on:click.prevent.stop="isLimited = true"
                                 x-cloak
                                 x-show="! isLimited"
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-infolists::components.entries.text.actions.collapse_list', $stateOverListLimitCount) ?>
-                            </button>
+                            </div>
                         <?php } else { ?>
                             <?= trans_choice('filament-infolists::components.entries.text.more_list_items', $stateOverListLimitCount) ?>
                         <?php } ?>

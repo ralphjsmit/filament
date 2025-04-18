@@ -18,18 +18,14 @@ window.setUpSpaModeUnsavedDataChangesAlert = ({
     resolveLivewireComponentUsing,
     $wire,
 }) => {
-    let formSubmitted = false
-
-    document.addEventListener('submit', () => (formSubmitted = true))
-
     const shouldPreventNavigation = () => {
-        if (formSubmitted) {
-            return
+        if ($wire?.__instance?.effects?.redirect) {
+            return false
         }
 
         return (
             window.jsMd5(JSON.stringify($wire.data).replace(/\\/g, '')) !==
-                $wire.savedDataHash || $wire?.__instance?.effects?.redirect
+            $wire.savedDataHash
         )
     }
 
