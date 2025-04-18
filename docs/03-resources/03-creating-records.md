@@ -468,7 +468,25 @@ protected function getFormActions(): array
 }
 ```
 
-## Custom view
+## Custom page content
+
+Each page in Filament has its own [schema](../schemas), which defines the overall structure and content. You can override the schema for the page by defining a `content()` method on it. The `content()` method for the Create page contains the following components by default:
+
+```php
+use Filament\Schemas\Schema;
+
+public function content(Schema $schema): Schema
+{
+    return $schema
+        ->components([
+            $this->getFormContentComponent(), // This method returns a component to display the form that is defined in this resource
+        ]);
+}
+```
+
+Inside the `components()` array, you can insert any [schema component](../schemas). You can reorder the components by changing the order of the array or remove any of the components that are not needed.
+
+### Using a custom Blade view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
 
@@ -476,21 +494,10 @@ For further customization opportunities, you can override the static `$view` pro
 protected string $view = 'filament.resources.users.pages.create-user';
 ```
 
-This assumes that you have created a view at `resources/views/filament/resources/users/pages/create-user.blade.php`.
-
-Here's a basic example of what that view might contain:
+This assumes that you have created a view at `resources/views/filament/resources/users/pages/create-user.blade.php`:
 
 ```blade
 <x-filament-panels::page>
-    <x-filament-panels::form wire:submit="create">
-        {{ $this->form }}
-
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
+    {{ $this->content }} {{-- This will render the content of the page defined in the `content()` method, which can be removed if you want to start from scratch --}}
 </x-filament-panels::page>
 ```
-
-To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/create-record.blade.php` file in your project.
