@@ -1,5 +1,5 @@
 ---
-title: Custom pages
+title: Custom resource pages
 ---
 
 ## Introduction

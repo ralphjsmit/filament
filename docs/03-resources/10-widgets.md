@@ -1,5 +1,5 @@
 ---
-title: Widgets
+title: Using widgets on resource pages
 ---
 
 ## Introduction

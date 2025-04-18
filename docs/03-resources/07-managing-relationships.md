@@ -32,7 +32,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 > These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
 
-All layout form components ([Grid](../../schemas/layouts#grid-component), [Section](../../schemas/sections), [Fieldset](../../schemas/layouts#fieldset-component), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../../schemas/layouts#grid-component), [Section](../../schemas/sections), [Fieldset](../../schemas/layouts#fieldset-component), etc.) have a [`relationship()` method](../../forms/overview#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -51,7 +51,7 @@ Fieldset::make('Metadata')
 
 In this example, the `title`, `description` and `image` are automatically loaded from the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
 
-This feature is explained more in depth in the [Forms documentation](../../forms/advanced#saving-data-to-relationships). Please visit that page for more information about how to use it.
+This feature is explained more in depth in the [Forms documentation](../../forms/overview#saving-data-to-relationships). Please visit that page for more information about how to use it.
 
 ## Creating a relation manager
 
@@ -584,7 +584,7 @@ Relation managers are Livewire components. When they are first loaded, the owner
 $this->getOwnerRecord()
 ```
 
-However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
+However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/overview#field-utility-injection) to access the `$livewire` instance:
 
 ```php
 use Filament\Forms;
@@ -721,7 +721,7 @@ RelationGroup::make('Contacts', [
 You may decide that you want a resource's form and table to be identical to a relation manager's, and subsequently want to reuse the code you previously wrote. This is easy, by calling the `form()` and `table()` methods of the resource from the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\PostResource;
+use App\Filament\Resources\Blog\Posts\PostResource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
@@ -741,7 +741,7 @@ public function table(Table $table): Table
 If you're sharing a form component from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a `Select` field for the owner record in the relation manager, since Filament will handle this for you anyway. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Blog\Posts\PostResource\RelationManagers\CommentsRelationManager;
 use Filament\Forms\Components\Select;
 
 Select::make('post_id')
@@ -754,7 +754,7 @@ Select::make('post_id')
 If you're sharing a table column from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a column for the owner record in the relation manager, since this is not appropriate when the owner record is already listed above the relation manager. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Blog\Posts\PostResource\RelationManagers\CommentsRelationManager;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('post.title')
@@ -766,7 +766,7 @@ TextColumn::make('post.title')
 If you're sharing a table filter from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a filter for the owner record in the relation manager, since this is not appropriate when the table is already filtered by the owner record. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Blog\Posts\PostResource\RelationManagers\CommentsRelationManager;
 use Filament\Tables\Filters\SelectFilter;
 
 SelectFilter::make('post')
@@ -779,7 +779,7 @@ SelectFilter::make('post')
 Any configuration that you make inside the resource can be overwritten on the relation manager. For example, if you wanted to disable pagination on the relation manager's inherited table but not the resource itself:
 
 ```php
-use App\Filament\Resources\Blog\PostResource;
+use App\Filament\Resources\Blog\Posts\PostResource;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -792,7 +792,7 @@ public function table(Table $table): Table
 It is probably also useful to provide extra configuration on the relation manager if you wanted to add a header action to [create](#creating-related-records), [attach](#attaching-and-detaching-records), or [associate](#associating-and-dissociating-records) records in the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\PostResource;
+use App\Filament\Resources\Blog\Posts\PostResource;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -953,7 +953,7 @@ public static function getRecordSubNavigation(Page $page): array
 When registering a relation manager in a resource, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
 
 ```php
-use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Blog\Posts\PostResource\RelationManagers\CommentsRelationManager;
 
 public static function getRelations(): array
 {

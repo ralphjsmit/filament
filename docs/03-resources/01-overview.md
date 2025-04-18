@@ -42,7 +42,7 @@ php artisan make:filament-resource Customer --simple
 
 Your resource will have a "Manage" page, which is a List page with modals added.
 
-Additionally, your simple resource will have no `getRelations()` method, as [relation managers](relation-managers) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
+Additionally, your simple resource will have no `getRelations()` method, as [relation managers](managing-relationships) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
 ### Automatically generating forms and tables
 
@@ -474,8 +474,8 @@ Sub-navigation allows the user to navigate between different pages within a reso
 - View customer, a [`ViewRecord` page](viewing-records) that provides a read-only view of the customer's details.
 - Edit customer, an [`EditRecord` page](editing-records) that allows the user to edit the customer's details.
 - Edit customer contact, an [`EditRecord` page](editing-records) that allows the user to edit the customer's contact details. You can [learn how to create more than one Edit page](editing-records#creating-another-edit-page).
-- Manage addresses, a [`ManageRelatedRecords` page](relation-managers#relation-pages) that allows the user to manage the customer's addresses.
-- Manage payments, a [`ManageRelatedRecords` page](relation-managers#relation-pages) that allows the user to manage the customer's payments.
+- Manage addresses, a [`ManageRelatedRecords` page](managing-relationships#relation-pages) that allows the user to manage the customer's addresses.
+- Manage payments, a [`ManageRelatedRecords` page](managing-relationships#relation-pages) that allows the user to manage the customer's payments.
 
 To add a sub-navigation to each "singular record" page in the resource, you can add the `getRecordSubNavigation()` method to the resource class:
 

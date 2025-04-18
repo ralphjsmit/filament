@@ -1,5 +1,5 @@
 ---
-title: Security
+title: Resource security
 ---
 
 ## Protecting model attributes
