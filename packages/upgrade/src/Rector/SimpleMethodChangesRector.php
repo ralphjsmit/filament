@@ -8,10 +8,13 @@ use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Contracts\HasColor;
+use Filament\Tables\Contracts\HasTable;
 use Illuminate\Validation\Rules\Enum;
 use PhpParser\Modifiers;
 use PhpParser\Node;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -65,7 +68,7 @@ class SimpleMethodChangesRector extends AbstractRector
                 'changes' => [
                     'infolist' => function (ClassMethod $node): void {
                         $param = new Param(new Variable('schema'));
-                        $param->type = new Name('\\Filament\\Schemas\\Schema');
+                        $param->type = new FullyQualified('Filament\\Schemas\\Schema');
 
                         $node->params = [$param];
                     },
@@ -88,6 +91,17 @@ class SimpleMethodChangesRector extends AbstractRector
                 'changes' => [
                     'getColor' => function (ClassMethod $node): void {
                         $node->returnType = new Identifier('?string');
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    HasTable::class,
+                ],
+                'changes' => [
+                    'getTableRecordKey' => function (ClassMethod $node): void {
+                        $param = $node->getParams()[0];
+                        $param->type = new UnionType([new FullyQualified('Illuminate\\Database\\Eloquent\\Model'), new Identifier('array')]);
                     },
                 ],
             ],

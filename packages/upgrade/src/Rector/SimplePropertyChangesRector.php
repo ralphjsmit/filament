@@ -15,8 +15,10 @@ use Filament\Widgets\Widget;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\UnionType;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 
@@ -51,7 +53,7 @@ class SimplePropertyChangesRector extends AbstractRector
                 ],
                 'changes' => [
                     'maxWidth' => function (Property $node): void {
-                        $node->type = new Name('\Filament\Support\Enums\Width | string | null');
+                        $node->type = new UnionType([new FullyQualified('Filament\\Support\\Enums\\Width'), new Name('string'), new Name('null')]);
                     },
                 ],
             ],
@@ -61,7 +63,7 @@ class SimplePropertyChangesRector extends AbstractRector
                 ],
                 'changes' => [
                     'maxContentWidth' => function (Property $node): void {
-                        $node->type = new Name('\Filament\Support\Enums\Width | string | null');
+                        $node->type = new UnionType([new FullyQualified('Filament\\Support\\Enums\\Width'), new Name('string'), new Name('null')]);
                     },
                 ],
             ],

@@ -203,6 +203,6 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
 
     public function placeholder(): string
     {
-        return '<div>' . $this->getTrigger()?->with(['unreadNotificationsCount' => $this->getUnreadNotificationsCount()])->toHtml() . '</div>';
+        return '<div>' . $this->getTrigger()?->with(['unreadNotificationsCount' => $this->getUnreadNotificationsCount()])->render() . '</div>';
     }
 }
