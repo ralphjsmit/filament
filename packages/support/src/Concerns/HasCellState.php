@@ -308,7 +308,7 @@ trait HasCellState
             return null;
         }
 
-        $recordKey = (string) $record->getKey();
+        $recordKey = $this->getLivewire()->getTableRecordKey($record);
 
         if (blank($recordKey)) {
             return $state();
