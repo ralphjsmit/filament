@@ -173,6 +173,10 @@ trait CanGenerateResourceTables
             $this->importUnlessPartial($action);
         }
 
+        if ($this->hasPartialImports()) {
+            $this->namespace->addUse('Filament\Actions');
+        }
+
         return $actions;
     }
 

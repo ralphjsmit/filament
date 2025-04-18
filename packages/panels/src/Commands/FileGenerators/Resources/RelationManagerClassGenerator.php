@@ -69,7 +69,6 @@ class RelationManagerClassGenerator extends ClassGenerator
                 ? [$relatedResourceFqn]
                 : [
                     Schema::class,
-                    Table::class,
                     ...($this->hasPartialImports() ? [
                         ...(blank($this->getTableFqn()) ? ['Filament\Actions', 'Filament\Tables'] : []),
                         ...(blank($this->getFormSchemaFqn()) ? ['Filament\Forms'] : []),
@@ -199,17 +198,31 @@ class RelationManagerClassGenerator extends ClassGenerator
 
     protected function addTableMethodToClass(ClassType $class): void
     {
-        if ($this->hasRelatedResource()) {
+        $relatedResource = $this->getRelatedResourceFqn();
+
+        if ($relatedResource && blank($headerActionsOutput = $this->outputTableHeaderActions())) {
+            // If the related resource is set and there are no table header actions, we don't need to generate the table method, since we
             return;
         }
 
-        $tableFqn = $this->getTableFqn();
+        $this->namespace->addUse(Table::class);
 
-        $methodBody = filled($tableFqn)
-            ? <<<PHP
+        if ($relatedResource) {
+            $methodBody = <<<PHP
+                return \$table
+                    ->headerActions([
+                        {$headerActionsOutput}
+                    ]);
+                PHP;
+        } else {
+            $tableFqn = $this->getTableFqn();
+
+            $methodBody = filled($tableFqn)
+                ? <<<PHP
                 return {$this->simplifyFqn($tableFqn)}::configure(\$table);
                 PHP
-            : $this->generateTableMethodBody($this->getRelatedModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
+                : $this->generateTableMethodBody($this->getRelatedModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
+        }
 
         $method = $class->addMethod('table')
             ->setPublic()
