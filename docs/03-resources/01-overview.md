@@ -4,7 +4,7 @@ title: Overview
 
 ## Introduction
 
-Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app - using tables and forms.
+Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app using tables and forms.
 
 ## Creating a resource
 
@@ -18,17 +18,23 @@ This will create several files in the `app/Filament/Resources` directory:
 
 ```
 .
-+-- CustomerResource.php
-+-- CustomerResource
++-- Customers
+|   +-- CustomerResource.php
 |   +-- Pages
 |   |   +-- CreateCustomer.php
 |   |   +-- EditCustomer.php
 |   |   +-- ListCustomers.php
+|   +-- Schemas
+|   |   +-- CustomerForm.php
+|   +-- Tables
+|   |   +-- CustomersTable.php
 ```
 
 Your new resource class lives in `CustomerResource.php`.
 
 The classes in the `Pages` directory are used to customize the pages in the app that interact with your resource. They're all full-page [Livewire](https://livewire.laravel.com) components that you can customize in any way you wish.
+
+The classes in the `Schemas` directory are used to define the content of the [forms](../forms) and [infolists](../infolists) for your resource. The classes in the `Tables` directory are used to build the table for your resource.
 
 > Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
 
@@ -70,7 +76,7 @@ By default, only List, Create and Edit pages are generated for your resource. If
 php artisan make:filament-resource Customer --view
 ```
 
-### Specifiying a custom model namespace
+### Specifying a custom model namespace
 
 By default, Filament will assume that your model exists in the `App\Models` directory. You can pass a different namespace for the model using the `--model-namespace` flag:
 
