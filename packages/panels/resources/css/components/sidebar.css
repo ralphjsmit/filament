@@ -18,10 +18,10 @@
 
 .fi-sidebar-group-btn {
     @apply flex items-center gap-x-3 px-2 py-2;
-}
 
-.fi-sidebar-group-icon {
-    @apply text-gray-400 dark:text-gray-500;
+    & .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
 }
 
 .fi-sidebar-group-label {
