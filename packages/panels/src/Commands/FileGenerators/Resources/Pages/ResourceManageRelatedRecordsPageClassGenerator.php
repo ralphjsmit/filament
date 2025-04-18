@@ -284,7 +284,14 @@ class ResourceManageRelatedRecordsPageClassGenerator extends ClassGenerator
             return null;
         }
 
-        $relationship = app($model)->{$this->getRelationship()}();
+        $modelInstance = app($model);
+        $relationshipName = $this->getRelationship();
+
+        if (! method_exists($modelInstance, $relationshipName)) {
+            return null;
+        }
+
+        $relationship = $modelInstance->{$relationshipName}();
 
         if (! ($relationship instanceof HasMany)) {
             return null;

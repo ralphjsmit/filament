@@ -526,6 +526,7 @@ class MakeResourceCommand extends Command
         $this->writeFile($path, app(ResourceFormSchemaClassGenerator::class, [
             'fqn' => $this->formSchemaFqn,
             'modelFqn' => $this->modelFqn,
+            'parentResourceFqn' => $this->parentResourceFqn,
             'isGenerated' => $this->isGenerated,
         ]));
     }
@@ -575,6 +576,7 @@ class MakeResourceCommand extends Command
         $this->writeFile($path, app(ResourceTableClassGenerator::class, [
             'fqn' => $this->tableFqn,
             'modelFqn' => $this->modelFqn,
+            'parentResourceFqn' => $this->parentResourceFqn,
             'hasViewOperation' => $this->hasViewOperation,
             'isGenerated' => $this->isGenerated,
             'isSoftDeletable' => $this->isSoftDeletable,

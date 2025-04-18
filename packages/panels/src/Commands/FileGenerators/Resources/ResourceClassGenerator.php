@@ -15,8 +15,10 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
@@ -177,7 +179,7 @@ class ResourceClassGenerator extends ClassGenerator
             ? <<<PHP
                 return {$this->simplifyFqn($formSchemaFqn)}::configure(\$schema);
                 PHP
-            : $this->generateFormMethodBody($this->getModelFqn());
+            : $this->generateFormMethodBody($this->getModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
 
         $method = $class->addMethod('form')
             ->setPublic()
@@ -232,7 +234,7 @@ class ResourceClassGenerator extends ClassGenerator
             ? <<<PHP
                 return {$this->simplifyFqn($tableFqn)}::configure(\$table);
                 PHP
-            : $this->generateTableMethodBody($this->getModelFqn());
+            : $this->generateTableMethodBody($this->getModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
 
         $method = $class->addMethod('table')
             ->setPublic()
@@ -243,6 +245,34 @@ class ResourceClassGenerator extends ClassGenerator
             ->setType(Table::class);
 
         $this->configureTableMethod($method);
+    }
+
+    public function getForeignKeyColumnToNotGenerate(): ?string
+    {
+        if (! class_exists($this->getParentResourceFqn())) {
+            return null;
+        }
+
+        $model = $this->getParentResourceFqn()::getModel();
+
+        if (! class_exists($model)) {
+            return null;
+        }
+
+        $modelInstance = app($model);
+        $relationshipName = (string) str($this->getModelBasename())->plural()->camel();
+
+        if (! method_exists($modelInstance, $relationshipName)) {
+            return null;
+        }
+
+        $relationship = $modelInstance->{$relationshipName}();
+
+        if (! ($relationship instanceof HasMany)) {
+            return null;
+        }
+
+        return $relationship->getForeignKeyName();
     }
 
     protected function configureTableMethod(Method $method): void {}
