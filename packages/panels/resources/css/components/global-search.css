@@ -33,7 +33,7 @@
 }
 
 .fi-global-search-result-group-header {
-    @apply sticky top-0 z-10 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-900 dark:bg-white/5 dark:text-white;
+    @apply sticky top-0 z-10 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-800 dark:text-white;
 }
 
 .fi-global-search-result-group-results {
