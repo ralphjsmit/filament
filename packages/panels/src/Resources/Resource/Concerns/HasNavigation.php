@@ -43,7 +43,7 @@ trait HasNavigation
             return;
         }
 
-        if (static::getParentResource()) {
+        if (static::getParentResourceRegistration()) {
             return;
         }
 
