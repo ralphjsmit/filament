@@ -201,7 +201,8 @@ class RelationManagerClassGenerator extends ClassGenerator
         $relatedResource = $this->getRelatedResourceFqn();
 
         if ($relatedResource && blank($headerActionsOutput = $this->outputTableHeaderActions())) {
-            // If the related resource is set and there are no table header actions, we don't need to generate the table method, since we
+            // If the related resource is set and there are no table header actions to add, we don't need
+            // to generate the table method since it will be inherited from the related resource.
             return;
         }
 
