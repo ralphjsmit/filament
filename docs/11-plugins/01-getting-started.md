@@ -1,6 +1,7 @@
 ---
 title: Getting started
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -31,8 +32,9 @@ Filament introduces the concept of a Plugin object that is used to configure the
 
 While the plugin object is extremely helpful, it is not required to build a plugin. You can still build plugins without using the plugin object as you can see in the [building a panel plugin](building-a-panel-plugin) tutorial.
 
-> **Info** 
-> The Plugin object is only used for Panel Providers. Standalone Plugins do not use this object. All configuration for Standalone Plugins should be handled in the plugin's service provider.
+<Aside variant="info">
+   The Plugin object is only used for Panel Providers. Standalone Plugins do not use this object. All configuration for Standalone Plugins should be handled in the plugin's service provider.
+</Aside>
 
 ### Registering assets
 

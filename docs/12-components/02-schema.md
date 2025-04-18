@@ -50,7 +50,7 @@ use Filament\Schemas\Schema;
 public function productSchema(Schema $schema): Schema
 {
     return $schema
-        ->schema([
+        ->components([
             // ...
         ]);
 }

@@ -1,6 +1,7 @@
 ---
 title: Managing relationships
 ---
+import Aside from "@components/Aside.astro"
 
 ## Choosing the right tool for the job
 
@@ -8,31 +9,39 @@ Filament provides many ways to manage relationships in the app. Which feature yo
 
 ### Relation managers - interactive tables underneath your resource forms
 
-> These are compatible with `HasMany`, `HasManyThrough`, `BelongsToMany`, `MorphMany` and `MorphToMany` relationships.
+<Aside variant="info">
+    These are compatible with `HasMany`, `HasManyThrough`, `BelongsToMany`, `MorphMany` and `MorphToMany` relationships.
+</Aside>
 
 [Relation managers](#creating-a-relation-manager) are interactive tables that allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related records without leaving the resource's Edit or View page.
 
 ### Select & checkbox list - choose from existing records or create a new one
 
-> These are compatible with `BelongsTo`, `MorphTo` and `BelongsToMany` relationships.
+<Aside variant="info">
+    These are compatible with `BelongsTo`, `MorphTo` and `BelongsToMany` relationships.
+</Aside>
 
-Using a [select](../../forms/fields/select#integrating-with-an-eloquent-relationship), users will be able to choose from a list of existing records. You may also [add a button that allows you to create a new record inside a modal](../../forms/fields/select#creating-new-records), without leaving the page.
+Using a [select](../forms/fields/select#integrating-with-an-eloquent-relationship), users will be able to choose from a list of existing records. You may also [add a button that allows you to create a new record inside a modal](../forms/fields/select#creating-new-records), without leaving the page.
 
-When using a `BelongsToMany` relationship with a select, you'll be able to select multiple options, not just one. Records will be automatically added to your pivot table when you submit the form. If you wish, you can swap out the multi-select dropdown with a simple [checkbox list](../../forms/fields/checkbox-list#integrating-with-an-eloquent-relationship). Both components work in the same way.
+When using a `BelongsToMany` relationship with a select, you'll be able to select multiple options, not just one. Records will be automatically added to your pivot table when you submit the form. If you wish, you can swap out the multi-select dropdown with a simple [checkbox list](../forms/fields/checkbox-list#integrating-with-an-eloquent-relationship). Both components work in the same way.
 
 ### Repeaters - CRUD multiple related records inside the owner's form
 
-> These are compatible with `HasMany` and `MorphMany` relationships.
+<Aside variant="info">
+    These are compatible with `HasMany` and `MorphMany` relationships.
+</Aside>
 
-[Repeaters](../../forms/fields/repeater#integrating-with-an-eloquent-relationship) are standard form components, which can render a repeatable set of fields infinitely. They can be hooked up to a relationship, so records are automatically read, created, updated, and deleted from the related table. They live inside the main form schema, and can be used inside resource pages, as well as nesting within action modals.
+[Repeaters](../forms/fields/repeater#integrating-with-an-eloquent-relationship) are standard form components, which can render a repeatable set of fields infinitely. They can be hooked up to a relationship, so records are automatically read, created, updated, and deleted from the related table. They live inside the main form schema, and can be used inside resource pages, as well as nesting within action modals.
 
 From a UX perspective, this solution is only suitable if your related model only has a few fields. Otherwise, the form can get very long.
 
 ### Layout form components - saving form fields to a single relationship
 
-> These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
+<Aside variant="info">
+    These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
+</Aside>
 
-All layout form components ([Grid](../../schemas/layouts#grid-component), [Section](../../schemas/sections), [Fieldset](../../schemas/layouts#fieldset-component), etc.) have a [`relationship()` method](../../forms/overview#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../schemas/layouts#grid-component), [Section](../schemas/sections), [Fieldset](../schemas/layouts#fieldset-component), etc.) have a [`relationship()` method](../forms/overview#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -51,7 +60,7 @@ Fieldset::make('Metadata')
 
 In this example, the `title`, `description` and `image` are automatically loaded from the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
 
-This feature is explained more in depth in the [Forms documentation](../../forms/overview#saving-data-to-relationships). Please visit that page for more information about how to use it.
+This feature is explained more in depth in the [Forms documentation](../forms/overview#saving-data-to-relationships). Please visit that page for more information about how to use it.
 
 ## Creating a relation manager
 
@@ -73,10 +82,10 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             Forms\Components\TextInput::make('title')->required(),
             // ...
         ]);
@@ -162,7 +171,7 @@ You can find out more about soft deleting [here](#deleting-records).
 
 Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-related-records), [edit](#editing-related-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
-You may use any features of the [Table Builder](../../tables) to customize relation managers.
+You may use any features of the [Table Builder](../tables) to customize relation managers.
 
 ### Listing with pivot attributes
 
@@ -193,10 +202,10 @@ For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot tabl
 use Filament\Forms;
 use Filament\Schemas\Schema;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             Forms\Components\TextInput::make('name')->required(),
             Forms\Components\TextInput::make('role')->required(),
             // ...
@@ -208,7 +217,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `CreateAction`
 
-To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/create).
+To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../actions/create).
 
 ## Editing related records
 
@@ -220,10 +229,10 @@ For `BelongsToMany` and `MorphToMany` relationships, you may also edit pivot tab
 use Filament\Forms;
 use Filament\Schemas\Schema;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             Forms\Components\TextInput::make('name')->required(),
             Forms\Components\TextInput::make('role')->required(),
             // ...
@@ -235,7 +244,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `EditAction`
 
-To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/edit).
+To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../actions/edit).
 
 ## Attaching and detaching records
 
@@ -540,11 +549,11 @@ public function table(Table $table): Table
 
 ### Customizing the `DeleteAction`
 
-To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [Actions documentation](../../actions/delete).
+To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [Actions documentation](../actions/delete).
 
 ## Importing related records
 
-The [`ImportAction`](../../actions/import) can be added to the header of a relation manager to import records. In this case, you probably want to tell the importer which owner these new records belong to. You can use [import options](../../actions/import#using-import-options) to pass through the ID of the owner record:
+The [`ImportAction`](../actions/import) can be added to the header of a relation manager to import records. In this case, you probably want to tell the importer which owner these new records belong to. You can use [import options](../actions/import#using-import-options) to pass through the ID of the owner record:
 
 ```php
 ImportAction::make()
@@ -584,17 +593,17 @@ Relation managers are Livewire components. When they are first loaded, the owner
 $this->getOwnerRecord()
 ```
 
-However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/overview#field-utility-injection) to access the `$livewire` instance:
+However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../forms/overview#field-utility-injection) to access the `$livewire` instance:
 
 ```php
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             Forms\Components\Select::make('store_id')
                 ->options(function (RelationManager $livewire): array {
                     return $livewire->getOwnerRecord()->stores()
@@ -656,7 +665,7 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
 
 ### Customizing the content tab
 
-On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../../schemas/tabs) customization methods:
+On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../schemas/tabs) customization methods:
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;
@@ -683,7 +692,7 @@ public function getContentTabPosition(): ?ContentTabPosition
 
 ## Customizing relation manager tabs
 
-To customize the tab for a relation manager, override the `getTabComponent()` method, and use any [Tab](../../schemas/tabs) customization methods:
+To customize the tab for a relation manager, override the `getTabComponent()` method, and use any [Tab](../schemas/tabs) customization methods:
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;
@@ -725,9 +734,9 @@ use App\Filament\Resources\Blog\Posts\PostResource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return PostResource::form($form);
+    return PostResource::form($schema);
 }
 
 public function table(Table $table): Table
@@ -842,7 +851,7 @@ public static function getTitle(Model $ownerRecord, string $pageClass): string
 }
 ```
 
-The title will be reflected in the [heading of the table](../../tables/overview#customizing-the-table-header), as well as the relation manager tab if there is more than one. If you want to customize the table heading independently, you can still use the `$table->heading()` method:
+The title will be reflected in the [heading of the table](../tables/overview#customizing-the-table-header), as well as the relation manager tab if there is more than one. If you want to customize the table heading independently, you can still use the `$table->heading()` method:
 
 ```php
 use Filament\Tables;
@@ -927,7 +936,9 @@ public static function getPages(): array
 }
 ```
 
-> When using a relation page, you do not need to generate a relation manager with `make:filament-relation-manager`, and you do not need to register it in the `getRelations()` method of the resource.
+<Aside variant="warning">
+    When using a relation page, you do not need to generate a relation manager with `make:filament-relation-manager`, and you do not need to register it in the `getRelations()` method of the resource.
+</Aside>
 
 Now, you can customize the page in exactly the same way as a relation manager, with the same `table()` and `form()`.
 

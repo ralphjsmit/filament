@@ -15,7 +15,7 @@ protected function mutateFormDataBeforeCreate(array $data): array
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/create#customizing-data-before-saving).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#customizing-data-before-saving).
 
 ## Customizing the creation process
 
@@ -30,7 +30,7 @@ protected function handleRecordCreation(array $data): Model
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/create#customizing-the-creation-process).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#customizing-the-creation-process).
 
 ## Customizing redirects
 
@@ -69,7 +69,7 @@ protected function getCreatedNotificationTitle(): ?string
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/create#customizing-the-save-notification).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#customizing-the-save-notification).
 
 You may customize the entire notification by overriding the `getCreatedNotification()` method on the create page class:
 
@@ -191,7 +191,7 @@ class CreateUser extends CreateRecord
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/create#lifecycle-hooks).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#lifecycle-hooks).
 
 ## Halting the creation process
 
@@ -221,7 +221,7 @@ protected function beforeCreate(): void
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/create#halting-the-creation-process).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#halting-the-creation-process).
 
 ## Authorization
 
@@ -254,7 +254,7 @@ class CreateCategory extends CreateRecord
 }
 ```
 
-Inside the `getSteps()` array, return your [wizard steps](../../schemas/wizards):
+Inside the `getSteps()` array, return your [wizard steps](../schemas/wizards):
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -294,7 +294,7 @@ protected function getSteps(): array
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/create#using-a-wizard).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#using-a-wizard).
 
 Now, create a new record to see your wizard in action! Edit will still use the form defined within the resource class.
 
@@ -318,10 +318,10 @@ use Filament\Schemas\Schema;
 
 class CategoryResource extends Resource
 {
-    public static function form(Schema $form): Schema
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 static::getNameFormField(),
                 static::getSlugFormField(),
                 // ...
@@ -389,7 +389,7 @@ protected function getHeaderActions(): array
 }
 ```
 
-The "importer" class [needs to be created](../../actions/import#creating-an-importer) to tell Filament how to import each row of the CSV. You can learn everything about the `ImportAction` in the [Actions documentation](../../actions/import).
+The "importer" class [needs to be created](../actions/import#creating-an-importer) to tell Filament how to import each row of the CSV. You can learn everything about the `ImportAction` in the [Actions documentation](../actions/import).
 
 ## Custom actions
 

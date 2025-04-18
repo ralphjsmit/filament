@@ -204,10 +204,10 @@ class Dashboard extends BaseDashboard
 {
     use HasFiltersForm;
 
-    public function filtersForm(Schema $form): Schema
+    public function filtersForm(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
                     ->schema([
                         DatePicker::make('startDate'),

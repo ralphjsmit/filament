@@ -18,10 +18,10 @@ By default, the View page will display a disabled form with the record's data. I
 use Filament\Infolists;
 use Filament\Schemas\Schema;
 
-public static function infolist(Schema $infolist): Schema
+public static function infolist(Schema $schema): Schema
 {
-    return $infolist
-        ->schema([
+    return $schema
+        ->components([
             Infolists\Components\TextEntry::make('name'),
             Infolists\Components\TextEntry::make('email'),
             Infolists\Components\TextEntry::make('notes')
@@ -30,9 +30,9 @@ public static function infolist(Schema $infolist): Schema
 }
 ```
 
-The `schema()` method is used to define the structure of your infolist. It is an array of [entries](../../infolists/entries#available-entries) and [layout components](../../schemas/layout#available-layout-components), in the order they should appear in your infolist.
+The `components()` method is used to define the structure of your infolist. It is an array of [entries](../infolists/entries#available-entries) and [layout components](../schemas/layout#available-layout-components), in the order they should appear in your infolist.
 
-Check out the Infolists docs for a [guide](../../infolists/getting-started) on how to build infolists with Filament.
+Check out the Infolists docs for a [guide](../infolists) on how to build infolists with Filament.
 
 ## Adding a View page to an existing resource
 
@@ -91,7 +91,7 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
-Alternatively, if you're viewing records in a modal action, check out the [Actions documentation](../../actions/view#customizing-data-before-filling-the-form).
+Alternatively, if you're viewing records in a modal action, check out the [Actions documentation](../actions/view#customizing-data-before-filling-the-form).
 
 ## Lifecycle hooks
 
@@ -152,10 +152,10 @@ Now, you can define the `infolist()` or `form()` for this page, which can contai
 ```php
 use Filament\Schemas\Schema;
 
-public function infolist(Schema $infolist): Schema
+public function infolist(Schema $schema): Schema
 {
-    return $infolist
-        ->schema([
+    return $schema
+        ->components([
             // ...
         ]);
 }

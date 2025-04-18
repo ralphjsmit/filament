@@ -1,6 +1,7 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
@@ -136,7 +137,9 @@ public static function getNavigationParentItem(): ?string
 
 As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
 
-> If you're reaching for a third level of navigation like this, you should consider using [clusters](clusters) instead, which are a logical grouping of resources and custom pages, which can share their own separate navigation.
+<Aside variant="tip">
+    If you're reaching for a third level of navigation like this, you should consider using [clusters](clusters) instead, which are a logical grouping of resources and custom pages, which can share their own separate navigation.
+</Aside>
 
 ### Customizing navigation groups
 
@@ -258,7 +261,9 @@ public function panel(Panel $panel): Panel
 
 ### Navigation groups in a collapsible sidebar on desktop
 
-> This section only applies to `sidebarCollapsibleOnDesktop()`, not `sidebarFullyCollapsibleOnDesktop()`, since the fully collapsible UI just hides the entire sidebar instead of changing its design.
+<Aside variant="info">
+    This section only applies to `sidebarCollapsibleOnDesktop()`, not `sidebarFullyCollapsibleOnDesktop()`, since the fully collapsible UI just hides the entire sidebar instead of changing its design.
+</Aside>
 
 When using a collapsible sidebar on desktop, you will also often be using [navigation groups](#grouping-navigation-items). By default, the labels of each navigation group will be hidden when the sidebar is collapsed, since there is no space to display them. Even if the navigation group itself is [collapsible](#making-navigation-groups-not-collapsible), all items will still be visible in the collapsed sidebar, since there is no group label to click on to expand the group.
 

@@ -6,7 +6,9 @@ import Checkbox from "@components/Checkbox.astro"
 import Checkboxes from "@components/Checkboxes.astro"
 import Disclosure from "@components/Disclosure.astro"
 
-> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
+<Aside variant="info">
+    If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
+</Aside>
 
 ## New requirements
 
@@ -29,7 +31,9 @@ Make sure to carefully follow the instructions, and review the changes made by t
 
 You can now `composer remove filament/upgrade` as you don't need it anymore.
 
-> Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
+<Aside variant="info">
+    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
+</Aside>
 
 ### Cleaning up your code style after upgrading to v4
 

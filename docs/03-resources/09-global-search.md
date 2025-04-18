@@ -1,6 +1,7 @@
 ---
 title: Global search
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -16,7 +17,9 @@ protected static ?string $recordTitleAttribute = 'title';
 
 This attribute is used to retrieve the search result title for that record.
 
-> Your resource needs to have an Edit or View page to allow the global search results to link to a URL, otherwise no results will be returned for this resource.
+<Aside variant="warning">
+    Your resource needs to have an Edit or View page to allow the global search results to link to a URL, otherwise no results will be returned for this resource.
+</Aside>
 
 You may customize the title further by overriding `getGlobalSearchResultTitle()` method. It may return a plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even Markdown, in the search result title:
 
@@ -92,7 +95,7 @@ public static function getGlobalSearchResultActions(Model $record): array
 }
 ```
 
-You can learn more about how to style action buttons [here](../../actions/overview).
+You can learn more about how to style action buttons [here](../actions/overview).
 
 ### Opening URLs from global search actions
 

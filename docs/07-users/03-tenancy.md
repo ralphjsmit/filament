@@ -1,6 +1,7 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -131,10 +132,10 @@ class RegisterTeam extends RegisterTenant
         return 'Register team';
     }
 
-    public function form(Schema $form): Schema
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name'),
                 // ...
             ]);
@@ -151,7 +152,7 @@ class RegisterTeam extends RegisterTenant
 }
 ```
 
-You may add any [form components](../forms/getting-started) to the `form()` method, and create the team inside the `handleRegistration()` method.
+You may add any [form components](../forms) to the `form()` method, and create the team inside the `handleRegistration()` method.
 
 Now, we need to tell Filament to use this page. We can do this in the [configuration](../panel-configuration):
 
@@ -191,10 +192,10 @@ class EditTeamProfile extends EditTenantProfile
         return 'Team profile';
     }
 
-    public function form(Schema $form): Schema
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name'),
                 // ...
             ]);
@@ -202,7 +203,7 @@ class EditTeamProfile extends EditTenantProfile
 }
 ```
 
-You may add any [form components](../forms/getting-started) to the `form()` method. They will get saved directly to the tenant model.
+You may add any [form components](../forms) to the `form()` method. They will get saved directly to the tenant model.
 
 Now, we need to tell Filament to use this page. We can do this in the [configuration](../panel-configuration):
 
@@ -722,7 +723,9 @@ public function panel(Panel $panel): Panel
 
 In this example, the `domain` attribute should contain a valid domain host, like `example.com` or `subdomain.example.com`.
 
-> Note: When using a parameter for the entire domain (`tenantDomain('{tenant:domain}')`), Filament will register a [global route parameter pattern](https://laravel.com/docs/routing#parameters-global-constraints) for all `tenant` parameters in the application to be `[a-z0-9.\-]+`. This is because Laravel does not allow the `.` character in route parameters by default. This might conflict with other panels using tenancy, or other parts of your application that use a `tenant` route parameter.
+<Aside variant="info">
+    When using a parameter for the entire domain (`tenantDomain('{tenant:domain}')`), Filament will register a [global route parameter pattern](https://laravel.com/docs/routing#parameters-global-constraints) for all `tenant` parameters in the application to be `[a-z0-9.\-]+`. This is because Laravel does not allow the `.` character in route parameters by default. This might conflict with other panels using tenancy, or other parts of your application that use a `tenant` route parameter.
+</Aside>
 
 ## Disabling tenancy for a resource
 

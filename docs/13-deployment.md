@@ -51,7 +51,9 @@ If you're not using the [`filament:optimize` command](#optimizing-filament-for-p
 
 From the [Laravel Forge documentation](https://forge.laravel.com/docs/servers/php.html#opcache):
 
-> Optimizing the PHP OPcache for production will configure OPcache to store your compiled PHP code in memory to greatly improve performance.
+<Aside variant="tip">
+    Optimizing the PHP OPcache for production will configure OPcache to store your compiled PHP code in memory to greatly improve performance.
+</Aside>
 
 Please use a search engine to find the relevant OPcache setup instructions for your environment.
 

@@ -1,6 +1,7 @@
 ---
 title: Rendering a form in a Blade view
 ---
+import Aside from "@components/Aside.astro"
 
 ## Setting up the Livewire component
 
@@ -58,10 +59,10 @@ class CreatePost extends Component implements HasSchemas
         $this->form->fill();
     }
     
-    public function form(Schema $form): Schema
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('title')
                     ->required(),
                 MarkdownEditor::make('content'),
@@ -98,9 +99,11 @@ Finally, in your Livewire component's view, render the form:
 </div>
 ```
 
-> `<x-filament-actions::modals />` is used to render form component [action modals](../schemas/actions). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
+<Aside variant="info">
+    `<x-filament-actions::modals />` is used to render form component [action modals](../schemas/actions). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
+</Aside>
 
-Visit your Livewire component in the browser, and you should see the form components from `schema()`:
+Visit your Livewire component in the browser, and you should see the form components from `components()`:
 
 Submit the form with data, and you'll see the form's data dumped to the screen. You can save the data to a model instead of dumping it:
 
@@ -145,10 +148,10 @@ use Filament\Schemas\Schema;
 
 public Post $post;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             // ...
         ])
         ->statePath('data')
@@ -164,10 +167,10 @@ In some cases, the form's model is not available until the form has been submitt
 use App\Models\Post;
 use Filament\Schemas\Schema;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             // ...
         ])
         ->statePath('data')
@@ -202,10 +205,10 @@ public ?string $title = null;
 
 public ?string $content = null;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             TextInput::make('title')
                 ->required(),
             MarkdownEditor::make('content'),
@@ -235,10 +238,10 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-public function editPostForm(Schema $form): Schema
+public function editPostForm(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             TextInput::make('title')
                 ->required(),
             MarkdownEditor::make('content'),
@@ -248,10 +251,10 @@ public function editPostForm(Schema $form): Schema
         ->model($this->post);
 }
 
-public function createCommentForm(Schema $form): Schema
+public function createCommentForm(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             TextInput::make('name')
                 ->required(),
             TextInput::make('email')

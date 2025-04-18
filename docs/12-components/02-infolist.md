@@ -47,11 +47,11 @@ Next, add a method to the Livewire component which accepts an `$infolist` object
 ```php
 use Filament\Schemas\Schema;
 
-public function productInfolist(Schema $infolist): Schema
+public function productInfolist(Schema $schema): Schema
 {
-    return $infolist
+    return $schema
         ->record($this->product)
-        ->schema([
+        ->components([
             // ...
         ]);
 }
@@ -73,11 +73,11 @@ Either pass an Eloquent model instance to the `record()` method of the infolist,
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
-public function productInfolist(Schema $infolist): Schema
+public function productInfolist(Schema $schema): Schema
 {
-    return $infolist
+    return $schema
         ->record($this->product)
-        ->schema([
+        ->components([
             TextEntry::make('name'),
             TextEntry::make('category.name'),
             // ...
@@ -91,9 +91,9 @@ Alternatively, you can pass an array of data to the `state()` method of the info
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
-public function productInfolist(Schema $infolist): Schema
+public function productInfolist(Schema $schema): Schema
 {
-    return $infolist
+    return $schema
         ->constantState([
             'name' => 'MacBook Pro',
             'category' => [
@@ -101,7 +101,7 @@ public function productInfolist(Schema $infolist): Schema
             ],
             // ...
         ])
-        ->schema([
+        ->components([
             TextEntry::make('name'),
             TextEntry::make('category.name'),
             // ...

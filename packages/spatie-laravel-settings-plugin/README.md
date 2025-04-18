@@ -41,10 +41,10 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             TextInput::make('copyright')
                 ->label('Copyright notice')
                 ->required(),

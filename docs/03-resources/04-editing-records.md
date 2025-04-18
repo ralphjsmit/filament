@@ -15,7 +15,7 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/edit#customizing-data-before-filling-the-form).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#customizing-data-before-filling-the-form).
 
 ## Customizing data before saving
 
@@ -30,7 +30,7 @@ protected function mutateFormDataBeforeSave(array $data): array
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/edit#customizing-data-before-saving).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#customizing-data-before-saving).
 
 ## Customizing the saving process
 
@@ -47,7 +47,7 @@ protected function handleRecordUpdate(Model $record, array $data): Model
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/edit#customizing-the-saving-process).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#customizing-the-saving-process).
 
 ## Customizing redirects
 
@@ -95,7 +95,7 @@ protected function getSavedNotificationTitle(): ?string
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/edit#customizing-the-save-notification).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#customizing-the-save-notification).
 
 You may customize the entire notification by overriding the `getSavedNotification()` method on the edit page class:
 
@@ -176,11 +176,11 @@ class EditUser extends EditRecord
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/edit#lifecycle-hooks).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#lifecycle-hooks).
 
 ## Saving a part of the form independently
 
-You may want to allow the user to save a part of the form independently of the rest of the form. One way to do this is with a [section action in the header or footer](../../schemas/sections#adding-actions-to-the-sections-header-or-footer). From the `action()` method, you can call `saveFormComponentOnly()`, passing in the `Section` component that you want to save:
+You may want to allow the user to save a part of the form independently of the rest of the form. One way to do this is with a [section action in the header or footer](../schemas/sections#adding-actions-to-the-sections-header-or-footer). From the `action()` method, you can call `saveFormComponentOnly()`, passing in the `Section` component that you want to save:
 
 ```php
 use Filament\Actions\Action;
@@ -237,7 +237,7 @@ protected function beforeSave(): void
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/edit#halting-the-saving-process).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#halting-the-saving-process).
 
 ## Authorization
 
@@ -356,10 +356,10 @@ Now, you can define the `form()` for this page, which can contain other fields t
 ```php
 use Filament\Schemas\Schema;
 
-public function form(Schema $form): Schema
+public function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
+    return $schema
+        ->components([
             // ...
         ]);
 }

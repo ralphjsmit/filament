@@ -212,10 +212,10 @@ use Filament\Forms\Components\TextInput
 
 class EditProfile extends BaseEditProfile
 {
-    public function form(Schema $form): Schema
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('username')
                     ->required()
                     ->maxLength(255),

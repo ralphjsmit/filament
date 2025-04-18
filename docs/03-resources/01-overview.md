@@ -1,6 +1,7 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -36,7 +37,9 @@ The classes in the `Pages` directory are used to customize the pages in the app 
 
 The classes in the `Schemas` directory are used to define the content of the [forms](../forms) and [infolists](../infolists) for your resource. The classes in the `Tables` directory are used to build the table for your resource.
 
-> Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
+<Aside variant="tip">
+    Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
+</Aside>
 
 ### Simple (modal) resources
 
@@ -108,30 +111,65 @@ protected static ?string $recordTitleAttribute = 'name';
 
 This is required for features like [global search](global-search) to work.
 
-> You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is inadequate at identifying a record.
+<Aside variant="tip">
+    You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is inadequate at identifying a record.
+</Aside>
 
 ## Resource forms
 
-Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
+Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages.
+
+By default, Filament creates a form schema file for you, which is referenced in the `form()` method. This is to keep your resource class clean and organized, otherwise it can get quite large:
 
 ```php
-use Filament\Forms;
+use App\Filament\Resources\Customers\Schemas\CustomerForm;
 use Filament\Schemas\Schema;
 
-public static function form(Schema $form): Schema
+public static function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
-            Forms\Components\TextInput::make('name')->required(),
-            Forms\Components\TextInput::make('email')->email()->required(),
+    return CustomerForm::configure($schema);
+}
+```
+
+In the `CustomerForm` class, you can define the fields and layout of your form:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+public static function configure(Schema $schema): Schema
+{
+    return $schema
+        ->components([
+            TextInput::make('name')->required(),
+            TextInput::make('email')->email()->required(),
             // ...
         ]);
 }
 ```
 
-The `schema()` method is used to define the structure of your form. It is an array of [fields](../../forms/fields#available-fields) and [layout components](../../schemas/layout#available-layout-components), in the order they should appear in your form.
+The `components()` method is used to define the structure of your form. It is an array of [fields](../forms/fields#available-fields) and [layout components](../schemas/layout#available-layout-components), in the order they should appear in your form.
 
-Check out the Forms docs for a [guide](../../forms/getting-started) on how to build forms with Filament.
+Check out the Forms docs for a [guide](../forms) on how to build forms with Filament.
+
+<Aside variant="tip">
+    If you would prefer to define the form directly in the resource class, you can do so and delete the form schema class altogether:
+
+    ```php
+    use Filament\Forms\Components\TextInput;
+    use Filament\Schemas\Schema;
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')->required(),
+                TextInput::make('email')->email()->required(),
+                // ...
+            ]);
+    }
+    ```
+</Aside>
 
 ### Hiding components based on the current operation
 
@@ -140,9 +178,10 @@ The `hiddenOn()` method of form components allows you to dynamically hide fields
 In this example, we hide the `password` field on the `edit` page:
 
 ```php
+use Filament\Forms\Components\TextInput;
 use Filament\Support\Enums\Operation;
 
-Forms\Components\TextInput::make('password')
+TextInput::make('password')
     ->password()
     ->required()
     ->hiddenOn(Operation::Edit),
@@ -151,9 +190,10 @@ Forms\Components\TextInput::make('password')
 Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page or action:
 
 ```php
+use Filament\Forms\Components\TextInput;
 use Filament\Support\Enums\Operation;
 
-Forms\Components\TextInput::make('password')
+TextInput::make('password')
     ->password()
     ->required()
     ->visibleOn(Operation::Create),
@@ -161,38 +201,93 @@ Forms\Components\TextInput::make('password')
 
 ## Resource tables
 
-Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
+Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records).
+
+By default, Filament creates a table file for you, which is referenced in the `table()` method. This is to keep your resource class clean and organized, otherwise it can get quite large:
 
 ```php
-use Filament\Tables;
+use App\Filament\Resources\Customers\Schemas\CustomersTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 public static function table(Table $table): Table
 {
+    return CustomersTable::configure($table);
+}
+```
+
+In the `CustomersTable` class, you can define the columns, filters and actions of the table:
+
+```php
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+
+public static function configure(Table $table): Table
+{
     return $table
         ->columns([
-            Tables\Columns\TextColumn::make('name'),
-            Tables\Columns\TextColumn::make('email'),
+            TextColumn::make('name'),
+            TextColumn::make('email'),
             // ...
         ])
         ->filters([
-            Tables\Filters\Filter::make('verified')
+            Filter::make('verified')
                 ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             // ...
         ])
         ->actions([
-            \Filament\Actions\EditAction::make(),
+            EditAction::make(),
         ])
         ->bulkActions([
-            \Filament\Actions\BulkActionGroup::make([
-                \Filament\Actions\DeleteBulkAction::make(),
+            BulkActionGroup::make([
+                DeleteBulkAction::make(),
             ]),
         ]);
 }
 ```
 
-Check out the [tables](../../tables) docs to find out how to add table columns, filters, actions and more.
+Check out the [tables](../tables) docs to find out how to add table columns, filters, actions and more.
+
+<Aside variant="tip">
+    If you would prefer to define the table directly in the resource class, you can do so and delete the table class altogether:
+
+    ```php
+    use Filament\Actions\BulkActionGroup;
+    use Filament\Actions\DeleteBulkAction;
+    use Filament\Actions\EditAction;
+    use Filament\Tables\Columns\TextColumn;
+    use Filament\Tables\Filters\Filter;
+    use Filament\Tables\Table;
+    use Illuminate\Database\Eloquent\Builder;
+    
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email'),
+                // ...
+            ])
+            ->filters([
+                Filter::make('verified')
+                    ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
+                // ...
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+    ```
+</Aside>
 
 ## Authorization
 
@@ -359,7 +454,9 @@ public static function getNavigationParentItem(): ?string
 }
 ```
 
-> If you're reaching for a third level of navigation like this, you should consider using [clusters](clusters) instead, which are a logical grouping of resources and [custom pages](../navigation/custom-pages), which can share their own separate navigation.
+<Aside variant="tip">
+    If you're reaching for a third level of navigation like this, you should consider using [clusters](../navigation/clusters) instead, which are a logical grouping of resources and [custom pages](../navigation/custom-pages), which can share their own separate navigation.
+</Aside>
 
 ## Generating URLs to resource pages
 
@@ -486,24 +583,25 @@ Sub-navigation allows the user to navigate between different pages within a reso
 To add a sub-navigation to each "singular record" page in the resource, you can add the `getRecordSubNavigation()` method to the resource class:
 
 ```php
-use App\Filament\Resources\Customers\Pages;
 use Filament\Resources\Pages\Page;
 
 public static function getRecordSubNavigation(Page $page): array
 {
     return $page->generateNavigationItems([
-        Pages\ViewCustomer::class,
-        Pages\EditCustomer::class,
-        Pages\EditCustomerContact::class,
-        Pages\ManageCustomerAddresses::class,
-        Pages\ManageCustomerPayments::class,
+        ViewCustomer::class,
+        EditCustomer::class,
+        EditCustomerContact::class,
+        ManageCustomerAddresses::class,
+        ManageCustomerPayments::class,
     ]);
 }
 ```
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
 
-> If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../navigation/custom-pages), you might be looking for [clusters](../navigation/clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
+<Aside variant="tip">
+    If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../navigation/custom-pages), you might be looking for [clusters](../navigation/clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
+</Aside>
 
 ### Setting the sub-navigation position for a resource
 
@@ -525,8 +623,8 @@ For example, you may have a resource with records that may not be created by any
 public static function getPages(): array
 {
     return [
-        'index' => Pages\ListCustomers::route('/'),
-        'edit' => Pages\EditCustomer::route('/{record}/edit'),
+        'index' => ListCustomers::route('/'),
+        'edit' => EditCustomer::route('/{record}/edit'),
     ];
 }
 ```

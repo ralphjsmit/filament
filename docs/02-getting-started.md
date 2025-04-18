@@ -1,10 +1,13 @@
 ---
 title: Getting started
 ---
+import Aside from "@components/Aside.astro"
 
 Once you have [installed Filament](introduction/installation#installing-the-panel-builder), you can start building your application.
 
-> This guide is for the Filament panel builder. If you are looking to use the Filament UI components outside of a panel, visit the [Components](components) documentation.
+<Aside variant="info">
+    This guide is for the Filament panel builder. If you are looking to use the Filament UI components outside of a panel, visit the [Components](components) documentation.
+</Aside>
 
 To start, visit `/admin` and sign in with a user account. You will be redirected to the default dashboard of the panel.
 
