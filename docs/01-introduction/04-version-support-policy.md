@@ -1,5 +1,5 @@
 ---
-title: Version Support Policy
+title: Version support policy
 contents: false
 ---
 
