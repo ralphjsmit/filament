@@ -44,12 +44,12 @@ public static function form(Schema $schema): Schema
 You could do the same for the `table()`:
 
 ```php
-use App\Filament\Resources\Customers\Schemas\CustomerTable;
+use App\Filament\Resources\Customers\Schemas\CustomersTable;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
-    return CustomerTable::configure($table);
+    return CustomersTable::configure($table);
 }
 ```
 
