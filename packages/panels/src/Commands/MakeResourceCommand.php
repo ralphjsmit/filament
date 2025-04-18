@@ -700,6 +700,10 @@ class MakeResourceCommand extends Command
 
     protected function createViewPage(): void
     {
+        if (! $this->hasViewOperation) {
+            return;
+        }
+
         if ($this->isSimple) {
             return;
         }
