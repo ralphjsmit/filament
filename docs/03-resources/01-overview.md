@@ -289,27 +289,6 @@ Check out the [tables](../tables) docs to find out how to add table columns, fil
     ```
 </Aside>
 
-## Authorization
-
-For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
-
-- `viewAny()` is used to completely hide resources from the navigation menu, and prevents the user from accessing any pages.
-- `create()` is used to control [creating new records](creating-records).
-- `update()` is used to control [editing a record](editing-records).
-- `view()` is used to control [viewing a record](viewing-records).
-- `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant. When using a `DeleteBulkAction`, if you want to call the `delete()` method for each record anyway, you should use the `DeleteBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
-- `forceDelete()` is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant. When using a `ForceDeleteBulkAction`, if you want to call the `forceDelete()` method for each record anyway, you should use the `ForceDeleteBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
-- `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant. When using a `RestoreBulkAction`, if you want to call the `restore()` method for each record anyway, you should use the `RestoreBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
-- `reorder()` is used to control [reordering records in a table](listing-records#reordering-records).
-
-### Skipping authorization
-
-If you'd like to skip authorization for a resource, you may set the `$shouldSkipAuthorization` property to `true`:
-
-```php
-protected static bool $shouldSkipAuthorization = true;
-```
-
 ## Customizing the model label
 
 Each resource has a "model label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
@@ -630,3 +609,47 @@ public static function getPages(): array
 ```
 
 Deleting a page will not delete any actions that link to that page. Any actions will open a modal instead of sending the user to the non-existent page. For instance, the `CreateAction` on the List page, the `EditAction` on the table or View page, or the `ViewAction` on the table or Edit page. If you want to remove those buttons, you must delete the actions as well.
+
+## Security
+
+## Authorization
+
+For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
+
+- `viewAny()` is used to completely hide resources from the navigation menu, and prevents the user from accessing any pages.
+- `create()` is used to control [creating new records](creating-records).
+- `update()` is used to control [editing a record](editing-records).
+- `view()` is used to control [viewing a record](viewing-records).
+- `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant. When using a `DeleteBulkAction`, if you want to call the `delete()` method for each record anyway, you should use the `DeleteBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
+- `forceDelete()` is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant. When using a `ForceDeleteBulkAction`, if you want to call the `forceDelete()` method for each record anyway, you should use the `ForceDeleteBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
+- `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant. When using a `RestoreBulkAction`, if you want to call the `restore()` method for each record anyway, you should use the `RestoreBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
+- `reorder()` is used to control [reordering records in a table](listing-records#reordering-records).
+
+### Skipping authorization
+
+If you'd like to skip authorization for a resource, you may set the `$shouldSkipAuthorization` property to `true`:
+
+```php
+protected static bool $shouldSkipAuthorization = true;
+```
+
+### Protecting model attributes
+
+Filament will expose all model attributes to JavaScript, except if they are `$hidden` on your model. This is Livewire's behavior for model binding. We preserve this functionality to facilitate the dynamic addition and removal of form fields after they are initially loaded, while preserving the data they may need.
+
+<Aside variant="danger">
+    While attributes may be visible in JavaScript, only those with a form field are actually editable by the user. This is not an issue with mass assignment.
+</Aside>
+
+To remove certain attributes from JavaScript on the Edit and View pages, you may override [the `mutateFormDataBeforeFill()` method](editing-records#customizing-data-before-filling-the-form):
+
+```php
+protected function mutateFormDataBeforeFill(array $data): array
+{
+    unset($data['is_admin']);
+
+    return $data;
+}
+```
+
+In this example, we remove the `is_admin` attribute from JavaScript, as it's not being used by the form.
