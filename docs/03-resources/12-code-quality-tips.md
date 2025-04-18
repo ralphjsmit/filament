@@ -1,7 +1,6 @@
 ---
 title: Code quality tips
 ---
-import Aside from "@components/Aside.astro"
 
 ## Using schema and table classes
 
