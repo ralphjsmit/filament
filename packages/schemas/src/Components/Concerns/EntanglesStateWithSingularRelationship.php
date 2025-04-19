@@ -19,15 +19,18 @@ trait EntanglesStateWithSingularRelationship
 
     protected ?string $relationship = null;
 
+    protected string | Closure | null $relatedModel = null;
+
     protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
 
     protected ?Closure $mutateRelationshipDataBeforeFillUsing = null;
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
-    public function relationship(string $name, bool | Closure $condition = true): static
+    public function relationship(string $name, bool | Closure $condition = true, string | Closure | null $relatedModel = null): static
     {
         $this->relationship = $name;
+        $this->relatedModel = $relatedModel;
         $this->statePath($name);
 
         $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
@@ -45,43 +48,7 @@ trait EntanglesStateWithSingularRelationship
                 return;
             }
 
-            if ($record) {
-                return;
-            }
-
-            $relationship = $component->getRelationship();
-
-            if ($relationship instanceof BelongsTo) {
-                return;
-            }
-
             $data = $component->getChildSchema()->getState(shouldCallHooksBefore: false);
-            $data = $component->mutateRelationshipDataBeforeCreate($data);
-
-            $relatedModel = $component->getRelatedModel();
-
-            $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
-
-            if ($translatableContentDriver) {
-                $record = $translatableContentDriver->makeRecord($relatedModel, $data);
-            } else {
-                $record = new $relatedModel;
-                $record->fill($data);
-            }
-
-            $relationship->save($record);
-
-            $component->cachedExistingRecord($record);
-        });
-
-        $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, LivewireComponent & HasSchemas $livewire) use ($condition): void {
-            if (! $component->evaluate($condition)) {
-                return;
-            }
-
-            $data = $component->getChildSchema()->getState(shouldCallHooksBefore: false);
-
-            $record = $component->getCachedExistingRecord();
 
             $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
 
@@ -96,14 +63,9 @@ trait EntanglesStateWithSingularRelationship
             }
 
             $relationship = $component->getRelationship();
-
-            if (! ($relationship instanceof BelongsTo)) {
-                return;
-            }
+            $relatedModel = $component->getRelatedModel();
 
             $data = $component->mutateRelationshipDataBeforeCreate($data);
-
-            $relatedModel = $component->getRelatedModel();
 
             if ($translatableContentDriver) {
                 $record = $translatableContentDriver->makeRecord($relatedModel, $data);
@@ -112,10 +74,13 @@ trait EntanglesStateWithSingularRelationship
                 $record->fill($data);
             }
 
-            $record->save();
-
-            $relationship->associate($record);
-            $relationship->getParent()->save();
+            if ($relationship instanceof BelongsTo) {
+                $record->save();
+                $relationship->associate($record);
+                $relationship->getParent()->save();
+            } else {
+                $relationship->save($record);
+            }
 
             $component->cachedExistingRecord($record);
         });
@@ -195,7 +160,7 @@ trait EntanglesStateWithSingularRelationship
      */
     public function getRelatedModel(): ?string
     {
-        return $this->getRelationship()?->getModel()::class;
+        return $this->evaluate($this->relatedModel) ?? $this->getRelationship()?->getModel()::class;
     }
 
     public function cachedExistingRecord(?Model $record): static
