@@ -120,16 +120,16 @@ trait CanBeValidated
 
         $livewire = $this->getLivewire();
 
-        // By storing the currently validating form in the Livewire component, we can optimize the validation process
-        // so that the `prepareForValidation()` method is only called for the current form instead of all forms.
+        // By storing the currently validating schema in the Livewire component, we can optimize the validation process
+        // so that the `prepareForValidation()` method is only called for the current schema instead of all schemas.
         // This can also prevent infinite loops involving schemas that self-validate, such as the table query
         // builder which crashes when it is being used while an action is submitted.
-        $livewire->currentlyValidatingForm($this);
+        $livewire->currentlyValidatingSchema($this);
 
         try {
             return $livewire->validate($rules, $this->getValidationMessages(), $this->getValidationAttributes());
         } finally {
-            $livewire->currentlyValidatingForm(null);
+            $livewire->currentlyValidatingSchema(null);
         }
     }
 }

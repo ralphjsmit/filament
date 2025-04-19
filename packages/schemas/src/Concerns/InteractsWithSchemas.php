@@ -46,6 +46,8 @@ trait InteractsWithSchemas
 
     protected bool $isCachingSchemas = false;
 
+    protected ?Schema $currentlyValidatingSchema = null;
+
     public function isCachingSchemas(): bool
     {
         return $this->isCachingSchemas;
@@ -122,8 +124,8 @@ trait InteractsWithSchemas
 
     public function updatedInteractsWithSchemas(string $statePath): void
     {
-        foreach ($this->getCachedSchemas() as $form) {
-            $form->callAfterStateUpdated($statePath);
+        foreach ($this->getCachedSchemas() as $schema) {
+            $schema->callAfterStateUpdated($statePath);
         }
     }
 
@@ -334,8 +336,12 @@ trait InteractsWithSchemas
      */
     protected function prepareForValidation($attributes): array
     {
-        foreach ($this->getCachedSchemas() as $form) {
-            $attributes = $form->mutateStateForValidation($attributes);
+        if ($this->currentlyValidatingSchema) {
+            $attributes = $this->currentlyValidatingSchema->mutateStateForValidation($attributes);
+        } else {
+            foreach ($this->getCachedSchemas() as $schema) {
+                $attributes = $schema->mutateStateForValidation($attributes);
+            }
         }
 
         return $attributes;
@@ -348,10 +354,10 @@ trait InteractsWithSchemas
     {
         $rules = parent::getRules();
 
-        foreach ($this->getCachedSchemas() as $form) {
+        foreach ($this->getCachedSchemas() as $schema) {
             $rules = [
                 ...$rules,
-                ...$form->getValidationRules(),
+                ...$schema->getValidationRules(),
             ];
         }
 
@@ -365,10 +371,10 @@ trait InteractsWithSchemas
     {
         $attributes = parent::getValidationAttributes();
 
-        foreach ($this->getCachedSchemas() as $form) {
+        foreach ($this->getCachedSchemas() as $schema) {
             $attributes = [
                 ...$attributes,
-                ...$form->getValidationAttributes(),
+                ...$schema->getValidationAttributes(),
             ];
         }
 
@@ -418,5 +424,10 @@ trait InteractsWithSchemas
                 $this->unsetMissingNumericArrayKeys($target[$key], $state[$key]);
             }
         }
+    }
+
+    public function currentlyValidatingSchema(?Schema $schema): void
+    {
+        $this->currentlyValidatingSchema = $schema;
     }
 }
