@@ -22,6 +22,17 @@ trait BelongsToContainer
         return $this->container;
     }
 
+    public function getRootContainer(): Schema
+    {
+        $container = $this->getContainer();
+
+        while (($parentComponent = $container->getParentComponent()) !== null) {
+            $container = $parentComponent->getContainer();
+        }
+
+        return $container;
+    }
+
     public function getLivewire(): Component & HasSchemas
     {
         return $this->getContainer()->getLivewire();

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Arr;
 use Livewire\Component as LivewireComponent;
 
 trait EntanglesStateWithSingularRelationship
@@ -27,9 +28,12 @@ trait EntanglesStateWithSingularRelationship
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
+    protected bool | Closure $hasRelationship = false;
+
     public function relationship(string $name, bool | Closure $condition = true, string | Closure | null $relatedModel = null): static
     {
         $this->relationship = $name;
+        $this->hasRelationship = $condition;
         $this->relatedModel = $relatedModel;
         $this->statePath($name);
 
@@ -39,25 +43,78 @@ trait EntanglesStateWithSingularRelationship
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, LivewireComponent & HasSchemas $livewire) use ($condition): void {
+        $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, LivewireComponent & HasSchemas $livewire): void {
+            // All layout components using this relationship should be saved together in this function.
+            $componentsWithThisRelationship = [];
+
+            $findComponentsWithThisRelationship = function (Schema $schema) use ($component, &$componentsWithThisRelationship, &$findComponentsWithThisRelationship): void {
+                foreach ($schema->getComponents(withActions: false, withHidden: true) as $childComponent) {
+                    if ($childComponent->isHidden() && (! $childComponent->shouldSaveRelationshipsWhenHidden())) {
+                        continue;
+                    }
+
+                    if ($childComponent->getModel() !== $component->getModel()) {
+                        continue;
+                    }
+
+                    if ($childComponent->getRecord() !== $component->getRecord()) {
+                        continue;
+                    }
+
+                    if (
+                        ($childComponent instanceof CanEntangleWithSingularRelationships) &&
+                        ($childComponent->getRelationshipName() === $component->getRelationshipName()) &&
+                        ($childComponent->hasRelationship())
+                    ) {
+                        $componentsWithThisRelationship[] = $childComponent;
+
+                        continue;
+                    }
+
+                    foreach ($childComponent->getChildSchemas() as $schema) {
+                        $findComponentsWithThisRelationship($schema);
+                    }
+                }
+            };
+
+            $findComponentsWithThisRelationship($component->getRootContainer());
+
+            // The first layout component using this relationship is the one that will save the relationship for all of them.
+            if (Arr::first($componentsWithThisRelationship) !== $component) {
+                return;
+            }
+
             $record = $component->getCachedExistingRecord();
 
-            if (! $component->evaluate($condition)) {
+            if (! $component->hasRelationship()) {
                 $record?->delete();
 
                 return;
             }
 
-            $data = $component->getChildSchema()->getState(shouldCallHooksBefore: false);
+            $data = [];
+
+            foreach ($componentsWithThisRelationship as $componentWithThisRelationship) {
+                $data = [
+                    ...$data,
+                    ...$componentWithThisRelationship->getChildSchema()->getState(shouldCallHooksBefore: false),
+                ];
+            }
 
             $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
 
             if ($record) {
-                $data = $component->mutateRelationshipDataBeforeSave($data);
+                foreach ($componentsWithThisRelationship as $componentWithThisRelationship) {
+                    $data = $componentWithThisRelationship->mutateRelationshipDataBeforeSave($data);
+                }
 
                 $translatableContentDriver ?
                     $translatableContentDriver->updateRecord($record, $data) :
                     $record->fill($data)->save();
+
+                foreach ($componentsWithThisRelationship as $componentWithThisRelationship) {
+                    $componentWithThisRelationship->cachedExistingRecord($record);
+                }
 
                 return;
             }
@@ -65,7 +122,9 @@ trait EntanglesStateWithSingularRelationship
             $relationship = $component->getRelationship();
             $relatedModel = $component->getRelatedModel();
 
-            $data = $component->mutateRelationshipDataBeforeCreate($data);
+            foreach ($componentsWithThisRelationship as $componentWithThisRelationship) {
+                $data = $componentWithThisRelationship->mutateRelationshipDataBeforeCreate($data);
+            }
 
             if ($translatableContentDriver) {
                 $record = $translatableContentDriver->makeRecord($relatedModel, $data);
@@ -82,7 +141,9 @@ trait EntanglesStateWithSingularRelationship
                 $relationship->save($record);
             }
 
-            $component->cachedExistingRecord($record);
+            foreach ($componentsWithThisRelationship as $componentWithThisRelationship) {
+                $componentWithThisRelationship->cachedExistingRecord($record);
+            }
         });
 
         $this->dehydrated(false);
@@ -153,6 +214,11 @@ trait EntanglesStateWithSingularRelationship
     public function getRelationshipName(): ?string
     {
         return $this->relationship;
+    }
+
+    public function hasRelationship(): bool
+    {
+        return $this->evaluate($this->hasRelationship) && filled($this->getRelationshipName());
     }
 
     /**
