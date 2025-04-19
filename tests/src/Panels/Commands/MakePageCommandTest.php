@@ -272,7 +272,7 @@ it('can generate a view page class in a resource', function (): void {
     ];
 
     $this->artisan('make:filament-page', [
-        'name' => 'EditUser',
+        'name' => 'ViewUser',
         '--panel' => 'admin',
         '--resource' => 'Users\\UserResource',
         '--type' => 'view',
