@@ -1546,11 +1546,31 @@ Group::make()
     ])
 ```
 
-### Saving data to a `BelongsTo` relationship
+### Saving data to a `BelongsTo` or `MorphTo` relationship
 
-Please note that if you are saving the data to a `BelongsTo` relationship, then the foreign key column in your database must be `nullable()`. This is because Filament saves the schema first, before saving the relationship. Since the schema is saved first, the foreign ID does not exist yet, so it must be nullable. Immediately after the schema is saved, Filament saves the relationship, which will then fill in the foreign ID and save it again.
+Please note that if you are saving the data to a `BelongsTo` or `MorphTo` relationship, then the foreign key column in your database must be `nullable()`. This is because Filament saves the schema first, before saving the relationship. Since the schema is saved first, the foreign ID does not exist yet, so it must be nullable. Immediately after the schema is saved, Filament saves the relationship, which will then fill in the foreign ID and save it again.
 
-It is worth noting that if you have an observer on your schema model, then you may need to adapt it to ensure that it does not depend on the relationship existing when it it created. For example, if you have an observer that sends an email to a related record when a schema is created, you may need to switch to using a different hook that runs after the relationship is attached, like `updated()`.
+It is worth noting that if you have an observer on your schema model, then you may need to adapt it to ensure that it does not depend on the relationship existing when it is created. For example, if you have an observer that sends an email to a related record when a schema is created, you may need to switch to using a different hook that runs after the relationship is attached, like `updated()`.
+
+#### Specifying the related model for a `MorphTo` relationship
+
+If you are using a `MorphTo` relationship, and you want Filament to be able to create `MorphTo` records instead of just updating them, you need to specify the related model using the `relatedModel` parameter of the `relationship()` method:
+
+```php
+use App\Models\Organization;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+
+Group::make()
+    ->relationship('customer', relatedModel: Organization::class)
+    ->schema([
+        // ...
+    ])
+```
+
+In this example, `customer` is a `MorphTo` relationship, and could be an `Individual` or `Organization`. By specifying the `relatedModel` parameter, Filament will be able to create `Organization` records when the form is submitted. If you do not specify this parameter, Filament will only be able to update existing records.
+
+<UtilityInjection set="formFields" version="4.x">The `relatedModel` parameter also accepts a function that returns the related model class name. This is useful if you want to dynamically determine the related model based on the current state of the form. You can inject various utilities into this function.</UtilityInjection>
 
 ### Conditionally saving data to a relationship
 
