@@ -1,5 +1,5 @@
 .fi-topbar-ctn {
-    @apply sticky top-0 z-20 overflow-x-clip;
+    @apply sticky top-0 z-30 overflow-x-clip;
 }
 
 .fi-topbar {

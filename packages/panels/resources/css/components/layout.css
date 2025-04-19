@@ -31,7 +31,7 @@ html.fi {
 }
 
 .fi-layout {
-    @apply flex h-full w-full flex-row-reverse overflow-x-clip;
+    @apply flex h-full w-full overflow-x-clip;
 }
 
 .fi-main-ctn {
@@ -131,10 +131,6 @@ html.fi {
     &.fi-width-screen {
         @apply fixed inset-0;
     }
-}
-
-.fi-sidebar-close-overlay {
-    @apply fixed inset-0 z-30 bg-gray-950/50 transition duration-500 lg:hidden dark:bg-gray-950/75;
 }
 
 .fi-simple-layout {
