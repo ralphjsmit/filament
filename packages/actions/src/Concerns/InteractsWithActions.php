@@ -524,12 +524,12 @@ trait InteractsWithActions
 
         $key = $action['context']['schemaComponent'];
 
-        $schemaKey = (string) str($key)->before('.');
+        $schemaName = (string) str($key)->before('.');
 
-        $schema = $this->getSchema($schemaKey);
+        $schema = $this->getSchema($schemaName);
 
         if (! $schema) {
-            throw new ActionNotResolvableException("Schema [{$schemaKey}] not found.");
+            throw new ActionNotResolvableException("Schema [{$schemaName}] not found.");
         }
 
         $resolvedAction = $schema->getAction(
