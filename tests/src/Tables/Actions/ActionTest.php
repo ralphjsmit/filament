@@ -3,7 +3,7 @@
 use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\Testing\Fixtures\TestAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;

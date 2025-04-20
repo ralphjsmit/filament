@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Actions\Testing\Fixtures\TestAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;

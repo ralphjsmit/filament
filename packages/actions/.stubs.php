@@ -4,7 +4,7 @@ namespace Livewire\Features\SupportTesting {
 
     use BackedEnum;
     use Closure;
-    use Filament\Actions\Testing\Fixtures\TestAction;
+    use Filament\Actions\Testing\TestAction;
 
     class Testable {
         public function mountAction(string | TestAction | array $actions, array $arguments = []): static {}

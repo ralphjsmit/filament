@@ -4,7 +4,7 @@ title: Testing actions
 
 ## Introduction
 
-All examples in this guide will be written using [Pest](https://pestphp.com). To use Pest's Livewire plugin for testing, you can follow the installation instructions in the Pest documentation on plugins: [Livewire plugin for Pest](https://pestphp.com/docs/plugins#livewire). However, you can easily adapt this to PHPUnit.
+All examples in this guide will be written using [Pest](https://pestphp.com). To use Pest's Livewire plugin for testing, you can follow the installation instructions in the Pest documentation on plugins: [Livewire plugin for Pest](https://pestphp.com/docs/plugins#livewire). However, you can easily adapt this to PHPUnit, mostly by switching out the `livewire()` function from Pest with the `Livewire::test()` method.
 
 Since all actions are mounted to a Livewire component, we're just using Livewire testing helpers everywhere. If you've never tested Livewire components before, please read [this guide](https://livewire.laravel.com/docs/testing) from the Livewire docs.
 
@@ -170,6 +170,26 @@ it('can send but not unsend invoices', function () {
 });
 ```
 
+You may pass a function as an additional argument to assert that an action passes a given "truth test". This is useful for asserting that an action has a specific configuration:
+
+```php
+use Filament\Actions\Action;
+use function Pest\Livewire\livewire;
+
+it('has the correct description', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertActionExists('send', function (Action $action): bool {
+            return $action->getModalDescription() === 'This will send an email to the customer\'s primary address, with the invoice attached as a PDF';
+        });
+});
+```
+
+### Hidden actions
+
 To ensure an action is hidden or visible for a user, you can use the `assertActionHidden()` or `assertActionVisible()` methods:
 
 ```php
@@ -185,6 +205,8 @@ it('can only print invoices', function () {
         ->assertActionVisible('print');
 });
 ```
+
+### Disabled actions
 
 To ensure an action is enabled or disabled for a user, you can use the `assertActionEnabled()` or `assertActionDisabled()` methods:
 
@@ -301,4 +323,151 @@ it('links to the correct Filament sites', function () {
         ->assertActionShouldOpenUrlInNewTab('filament')
         ->assertActionShouldNotOpenUrlInNewTab('github');
 });
+```
+
+## Testing table actions
+
+To test table actions, you can use a `TestAction` object with the `table()` method. This object receives the name of the action you want to test, and replaces the name of the action in any testing method you want to use. For example:
+
+```php
+use Filament\Actions\Testing\TestAction;use function Pest\Livewire\livewire;
+
+$invoice = Invoice::factory()->create();
+
+livewire(ListInvoices::class)
+    ->callAction(TestAction::make('send')->table($invoice));
+
+livewire(ListInvoices::class)
+    ->assertActionVisible(TestAction::make('send')->table($invoice))
+
+livewire(ListInvoices::class)
+    ->assertActionExists(TestAction::make('send')->table($invoice))
+```
+
+### Testing table header actions
+
+To test a header action, you can use the `table()` method without passing in a specific record to test with:
+
+```php
+use Filament\Actions\Testing\TestAction;use function Pest\Livewire\livewire;
+
+livewire(ListInvoices::class)
+    ->callAction(TestAction::make('create')->table());
+
+livewire(ListInvoices::class)
+    ->assertActionVisible(TestAction::make('create')->table())
+
+livewire(ListInvoices::class)
+    ->assertActionExists(TestAction::make('create')->table())
+```
+
+### Testing table bulk actions
+
+To test a bulk action, first call `selectTableRecords()` and pass in any records you want to select. Then, use the `TestAction`'s `bulk()` method to specify the action you want to test. For example:
+
+```php
+use Filament\Actions\Testing\TestAction;use function Pest\Livewire\livewire;
+
+$invoices = Invoice::factory()->count(3)->create();
+
+livewire(ListInvoices::class)
+    ->selectTableRecords($invoices->pluck('id')->toArray())
+    ->callAction(TestAction::make('send')->table()->bulk());
+
+livewire(ListInvoices::class)
+    ->assertActionVisible(TestAction::make('send')->table()->bulk())
+
+livewire(ListInvoices::class)
+    ->assertActionExists(TestAction::make('send')->table()->bulk())
+```
+
+## Testing resource form component actions
+
+If an action belongs to a component in a resource's form, for example, if it is in the `belowContent()` method of a form field, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. The `schemaComponent()` method should receive a `TestSchemaComponent::inResourceForm()` object, which accepts the name of the form component you want to test. For example:
+
+```php
+use Filament\Actions\Testing\TestAction;
+use Filament\Schemas\Testing\TestSchemaComponent;
+use function Pest\Livewire\livewire;
+
+$invoice = Invoice::factory()->create();
+
+livewire(EditInvoice::class)
+    ->callAction(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceForm('customer_id')));
+
+livewire(EditInvoice::class)
+    ->assertActionVisible(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceForm('customer_id')))
+
+livewire(EditInvoice::class)
+    ->assertActionExists(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceForm('customer_id')))
+```
+
+## Testing resource infolist component actions
+
+If an action belongs to a component in a resource's infolist, for example, if it is in the `belowContent()` method of an infolist entry, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. The `schemaComponent()` method should receive a `TestSchemaComponent::inResourceInfolist()` object, which accepts the name of the infolist component you want to test. For example:
+
+```php
+use Filament\Actions\Testing\TestAction;
+use Filament\Schemas\Testing\TestSchemaComponent;
+use function Pest\Livewire\livewire;
+
+$invoice = Invoice::factory()->create();
+
+livewire(ViewInvoice::class)
+    ->callAction(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceInfolist('customer.name')));
+
+livewire(ViewInvoice::class)
+    ->assertActionVisible(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceInfolist('customer.name')))
+
+livewire(ViewInvoice::class)
+    ->assertActionExists(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceInfolist('customer.name')))
+```
+
+## Testing actions inside another action's schema / form
+
+If an action belongs to a component in another action's `schema()` (or `form()`), for example, if it is in the `belowContent()` method of a form field in an action modal, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. The `schemaComponent()` method should receive a `TestSchemaComponent::inActionSchema()` object, which accepts the name of the action component you want to test. You should pass an array of `TestAction` objects in order, for example:
+
+```php
+use Filament\Actions\Testing\TestAction;
+use Filament\Schemas\Testing\TestSchemaComponent;
+use function Pest\Livewire\livewire;
+
+$invoice = Invoice::factory()->create();
+
+livewire(ManageInvoices::class)
+    ->callAction([
+        TestAction::make('view')->table($invoice),
+        TestAction::make('send')->schemaComponent(TestSchemaComponent::inActionSchema('customer.name')),
+    ]);
+    
+livewire(ManageInvoices::class)
+    ->assertActionVisible([
+        TestAction::make('view')->table($invoice),
+        TestAction::make('send')->schemaComponent(TestSchemaComponent::inActionSchema('customer.name')),
+    ]);
+    
+livewire(ManageInvoices::class)
+    ->assertActionExists([
+        TestAction::make('view')->table($invoice),
+        TestAction::make('send')->schemaComponent(TestSchemaComponent::inActionSchema('customer.name')),
+    ]);
+```
+
+## Testing action arguments
+
+To test action arguments, you can use a `TestAction` object with the `arguments()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. For example:
+
+```php
+use Filament\Actions\Testing\TestAction;use function Pest\Livewire\livewire;
+
+$invoice = Invoice::factory()->create();
+
+livewire(ManageInvoices::class)
+    ->callAction(TestAction::make('send')->arguments(['invoice' => $invoice->getKey()]));
+
+livewire(ManageInvoices::class)
+    ->assertActionVisible(TestAction::make('send')->arguments(['invoice' => $invoice->getKey()]))
+
+livewire(ManageInvoices::class)
+    ->assertActionExists(TestAction::make('send')->arguments(['invoice' => $invoice->getKey()]))
 ```

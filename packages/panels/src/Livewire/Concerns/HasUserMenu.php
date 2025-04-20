@@ -17,7 +17,7 @@ trait HasUserMenu
         if (! Filament::auth()->check()) {
             return;
         }
-        
+
         $this->userMenuItems = Filament::getUserMenuItems();
 
         foreach ($this->userMenuItems as $action) {

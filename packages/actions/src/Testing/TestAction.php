@@ -1,9 +1,11 @@
 <?php
 
-namespace Filament\Actions\Testing\Fixtures;
+namespace Filament\Actions\Testing;
 
 use Closure;
+use Filament\Support\ArrayRecord;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 
 class TestAction implements Arrayable
 {
@@ -96,7 +98,13 @@ class TestAction implements Arrayable
             return $array;
         }
 
-        $array['context']['recordKey'] = $this->table;
+        if ($this->table instanceof Model) {
+            $array['context']['recordKey'] = $this->table->getKey();
+        } elseif (is_array($this->table)) {
+            $array['context']['recordKey'] = $this->table[ArrayRecord::getKeyName()] ?? null;
+        } else {
+            $array['context']['recordKey'] = $this->table;
+        }
 
         return $array;
     }

@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Actions\Action;
-use Filament\Actions\Testing\Fixtures\TestAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\InfolistActions;
 use Filament\Tests\TestCase;
