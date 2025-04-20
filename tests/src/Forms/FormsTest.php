@@ -111,11 +111,11 @@ it('does not have layout components', function (): void {
 
 it('can go to next wizard step on multiple forms', function (): void {
     livewire(TestComponentWithMultipleWizardForms::class)
-        ->assertHasNoFormErrors(schemaName: 'fooForm')
-        ->assertHasNoFormErrors(schemaName: 'barForm')
+        ->assertHasNoFormErrors(schema: 'fooForm')
+        ->assertHasNoFormErrors(schema: 'barForm')
 
         ->assertWizardStepExists(2, 'fooForm')
-        ->goToWizardStep(2, schemaName: 'fooForm')
+        ->goToWizardStep(2, schema: 'fooForm')
         ->assertHasFormErrors(['title'], 'fooForm')
         ->assertHasNoFormErrors(['title'], 'barForm');
 });
