@@ -83,8 +83,18 @@ class TestsForms
             }
 
             if (is_array($state)) {
-                foreach (Arr::dot($state, prepend: filled($formSchemaStatePath) ? "{$formSchemaStatePath}." : '') as $key => $value) {
-                    $this->assertSet($key, $value);
+                $components = $formSchema->getFlatComponents(withActions: false, withHidden: true);
+
+                foreach ($state as $key => $value) {
+                    if (array_key_exists($key, $components)) {
+                        Assert::assertEquals(
+                            $value,
+                            $components[$key]->getState(),
+                            message: "Failed asserting that the form [{$schema}] has a component [{$key}] set to the expected value.",
+                        );
+                    } else {
+                        $this->assertSet((filled($formSchemaStatePath) ? "{$formSchemaStatePath}." : '') . $key, $value);
+                    }
                 }
             }
 
