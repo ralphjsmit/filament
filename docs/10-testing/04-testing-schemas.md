@@ -18,6 +18,8 @@ livewire(CreatePost::class)
 
 > If you have multiple schemas on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
 
+## Testing form field and infolist entry state
+
 To check that a form has data, use `assertSchemaStateSet()`:
 
 ```php
@@ -37,7 +39,7 @@ it('can automatically generate a slug from the title', function () {
 });
 ```
 
-> If you have multiple schemas on a Livewire component, you can specify which form you want to check using `assertSchemaStateSet([...], 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can specify which schema you want to check using `assertSchemaStateSet([...], 'createPostForm')`.
 
 You may also find it useful to pass a function to the `assertSchemaStateSet()` method, which allows you to access the form `$state` and perform additional assertions:
 
@@ -63,7 +65,7 @@ it('can automatically generate a slug from the title without any spaces', functi
 });
 ```
 
-You can return an array from the function if you want Filament to continue to assert the form state after the function has been run.
+You can return an array from the function if you want Filament to continue to assert the achema state after the function has been run.
 
 ## Testing form validation
 
@@ -203,6 +205,8 @@ test('title is disabled', function () {
 ```
 
 > For both `assertFormFieldEnabled()` and `assertFormFieldDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldEnabled('title', 'createPostForm')`.
+
+## Testing the 
 
 ## Testing other schema components
 
