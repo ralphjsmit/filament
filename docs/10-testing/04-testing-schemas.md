@@ -286,6 +286,123 @@ test('comments section is enabled', function () {
 });
 ```
 
+## Testing repeaters
+
+Internally, repeaters generate UUIDs for items to keep track of them in the Livewire HTML easier. This means that when you are testing a form with a repeater, you need to ensure that the UUIDs are consistent between the form and the test. This can be tricky, and if you don't do it correctly, your tests can fail as the tests are expecting a UUID, not a numeric key.
+
+However, since Livewire doesn't need to keep track of the UUIDs in a test, you can disable the UUID generation and replace them with numeric keys, using the `Repeater::fake()` method at the start of your test:
+
+```php
+use Filament\Forms\Components\Repeater;
+use function Pest\Livewire\livewire;
+
+$undoRepeaterFake = Repeater::fake();
+
+livewire(EditPost::class, ['record' => $post])
+    ->assertSchemaSet([
+        'quotes' => [
+            [
+                'content' => 'First quote',
+            ],
+            [
+                'content' => 'Second quote',
+            ],
+        ],
+        // ...
+    ]);
+
+$undoRepeaterFake();
+```
+
+You may also find it useful to test the number of items in a repeater by passing a function to the `assertSchemaSet()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+use function Pest\Livewire\livewire;
+
+$undoRepeaterFake = Repeater::fake();
+
+livewire(EditPost::class, ['record' => $post])
+    ->assertSchemaSet(function (array $state) {
+        expect($state['quotes'])
+            ->toHaveCount(2);
+    });
+
+$undoRepeaterFake();
+```
+
+### Testing repeater actions
+
+In order to test that repeater actions are working as expected, you can utilize the `callFormComponentAction()` method to call your repeater actions and then [perform additional assertions](../testing#actions).
+
+To interact with an action on a particular repeater item, you need to pass in the `item` argument with the key of that repeater item. If your repeater is reading from a relationship, you should prefix the ID (key) of the related record with `record-` to form the key of the repeater item:
+
+```php
+use App\Models\Quote;
+use Filament\Forms\Components\Repeater;
+use function Pest\Livewire\livewire;
+
+$quote = Quote::first();
+
+livewire(EditPost::class, ['record' => $post])
+    ->callAction(TestAction::make('sendQuote')->schemaComponent('quotes')->arguments([
+        'item' => "record-{$quote->getKey()}",
+    ]))
+    ->assertNotified('Quote sent!');
+```
+
+## Testing builders
+
+Internally, builders generate UUIDs for items to keep track of them in the Livewire HTML easier. This means that when you are testing a form with a builder, you need to ensure that the UUIDs are consistent between the form and the test. This can be tricky, and if you don't do it correctly, your tests can fail as the tests are expecting a UUID, not a numeric key.
+
+However, since Livewire doesn't need to keep track of the UUIDs in a test, you can disable the UUID generation and replace them with numeric keys, using the `Builder::fake()` method at the start of your test:
+
+```php
+use Filament\Forms\Components\Builder;
+use function Pest\Livewire\livewire;
+
+$undoBuilderFake = Builder::fake();
+
+livewire(EditPost::class, ['record' => $post])
+    ->assertSchemaSet([
+        'content' => [
+            [
+                'type' => 'heading',
+                'data' => [
+                    'content' => 'Hello, world!',
+                    'level' => 'h1',
+                ],
+            ],
+            [
+                'type' => 'paragraph',
+                'data' => [
+                    'content' => 'This is a test post.',
+                ],
+            ],
+        ],
+        // ...
+    ]);
+
+$undoBuilderFake();
+```
+
+You may also find it useful to access test the number of items in a repeater by passing a function to the `assertSchemaSet()` method:
+
+```php
+use Filament\Forms\Components\Builder;
+use function Pest\Livewire\livewire;
+
+$undoBuilderFake = Builder::fake();
+
+livewire(EditPost::class, ['record' => $post])
+    ->assertSchemaSet(function (array $state) {
+        expect($state['content'])
+            ->toHaveCount(2);
+    });
+
+$undoBuilderFake();
+```
+
 ## Testing wizards
 
 To go to a wizard's next step, use `goToNextWizardStep()`:
