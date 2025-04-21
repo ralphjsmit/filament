@@ -50,7 +50,7 @@ it('can send invoices', function () {
 });
 ```
 
-If you ever need to only set an action's data without immediately calling it, you can use `setActionData()`:
+If you ever need to only set an action's data without immediately calling it, you can use `fillForm()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -62,7 +62,7 @@ it('can send invoices', function () {
         'invoice' => $invoice,
     ])
         ->mountAction('send')
-        ->setActionData([
+        ->fillForm([
             'email' => $email = fake()->email(),
         ])
 });
