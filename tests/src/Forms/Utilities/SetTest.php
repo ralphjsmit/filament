@@ -30,7 +30,7 @@ it('can set the value of a field', function (): void {
         ->fillForm([
             'bar' => $bar = Str::random(),
         ])
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'foo' => $bar,
         ]);
 });
@@ -54,7 +54,7 @@ it('can set the value of a field and call its updated hook', function (): void {
         ->fillForm([
             'bar' => $bar = Str::random(),
         ])
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'foo' => $bar,
             'baz' => 'qux',
         ]);
@@ -82,7 +82,7 @@ it('can set the value of a nested field', function (): void {
         ->fillForm([
             'bar' => $bar = Str::random(),
         ])
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'nested.foo' => $bar,
         ]);
 });
@@ -109,7 +109,7 @@ it('can set the value of a parent level field', function (): void {
         ->fillForm([
             'nested.bar' => $bar = Str::random(),
         ])
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'foo' => $bar,
         ]);
 });
@@ -140,7 +140,7 @@ it('can set the value of a parent level field with a nested field', function ():
         ->fillForm([
             'nestedTwo.bar' => $bar = Str::random(),
         ])
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'nestedOne.foo' => $bar,
         ]);
 });

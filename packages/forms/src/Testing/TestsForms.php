@@ -71,7 +71,7 @@ class TestsForms
     public function assertFormSet(): Closure
     {
         return function (array | Closure $state, string $form = 'form'): static {
-            $this->assertSchemaSet($state, $form);
+            $this->assertSchemaStateSet($state, $form);
 
             return $this;
         };

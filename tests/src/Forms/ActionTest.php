@@ -41,13 +41,13 @@ it('can call an action with data', function (): void {
         ->callAction(TestAction::make('setValue')->schemaComponent('textInput'), data: [
             'value' => $value = Str::random(),
         ])
-        ->assertSchemaSet(['textInput' => $value]);
+        ->assertSchemaStateSet(['textInput' => $value]);
 
     livewire(Actions::class)
         ->callFormComponentAction('textInput', 'setValue', data: [
             'value' => $value = Str::random(),
         ])
-        ->assertSchemaSet(['textInput' => $value]);
+        ->assertSchemaStateSet(['textInput' => $value]);
 });
 
 it('can validate an action\'s data', function (): void {
@@ -56,20 +56,20 @@ it('can validate an action\'s data', function (): void {
             'value' => null,
         ])
         ->assertHasFormErrors(['value' => ['required']])
-        ->assertSchemaSet(['textInput' => null]);
+        ->assertSchemaStateSet(['textInput' => null]);
 
     livewire(Actions::class)
         ->callFormComponentAction('textInput', 'setValue', data: [
             'value' => null,
         ])
         ->assertHasFormComponentActionErrors(['value' => ['required']])
-        ->assertSchemaSet(['textInput' => null]);
+        ->assertSchemaStateSet(['textInput' => null]);
 });
 
 it('can set default action data when mounted', function (): void {
     livewire(Actions::class)
         ->mountAction(TestAction::make('setValue')->schemaComponent('textInput'))
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'value' => 'foo',
         ]);
 
@@ -85,13 +85,13 @@ it('can call an action with arguments', function (): void {
         ->callAction(TestAction::make('setValueFromArguments')->schemaComponent('textInput')->arguments([
             'value' => $value = Str::random(),
         ]))
-        ->assertSchemaSet(['textInput' => $value]);
+        ->assertSchemaStateSet(['textInput' => $value]);
 
     livewire(Actions::class)
         ->callFormComponentAction('textInput', 'setValueFromArguments', arguments: [
             'value' => $value = Str::random(),
         ])
-        ->assertSchemaSet(['textInput' => $value]);
+        ->assertSchemaStateSet(['textInput' => $value]);
 });
 
 it('can call an action and halt', function (): void {

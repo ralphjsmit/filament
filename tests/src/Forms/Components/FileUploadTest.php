@@ -22,7 +22,7 @@ it('UploadedFile should be converted to TemporaryUploadedFile', function (): voi
                     UploadedFile::fake()->image('multiple-file2.jpg'),
                 ],
             ])
-            ->assertSchemaSet(function (array $data): void {
+            ->assertSchemaStateSet(function (array $data): void {
                 expect($data['single-file'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
                     ->and($data['multiple-files'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
                     ->and($data['multiple-files'][1])->toBeInstanceOf(TemporaryUploadedFile::class);

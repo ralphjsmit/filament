@@ -82,7 +82,7 @@ it('can set default bulk action data when mounted', function (): void {
     livewire(PostsTable::class)
         ->selectTableRecords($posts)
         ->mountAction(TestAction::make('data')->table()->bulk())
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'foo' => 'bar',
         ]);
 

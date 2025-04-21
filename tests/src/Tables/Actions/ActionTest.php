@@ -87,7 +87,7 @@ it('can validate an action\'s data', function (): void {
 it('can set default action data when mounted', function (): void {
     livewire(PostsTable::class)
         ->mountAction(TestAction::make('data')->table())
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'foo' => 'bar',
         ]);
 

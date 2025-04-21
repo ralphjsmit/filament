@@ -91,7 +91,7 @@ namespace Livewire\Features\SupportTesting {
         public function setTableActionData(array $data): static {}
 
         /**
-         * @deprecated Use `assertSchemaSet()` instead.
+         * @deprecated Use `assertSchemaStateSet()` instead.
          */
         public function assertTableActionDataSet(array | Closure $state): static {}
 
@@ -179,7 +179,7 @@ namespace Livewire\Features\SupportTesting {
         public function setTableBulkActionData(array $data): static {}
 
         /**
-         * @deprecated Use `assertSchemaSet()` instead.
+         * @deprecated Use `assertSchemaStateSet()` instead.
          */
         public function assertTableBulkActionDataSet(array | Closure $state): static {}
 

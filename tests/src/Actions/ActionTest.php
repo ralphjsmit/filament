@@ -52,7 +52,7 @@ it('can access form data in before hook', function (): void {
 it('can set default action data when mounted', function (): void {
     livewire(Actions::class)
         ->mountAction('data')
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'foo' => 'bar',
         ]);
 });

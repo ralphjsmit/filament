@@ -18,7 +18,7 @@ livewire(CreatePost::class)
 
 > If you have multiple schemas on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
 
-To check that a form has data, use `assertSchemaSet()`:
+To check that a form has data, use `assertSchemaStateSet()`:
 
 ```php
 use Illuminate\Support\Str;
@@ -31,15 +31,15 @@ it('can automatically generate a slug from the title', function () {
         ->fillForm([
             'title' => $title,
         ])
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'slug' => Str::slug($title),
         ]);
 });
 ```
 
-> If you have multiple schemas on a Livewire component, you can specify which form you want to check using `assertSchemaSet([...], 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can specify which form you want to check using `assertSchemaStateSet([...], 'createPostForm')`.
 
-You may also find it useful to pass a function to the `assertSchemaSet()` method, which allows you to access the form `$state` and perform additional assertions:
+You may also find it useful to pass a function to the `assertSchemaStateSet()` method, which allows you to access the form `$state` and perform additional assertions:
 
 ```php
 use Illuminate\Support\Str;
@@ -52,7 +52,7 @@ it('can automatically generate a slug from the title without any spaces', functi
         ->fillForm([
             'title' => $title,
         ])
-        ->assertSchemaSet(function (array $state): array {
+        ->assertSchemaStateSet(function (array $state): array {
             expect($state['slug'])
                 ->not->toContain(' ');
                 
@@ -293,7 +293,7 @@ use function Pest\Livewire\livewire;
 $undoRepeaterFake = Repeater::fake();
 
 livewire(EditPost::class, ['record' => $post])
-    ->assertSchemaSet([
+    ->assertSchemaStateSet([
         'quotes' => [
             [
                 'content' => 'First quote',
@@ -308,7 +308,7 @@ livewire(EditPost::class, ['record' => $post])
 $undoRepeaterFake();
 ```
 
-You may also find it useful to test the number of items in a repeater by passing a function to the `assertSchemaSet()` method:
+You may also find it useful to test the number of items in a repeater by passing a function to the `assertSchemaStateSet()` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -317,7 +317,7 @@ use function Pest\Livewire\livewire;
 $undoRepeaterFake = Repeater::fake();
 
 livewire(EditPost::class, ['record' => $post])
-    ->assertSchemaSet(function (array $state) {
+    ->assertSchemaStateSet(function (array $state) {
         expect($state['quotes'])
             ->toHaveCount(2);
     });
@@ -358,7 +358,7 @@ use function Pest\Livewire\livewire;
 $undoBuilderFake = Builder::fake();
 
 livewire(EditPost::class, ['record' => $post])
-    ->assertSchemaSet([
+    ->assertSchemaStateSet([
         'content' => [
             [
                 'type' => 'heading',
@@ -380,7 +380,7 @@ livewire(EditPost::class, ['record' => $post])
 $undoBuilderFake();
 ```
 
-You may also find it useful to access test the number of items in a repeater by passing a function to the `assertSchemaSet()` method:
+You may also find it useful to access test the number of items in a repeater by passing a function to the `assertSchemaStateSet()` method:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -389,7 +389,7 @@ use function Pest\Livewire\livewire;
 $undoBuilderFake = Builder::fake();
 
 livewire(EditPost::class, ['record' => $post])
-    ->assertSchemaSet(function (array $state) {
+    ->assertSchemaStateSet(function (array $state) {
         expect($state['content'])
             ->toHaveCount(2);
     });

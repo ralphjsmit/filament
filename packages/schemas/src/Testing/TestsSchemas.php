@@ -102,7 +102,7 @@ class TestsSchemas
         };
     }
 
-    public function assertSchemaSet(): Closure
+    public function assertSchemaStateSet(): Closure
     {
         return function (array | Closure $state, ?string $schema = null): static {
             if ($this->instance() instanceof HasActions) {

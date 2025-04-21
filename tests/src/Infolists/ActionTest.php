@@ -44,7 +44,7 @@ it('can validate an action\'s data', function (): void {
 it('can set default action data when mounted', function (): void {
     livewire(InfolistActions::class)
         ->mountAction(TestAction::make('setValue')->schemaComponent('textEntry'))
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'value' => 'foo',
         ]);
 

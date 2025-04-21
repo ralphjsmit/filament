@@ -8,7 +8,7 @@ namespace Livewire\Features\SupportTesting {
         public function fillForm(array | Closure $state = [], ?string $form = null): static {}
 
         /**
-         * @deprecated Use `assertSchemaSet()` instead.
+         * @deprecated Use `assertSchemaStateSet()` instead.
          */
         public function assertFormSet(array | Closure $state, string $form = 'form'): static {}
 
@@ -67,7 +67,7 @@ namespace Livewire\Features\SupportTesting {
         public function setFormComponentActionData(array $data): static {}
 
         /**
-         * @deprecated Use `assertSchemaSet()` instead.
+         * @deprecated Use `assertSchemaStateSet()` instead.
          */
         public function assertFormComponentActionDataSet(array $data): static {}
 

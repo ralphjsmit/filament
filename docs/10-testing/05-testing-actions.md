@@ -194,7 +194,7 @@ it('can validate invoice recipient email', function () {
 });
 ```
 
-To check if an action is pre-filled with data, you can use the `assertSchemaSet()` method:
+To check if an action is pre-filled with data, you can use the `assertSchemaStateSet()` method:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -207,7 +207,7 @@ it('can send invoices to the primary contact by default', function () {
         'invoice' => $invoice,
     ])
         ->mountAction('send')
-        ->assertSchemaSet([
+        ->assertSchemaStateSet([
             'email' => $recipientEmail,
         ])
         ->callMountedAction()

@@ -12,7 +12,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertSchemaExists(string $name): static {}
 
-        public function assertSchemaSet(array | Closure $state, ?string $schema = null): static {}
+        public function assertSchemaStateSet(array | Closure $state, ?string $schema = null): static {}
 
         public function assertSchemaComponentStateSet(string $key, mixed $state, ?string $schema = null): static {}
 
