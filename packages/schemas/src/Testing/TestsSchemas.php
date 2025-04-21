@@ -56,6 +56,34 @@ class TestsSchemas
         };
     }
 
+    public function assertSchemaComponentDoesNotExist(): Closure
+    {
+        return function (string $component, ?string $schema = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $schema ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $schema ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertSchemaExists($schema);
+
+            /** @var Schema $schemaInstance */
+            $schemaInstance = $this->instance()->{$schema};
+
+            $componentInstance = $schemaInstance->getFlatComponents(withHidden: true)[$component] ?? null;
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertNull(
+                $componentInstance,
+                "Failed asserting that a component [{$component}] does not exist on the schema with the name [{$schema}] on the [{$livewireClass}] component."
+            );
+
+            return $this;
+        };
+    }
+
     public function assertSchemaExists(): Closure
     {
         return function (string $name): static {
