@@ -79,18 +79,7 @@ class TestsActions
     public function assertActionDataSet(): Closure
     {
         return function (array | Closure $data): static {
-            $mountedActions = $this->instance()->mountedActions;
-            $mountedActionIndex = array_key_last($mountedActions);
-
-            if ($data instanceof Closure) {
-                $data = $data($mountedActions[$mountedActionIndex]['data'] ?? []);
-            }
-
-            if (is_array($data)) {
-                foreach (Arr::dot($data, prepend: "mountedActions.{$mountedActionIndex}.data.") as $key => $value) {
-                    $this->assertSet($key, $value);
-                }
-            }
+            $this->assertSchemaSet($data);
 
             return $this;
         };
