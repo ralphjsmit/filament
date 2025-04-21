@@ -68,35 +68,7 @@ class TestsForms
     public function assertFormSet(): Closure
     {
         return function (array | Closure $state, string $schema = 'form'): static {
-            /** @phpstan-ignore-next-line  */
-            $this->assertFormExists($schema);
-
-            $livewire = $this->instance();
-
-            /** @var Schema $formSchema */
-            $formSchema = $livewire->{$schema};
-
-            $formSchemaStatePath = $formSchema->getStatePath();
-
-            if ($state instanceof Closure) {
-                $state = $state($formSchema->getRawState());
-            }
-
-            if (is_array($state)) {
-                $components = $formSchema->getFlatComponents(withActions: false, withHidden: true);
-
-                foreach ($state as $key => $value) {
-                    if (array_key_exists($key, $components)) {
-                        Assert::assertEquals(
-                            $value,
-                            $components[$key]->getState(),
-                            "Failed asserting that the form [{$schema}] has a component [{$key}] set to the expected value.",
-                        );
-                    } else {
-                        $this->assertSet((filled($formSchemaStatePath) ? "{$formSchemaStatePath}." : '') . $key, $value);
-                    }
-                }
-            }
+            $this->assertSchemaSet($state, $schema);
 
             return $this;
         };
@@ -200,13 +172,13 @@ class TestsForms
             Assert::assertInstanceOf(
                 Component::class,
                 $component,
-                "Failed asserting that a component with the key [{$componentKey}] exists on the form with the name [{$schema}] on the [{$livewireClass}] component."
+                "Failed asserting that a component [{$componentKey}] exists on the form with the name [{$schema}] on the [{$livewireClass}] component."
             );
 
             if ($checkComponentUsing) {
                 Assert::assertTrue(
                     $checkComponentUsing($component),
-                    "Failed asserting that a component with the key [{$componentKey}] and provided configuration exists on the form with the name [{$schema}] on the [{$livewireClass}] component."
+                    "Failed asserting that a component [{$componentKey}] and provided configuration exists on the form with the name [{$schema}] on the [{$livewireClass}] component."
                 );
             }
 
@@ -227,7 +199,7 @@ class TestsForms
             Assert::assertArrayNotHasKey(
                 $componentKey,
                 $components,
-                "Failed asserting that a component with the key [{$componentKey}] does not exist on the form named [{$schema}] on the [{$livewireClass}] component."
+                "Failed asserting that a component [{$componentKey}] does not exist on the form named [{$schema}] on the [{$livewireClass}] component."
             );
 
             return $this;
