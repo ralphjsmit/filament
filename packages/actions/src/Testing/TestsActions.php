@@ -7,14 +7,13 @@ use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\ActionName;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
-use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
-
+use ReflectionClass;
 use function Livewire\store;
 
 /**
@@ -664,9 +663,14 @@ class TestsActions
 
                 if (
                     class_exists($actionName) &&
-                    method_exists($actionName, 'getDefaultName')
+                    is_subclass_of($actionName, Action::class)
                 ) {
                     $action['name'] = $actionName = $actionName::getDefaultName();
+                } elseif (
+                    class_exists($actionName) &&
+                    ($actionClassNameAttributes = (new ReflectionClass($actionName))->getAttributes(ActionName::class))
+                ) {
+                    $action['name'] = $actionName = (string) Arr::first($actionClassNameAttributes)->newInstance();
                 }
 
                 if (filled($arguments) && (! array_key_exists('arguments', $action))) {
