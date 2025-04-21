@@ -549,6 +549,10 @@ class TestsActions
                     return $name;
                 }
 
+                if ($actionClassNameAttributes = (new ReflectionClass($name))->getAttributes(ActionName::class)) {
+                    $name = (string) Arr::first($actionClassNameAttributes)->newInstance();
+                }
+
                 if (! is_subclass_of($name, Action::class)) {
                     return $name;
                 }
@@ -631,14 +635,16 @@ class TestsActions
 
                 if (
                     class_exists($actionName) &&
-                    is_subclass_of($actionName, Action::class)
-                ) {
-                    $action['name'] = $actionName = $actionName::getDefaultName();
-                } elseif (
-                    class_exists($actionName) &&
                     ($actionClassNameAttributes = (new ReflectionClass($actionName))->getAttributes(ActionName::class))
                 ) {
                     $action['name'] = $actionName = (string) Arr::first($actionClassNameAttributes)->newInstance();
+                }
+
+                if (
+                    class_exists($actionName) &&
+                    is_subclass_of($actionName, Action::class)
+                ) {
+                    $action['name'] = $actionName = $actionName::getDefaultName();
                 }
 
                 if (filled($arguments) && (! array_key_exists('arguments', $action))) {
