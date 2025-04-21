@@ -21,7 +21,7 @@ namespace Livewire\Features\SupportTesting {
         public function setInfolistActionData(array $data): static {}
 
         /**
-         * @deprecated Use `assertActionDataSet()` instead.
+         * @deprecated Use `assertSchemaSet()` instead.
          */
         public function assertInfolistActionDataSet(array $data): static {}
 

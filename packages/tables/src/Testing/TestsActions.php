@@ -53,7 +53,7 @@ class TestsActions
     public function assertTableActionDataSet(): Closure
     {
         return function (array | Closure $data): static {
-            $this->assertActionDataSet($data);
+            $this->assertSchemaSet($data);
 
             return $this;
         };

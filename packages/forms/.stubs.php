@@ -64,7 +64,7 @@ namespace Livewire\Features\SupportTesting {
         public function setFormComponentActionData(array $data): static {}
 
         /**
-         * @deprecated Use `assertActionDataSet()` instead.
+         * @deprecated Use `assertSchemaSet()` instead.
          */
         public function assertFormComponentActionDataSet(array $data): static {}
 
