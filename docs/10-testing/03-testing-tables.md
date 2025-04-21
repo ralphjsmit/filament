@@ -8,7 +8,7 @@ All examples in this guide will be written using [Pest](https://pestphp.com). To
 
 Since the Table Builder works on Livewire components, you can use the [Livewire testing helpers](https://livewire.laravel.com/docs/testing). However, we have many custom testing helpers that you can use for tables:
 
-## Render
+## Testing that a table can render
 
 To ensure a table component renders, use the `assertSuccessful()` Livewire helper:
 
@@ -16,7 +16,8 @@ To ensure a table component renders, use the `assertSuccessful()` Livewire helpe
 use function Pest\Livewire\livewire;
 
 it('can render page', function () {
-    livewire(ListPosts::class)->assertSuccessful();
+    livewire(ListPosts::class)
+        ->assertSuccessful();
 });
 ```
 
@@ -40,7 +41,7 @@ it('cannot display trashed posts by default', function () {
 
 > If your table uses `deferLoading()`, you should call `loadTable()` before `assertCanSeeTableRecords()`.
 
-## Columns
+## Testing columns
 
 To ensure that a certain column is rendered, pass the column name to `assertCanRenderTableColumn()`:
 
@@ -72,7 +73,7 @@ it('can not render post comments', function () {
 
 This helper will assert that the HTML for this column is not shown by default in the present table.
 
-### Sorting
+### Testing that a column can be sorted
 
 To sort table records, you can call `sortTable()`, passing the name of the column to sort by. You can use `'desc'` in the second parameter of `sortTable()` to reverse the sorting direction.
 
@@ -92,7 +93,7 @@ it('can sort posts by title', function () {
 });
 ```
 
-### Searching
+### Testing that a column can be searched
 
 To search the table, call the `searchTable()` method with your search query.
 
@@ -130,7 +131,7 @@ it('can search posts by title column', function () {
 });
 ```
 
-### State
+### Testing the state of a column
 
 To assert that a certain column has a state or does not have a state for a record you can use `assertTableColumnStateSet()` and `assertTableColumnStateNotSet()`:
 
@@ -162,7 +163,7 @@ it('can get post author names', function () {
 });
 ```
 
-### Existence
+### Testing the existence of a column
 
 To ensure that a column exists, you can use the `assertTableColumnExists()` method:
 
@@ -191,7 +192,7 @@ it('has an author column', function () {
 });
 ```
 
-### Authorization
+### Testing the visibility of a column
 
 To ensure that a particular user cannot see a column, you can use the `assertTableColumnVisible()` and `assertTableColumnHidden()` methods:
 
@@ -205,7 +206,7 @@ it('shows the correct columns', function () {
 });
 ```
 
-### Descriptions
+### Testing the description of a column
 
 To ensure a column has the correct description above or below you can use the `assertTableColumnHasDescription()` and `assertTableColumnDoesNotHaveDescription()` methods:
 
@@ -223,7 +224,7 @@ it('has the correct descriptions above and below author', function () {
 });
 ```
 
-### Extra Attributes
+### Testing the extra attributes of a column
 
 To ensure that a column has the correct extra attributes, you can use the `assertTableColumnHasExtraAttributes()` and `assertTableColumnDoesNotHaveExtraAttributes()` methods:
 
@@ -239,7 +240,7 @@ it('displays author in red', function () {
 });
 ```
 
-### Select Columns
+### Testing the options in a `SelectColumn`
 
 If you have a select column, you can ensure it has the correct options with `assertTableSelectColumnHasOptions()` and `assertTableSelectColumnDoesNotHaveOptions()`:
 
@@ -255,7 +256,7 @@ it('has the correct statuses', function () {
 });
 ```
 
-## Filters
+## Testing filters
 
 To filter the table records, you can use the `filterTable()` method, along with `assertCanSeeTableRecords()` and `assertCanNotSeeTableRecords()`:
 
@@ -293,7 +294,7 @@ it('can filter posts by `author_id`', function () {
 });
 ```
 
-### Resetting filters
+### Resetting filters in a test
 
 To reset all filters to their original state, call `resetTableFilters()`:
 
@@ -308,7 +309,7 @@ it('can reset table filters', function () {
 });
 ```
 
-### Removing Filters
+### Removing filters in a test
 
 To remove a single filter you can use `removeTableFilter()`:
 
@@ -349,7 +350,7 @@ it('can remove all table filters', function () {
 });
 ```
 
-### Hidden filters
+### Testing the visibility of a filter
 
 To ensure that a particular user cannot see a filter, you can use the `assertTableFilterVisible()` and `assertTableFilterHidden()` methods:
 
@@ -362,7 +363,7 @@ it('shows the correct filters', function () {
         ->assertTableFilterHidden('author');
 ```
 
-### Filter existence
+### Testing the existence of a filter
 
 To ensure that a filter exists, you can use the `assertTableFilterExists()` method:
 
@@ -389,7 +390,7 @@ it('has an author filter', function () {
 });
 ```
 
-## Summaries
+## Testing summaries
 
 To test that a summary calculation is working, you may use the `assertTableColumnSummarySet()` method:
 
@@ -421,7 +422,7 @@ TextColumn::make('rating')
 
 The ID should be unique between summarizers in that column.
 
-### Summarizing only one pagination page
+### Testing summaries on only one pagination page
 
 To calculate the average for only one pagination page, use the `isCurrentPaginationPageOnly` argument:
 

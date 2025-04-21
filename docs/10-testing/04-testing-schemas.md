@@ -8,7 +8,7 @@ All examples in this guide will be written using [Pest](https://pestphp.com). To
 
 Since the Form Builder works on Livewire components, you can use the [Livewire testing helpers](https://livewire.laravel.com/docs/testing). However, we have custom testing helpers that you can use with forms:
 
-## Filling a form
+## Filling a form in a test
 
 To fill a form with data, pass the data to `fillForm()`:
 
@@ -22,7 +22,7 @@ livewire(CreatePost::class)
     ]);
 ```
 
-> If you have multiple forms on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
 
 To check that a form has data, use `assertSchemaSet()`:
 
@@ -43,7 +43,7 @@ it('can automatically generate a slug from the title', function () {
 });
 ```
 
-> If you have multiple forms on a Livewire component, you can specify which form you want to check using `assertSchemaSet([...], 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can specify which form you want to check using `assertSchemaSet([...], 'createPostForm')`.
 
 You may also find it useful to pass a function to the `assertSchemaSet()` method, which allows you to access the form `$state` and perform additional assertions:
 
@@ -71,7 +71,7 @@ it('can automatically generate a slug from the title without any spaces', functi
 
 You can return an array from the function if you want Filament to continue to assert the form state after the function has been run.
 
-## Validation
+## Testing form validation
 
 Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
 
@@ -102,9 +102,9 @@ livewire(CreatePost::class)
     ->assertHasNoFormErrors();
 ```
 
-> If you have multiple forms on a Livewire component, you can pass the name of a specific form as the second parameter like `assertHasFormErrors(['title' => 'required'], 'createPostForm')` or `assertHasNoFormErrors([], 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can pass the name of a specific form as the second parameter like `assertHasFormErrors(['title' => 'required'], 'createPostForm')` or `assertHasNoFormErrors([], 'createPostForm')`.
 
-## Form existence
+## Testing the existence of a form
 
 To check that a Livewire component has a form, use `assertFormExists()`:
 
@@ -117,9 +117,9 @@ it('has a form', function () {
 });
 ```
 
-> If you have multiple forms on a Livewire component, you can pass the name of a specific form like `assertFormExists('createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can pass the name of a specific form like `assertFormExists('createPostForm')`.
 
-## Fields
+## Testing the existence of form fields
 
 To ensure that a form has a given field, pass the field name to `assertFormFieldExists()`:
 
@@ -156,9 +156,9 @@ it('does not have a conditional field', function () {
 });
 ```
 
-> If you have multiple forms on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
 
-### Hidden fields
+### Testing the visibility of form fields
 
 To ensure that a field is visible, pass the name to `assertFormFieldVisible()`:
 
@@ -184,7 +184,7 @@ test('title is hidden', function () {
 
 > For both `assertFormFieldHidden()` and `assertFormFieldVisible()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldHidden('title', 'createPostForm')`.
 
-### Disabled fields
+### Testing disabled form fields
 
 To ensure that a field is enabled, pass the name to `assertFormFieldEnabled()`:
 
@@ -210,12 +210,12 @@ test('title is disabled', function () {
 
 > For both `assertFormFieldEnabled()` and `assertFormFieldDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldEnabled('title', 'createPostForm')`.
 
-## Layout components
+## Testing other schema components
 
-If you need to check if a particular layout component exists rather than a field, you may use `assertFormComponentExists()`.  As layout components do not have names, this method uses the `key()` provided by the developer:
+If you need to check if a particular schema component exists rather than a field, you may use `asserSchemaComponentExists()`.  As components do not have names, this method uses the `key()` provided by the developer:
 
 ```php
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 
 Section::make('Comments')
     ->key('comments-section')
@@ -229,22 +229,22 @@ use function Pest\Livewire\livewire;
 
 test('comments section exists', function () {
     livewire(EditPost::class)
-        ->assertFormComponentExists('comments-section');
+        ->asserSchemaComponentExists('comments-section');
 });
 ```
 
-To assert that a form does not have a given component, pass the component key to `assertFormComponentDoesNotExist()`:
+To assert that a schema does not have a given component, pass the component key to `asserSchemaComponentDoesNotExist()`:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('does not have a conditional component', function () {
     livewire(CreatePost::class)
-        ->assertFormComponentDoesNotExist('no-such-section');
+        ->asserSchemaComponentDoesNotExist('no-such-section');
 });
 ```
 
-To check if the component exists and passes a given truth test, you can pass a function to the second argument of `assertFormComponentExists()`, returning true or false if the component passes the test or not:
+To check if the component exists and passes a given truth test, you can pass a function to the second argument of `asserSchemaComponentExists()`, returning true or false if the component passes the test or not:
 
 ```php
 use Filament\Forms\Components\Component;
@@ -253,7 +253,7 @@ use function Pest\Livewire\livewire;
 
 test('comments section has heading', function () {
     livewire(EditPost::class)
-        ->assertFormComponentExists(
+        ->asserSchemaComponentExists(
             'comments-section',
             function (Component $component): bool {
                 return $component->getHeading() === 'Comments';
@@ -272,7 +272,7 @@ use function Pest\Livewire\livewire;
 
 test('comments section is enabled', function () {
     livewire(EditPost::class)
-        ->assertFormComponentExists(
+        ->asserSchemaComponentExists(
             'comments-section',
             function (Component $component): bool {
                 Assert::assertTrue(
@@ -286,7 +286,7 @@ test('comments section is enabled', function () {
 });
 ```
 
-### Wizard
+## Testing wizards
 
 To go to a wizard's next step, use `goToNextWizardStep()`:
 
@@ -324,14 +324,14 @@ it('moves to the wizards second step', function () {
 });
 ```
 
-If you have multiple forms on a single Livewire component, any of the wizard test helpers can accept a `formName` parameter:
+If you have multiple schemas on a single Livewire component, any of the wizard test helpers can accept a `schema` parameter:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('moves to next wizard step only for fooForm', function () {
     livewire(CreatePost::class)
-        ->goToNextWizardStep(formName: 'fooForm')
-        ->assertHasFormErrors(['title'], formName: 'fooForm');
+        ->goToNextWizardStep(schema: 'fooForm')
+        ->assertHasFormErrors(['title'], schema: 'fooForm');
 });
 ```
