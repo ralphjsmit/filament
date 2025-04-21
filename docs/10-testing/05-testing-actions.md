@@ -298,7 +298,7 @@ it('can only print invoices', function () {
 });
 ```
 
-### Testing disabled actions
+## Testing disabled actions
 
 To ensure an action is enabled or disabled for a user, you can use the `assertActionEnabled()` or `assertActionDisabled()` methods:
 

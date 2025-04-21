@@ -158,7 +158,7 @@ it('does not have a conditional field', function () {
 
 > If you have multiple schemas on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
 
-### Testing the visibility of form fields
+## Testing the visibility of form fields
 
 To ensure that a field is visible, pass the name to `assertFormFieldVisible()`:
 
@@ -184,7 +184,7 @@ test('title is hidden', function () {
 
 > For both `assertFormFieldHidden()` and `assertFormFieldVisible()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldHidden('title', 'createPostForm')`.
 
-### Testing disabled form fields
+## Testing disabled form fields
 
 To ensure that a field is enabled, pass the name to `assertFormFieldEnabled()`:
 
