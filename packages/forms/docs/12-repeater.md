@@ -819,7 +819,7 @@ use function Pest\Livewire\livewire;
 $undoRepeaterFake = Repeater::fake();
 
 livewire(EditPost::class, ['record' => $post])
-    ->assertFormSet([
+    ->assertSchemaSet([
         'quotes' => [
             [
                 'content' => 'First quote',
@@ -834,7 +834,7 @@ livewire(EditPost::class, ['record' => $post])
 $undoRepeaterFake();
 ```
 
-You may also find it useful to test the number of items in a repeater by passing a function to the `assertFormSet()` method:
+You may also find it useful to test the number of items in a repeater by passing a function to the `assertSchemaSet()` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -843,7 +843,7 @@ use function Pest\Livewire\livewire;
 $undoRepeaterFake = Repeater::fake();
 
 livewire(EditPost::class, ['record' => $post])
-    ->assertFormSet(function (array $state) {
+    ->assertSchemaSet(function (array $state) {
         expect($state['quotes'])
             ->toHaveCount(2);
     });

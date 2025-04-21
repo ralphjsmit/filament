@@ -675,7 +675,7 @@ use function Pest\Livewire\livewire;
 $undoBuilderFake = Builder::fake();
 
 livewire(EditPost::class, ['record' => $post])
-    ->assertFormSet([
+    ->assertSchemaSet([
         'content' => [
             [
                 'type' => 'heading',
@@ -697,7 +697,7 @@ livewire(EditPost::class, ['record' => $post])
 $undoBuilderFake();
 ```
 
-You may also find it useful to access test the number of items in a repeater by passing a function to the `assertFormSet()` method:
+You may also find it useful to access test the number of items in a repeater by passing a function to the `assertSchemaSet()` method:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -706,7 +706,7 @@ use function Pest\Livewire\livewire;
 $undoBuilderFake = Builder::fake();
 
 livewire(EditPost::class, ['record' => $post])
-    ->assertFormSet(function (array $state) {
+    ->assertSchemaSet(function (array $state) {
         expect($state['content'])
             ->toHaveCount(2);
     });

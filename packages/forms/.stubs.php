@@ -5,23 +5,26 @@ namespace Livewire\Features\SupportTesting {
     use Closure;
 
     class Testable {
-        public function fillForm(array | Closure $state = [], string $form = 'form'): static {}
+        public function fillForm(array | Closure $state = [], ?string $form = null): static {}
 
+        /**
+         * @deprecated Use `assertSchemaSet()` instead.
+         */
         public function assertFormSet(array | Closure $state, string $form = 'form'): static {}
 
-        public function assertHasFormErrors(array $keys = [], string $form = 'form'): static {}
+        public function assertHasFormErrors(array $keys = [], ?string $form = null): static {}
 
-        public function assertHasNoFormErrors(array $keys = [], string $form = 'form'): static {}
+        public function assertHasNoFormErrors(array $keys = [], ?string $form = null): static {}
 
-        public function assertFormFieldExists(string $fieldName, string | Closure $form = 'form', ?Closure $checkFieldUsing = null): static {}
+        public function assertFormFieldExists(string $fieldName, string | Closure | null $form = null, ?Closure $checkFieldUsing = null): static {}
 
-        public function assertFormFieldDoesNotExist(string $fieldName, string $form = 'form'): static {}
+        public function assertFormFieldDoesNotExist(string $fieldName, ?string $form = null): static {}
 
-        public function assertFormFieldDisabled(string $fieldName, string $form = 'form'): static {}
+        public function assertFormFieldDisabled(string $fieldName, ?string $form = null): static {}
 
-        public function assertFormFieldEnabled(string $fieldName, string $form = 'form'): static {}
+        public function assertFormFieldEnabled(string $fieldName, ?string $form = null): static {}
 
-        public function assertFormFieldReadOnly(string $fieldName, string $form = 'form'): static {}
+        public function assertFormFieldReadOnly(string $fieldName, ?string $form = null): static {}
 
         /**
          * @deprecated Use `assertSchemaExists()` instead.

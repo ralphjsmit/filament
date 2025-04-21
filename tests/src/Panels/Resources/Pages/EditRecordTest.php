@@ -38,7 +38,7 @@ it('can retrieve data', function (): void {
     livewire(EditPost::class, [
         'record' => $post->getKey(),
     ])
-        ->assertFormSet([
+        ->assertSchemaSet([
             'author_id' => $post->author->getKey(),
             'content' => $post->content,
             'tags' => $post->tags,
@@ -104,7 +104,7 @@ it('can refresh data', function (): void {
 
     $originalPostTitle = $post->title;
 
-    $page->assertFormSet([
+    $page->assertSchemaSet([
         'title' => $originalPostTitle,
     ]);
 
@@ -113,13 +113,13 @@ it('can refresh data', function (): void {
     $post->title = $newPostTitle;
     $post->save();
 
-    $page->assertFormSet([
+    $page->assertSchemaSet([
         'title' => $originalPostTitle,
     ]);
 
     $page->call('refreshTitle');
 
-    $page->assertFormSet([
+    $page->assertSchemaSet([
         'title' => $newPostTitle,
     ]);
 });

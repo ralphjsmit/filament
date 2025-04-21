@@ -70,7 +70,7 @@ class TestsForms
 
     public function assertFormSet(): Closure
     {
-        return function (array | Closure $state, ?string $form = null): static {
+        return function (array | Closure $state, string $form = 'form'): static {
             $this->assertSchemaSet($state, $form);
 
             return $this;
@@ -158,10 +158,10 @@ class TestsForms
 
     public function assertFormComponentExists(): Closure
     {
-        return function (string $componentKey, string | Closure | null $form = null, ?Closure $checkComponentUsing = null): static {
+        return function (string $componentKey, string | Closure $form = 'form', ?Closure $checkComponentUsing = null): static {
             if ($form instanceof Closure) {
                 $checkComponentUsing = $form;
-                $form = null;
+                $form = 'form';
             }
 
             $this->assertSchemaComponentExists($componentKey, $form, $checkComponentUsing);
@@ -172,7 +172,7 @@ class TestsForms
 
     public function assertFormComponentDoesNotExist(): Closure
     {
-        return function (string $componentKey, ?string $form = null): static {
+        return function (string $componentKey, string $form = 'form'): static {
             $this->assertSchemaComponentDoesNotExist($componentKey, $form);
 
             return $this;

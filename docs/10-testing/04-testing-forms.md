@@ -24,7 +24,7 @@ livewire(CreatePost::class)
 
 > If you have multiple forms on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
 
-To check that a form has data, use `assertFormSet()`:
+To check that a form has data, use `assertSchemaSet()`:
 
 ```php
 use Illuminate\Support\Str;
@@ -37,15 +37,15 @@ it('can automatically generate a slug from the title', function () {
         ->fillForm([
             'title' => $title,
         ])
-        ->assertFormSet([
+        ->assertSchemaSet([
             'slug' => Str::slug($title),
         ]);
 });
 ```
 
-> If you have multiple forms on a Livewire component, you can specify which form you want to check using `assertFormSet([...], 'createPostForm')`.
+> If you have multiple forms on a Livewire component, you can specify which form you want to check using `assertSchemaSet([...], 'createPostForm')`.
 
-You may also find it useful to pass a function to the `assertFormSet()` method, which allows you to access the form `$state` and perform additional assertions:
+You may also find it useful to pass a function to the `assertSchemaSet()` method, which allows you to access the form `$state` and perform additional assertions:
 
 ```php
 use Illuminate\Support\Str;
@@ -58,7 +58,7 @@ it('can automatically generate a slug from the title without any spaces', functi
         ->fillForm([
             'title' => $title,
         ])
-        ->assertFormSet(function (array $state): array {
+        ->assertSchemaSet(function (array $state): array {
             expect($state['slug'])
                 ->not->toContain(' ');
                 

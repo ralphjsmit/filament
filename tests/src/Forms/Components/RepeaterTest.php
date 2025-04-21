@@ -21,7 +21,7 @@ it('can fill and assert data in a repeater', function (array $data): void {
     try {
         livewire(TestComponentWithRepeater::class)
             ->fillForm($data)
-            ->assertFormSet($data);
+            ->assertSchemaSet($data);
     } catch (RootTagMissingFromViewException $exception) {
         // Flaky test
     }
@@ -127,13 +127,13 @@ it('can remove items from a repeater', function (): void {
                 ],
             ],
         ])
-        ->assertFormSet($data)
+        ->assertSchemaSet($data)
         ->fillForm([
             'normal' => [
                 Arr::first($data['normal']),
             ],
         ])
-        ->assertFormSet(function (array $data) {
+        ->assertSchemaSet(function (array $data) {
             expect($data['normal'])->toHaveCount(1);
 
             return [

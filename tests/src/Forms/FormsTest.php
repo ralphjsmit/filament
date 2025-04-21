@@ -48,7 +48,7 @@ it('has fields on multiple forms', function (): void {
 it('can fill fields on multiple forms', function (): void {
     livewire(TestComponentWithMultipleForms::class)
         ->fillForm(['title' => 'value'], 'fooForm')
-        ->assertFormSet(['title' => 'value'], 'fooForm');
+        ->assertSchemaSet(['title' => 'value'], 'fooForm');
 });
 
 it('can have disabled fields', function (): void {
