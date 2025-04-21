@@ -1,5 +1,5 @@
 ---
-title: Testing forms
+title: Testing schemas
 ---
 
 ## Introduction
