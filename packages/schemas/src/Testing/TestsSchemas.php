@@ -3,8 +3,11 @@
 namespace Filament\Schemas\Testing;
 
 use Closure;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Testing\Assert;
@@ -167,6 +170,134 @@ class TestsSchemas
                 $componentInstance->getState(),
                 "Failed asserting that a component [{$component}] does not have the expected state in the [{$livewireClass}] component."
             );
+
+            return $this;
+        };
+    }
+
+    public function assertWizardStepExists(): Closure
+    {
+        return function (int $step, ?string $schema = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $schema ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $schema ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertSchemaExists($schema);
+
+            /** @var Schema $schemaInstance */
+            $schemaInstance = $this->instance()->{$schema};
+
+            /** @var Wizard $wizard */
+            $wizard = $schemaInstance->getComponent(fn (Component | Action | ActionGroup $component): bool => $component instanceof Wizard);
+            Assert::assertArrayHasKey(
+                $step - 1,
+                $wizard->getDefaultChildComponents(),
+                "Wizard does not have a step [{$step}]."
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertWizardCurrentStep(): Closure
+    {
+        return function (int $step, ?string $schema = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $schema ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $schema ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertSchemaExists($schema);
+
+            /** @var Schema $schemaInstance */
+            $schemaInstance = $this->instance()->{$schema};
+
+            /** @var Wizard $wizard */
+            $wizard = $schemaInstance->getComponent(fn (Component | Action | ActionGroup $component): bool => $component instanceof Wizard);
+            Assert::assertEquals(
+                $step,
+                $current = $wizard->getCurrentStepIndex() + 1,
+                "Failed asserting that wizard is on step [{$step}], current step is [{$current}]."
+            );
+
+            return $this;
+        };
+    }
+
+    public function goToWizardStep(): Closure
+    {
+        return function (int $step, ?string $schema = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $schema ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $schema ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertWizardStepExists($step, $schema);
+
+            /** @var Schema $schemaInstance */
+            $schemaInstance = $this->instance()->{$schema};
+
+            /** @var Wizard $wizard */
+            $wizard = $schemaInstance->getComponent(fn (Component | Action | ActionGroup $component): bool => $component instanceof Wizard);
+
+            $stepIndex = ($step <= 1) ? 0 : $step - 2;
+
+            $this->call('callSchemaComponentMethod', $wizard->getKey(), 'nextStep', [$stepIndex]);
+
+            return $this;
+        };
+    }
+
+    public function goToNextWizardStep(): Closure
+    {
+        return function (?string $schema = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $schema ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $schema ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertSchemaExists($schema);
+
+            /** @var Schema $schemaInstance */
+            $schemaInstance = $this->instance()->{$schema};
+
+            /** @var Wizard $wizard */
+            $wizard = $schemaInstance->getComponent(fn (Component | Action | ActionGroup $component): bool => $component instanceof Wizard);
+
+            $this->call('callSchemaComponentMethod', $wizard->getKey(), 'nextStep', [$wizard->getCurrentStepIndex()]);
+
+            return $this;
+        };
+    }
+
+    public function goToPreviousWizardStep(): Closure
+    {
+        return function (?string $schema = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $schema ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $schema ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertSchemaExists($schema);
+
+            /** @var Schema $schemaInstance */
+            $schemaInstance = $this->instance()->{$schema};
+
+            /** @var Wizard $wizard */
+            $wizard = $schemaInstance->getComponent(fn (Component | Action | ActionGroup $component): bool => $component instanceof Wizard);
+
+            $this->call('callSchemaComponentMethod', $wizard->getKey(), 'previousStep', [$wizard->getCurrentStepIndex()]);
 
             return $this;
         };

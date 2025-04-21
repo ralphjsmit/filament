@@ -32,16 +32,6 @@ namespace Livewire\Features\SupportTesting {
         public function assertFormComponentExists(string $componentKey, string | Closure $schema = 'form', ?Closure $checkComponentUsing = null): static {}
 
         public function assertFormComponentDoesNotExist(string $componentKey, string $schema = 'form'): static {}
-
-        public function goToWizardStep(int $step, string $schema = 'form'): static {}
-
-        public function goToNextWizardStep(string $schema = 'form'): static {}
-
-        public function goToPreviousWizardStep(string $schema = 'form'): static {}
-
-        public function assertWizardStepExists(int $step, string $schema = 'form'): static {}
-
-        public function assertWizardCurrentStep(int $step, string $schema = 'form'): static {}
     }
 
 }
