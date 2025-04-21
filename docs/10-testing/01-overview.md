@@ -28,9 +28,9 @@ When testing Filament, it is useful to understand which components are Livewire 
 
 Some examples of Livewire components are:
 
-- Pages in a panel, including page classes in a resource's `Pages` directory.
-- Relation managers in a resource.
-- Widgets.
+- Pages in a panel, including page classes in a resource's `Pages` directory
+- Relation managers in a resource
+- Widgets
 
 Some examples of classes that are not Livewire components are:
 
