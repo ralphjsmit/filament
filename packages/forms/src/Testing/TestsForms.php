@@ -3,6 +3,7 @@
 namespace Filament\Forms\Testing;
 
 use Closure;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -21,8 +22,14 @@ class TestsForms
 {
     public function fillForm(): Closure
     {
-        return function (array | Closure $state = [], string $form = 'form'): static {
-            /** @phpstan-ignore-next-line  */
+        return function (array | Closure $state = [], ?string $form = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($form);
 
             $livewire = $this->instance();
@@ -63,7 +70,7 @@ class TestsForms
 
     public function assertFormSet(): Closure
     {
-        return function (array | Closure $state, string $form = 'form'): static {
+        return function (array | Closure $state, ?string $form = null): static {
             $this->assertSchemaSet($state, $form);
 
             return $this;
@@ -72,8 +79,14 @@ class TestsForms
 
     public function assertHasFormErrors(): Closure
     {
-        return function (array $keys = [], string $form = 'form'): static {
-            /** @phpstan-ignore-next-line  */
+        return function (array $keys = [], ?string $form = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($form);
 
             $livewire = $this->instance();
@@ -101,8 +114,14 @@ class TestsForms
 
     public function assertHasNoFormErrors(): Closure
     {
-        return function (array $keys = [], string $form = 'form'): static {
-            /** @phpstan-ignore-next-line  */
+        return function (array $keys = [], ?string $form = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($form);
 
             $livewire = $this->instance();
@@ -139,10 +158,10 @@ class TestsForms
 
     public function assertFormComponentExists(): Closure
     {
-        return function (string $componentKey, string | Closure $form = 'form', ?Closure $checkComponentUsing = null): static {
+        return function (string $componentKey, string | Closure | null $form = null, ?Closure $checkComponentUsing = null): static {
             if ($form instanceof Closure) {
                 $checkComponentUsing = $form;
-                $form = 'form';
+                $form = null;
             }
 
             $this->assertSchemaComponentExists($componentKey, $form, $checkComponentUsing);
@@ -153,7 +172,7 @@ class TestsForms
 
     public function assertFormComponentDoesNotExist(): Closure
     {
-        return function (string $componentKey, string $form = 'form'): static {
+        return function (string $componentKey, ?string $form = null): static {
             $this->assertSchemaComponentDoesNotExist($componentKey, $form);
 
             return $this;
@@ -162,13 +181,19 @@ class TestsForms
 
     public function assertFormFieldExists(): Closure
     {
-        return function (string $field, string | Closure $form = 'form', ?Closure $checkFieldUsing = null): static {
+        return function (string $field, string | Closure | null $form = null, ?Closure $checkFieldUsing = null): static {
             if ($form instanceof Closure) {
                 $checkFieldUsing = $form;
-                $form = 'form';
+                $form = null;
             }
 
-            /** @phpstan-ignore-next-line  */
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($form);
 
             /** @var Schema $schemaInstance */
@@ -198,7 +223,16 @@ class TestsForms
 
     public function assertFormFieldDoesNotExist(): Closure
     {
-        return function (string $field, string $form = 'form'): static {
+        return function (string $field, ?string $form = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
+            $this->assertSchemaExists($form);
+
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$form};
 
@@ -218,8 +252,14 @@ class TestsForms
 
     public function assertFormFieldDisabled(): Closure
     {
-        return function (string $field, string $form = 'form'): static {
-            /** @phpstan-ignore-next-line  */
+        return function (string $field, ?string $form = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
             $this->assertFormFieldExists($field, $form);
 
             /** @var Schema $schemaInstance */
@@ -230,7 +270,7 @@ class TestsForms
 
             $livewireClass = $this->instance()::class;
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertFormFieldExists($field, $form, function (Field $fieldInstance) use ($field, $form, $livewireClass): bool {
                 Assert::assertTrue(
                     $fieldInstance->isDisabled(),
@@ -254,8 +294,14 @@ class TestsForms
 
     public function assertFormFieldEnabled(): Closure
     {
-        return function (string $field, string $form = 'form'): static {
-            /** @phpstan-ignore-next-line  */
+        return function (string $field, ?string $form = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
             $this->assertFormFieldExists($field, $form);
 
             /** @var Schema $schemaInstance */
@@ -266,7 +312,7 @@ class TestsForms
 
             $livewireClass = $this->instance()::class;
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertFormFieldExists($field, $form, function (Field $fieldInstance) use ($field, $form, $livewireClass): bool {
                 Assert::assertFalse(
                     $fieldInstance->isDisabled(),
@@ -290,8 +336,14 @@ class TestsForms
 
     public function assertFormFieldReadOnly(): Closure
     {
-        return function (string $field, string $form = 'form'): static {
-            /** @phpstan-ignore-next-line  */
+        return function (string $field, ?string $form = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
             $this->assertFormFieldExists($field, $form);
 
             /** @var Schema $schemaInstance */
@@ -321,8 +373,14 @@ class TestsForms
 
     public function assertFormFieldHidden(): Closure
     {
-        return function (string $field, string $form = 'form'): static {
-            /** @phpstan-ignore-next-line  */
+        return function (string $field, ?string $form = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
             $this->assertFormFieldExists($field, $form);
 
             /** @var Schema $schemaInstance */
@@ -352,8 +410,14 @@ class TestsForms
 
     public function assertFormFieldVisible(): Closure
     {
-        return function (string $field, string $form = 'form'): static {
-            /** @phpstan-ignore-next-line  */
+        return function (string $field, ?string $form = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $form ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $form ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
             $this->assertFormFieldExists($field, $form);
 
             /** @var Schema $schemaInstance */

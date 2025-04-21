@@ -29,7 +29,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($schema);
 
             /** @var Schema $schemaInstance */
@@ -65,7 +65,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($schema);
 
             /** @var Schema $schemaInstance */
@@ -111,7 +111,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($schema);
 
             /** @var Schema $schemaInstance */
@@ -154,7 +154,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaComponentExists($component, $schema);
 
             /** @var Schema $schemaInstance */
@@ -183,7 +183,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaComponentExists($component, $schema);
 
             /** @var Schema $schemaInstance */
@@ -212,7 +212,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($schema);
 
             /** @var Schema $schemaInstance */
@@ -239,7 +239,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($schema);
 
             /** @var Schema $schemaInstance */
@@ -266,7 +266,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertWizardStepExists($step, $schema);
 
             /** @var Schema $schemaInstance */
@@ -292,7 +292,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($schema);
 
             /** @var Schema $schemaInstance */
@@ -316,7 +316,7 @@ class TestsSchemas
 
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertSchemaExists($schema);
 
             /** @var Schema $schemaInstance */

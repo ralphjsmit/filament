@@ -44,7 +44,7 @@ class TestsColumns
     public function assertCanNotRenderTableColumn(): Closure
     {
         return function (string $name): static {
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
             $livewire = $this->instance();
