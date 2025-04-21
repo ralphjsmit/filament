@@ -330,7 +330,8 @@ it('links to the correct Filament sites', function () {
 To test table actions, you can use a `TestAction` object with the `table()` method. This object receives the name of the action you want to test, and replaces the name of the action in any testing method you want to use. For example:
 
 ```php
-use Filament\Actions\Testing\TestAction;use function Pest\Livewire\livewire;
+use Filament\Actions\Testing\TestAction;
+use function Pest\Livewire\livewire;
 
 $invoice = Invoice::factory()->create();
 
@@ -349,7 +350,8 @@ livewire(ListInvoices::class)
 To test a header action, you can use the `table()` method without passing in a specific record to test with:
 
 ```php
-use Filament\Actions\Testing\TestAction;use function Pest\Livewire\livewire;
+use Filament\Actions\Testing\TestAction;
+use function Pest\Livewire\livewire;
 
 livewire(ListInvoices::class)
     ->callAction(TestAction::make('create')->table());
@@ -366,7 +368,8 @@ livewire(ListInvoices::class)
 To test a bulk action, first call `selectTableRecords()` and pass in any records you want to select. Then, use the `TestAction`'s `bulk()` method to specify the action you want to test. For example:
 
 ```php
-use Filament\Actions\Testing\TestAction;use function Pest\Livewire\livewire;
+use Filament\Actions\Testing\TestAction;
+use function Pest\Livewire\livewire;
 
 $invoices = Invoice::factory()->count(3)->create();
 
@@ -455,7 +458,8 @@ livewire(ManageInvoices::class)
 To test action arguments, you can use a `TestAction` object with the `arguments()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. For example:
 
 ```php
-use Filament\Actions\Testing\TestAction;use function Pest\Livewire\livewire;
+use Filament\Actions\Testing\TestAction;
+use function Pest\Livewire\livewire;
 
 $invoice = Invoice::factory()->create();
 
@@ -467,4 +471,74 @@ livewire(ManageInvoices::class)
 
 livewire(ManageInvoices::class)
     ->assertActionExists(TestAction::make('send')->arguments(['invoice' => $invoice->getKey()]))
+```
+
+## Using action class names in tests
+
+Filament includes a host of prebuilt actions such as `CreateAction`, `EditAction` and `DeleteAction`, and you can use these class names in your tests instead of action names, for example:
+
+```php
+use Filament\Actions\CreateAction;
+use function Pest\Livewire\livewire;
+
+livewire(ManageInvoices::class)
+    ->callAction(CreateAction::class)
+```
+
+If you have your own action classes in your app with a `make()` method, the name of your action is not discoverable by Filament unless it runs the `make()` method, which is not efficient. To use your own action class names in your tests, you can add an `#[ActionName]` attribute to your action class, which Filament can use to discover the name of your action. The name passed to the `#[ActionName]` attribute should be the same as the name of the action you would normally use in your tests. For example:
+
+```php
+use Filament\Actions\Action;
+use Filament\Actions\ActionName;
+
+#[ActionName('send')]
+class SendInvoiceAction
+{
+    public static function make(): Action
+    {
+        return Action::make('send')
+            ->requiresConfirmation()
+            ->action(function () {
+                // ...
+            });
+    }
+}
+```
+
+Now, you can use the class name in your tests:
+
+```php
+use App\Filament\Resources\Invoices\Actions\SendInvoiceAction;
+use Filament\Actions\Testing\TestAction;
+use function Pest\Livewire\livewire;
+
+$invoice = Invoice::factory()->create();
+
+livewire(ManageInvoices::class)
+    ->callAction(TestAction::make(SendInvoiceAction::class)->table($invoice);
+```
+
+If you have an action class that extends the `Action` class, you can add a `getDefaultName()` static method to the class, which will be used to discover the name of the action. It also allows users to omit the name of the action from the `make()` method when instantiating it. For example:
+
+```php
+use Filament\Actions\Action;
+
+class SendInvoiceAction extends Action
+{
+    public static function getDefaultName(): string
+    {
+        return 'send';
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        $this
+            ->requiresConfirmation()
+            ->action(function () {
+                // ...
+            });
+    }
+}
 ```
