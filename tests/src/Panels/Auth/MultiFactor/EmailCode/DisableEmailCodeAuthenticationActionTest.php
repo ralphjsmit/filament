@@ -44,7 +44,7 @@ it('can disable authentication when valid challenge code is used', function (): 
                 ->schemaComponent('email_code', schema: 'content'),
             ['code' => $emailCodeAuthentication->getCurrentCode($user)],
         )
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($user->hasEmailCodeAuthentication())
         ->toBeFalse();
@@ -120,7 +120,7 @@ it('will not disable authentication when an invalid code is used', function (): 
                 ->schemaComponent('email_code', schema: 'content'),
             ['code' => ($emailCodeAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000'],
         )
-        ->assertHasActionErrors();
+        ->assertHasFormErrors();
 
     expect($user->hasEmailCodeAuthentication())
         ->toBeTrue();
@@ -144,7 +144,7 @@ test('codes are required', function (): void {
                 ->schemaComponent('email_code', schema: 'content'),
             ['code' => ''],
         )
-        ->assertHasActionErrors([
+        ->assertHasFormErrors([
             'code' => 'required',
         ]);
 
@@ -172,7 +172,7 @@ test('codes must be 6 digits', function (): void {
                 ->schemaComponent('email_code', schema: 'content'),
             ['code' => Str::limit($emailCodeAuthentication->getCurrentCode($user), limit: 5, end: '')],
         )
-        ->assertHasActionErrors([
+        ->assertHasFormErrors([
             'code' => 'digits',
         ]);
 

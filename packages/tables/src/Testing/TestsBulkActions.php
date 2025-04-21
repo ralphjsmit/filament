@@ -307,7 +307,7 @@ class TestsBulkActions
     public function assertHasTableBulkActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasActionErrors($keys);
+            $this->assertHasFormErrors($keys);
 
             return $this;
         };
@@ -316,7 +316,7 @@ class TestsBulkActions
     public function assertHasNoTableBulkActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasNoActionErrors($keys);
+            $this->assertHasNoFormErrors($keys);
 
             return $this;
         };

@@ -319,7 +319,7 @@ class TestsInfolistActions
     public function assertHasInfolistActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasActionErrors($keys);
+            $this->assertHasFormErrors($keys);
 
             return $this;
         };
@@ -328,7 +328,7 @@ class TestsInfolistActions
     public function assertHasNoInfolistActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasNoActionErrors($keys);
+            $this->assertHasNoFormErrors($keys);
 
             return $this;
         };

@@ -42,7 +42,7 @@ it('can call a bulk action with data', function (): void {
         ->callAction(TestAction::make('data')->table()->bulk(), data: [
             'payload' => $payload = Str::random(),
         ])
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertDispatched('data-called', data: [
             'payload' => $payload,
         ]);
@@ -65,7 +65,7 @@ it('can validate a bulk action\'s data', function (): void {
         ->callAction(TestAction::make('data')->table()->bulk(), data: [
             'payload' => null,
         ])
-        ->assertHasActionErrors(['payload' => ['required']])
+        ->assertHasFormErrors(['payload' => ['required']])
         ->assertNotDispatched('data-called');
 
     livewire(PostsTable::class)
@@ -82,7 +82,7 @@ it('can set default bulk action data when mounted', function (): void {
     livewire(PostsTable::class)
         ->selectTableRecords($posts)
         ->mountAction(TestAction::make('data')->table()->bulk())
-        ->assertActionDataSet([
+        ->assertSchemaSet([
             'foo' => 'bar',
         ]);
 

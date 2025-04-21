@@ -82,9 +82,9 @@ it('can save the secret and recovery codes to the user when the action is submit
     $recoveryCodes = $encryptedActionArguments['recoveryCodes'];
 
     $livewire
-        ->setActionData(['code' => $googleTwoFactorAuthentication->getCurrentCode($user, $secret)])
+        ->fillForm(['code' => $googleTwoFactorAuthentication->getCurrentCode($user, $secret)])
         ->callMountedAction()
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($user->hasGoogleTwoFactorAuthentication())
         ->toBeTrue();
@@ -124,11 +124,11 @@ it('will not set up authentication when an invalid code is used', function (): v
     $secret = $encryptedActionArguments['secret'];
 
     $livewire
-        ->setActionData([
+        ->fillForm([
             'code' => ($googleTwoFactorAuthentication->getCurrentCode($user, $secret) === '000000') ? '111111' : '000000',
         ])
         ->callMountedAction()
-        ->assertHasActionErrors();
+        ->assertHasFormErrors();
 
     expect($user->hasGoogleTwoFactorAuthentication())
         ->toBeFalse();
@@ -155,9 +155,9 @@ test('codes are required', function (): void {
     livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
             ->schemaComponent('google_two_factor', schema: 'content'))
-        ->setActionData(['code' => ''])
+        ->fillForm(['code' => ''])
         ->callMountedAction()
-        ->assertHasActionErrors([
+        ->assertHasFormErrors([
             'code' => 'required',
         ]);
 
@@ -193,11 +193,11 @@ test('codes must be 6 digits', function (): void {
     $secret = $encryptedActionArguments['secret'];
 
     $livewire
-        ->setActionData([
+        ->fillForm([
             'code' => Str::limit($googleTwoFactorAuthentication->getCurrentCode($user, $secret), limit: 5, end: ''),
         ])
         ->callMountedAction()
-        ->assertHasActionErrors([
+        ->assertHasFormErrors([
             'code' => 'digits',
         ]);
 

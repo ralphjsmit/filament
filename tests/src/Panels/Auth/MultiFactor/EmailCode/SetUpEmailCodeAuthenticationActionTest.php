@@ -76,9 +76,9 @@ it('can save the secret to the user when the action is submitted', function (): 
     $secret = $encryptedActionArguments['secret'];
 
     $livewire
-        ->setActionData(['code' => $emailCodeAuthentication->getCurrentCode($user, $secret)])
+        ->fillForm(['code' => $emailCodeAuthentication->getCurrentCode($user, $secret)])
         ->callMountedAction()
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($user->hasEmailCodeAuthentication())
         ->toBeTrue();
@@ -148,11 +148,11 @@ it('will not set up authentication when an invalid code is used', function (): v
     $secret = $encryptedActionArguments['secret'];
 
     $livewire
-        ->setActionData([
+        ->fillForm([
             'code' => ($emailCodeAuthentication->getCurrentCode($user, $secret) === '000000') ? '111111' : '000000',
         ])
         ->callMountedAction()
-        ->assertHasActionErrors();
+        ->assertHasFormErrors();
 
     expect($user->hasEmailCodeAuthentication())
         ->toBeFalse();
@@ -173,9 +173,9 @@ test('codes are required', function (): void {
     livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
             ->schemaComponent('email_code', schema: 'content'))
-        ->setActionData(['code' => ''])
+        ->fillForm(['code' => ''])
         ->callMountedAction()
-        ->assertHasActionErrors([
+        ->assertHasFormErrors([
             'code' => 'required',
         ]);
 
@@ -205,11 +205,11 @@ test('codes must be 6 digits', function (): void {
     $secret = $encryptedActionArguments['secret'];
 
     $livewire
-        ->setActionData([
+        ->fillForm([
             'code' => Str::limit($emailCodeAuthentication->getCurrentCode($user, $secret), limit: 5, end: ''),
         ])
         ->callMountedAction()
-        ->assertHasActionErrors([
+        ->assertHasFormErrors([
             'code' => 'digits',
         ]);
 

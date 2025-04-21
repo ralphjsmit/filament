@@ -124,12 +124,12 @@ namespace Livewire\Features\SupportTesting {
         public function assertFormComponentActionHalted(string | array $component, string | array $name, string $formName = 'form'): static {}
 
         /**
-         * @deprecated Use `assertHasActionErrors()` instead.
+         * @deprecated Use `assertHasFormErrors()` instead.
          */
         public function assertHasFormComponentActionErrors(array $keys = []): static {}
 
         /**
-         * @deprecated Use `assertHasNoActionErrors()` instead.
+         * @deprecated Use `assertHasNoFormErrors()` instead.
          */
         public function assertHasNoFormComponentActionErrors(array $keys = []): static {}
 

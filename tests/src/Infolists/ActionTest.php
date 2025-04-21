@@ -30,7 +30,7 @@ it('can validate an action\'s data', function (): void {
         ->callAction(TestAction::make('setValue')->schemaComponent('textEntry'), data: [
             'value' => null,
         ])
-        ->assertHasActionErrors(['value' => ['required']])
+        ->assertHasFormErrors(['value' => ['required']])
         ->assertNotDispatched('foo');
 
     livewire(InfolistActions::class)
@@ -44,7 +44,7 @@ it('can validate an action\'s data', function (): void {
 it('can set default action data when mounted', function (): void {
     livewire(InfolistActions::class)
         ->mountAction(TestAction::make('setValue')->schemaComponent('textEntry'))
-        ->assertActionDataSet([
+        ->assertSchemaSet([
             'value' => 'foo',
         ]);
 

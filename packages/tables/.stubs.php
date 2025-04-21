@@ -164,7 +164,7 @@ namespace Livewire\Features\SupportTesting {
         public function assertHasTableActionErrors(array $keys = []): static {}
 
         /**
-         * @deprecated Use `assertHasNoActionErrors()` instead.
+         * @deprecated Use `assertHasNoFormErrors()` instead.
          */
         public function assertHasNoTableActionErrors(array $keys = []): static {}
 
@@ -324,12 +324,12 @@ namespace Livewire\Features\SupportTesting {
         public function assertTableBulkActionHalted(string $name): static {}
 
         /**
-         * @deprecated Use `assertHasActionErrors()` instead.
+         * @deprecated Use `assertHasFormErrors()` instead.
          */
         public function assertHasTableBulkActionErrors(array $keys = []): static {}
 
         /**
-         * @deprecated Use `assertHasNoActionErrors()` instead.
+         * @deprecated Use `assertHasNoFormErrors()` instead.
          */
         public function assertHasNoTableBulkActionErrors(array $keys = []): static {}
     }

@@ -23,7 +23,7 @@ it('can call an action with data', function (): void {
         ->callAction('data', data: [
             'payload' => $payload = Str::random(),
         ])
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertDispatched('data-called', data: [
             'payload' => $payload,
         ]);
@@ -34,7 +34,7 @@ it('can validate an action\'s data', function (): void {
         ->callAction('data', data: [
             'payload' => null,
         ])
-        ->assertHasActionErrors(['payload' => ['required']])
+        ->assertHasFormErrors(['payload' => ['required']])
         ->assertNotDispatched('data-called');
 });
 
@@ -43,7 +43,7 @@ it('can access form data in before hook', function (): void {
         ->callAction('before-hook-data', data: [
             'payload' => $payload = Str::random(),
         ])
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertDispatched('before-hook-called', data: [
             'payload' => $payload,
         ]);
@@ -52,7 +52,7 @@ it('can access form data in before hook', function (): void {
 it('can set default action data when mounted', function (): void {
     livewire(Actions::class)
         ->mountAction('data')
-        ->assertActionDataSet([
+        ->assertSchemaSet([
             'foo' => 'bar',
         ]);
 });
@@ -65,12 +65,12 @@ it('can call a nested action registered in the modal footer', function (): void 
         ], [
             'bar' => Str::random(),
         ])
-        ->assertHasNoActionErrors()
-        ->setActionData([
+        ->assertHasNoFormErrors()
+        ->fillForm([
             'foo' => $foo = Str::random(),
         ])
         ->callMountedAction()
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertDispatched('parent-called', foo: $foo);
 });
 
@@ -82,12 +82,12 @@ it('can call a manually modal registered nested action', function (): void {
         ], [
             'bar' => Str::random(),
         ])
-        ->assertHasNoActionErrors()
-        ->setActionData([
+        ->assertHasNoFormErrors()
+        ->fillForm([
             'foo' => $foo = Str::random(),
         ])
         ->callMountedAction()
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertDispatched('parent-called', foo: $foo);
 });
 
@@ -99,12 +99,12 @@ it('can call a nested action registered on a schema component', function (): voi
         ], [
             'bar' => Str::random(),
         ])
-        ->assertHasNoActionErrors()
-        ->setActionData([
+        ->assertHasNoFormErrors()
+        ->fillForm([
             'foo' => $foo = Str::random(),
         ])
         ->callMountedAction()
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertDispatched('parent-called', foo: $foo);
 });
 
@@ -116,7 +116,7 @@ it('can cancel a parent action when calling a nested action', function (): void 
         ], [
             'bar' => Str::random(),
         ])
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertActionNotMounted()
         ->assertNotDispatched('parent-called');
 });
@@ -173,11 +173,11 @@ it('can mount a nested action with nested arguments', function (): void {
 it('can get the raw data from parent actions', function (): void {
     livewire(Actions::class)
         ->mountAction('parent')
-        ->setActionData([
+        ->fillForm([
             'foo' => $foo = Str::random(),
         ])
         ->mountAction('manuallyRegisteredModal')
-        ->setActionData([
+        ->fillForm([
             'bar' => $bar = Str::random(),
         ])
         ->callAction('testData', [

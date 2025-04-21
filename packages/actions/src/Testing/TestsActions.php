@@ -523,17 +523,7 @@ class TestsActions
     public function assertHasActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasErrors(
-                collect($keys)
-                    ->mapWithKeys(function ($value, $key): array {
-                        if (is_int($key)) {
-                            return [$key => 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $value];
-                        }
-
-                        return ['mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $key => $value];
-                    })
-                    ->all(),
-            );
+            $this->assertHasFormErrors($keys);
 
             return $this;
         };
@@ -542,17 +532,7 @@ class TestsActions
     public function assertHasNoActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasNoErrors(
-                collect($keys)
-                    ->mapWithKeys(function ($value, $key): array {
-                        if (is_int($key)) {
-                            return [$key => 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $value];
-                        }
-
-                        return ['mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $key => $value];
-                    })
-                    ->all(),
-            );
+            $this->assertHasNoFormErrors($keys);
 
             return $this;
         };

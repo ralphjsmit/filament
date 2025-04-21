@@ -63,8 +63,14 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertActionHalted(string | TestAction | array $actions = []): static {}
 
+        /**
+         * @deprecated Use `assertHasFormErrors()` instead.
+         */
         public function assertHasActionErrors(array $keys = []): static {}
 
+        /**
+         * @deprecated Use `assertHasNoFormErrors()` instead.
+         */
         public function assertHasNoActionErrors(array $keys = []): static {}
 
         public function parseActionName(string | TestAction | array $actions): string {}

@@ -320,7 +320,7 @@ class TestsFormComponentActions
     public function assertHasFormComponentActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasActionErrors($keys);
+            $this->assertHasFormErrors($keys);
 
             return $this;
         };
@@ -329,7 +329,7 @@ class TestsFormComponentActions
     public function assertHasNoFormComponentActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasNoActionErrors($keys);
+            $this->assertHasNoFormErrors($keys);
 
             return $this;
         };

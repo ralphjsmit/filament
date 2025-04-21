@@ -81,12 +81,12 @@ namespace Livewire\Features\SupportTesting {
         public function assertInfolistActionHalted(string $component, string | array $name, string $infolistName = 'infolist'): static {}
 
         /**
-         * @deprecated Use `assertHasActionErrors()` instead.
+         * @deprecated Use `assertHasFormErrors()` instead.
          */
         public function assertHasInfolistActionErrors(array $keys = []): static {}
 
         /**
-         * @deprecated Use `assertHasNoActionErrors()` instead.
+         * @deprecated Use `assertHasNoFormErrors()` instead.
          */
         public function assertHasNoInfolistActionErrors(array $keys = []): static {}
 

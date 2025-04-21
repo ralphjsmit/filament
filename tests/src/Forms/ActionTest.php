@@ -55,7 +55,7 @@ it('can validate an action\'s data', function (): void {
         ->callAction(TestAction::make('setValue')->schemaComponent('textInput'), data: [
             'value' => null,
         ])
-        ->assertHasActionErrors(['value' => ['required']])
+        ->assertHasFormErrors(['value' => ['required']])
         ->assertFormSet(['textInput' => null]);
 
     livewire(Actions::class)
@@ -69,7 +69,7 @@ it('can validate an action\'s data', function (): void {
 it('can set default action data when mounted', function (): void {
     livewire(Actions::class)
         ->mountAction(TestAction::make('setValue')->schemaComponent('textInput'))
-        ->assertActionDataSet([
+        ->assertSchemaSet([
             'value' => 'foo',
         ]);
 

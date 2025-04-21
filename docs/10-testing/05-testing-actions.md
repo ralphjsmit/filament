@@ -42,7 +42,7 @@ it('can send invoices', function () {
         ->callAction('send', data: [
             'email' => $email = fake()->email(),
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($invoice->refresh())
         ->isSent()->toBeTrue()
@@ -107,9 +107,9 @@ it('confirms the target address before sending', function () {
 
 ## Errors
 
-`assertHasNoActionErrors()` is used to assert that no validation errors occurred when submitting the action form.
+`assertHasNoFormErrors()` is used to assert that no validation errors occurred when submitting the action form.
 
-To check if a validation error has occurred with the data, use `assertHasActionErrors()`, similar to `assertHasErrors()` in Livewire:
+To check if a validation error has occurred with the data, use `assertHasFormErrors()`, similar to `assertHasErrors()` in Livewire:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -123,7 +123,7 @@ it('can validate invoice recipient email', function () {
         ->callAction('send', data: [
             'email' => Str::random(),
         ])
-        ->assertHasActionErrors(['email' => ['email']]);
+        ->assertHasFormErrors(['email' => ['email']]);
 });
 ```
 
@@ -144,7 +144,7 @@ it('can send invoices to the primary contact by default', function () {
             'email' => $recipientEmail,
         ])
         ->callMountedAction()
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($invoice->refresh())
         ->isSent()->toBeTrue()
