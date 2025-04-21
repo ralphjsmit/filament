@@ -26,7 +26,7 @@ You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-media
 
 ## Form component
 
-You may use the field in the same way as the [original file upload](https://filamentphp.com/docs/forms/fields/file-upload) field:
+You may use the field in the same way as the [original file upload](https://filamentphp.com/docs/forms/file-upload) field:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -34,7 +34,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 SpatieMediaLibraryFileUpload::make('avatar')
 ```
 
-The media library file upload supports all the customization options of the [original file upload component](https://filamentphp.com/docs/forms/fields/file-upload).
+The media library file upload supports all the customization options of the [original file upload component](https://filamentphp.com/docs/forms/file-upload).
 
 ### Passing a collection
 

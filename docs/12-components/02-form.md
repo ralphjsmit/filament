@@ -139,7 +139,7 @@ Giving the `$form` access to a model is useful for a few reasons:
 - The form can load and save the model's relationship data automatically. For example, you have an Edit Post form, with a [Repeater](fields/repeater#integrating-with-an-eloquent-relationship) which manages comments associated with that post. Filament will automatically load the comments for that post when you call `$this->form->fill([...])`, and save them back to the relationship when you call `$this->form->getState()`.
 - Validation rules like `exists()` and `unique()` can automatically retrieve the database table name from the model.
 
-It is advised to always pass the model to the form when there is one. As explained, it unlocks many new powers of the Filament Form Builder.
+It is advised to always pass the model to the form when there is one. As explained, it unlocks many new powers of Filament's form system.
 
 To pass the model to the form, use the `$form->model()` method:
 
@@ -296,7 +296,7 @@ public function createComment(): void
 
 ## Generating form Livewire components with the CLI
 
-It's advised that you learn how to set up a Livewire component with the Form Builder manually, but once you are confident, you can use the CLI to generate a form for you.
+It's advised that you learn how to set up a Livewire component with forms manually, but once you are confident, you can use the CLI to generate a form for you.
 
 ```bash
 php artisan make:filament-livewire-form RegistrationForm
