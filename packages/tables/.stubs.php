@@ -21,9 +21,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableColumnHidden(string $name): static {}
 
-        public function assertTableColumnStateSet(string $name, $value, $record): static {}
+        public function assertTableColumnStateSet(string $name, $state, $record): static {}
 
-        public function assertTableColumnStateNotSet(string $name, $value, $record): static {}
+        public function assertTableColumnStateNotSet(string $name, $state, $record): static {}
 
         public function assertTableColumnSummarizerExists(string $columnName, string $summarizerId): static {}
 
@@ -31,13 +31,13 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableColumnSummaryNotSet(string $columnName, string $summarizerId, $state, bool $isCurrentPaginationPageOnly = false): static {}
 
-        public function assertTableColumnFormattedStateSet(string $name, $value, $record): static {}
+        public function assertTableColumnFormattedStateSet(string $name, $state, $record): static {}
 
-        public function assertTableColumnFormattedStateNotSet(string $name, $value, $record): static {}
+        public function assertTableColumnFormattedStateNotSet(string $name, $state, $record): static {}
 
-        public function assertTableColumnHasExtraAttributes(string $name, $value, $record): static {}
+        public function assertTableColumnHasExtraAttributes(string $name, array $attributes, $record): static {}
 
-        public function assertTableColumnDoesNotHaveExtraAttributes(string $name, $value, $record): static {}
+        public function assertTableColumnDoesNotHaveExtraAttributes(string $name, array $attributes, $record): static {}
 
         public function assertTableColumnHasDescription(string $name, $description, $record, $position = 'below'): static {}
 

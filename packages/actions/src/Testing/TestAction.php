@@ -50,9 +50,9 @@ class TestAction implements Arrayable
         return $this;
     }
 
-    public function table(mixed $recordKey = true): static
+    public function table(mixed $record = true): static
     {
-        $this->table = $recordKey;
+        $this->table = $record;
 
         return $this;
     }

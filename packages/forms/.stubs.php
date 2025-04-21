@@ -16,15 +16,15 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertHasNoFormErrors(array $keys = [], ?string $form = null): static {}
 
-        public function assertFormFieldExists(string $fieldName, string | Closure | null $form = null, ?Closure $checkFieldUsing = null): static {}
+        public function assertFormFieldExists(string $key, string | Closure | null $form = null, ?Closure $checkFieldUsing = null): static {}
 
-        public function assertFormFieldDoesNotExist(string $fieldName, ?string $form = null): static {}
+        public function assertFormFieldDoesNotExist(string $key, ?string $form = null): static {}
 
-        public function assertFormFieldDisabled(string $fieldName, ?string $form = null): static {}
+        public function assertFormFieldDisabled(string $key, ?string $form = null): static {}
 
-        public function assertFormFieldEnabled(string $fieldName, ?string $form = null): static {}
+        public function assertFormFieldEnabled(string $key, ?string $form = null): static {}
 
-        public function assertFormFieldReadOnly(string $fieldName, ?string $form = null): static {}
+        public function assertFormFieldReadOnly(string $key, ?string $form = null): static {}
 
         /**
          * @deprecated Use `assertSchemaExists()` instead.
@@ -34,12 +34,12 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertSchemaComponentHidden()` instead.
          */
-        public function assertFormFieldHidden(string $fieldName, string $form = 'form'): static {}
+        public function assertFormFieldHidden(string $key, string $form = 'form'): static {}
 
         /**
          * @deprecated Use `assertSchemaComponentVisible()` instead.
          */
-        public function assertFormFieldVisible(string $fieldName, string $form = 'form'): static {}
+        public function assertFormFieldVisible(string $key, string $form = 'form'): static {}
 
         /**
          * @deprecated Use `assertSchemaComponentExists()` instead.

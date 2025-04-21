@@ -181,7 +181,7 @@ class TestsForms
 
     public function assertFormFieldExists(): Closure
     {
-        return function (string $field, string | Closure | null $form = null, ?Closure $checkFieldUsing = null): static {
+        return function (string $key, string | Closure | null $form = null, ?Closure $checkFieldUsing = null): static {
             if ($form instanceof Closure) {
                 $checkFieldUsing = $form;
                 $form = null;
@@ -200,20 +200,20 @@ class TestsForms
             $schemaInstance = $this->instance()->{$form};
 
             /** @var ?Field $fieldInstance */
-            $fieldInstance = $schemaInstance->getFlatFields(withHidden: true)[$field] ?? null;
+            $fieldInstance = $schemaInstance->getFlatFields(withHidden: true)[$key] ?? null;
 
             $livewireClass = $this->instance()::class;
 
             Assert::assertInstanceOf(
                 Field::class,
                 $fieldInstance,
-                "Failed asserting that a field with the name [{$field}] exists on the form with the name [{$form}] on the [{$livewireClass}] component."
+                "Failed asserting that a field with the name [{$key}] exists on the form with the name [{$form}] on the [{$livewireClass}] component."
             );
 
             if ($checkFieldUsing) {
                 Assert::assertTrue(
                     $checkFieldUsing($fieldInstance),
-                    "Failed asserting that a field with the name [{$field}] and provided configuration exists on the form with the name [{$form}] on the [{$livewireClass}] component."
+                    "Failed asserting that a field with the name [{$key}] and provided configuration exists on the form with the name [{$form}] on the [{$livewireClass}] component."
                 );
             }
 
@@ -223,7 +223,7 @@ class TestsForms
 
     public function assertFormFieldDoesNotExist(): Closure
     {
-        return function (string $field, ?string $form = null): static {
+        return function (string $key, ?string $form = null): static {
             if ($this->instance() instanceof HasActions) {
                 $form ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -241,9 +241,9 @@ class TestsForms
             $livewireClass = $this->instance()::class;
 
             Assert::assertArrayNotHasKey(
-                $field,
+                $key,
                 $fields,
-                "Failed asserting that a field with the name [{$field}] does not exist on the form named [{$form}] on the [{$livewireClass}] component."
+                "Failed asserting that a field with the name [{$key}] does not exist on the form named [{$form}] on the [{$livewireClass}] component."
             );
 
             return $this;
@@ -252,7 +252,7 @@ class TestsForms
 
     public function assertFormFieldDisabled(): Closure
     {
-        return function (string $field, ?string $form = null): static {
+        return function (string $key, ?string $form = null): static {
             if ($this->instance() instanceof HasActions) {
                 $form ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -260,21 +260,21 @@ class TestsForms
             $form ??= $this->instance()->getDefaultTestingSchemaName();
 
             /** @phpstan-ignore-next-line */
-            $this->assertFormFieldExists($field, $form);
+            $this->assertFormFieldExists($key, $form);
 
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$form};
 
             /** @var Field $fieldInstance */
-            $fieldInstance = $schemaInstance->getFlatFields(withHidden: true)[$field];
+            $fieldInstance = $schemaInstance->getFlatFields(withHidden: true)[$key];
 
             $livewireClass = $this->instance()::class;
 
             /** @phpstan-ignore-next-line */
-            $this->assertFormFieldExists($field, $form, function (Field $fieldInstance) use ($field, $form, $livewireClass): bool {
+            $this->assertFormFieldExists($key, $form, function (Field $fieldInstance) use ($key, $form, $livewireClass): bool {
                 Assert::assertTrue(
                     $fieldInstance->isDisabled(),
-                    "Failed asserting that a field with the name [{$field}] is disabled on the form named [{$form}] on the [{$livewireClass}] component."
+                    "Failed asserting that a field with the name [{$key}] is disabled on the form named [{$form}] on the [{$livewireClass}] component."
                 );
 
                 return true;
@@ -294,7 +294,7 @@ class TestsForms
 
     public function assertFormFieldEnabled(): Closure
     {
-        return function (string $field, ?string $form = null): static {
+        return function (string $key, ?string $form = null): static {
             if ($this->instance() instanceof HasActions) {
                 $form ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -302,21 +302,21 @@ class TestsForms
             $form ??= $this->instance()->getDefaultTestingSchemaName();
 
             /** @phpstan-ignore-next-line */
-            $this->assertFormFieldExists($field, $form);
+            $this->assertFormFieldExists($key, $form);
 
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$form};
 
             /** @var Field $fieldInstance */
-            $fieldInstance = $schemaInstance->getFlatFields(withHidden: true)[$field];
+            $fieldInstance = $schemaInstance->getFlatFields(withHidden: true)[$key];
 
             $livewireClass = $this->instance()::class;
 
             /** @phpstan-ignore-next-line */
-            $this->assertFormFieldExists($field, $form, function (Field $fieldInstance) use ($field, $form, $livewireClass): bool {
+            $this->assertFormFieldExists($key, $form, function (Field $fieldInstance) use ($key, $form, $livewireClass): bool {
                 Assert::assertFalse(
                     $fieldInstance->isDisabled(),
-                    "Failed asserting that a field with the name [{$field}] is enabled on the form named [{$form}] on the [{$livewireClass}] component."
+                    "Failed asserting that a field with the name [{$key}] is enabled on the form named [{$form}] on the [{$livewireClass}] component."
                 );
 
                 return true;
@@ -336,7 +336,7 @@ class TestsForms
 
     public function assertFormFieldReadOnly(): Closure
     {
-        return function (string $field, ?string $form = null): static {
+        return function (string $key, ?string $form = null): static {
             if ($this->instance() instanceof HasActions) {
                 $form ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -344,19 +344,19 @@ class TestsForms
             $form ??= $this->instance()->getDefaultTestingSchemaName();
 
             /** @phpstan-ignore-next-line */
-            $this->assertFormFieldExists($field, $form);
+            $this->assertFormFieldExists($key, $form);
 
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$form};
 
             /** @var TextInput $fieldInstance */
-            $fieldInstance = $schemaInstance->getFlatFields(withHidden: true)[$field];
+            $fieldInstance = $schemaInstance->getFlatFields(withHidden: true)[$key];
 
             $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $fieldInstance->isReadOnly(),
-                "Failed asserting that a field with the name [{$field}] is read-only on the form named [{$form}] on the [{$livewireClass}] component."
+                "Failed asserting that a field with the name [{$key}] is read-only on the form named [{$form}] on the [{$livewireClass}] component."
             );
 
             return $this;
@@ -373,7 +373,7 @@ class TestsForms
 
     public function assertFormFieldHidden(): Closure
     {
-        return function (string $field, ?string $form = null): static {
+        return function (string $key, ?string $form = null): static {
             if ($this->instance() instanceof HasActions) {
                 $form ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -381,7 +381,7 @@ class TestsForms
             $form ??= $this->instance()->getDefaultTestingSchemaName();
 
             /** @phpstan-ignore-next-line */
-            $this->assertFormFieldExists($field, $form);
+            $this->assertFormFieldExists($key, $form);
 
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$form};
@@ -391,9 +391,9 @@ class TestsForms
             $livewireClass = $this->instance()::class;
 
             Assert::assertArrayNotHasKey(
-                $field,
+                $key,
                 $fields,
-                "Failed asserting that a field with the name [{$field}] is hidden on the form named [{$form}] on the [{$livewireClass}] component."
+                "Failed asserting that a field with the name [{$key}] is hidden on the form named [{$form}] on the [{$livewireClass}] component."
             );
 
             return $this;
@@ -410,7 +410,7 @@ class TestsForms
 
     public function assertFormFieldVisible(): Closure
     {
-        return function (string $field, ?string $form = null): static {
+        return function (string $key, ?string $form = null): static {
             if ($this->instance() instanceof HasActions) {
                 $form ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -418,7 +418,7 @@ class TestsForms
             $form ??= $this->instance()->getDefaultTestingSchemaName();
 
             /** @phpstan-ignore-next-line */
-            $this->assertFormFieldExists($field, $form);
+            $this->assertFormFieldExists($key, $form);
 
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$form};
@@ -428,9 +428,9 @@ class TestsForms
             $livewireClass = $this->instance()::class;
 
             Assert::assertArrayHasKey(
-                $field,
+                $key,
                 $fields,
-                "Failed asserting that a field with the name [{$field}] is visible on the form named [{$form}] on the [{$livewireClass}] component."
+                "Failed asserting that a field with the name [{$key}] is visible on the form named [{$form}] on the [{$livewireClass}] component."
             );
 
             return $this;

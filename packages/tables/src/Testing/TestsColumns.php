@@ -173,7 +173,7 @@ class TestsColumns
 
     public function assertTableColumnStateSet(): Closure
     {
-        return function (string $name, $value, $record): static {
+        return function (string $name, $state, $record): static {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
@@ -189,20 +189,20 @@ class TestsColumns
 
             $column->clearCachedState();
 
-            $state = $column->getState();
+            $actualState = $column->getState();
+
+            if (is_array($actualState)) {
+                $actualState = json_encode($actualState);
+            }
 
             if (is_array($state)) {
                 $state = json_encode($state);
             }
 
-            if (is_array($value)) {
-                $value = json_encode($value);
-            }
-
             Assert::assertEquals(
-                $value,
                 $state,
-                "Failed asserting that a table column with name [{$name}] has value of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                $actualState,
+                "Failed asserting that a table column with name [{$name}] has value of [{$state}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -211,7 +211,7 @@ class TestsColumns
 
     public function assertTableColumnStateNotSet(): Closure
     {
-        return function (string $name, $value, $record): static {
+        return function (string $name, $state, $record): static {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
@@ -227,20 +227,20 @@ class TestsColumns
 
             $column->clearCachedState();
 
-            $state = $column->getState();
+            $actualState = $column->getState();
+
+            if (is_array($actualState)) {
+                $actualState = json_encode($actualState);
+            }
 
             if (is_array($state)) {
                 $state = json_encode($state);
             }
 
-            if (is_array($value)) {
-                $value = json_encode($value);
-            }
-
             Assert::assertNotEquals(
-                $value,
                 $state,
-                "Failed asserting that a table column with name [{$name}] does not have a value of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                $actualState,
+                "Failed asserting that a table column with name [{$name}] does not have a value of [{$state}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -249,7 +249,7 @@ class TestsColumns
 
     public function assertTableColumnFormattedStateSet(): Closure
     {
-        return function (string $name, $value, $record): static {
+        return function (string $name, $state, $record): static {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
@@ -267,9 +267,9 @@ class TestsColumns
             $column->clearCachedState();
 
             Assert::assertEquals(
-                $value,
+                $state,
                 $column->formatState($column->getState()),
-                "Failed asserting that a table column with name [{$name}] has a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                "Failed asserting that a table column with name [{$name}] has a formatted state of [{$state}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -278,7 +278,7 @@ class TestsColumns
 
     public function assertTableColumnFormattedStateNotSet(): Closure
     {
-        return function (string $name, $value, $record): static {
+        return function (string $name, $state, $record): static {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
@@ -296,9 +296,9 @@ class TestsColumns
             $column->clearCachedState();
 
             Assert::assertNotEquals(
-                $value,
+                $state,
                 $column->formatState($column->getState()),
-                "Failed asserting that a table column with name [{$name}] does not have a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                "Failed asserting that a table column with name [{$name}] does not have a formatted state of [{$state}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
             return $this;

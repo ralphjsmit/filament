@@ -22,7 +22,7 @@ class TestsSchemas
 {
     public function assertSchemaComponentExists(): Closure
     {
-        return function (string $component, ?string $schema = null, ?Closure $checkComponentUsing = null): static {
+        return function (string $key, ?string $schema = null, ?Closure $checkComponentUsing = null): static {
             if ($this->instance() instanceof HasActions) {
                 $schema ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -35,20 +35,20 @@ class TestsSchemas
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$schema};
 
-            $componentInstance = $schemaInstance->getFlatComponents(withHidden: true)[$component] ?? null;
+            $componentInstance = $schemaInstance->getFlatComponents(withHidden: true)[$key] ?? null;
 
             $livewireClass = $this->instance()::class;
 
             Assert::assertInstanceOf(
                 Component::class,
                 $componentInstance,
-                "Failed asserting that a component [{$component}] exists on the schema with the name [{$schema}] on the [{$livewireClass}] component."
+                "Failed asserting that a component [{$key}] exists on the schema with the name [{$schema}] on the [{$livewireClass}] component."
             );
 
             if ($checkComponentUsing) {
                 Assert::assertTrue(
                     $checkComponentUsing($componentInstance),
-                    "Failed asserting that a component [{$component}] and provided configuration exists on the schema with the name [{$schema}] on the [{$livewireClass}] component."
+                    "Failed asserting that a component [{$key}] and provided configuration exists on the schema with the name [{$schema}] on the [{$livewireClass}] component."
                 );
             }
 
@@ -58,7 +58,7 @@ class TestsSchemas
 
     public function assertSchemaComponentDoesNotExist(): Closure
     {
-        return function (string $component, ?string $schema = null): static {
+        return function (string $key, ?string $schema = null): static {
             if ($this->instance() instanceof HasActions) {
                 $schema ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -71,13 +71,13 @@ class TestsSchemas
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$schema};
 
-            $componentInstance = $schemaInstance->getFlatComponents(withHidden: true)[$component] ?? null;
+            $componentInstance = $schemaInstance->getFlatComponents(withHidden: true)[$key] ?? null;
 
             $livewireClass = $this->instance()::class;
 
             Assert::assertNull(
                 $componentInstance,
-                "Failed asserting that a component [{$component}] does not exist on the schema with the name [{$schema}] on the [{$livewireClass}] component."
+                "Failed asserting that a component [{$key}] does not exist on the schema with the name [{$schema}] on the [{$livewireClass}] component."
             );
 
             return $this;
@@ -147,7 +147,7 @@ class TestsSchemas
 
     public function assertSchemaComponentStateSet(): Closure
     {
-        return function (string $component, mixed $state, ?string $schema = null): static {
+        return function (string $key, mixed $state, ?string $schema = null): static {
             if ($this->instance() instanceof HasActions) {
                 $schema ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -155,19 +155,19 @@ class TestsSchemas
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
             /** @phpstan-ignore-next-line */
-            $this->assertSchemaComponentExists($component, $schema);
+            $this->assertSchemaComponentExists($key, $schema);
 
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$schema};
 
-            $componentInstance = $schemaInstance->getFlatComponents(withHidden: true)[$component] ?? null;
+            $componentInstance = $schemaInstance->getFlatComponents(withHidden: true)[$key] ?? null;
 
             $livewireClass = $this->instance()::class;
 
             Assert::assertEquals(
                 $state,
                 $componentInstance->getState(),
-                "Failed asserting that a component [{$component}] has the expected state in the [{$livewireClass}] component."
+                "Failed asserting that a component [{$key}] has the expected state in the [{$livewireClass}] component."
             );
 
             return $this;
@@ -176,7 +176,7 @@ class TestsSchemas
 
     public function assertSchemaComponentStateNotSet(): Closure
     {
-        return function (string $component, mixed $state, ?string $schema = null): static {
+        return function (string $key, mixed $state, ?string $schema = null): static {
             if ($this->instance() instanceof HasActions) {
                 $schema ??= $this->instance()->getMountedActionSchemaName();
             }
@@ -184,19 +184,19 @@ class TestsSchemas
             $schema ??= $this->instance()->getDefaultTestingSchemaName();
 
             /** @phpstan-ignore-next-line */
-            $this->assertSchemaComponentExists($component, $schema);
+            $this->assertSchemaComponentExists($key, $schema);
 
             /** @var Schema $schemaInstance */
             $schemaInstance = $this->instance()->{$schema};
 
-            $componentInstance = $schemaInstance->getFlatComponents(withHidden: true)[$component] ?? null;
+            $componentInstance = $schemaInstance->getFlatComponents(withHidden: true)[$key] ?? null;
 
             $livewireClass = $this->instance()::class;
 
             Assert::assertNotEquals(
                 $state,
                 $componentInstance->getState(),
-                "Failed asserting that a component [{$component}] does not have the expected state in the [{$livewireClass}] component."
+                "Failed asserting that a component [{$key}] does not have the expected state in the [{$livewireClass}] component."
             );
 
             return $this;
