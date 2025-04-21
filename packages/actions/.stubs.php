@@ -13,6 +13,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function setActionData(array $data): static {}
 
+        /**
+         * @deprecated Use `assertSchemaSet()` instead.
+         */
         public function assertActionDataSet(array | Closure $data): static {}
 
         public function callAction(string | TestAction | array $actions, array $data = [], array $arguments = []): static {}
