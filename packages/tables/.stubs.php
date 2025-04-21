@@ -86,7 +86,7 @@ namespace Livewire\Features\SupportTesting {
         public function unmountTableAction(): static {}
 
         /**
-         * @deprecated Use `setActionData()` instead.
+         * @deprecated Use `fillForm()` instead.
          */
         public function setTableActionData(array $data): static {}
 
@@ -174,7 +174,7 @@ namespace Livewire\Features\SupportTesting {
         public function mountTableBulkAction(string $name, array | Collection $records): static {}
 
         /**
-         * @deprecated Use `setActionData()` instead.
+         * @deprecated Use `fillForm()` instead.
          */
         public function setTableBulkActionData(array $data): static {}
 

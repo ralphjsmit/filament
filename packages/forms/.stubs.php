@@ -59,7 +59,7 @@ namespace Livewire\Features\SupportTesting {
         public function unmountFormComponentAction(): static {}
 
         /**
-         * @deprecated Use `setActionData()` instead.
+         * @deprecated Use `fillForm()` instead.
          */
         public function setFormComponentActionData(array $data): static {}
 

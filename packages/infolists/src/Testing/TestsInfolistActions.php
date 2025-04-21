@@ -40,7 +40,7 @@ class TestsInfolistActions
     public function setInfolistActionData(): Closure
     {
         return function (array $data): static {
-            $this->setActionData($data);
+            $this->fillForm($data);
 
             return $this;
         };

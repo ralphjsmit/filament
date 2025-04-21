@@ -59,7 +59,7 @@ class TestsForms
                     }
                 }
 
-                $this->call('fillFormDataForTesting', $state);
+                $this->call('fillFormDataForTesting', $state, $schemaStatePath);
             }
 
             $this->refresh();

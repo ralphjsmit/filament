@@ -16,7 +16,7 @@ namespace Livewire\Features\SupportTesting {
         public function unmountInfolistAction(): static {}
 
         /**
-         * @deprecated Use `setActionData()` instead.
+         * @deprecated Use `fillForm()` instead.
          */
         public function setInfolistActionData(array $data): static {}
 

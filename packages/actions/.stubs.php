@@ -11,6 +11,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function unmountAction(): static {}
 
+        /**
+         * @deprecated Use `fillForm()` instead.
+         */
         public function setActionData(array $data): static {}
 
         /**

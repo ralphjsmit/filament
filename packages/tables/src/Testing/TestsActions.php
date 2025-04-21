@@ -44,7 +44,7 @@ class TestsActions
     public function setTableActionData(): Closure
     {
         return function (array $data): static {
-            $this->setActionData($data);
+            $this->fillForm($data);
 
             return $this;
         };

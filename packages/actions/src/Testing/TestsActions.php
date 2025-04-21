@@ -68,9 +68,7 @@ class TestsActions
     public function setActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::dot($data, prepend: 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.') as $key => $value) {
-                $this->set($key, $value);
-            }
+            $this->fillForm($data);
 
             return $this;
         };
@@ -96,11 +94,7 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->mountAction($actions, $arguments);
 
-            /** @var array<array<string, mixed>> $actions */
-            /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedActions($actions, $arguments);
-
-            if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count($actions))) {
+            if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count(Arr::wrap($actions)))) {
                 return $this;
             }
 
@@ -108,8 +102,10 @@ class TestsActions
                 return $this;
             }
 
-            /** @phpstan-ignore-next-line */
-            $this->setActionData($data);
+            if (filled($data)) {
+                /** @phpstan-ignore-next-line */
+                $this->fillForm($data);
+            }
 
             /** @phpstan-ignore-next-line */
             $this->callMountedAction($arguments);

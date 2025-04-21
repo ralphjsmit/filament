@@ -384,7 +384,7 @@ trait InteractsWithSchemas
     /**
      * @param  array<mixed>  $state
      */
-    public function fillFormDataForTesting(array $state = []): void
+    public function fillFormDataForTesting(array $state = [], ?string $schemaStatePath = null): void
     {
         if (! app()->runningUnitTests()) {
             return;
@@ -398,12 +398,12 @@ trait InteractsWithSchemas
             $this->updatedInteractsWithSchemas($statePath);
         }
 
-        foreach ($state as $statePath => $value) {
+        foreach (Arr::undot($state) as $statePath => $value) {
             if (! is_array($value)) {
                 continue;
             }
 
-            $this->unsetMissingNumericArrayKeys($this->{$statePath}, $value);
+            $this->unsetMissingNumericArrayKeys($this->{$statePath}, $value, $statePath, $schemaStatePath);
         }
     }
 
@@ -411,17 +411,23 @@ trait InteractsWithSchemas
      * @param  array<mixed>  $target
      * @param  array<mixed>  $state
      */
-    protected function unsetMissingNumericArrayKeys(array &$target, array $state): void
+    protected function unsetMissingNumericArrayKeys(array &$target, array $state, string $currentStatePath, ?string $schemaStatePath = null): void
     {
         foreach ($target as $key => $value) {
-            if (is_numeric($key) && (! array_key_exists($key, $state))) {
+            $currentStatePath .= ".{$key}";
+
+            if (
+                is_numeric($key) &&
+                (! array_key_exists($key, $state)) &&
+                str($currentStatePath)->startsWith($schemaStatePath)
+            ) {
                 unset($target[$key]);
 
                 continue;
             }
 
             if (is_array($value) && is_array($state[$key] ?? null)) {
-                $this->unsetMissingNumericArrayKeys($target[$key], $state[$key]);
+                $this->unsetMissingNumericArrayKeys($target[$key], $state[$key], $currentStatePath, $schemaStatePath);
             }
         }
     }
