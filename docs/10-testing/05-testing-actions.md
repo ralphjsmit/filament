@@ -383,53 +383,50 @@ livewire(ListInvoices::class)
 
 ## Testing resource form component actions
 
-If an action belongs to a component in a resource's form, for example, if it is in the `belowContent()` method of a form field, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. The `schemaComponent()` method should receive a `TestSchemaComponent::inResourceForm()` object, which accepts the name of the form component you want to test. For example:
+If an action belongs to a component in a resource's form, for example, if it is in the `belowContent()` method of a form field, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. For example:
 
 ```php
 use Filament\Actions\Testing\TestAction;
-use Filament\Schemas\Testing\TestSchemaComponent;
 use function Pest\Livewire\livewire;
 
 $invoice = Invoice::factory()->create();
 
 livewire(EditInvoice::class)
-    ->callAction(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceForm('customer_id')));
+    ->callAction(TestAction::make('send')->schemaComponent('customer_id'));
 
 livewire(EditInvoice::class)
-    ->assertActionVisible(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceForm('customer_id')))
+    ->assertActionVisible(TestAction::make('send')->schemaComponent('customer_id'))
 
 livewire(EditInvoice::class)
-    ->assertActionExists(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceForm('customer_id')))
+    ->assertActionExists(TestAction::make('send')->schemaComponent('customer_id'))
 ```
 
 ## Testing resource infolist component actions
 
-If an action belongs to a component in a resource's infolist, for example, if it is in the `belowContent()` method of an infolist entry, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. The `schemaComponent()` method should receive a `TestSchemaComponent::inResourceInfolist()` object, which accepts the name of the infolist component you want to test. For example:
+If an action belongs to a component in a resource's infolist, for example, if it is in the `belowContent()` method of an infolist entry, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. For example:
 
 ```php
 use Filament\Actions\Testing\TestAction;
-use Filament\Schemas\Testing\TestSchemaComponent;
 use function Pest\Livewire\livewire;
 
 $invoice = Invoice::factory()->create();
 
 livewire(ViewInvoice::class)
-    ->callAction(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceInfolist('customer.name')));
+    ->callAction(TestAction::make('send')->schemaComponent('customer.name'));
 
 livewire(ViewInvoice::class)
-    ->assertActionVisible(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceInfolist('customer.name')))
+    ->assertActionVisible(TestAction::make('send')->schemaComponent('customer.name'))
 
 livewire(ViewInvoice::class)
-    ->assertActionExists(TestAction::make('send')->schemaComponent(TestSchemaComponent::inResourceInfolist('customer.name')))
+    ->assertActionExists(TestAction::make('send')->schemaComponent('customer.name'))
 ```
 
 ## Testing actions inside another action's schema / form
 
-If an action belongs to a component in another action's `schema()` (or `form()`), for example, if it is in the `belowContent()` method of a form field in an action modal, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. The `schemaComponent()` method should receive a `TestSchemaComponent::inActionSchema()` object, which accepts the name of the action component you want to test. You should pass an array of `TestAction` objects in order, for example:
+If an action belongs to a component in another action's `schema()` (or `form()`), for example, if it is in the `belowContent()` method of a form field in an action modal, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. You should pass an array of `TestAction` objects in order, for example:
 
 ```php
 use Filament\Actions\Testing\TestAction;
-use Filament\Schemas\Testing\TestSchemaComponent;
 use function Pest\Livewire\livewire;
 
 $invoice = Invoice::factory()->create();
@@ -437,19 +434,19 @@ $invoice = Invoice::factory()->create();
 livewire(ManageInvoices::class)
     ->callAction([
         TestAction::make('view')->table($invoice),
-        TestAction::make('send')->schemaComponent(TestSchemaComponent::inActionSchema('customer.name')),
+        TestAction::make('send')->schemaComponent('customer.name'),
     ]);
     
 livewire(ManageInvoices::class)
     ->assertActionVisible([
         TestAction::make('view')->table($invoice),
-        TestAction::make('send')->schemaComponent(TestSchemaComponent::inActionSchema('customer.name')),
+        TestAction::make('send')->schemaComponent('customer.name'),
     ]);
     
 livewire(ManageInvoices::class)
     ->assertActionExists([
         TestAction::make('view')->table($invoice),
-        TestAction::make('send')->schemaComponent(TestSchemaComponent::inActionSchema('customer.name')),
+        TestAction::make('send')->schemaComponent('customer.name'),
     ]);
 ```
 

@@ -430,4 +430,9 @@ trait InteractsWithSchemas
     {
         $this->currentlyValidatingSchema = $schema;
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return array_key_first($this->getCachedSchemas());
+    }
 }

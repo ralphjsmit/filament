@@ -17,6 +17,8 @@ class TestAction implements Arrayable
 
     protected ?string $schemaComponent = null;
 
+    protected ?string $schema = null;
+
     protected mixed $table = null;
 
     protected bool $isBulk = false;
@@ -40,9 +42,10 @@ class TestAction implements Arrayable
         return $this;
     }
 
-    public function schemaComponent(?string $key): static
+    public function schemaComponent(?string $component, ?string $schema = null): static
     {
-        $this->schemaComponent = $key;
+        $this->schemaComponent = $component;
+        $this->schema = $schema;
 
         return $this;
     }
@@ -76,14 +79,16 @@ class TestAction implements Arrayable
     /**
      * @return array<string, mixed>
      */
-    public function toArray(): array
+    public function toArray(?string $defaultSchema = null): array
     {
+        $schema = $this->schema ?? $defaultSchema;
+
         $array = [
             'name' => $this->name,
             ...((is_array($this->arguments)) ? ['arguments' => $this->arguments] : []),
             'context' => [
                 ...($this->isBulk ? ['bulk' => true] : []),
-                ...($this->schemaComponent ? ['schemaComponent' => $this->schemaComponent] : []),
+                ...($this->schemaComponent ? ['schemaComponent' => (filled($schema) ? "{$schema}." : '') . $this->schemaComponent] : []),
                 ...$this->context,
             ],
         ];

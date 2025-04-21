@@ -65,7 +65,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function parseNestedActionName(string | array $name): array {}
 
-        public function parseNestedActions(string | TestAction | array $actions, array $arguments = []): array {}
+        public function parseNestedActions(string | TestAction | array $actions, array $arguments = [], bool $areRelativeToMountedActions = true): array {}
     }
 
 }

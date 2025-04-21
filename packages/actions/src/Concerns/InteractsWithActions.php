@@ -557,6 +557,15 @@ trait InteractsWithActions
         return Arr::last($this->resolveActions($actions));
     }
 
+    public function getMountedActionSchemaName(): ?string
+    {
+        if (empty($this->mountedActions)) {
+            return null;
+        }
+
+        return 'mountedActionSchema' . array_key_last($this->mountedActions);
+    }
+
     protected function getMountedActionSchema(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Schema
     {
         $actionNestingIndex ??= array_key_last($this->mountedActions);

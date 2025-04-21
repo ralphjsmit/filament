@@ -2,14 +2,16 @@
 
 namespace Filament\Schemas;
 
+use Filament\Schemas\Testing\TestsSchemas;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Filesystem\Filesystem;
+use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class SchemaServiceProvider extends PackageServiceProvider
+class SchemasServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
@@ -40,5 +42,7 @@ class SchemaServiceProvider extends PackageServiceProvider
                 ], 'filament-stubs');
             }
         }
+
+        Testable::mixin(new TestsSchemas);
     }
 }

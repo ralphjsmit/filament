@@ -23,9 +23,9 @@ beforeEach(function (): void {
 it('can generate a secret and recovery codes when the action is mounted', function (): void {
     livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('content.google_two_factor'))
+            ->schemaComponent('google_two_factor', schema: 'content'))
         ->assertActionMounted(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('content.google_two_factor')
+            ->schemaComponent('google_two_factor', schema: 'content')
             ->arguments(function (array $actualArguments): bool {
                 $encrypted = decrypt($actualArguments['encrypted']);
 
@@ -75,7 +75,7 @@ it('can save the secret and recovery codes to the user when the action is submit
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('content.google_two_factor'));
+            ->schemaComponent('google_two_factor', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];
@@ -118,7 +118,7 @@ it('will not set up authentication when an invalid code is used', function (): v
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('content.google_two_factor'));
+            ->schemaComponent('google_two_factor', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];
@@ -154,7 +154,7 @@ test('codes are required', function (): void {
 
     livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('content.google_two_factor'))
+            ->schemaComponent('google_two_factor', schema: 'content'))
         ->setActionData(['code' => ''])
         ->callMountedAction()
         ->assertHasActionErrors([
@@ -187,7 +187,7 @@ test('codes must be 6 digits', function (): void {
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('content.google_two_factor'));
+            ->schemaComponent('google_two_factor', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];

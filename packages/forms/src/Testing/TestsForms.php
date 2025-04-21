@@ -90,7 +90,7 @@ class TestsForms
                         Assert::assertEquals(
                             $value,
                             $components[$key]->getState(),
-                            message: "Failed asserting that the form [{$schema}] has a component [{$key}] set to the expected value.",
+                            "Failed asserting that the form [{$schema}] has a component [{$key}] set to the expected value.",
                         );
                     } else {
                         $this->assertSet((filled($formSchemaStatePath) ? "{$formSchemaStatePath}." : '') . $key, $value);

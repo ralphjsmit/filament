@@ -210,4 +210,9 @@ class ResetPassword extends SimplePage
                     ->fullWidth($this->hasFullWidthFormActions()),
             ]);
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
+    }
 }

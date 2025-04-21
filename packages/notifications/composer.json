@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.2",
+        "php": "^8.2",
         "filament/actions": "self.version",
         "filament/support": "self.version"
     },
@@ -17,7 +18,7 @@
             "Filament\\Notifications\\": "src"
         },
         "files": [
-            "src/Testing/Autoload.php"
+            "src/Testing/helpers.php"
         ]
     },
     "extra": {

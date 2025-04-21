@@ -43,7 +43,7 @@ it('can disable authentication when valid challenge code is used', function (): 
     livewire(EditProfile::class)
         ->callAction(
             TestAction::make('disableGoogleTwoFactorAuthentication')
-                ->schemaComponent('content.google_two_factor'),
+                ->schemaComponent('google_two_factor', schema: 'content'),
             ['code' => $googleTwoFactorAuthentication->getCurrentCode($user)],
         )
         ->assertHasNoActionErrors();
@@ -73,9 +73,9 @@ it('can disable authentication when a valid recovery code is used', function ():
 
     livewire(EditProfile::class)
         ->mountAction(TestAction::make('disableGoogleTwoFactorAuthentication')
-            ->schemaComponent('content.google_two_factor'))
+            ->schemaComponent('google_two_factor', schema: 'content'))
         ->callAction(TestAction::make('useRecoveryCode')
-            ->schemaComponent('mountedActionSchema0.code'))
+            ->schemaComponent('code'))
         ->setActionData([
             'recoveryCode' => Arr::first($this->recoveryCodes),
         ])
@@ -110,7 +110,7 @@ it('will not disable authentication when an invalid code is used', function (): 
     livewire(EditProfile::class)
         ->callAction(
             TestAction::make('disableGoogleTwoFactorAuthentication')
-                ->schemaComponent('content.google_two_factor'),
+                ->schemaComponent('google_two_factor', schema: 'content'),
             ['code' => ($googleTwoFactorAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000'],
         )
         ->assertHasActionErrors();
@@ -142,7 +142,7 @@ test('codes are required without a recovery code', function (): void {
     livewire(EditProfile::class)
         ->callAction(
             TestAction::make('disableGoogleTwoFactorAuthentication')
-                ->schemaComponent('content.google_two_factor'),
+                ->schemaComponent('google_two_factor', schema: 'content'),
             ['code' => ''],
         )
         ->assertHasActionErrors([
@@ -178,7 +178,7 @@ test('codes must be 6 digits', function (): void {
     livewire(EditProfile::class)
         ->callAction(
             TestAction::make('disableGoogleTwoFactorAuthentication')
-                ->schemaComponent('content.google_two_factor'),
+                ->schemaComponent('google_two_factor', schema: 'content'),
             ['code' => Str::limit($googleTwoFactorAuthentication->getCurrentCode($user), limit: 5, end: '')],
         )
         ->assertHasActionErrors([
@@ -211,9 +211,9 @@ it('will not disable authentication when an invalid recovery code is used', func
 
     livewire(EditProfile::class)
         ->mountAction(TestAction::make('disableGoogleTwoFactorAuthentication')
-            ->schemaComponent('content.google_two_factor'))
+            ->schemaComponent('google_two_factor', schema: 'content'))
         ->callAction(TestAction::make('useRecoveryCode')
-            ->schemaComponent('mountedActionSchema0.code'))
+            ->schemaComponent('code'))
         ->setActionData([
             'recoveryCode' => 'invalid-recovery-code',
         ])
@@ -250,7 +250,7 @@ it('will not disable authentication with a recovery code if recovery is disabled
     livewire(EditProfile::class)
         ->callAction(
             TestAction::make('disableGoogleTwoFactorAuthentication')
-                ->schemaComponent('content.google_two_factor'),
+                ->schemaComponent('google_two_factor', schema: 'content'),
             ['recoveryCode' => Arr::first($this->recoveryCodes)],
         )
         ->assertHasActionErrors();

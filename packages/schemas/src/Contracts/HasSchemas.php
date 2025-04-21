@@ -19,4 +19,6 @@ interface HasSchemas
     public function getSchema(string $name): ?Schema;
 
     public function currentlyValidatingSchema(?Schema $schema): void;
+
+    public function getDefaultTestingSchemaName(): ?string;
 }

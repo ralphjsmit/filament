@@ -432,7 +432,7 @@ class TestsActions
 
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedActions($actions);
+            $actions = $this->parseNestedActions($actions, areRelativeToMountedActions: false);
 
             $actionNestingIndexOffset = count($this->instance()->mountedActions) - count($actions);
 
@@ -481,7 +481,7 @@ class TestsActions
 
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedActions($actions);
+            $actions = $this->parseNestedActions($actions, areRelativeToMountedActions: false);
 
             $actionNestingIndexOffset = count($this->instance()->mountedActions) - count($actions);
 
@@ -637,7 +637,9 @@ class TestsActions
 
     public function parseNestedActions(): Closure
     {
-        return function (string | TestAction | array $actions, array $arguments = []): array {
+        return function (string | TestAction | array $actions, array $arguments = [], bool $areRelativeToMountedActions = true): array {
+            $initialMountedActionsCount = $areRelativeToMountedActions ? count($this->instance()->mountedActions) : 0;
+
             if (is_string($actions)) {
                 $actions = explode('.', $actions);
             } elseif (
@@ -655,14 +657,14 @@ class TestsActions
                         'name' => $action,
                     ];
                 } elseif ($action instanceof TestAction) {
-                    $action = $action->toArray();
+                    $action = $action->toArray(defaultSchema: ($initialMountedActionsCount + $actionNestingIndex) ? ('mountedActionSchema' . ($initialMountedActionsCount + $actionNestingIndex - 1)) : $this->instance()->getDefaultTestingSchemaName());
                 }
 
                 $actionName = $action['name'] ?? throw new Exception("Action name at index [{$actionNestingIndex}] is not specified.");
 
                 if (
                     class_exists($actionName) &&
-                    is_subclass_of($actionName, Action::class)
+                    method_exists($actionName, 'getDefaultName')
                 ) {
                     $action['name'] = $actionName = $actionName::getDefaultName();
                 }
@@ -678,14 +680,6 @@ class TestsActions
                             ...$action['arguments'] ?? [],
                         ];
                     }
-                }
-
-                if (
-                    ($actionNestingIndex > 0) &&
-                    filled($schemaComponent = $action['context']['schemaComponent'] ?? null) &&
-                    (! str($schemaComponent)->startsWith('mountedActionSchema' . ($actionNestingIndex - 1) . '.'))
-                ) {
-                    $action['context']['schemaComponent'] = 'mountedActionSchema' . ($actionNestingIndex - 1) . ".{$schemaComponent}";
                 }
 
                 if (

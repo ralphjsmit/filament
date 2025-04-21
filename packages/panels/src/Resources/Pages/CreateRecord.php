@@ -382,4 +382,9 @@ class CreateRecord extends Page
     {
         return false;
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
+    }
 }

@@ -397,4 +397,9 @@ abstract class Page extends BasePage
             ])
             ->hidden(empty($widgets));
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'content';
+    }
 }

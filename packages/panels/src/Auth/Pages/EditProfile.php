@@ -470,4 +470,9 @@ class EditProfile extends Page
                     ->statePath($multiFactorAuthenticationProvider->getId()))
                 ->all());
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
+    }
 }

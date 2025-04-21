@@ -28,9 +28,9 @@ it('can generate a secret when the action is mounted', function (): void {
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
-            ->schemaComponent('content.email_code'))
+            ->schemaComponent('email_code', schema: 'content'))
         ->assertActionMounted(TestAction::make('setUpEmailCodeAuthentication')
-            ->schemaComponent('content.email_code')
+            ->schemaComponent('email_code', schema: 'content')
             ->arguments(function (array $actualArguments): bool {
                 $encrypted = decrypt($actualArguments['encrypted']);
 
@@ -70,7 +70,7 @@ it('can save the secret to the user when the action is submitted', function (): 
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
-            ->schemaComponent('content.email_code'));
+            ->schemaComponent('email_code', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];
@@ -92,7 +92,7 @@ it('can resend the code to the user', function (): void {
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
-            ->schemaComponent('content.email_code'));
+            ->schemaComponent('email_code', schema: 'content'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
 
@@ -100,7 +100,7 @@ it('can resend the code to the user', function (): void {
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('mountedActionSchema0.code'));
+            ->schemaComponent('code'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });
@@ -110,13 +110,13 @@ it('can resend the code to the user more than once per minute', function (): voi
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
-            ->schemaComponent('content.email_code'));
+            ->schemaComponent('email_code', schema: 'content'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('mountedActionSchema0.code'));
+            ->schemaComponent('code'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
 
@@ -124,7 +124,7 @@ it('can resend the code to the user more than once per minute', function (): voi
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('mountedActionSchema0.code'));
+            ->schemaComponent('code'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });
@@ -142,7 +142,7 @@ it('will not set up authentication when an invalid code is used', function (): v
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
-            ->schemaComponent('content.email_code'));
+            ->schemaComponent('email_code', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];
@@ -172,7 +172,7 @@ test('codes are required', function (): void {
 
     livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
-            ->schemaComponent('content.email_code'))
+            ->schemaComponent('email_code', schema: 'content'))
         ->setActionData(['code' => ''])
         ->callMountedAction()
         ->assertHasActionErrors([
@@ -199,7 +199,7 @@ test('codes must be 6 digits', function (): void {
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
-            ->schemaComponent('content.email_code'));
+            ->schemaComponent('email_code', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];

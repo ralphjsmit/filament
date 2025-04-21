@@ -218,4 +218,9 @@ class ViewRecord extends Page
             "fi-resource-record-{$this->getRecord()->getKey()}",
         ];
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return $this->hasInfolist() ? 'infolist' : 'form';
+    }
 }

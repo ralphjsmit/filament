@@ -248,4 +248,9 @@ class SettingsPage extends Page
     {
         return true;
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
+    }
 }
