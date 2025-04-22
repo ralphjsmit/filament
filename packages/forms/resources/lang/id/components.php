@@ -408,6 +408,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'Buat',
+
                 'modal' => [
 
                     'heading' => 'Buat',
@@ -429,6 +431,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Ubah',
 
                 'modal' => [
 
