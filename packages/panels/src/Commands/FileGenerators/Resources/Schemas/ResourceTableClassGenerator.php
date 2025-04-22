@@ -69,6 +69,8 @@ class ResourceTableClassGenerator extends ClassGenerator
         $this->configureConfigureMethod($method);
     }
 
+    protected function configureConfigureMethod(Method $method): void {}
+
     public function getForeignKeyColumnToNotGenerate(): ?string
     {
         if (! class_exists($this->getParentResourceFqn())) {
@@ -109,8 +111,6 @@ class ResourceTableClassGenerator extends ClassGenerator
     {
         return $this->parentResourceFqn;
     }
-
-    protected function configureConfigureMethod(Method $method): void {}
 
     public function getFqn(): string
     {

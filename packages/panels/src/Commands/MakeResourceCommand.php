@@ -553,6 +553,9 @@ class MakeResourceCommand extends Command
 
         $this->writeFile($path, app(ResourceInfolistSchemaClassGenerator::class, [
             'fqn' => $this->infolistSchemaFqn,
+            'modelFqn' => $this->modelFqn,
+            'parentResourceFqn' => $this->parentResourceFqn,
+            'isGenerated' => $this->isGenerated,
         ]));
     }
 

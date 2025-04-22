@@ -5,6 +5,7 @@ namespace Filament\Commands\FileGenerators\Resources;
 use BackedEnum;
 use Filament\Clusters\Cluster;
 use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceForms;
+use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceInfolists;
 use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceTables;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -26,6 +27,7 @@ use Nette\PhpGenerator\Property;
 class ResourceClassGenerator extends ClassGenerator
 {
     use CanGenerateResourceForms;
+    use CanGenerateResourceInfolists;
     use CanGenerateResourceTables;
     use CanReadModelSchemas;
 
@@ -205,12 +207,7 @@ class ResourceClassGenerator extends ClassGenerator
             ? <<<PHP
                 return {$this->simplifyFqn($infolistSchemaFqn)}::configure(\$schema);
                 PHP
-            : <<<'PHP'
-                return $schema
-                    ->components([
-                        //
-                    ]);
-                PHP;
+            : $this->generateInfolistMethodBody($this->getModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
 
         $method = $class->addMethod('infolist')
             ->setPublic()
