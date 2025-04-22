@@ -7,6 +7,8 @@ title: Testing resources
 Ensure that you are authenticated to access the app in your `TestCase`:
 
 ```php
+use App\Models\User;
+
 protected function setUp(): void
 {
     parent::setUp();
@@ -15,300 +17,388 @@ protected function setUp(): void
 }
 ```
 
-## Resources
-
-### Pages
-
-#### List
-
-##### Routing & render
-
-To ensure that the List page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
+Alternatively, if you are using Pest you can use a `beforeEach()` function at the top of your test file to authenticate:
 
 ```php
-use PostResource\PostResource;it('can render page', function () {
-    $this->get(PostResource::getUrl('index'))->assertSuccessful();
+use App\Models\User;
+
+beforeEach(function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
 });
 ```
 
-##### Table
+## Testing a resource list page
 
-Filament includes a selection of helpers for testing tables. A full guide to testing tables can be found [in the Table Builder documentation](../tables/testing).
-
-To use a table [testing helper](../tables/testing), make assertions on the resource's List page class, which holds the table:
+To test if the list page is able to load, test the list page as a Livewire component, and call `assertOk()` to ensure that the HTTP response was 200 OK. You can also use the `assertCanSeeTableRecords()` method to check if records are being displayed in the table:
 
 ```php
-use function Pest\Livewire\livewire;
+use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Models\User;
 
-it('can list posts', function () {
-    $posts = Post::factory()->count(10)->create();
+it('can load the page', function () {
+    $users = User::factory()->count(5)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
-        ->assertCanSeeTableRecords($posts);
+    livewire(ListUsers::class)
+        ->assertOk()
+        ->assertCanSeeTableRecords($users);
 });
 ```
 
-#### Create
+To test the table on the list page, you should visit the [Testing tables](testing-tables) section. To test any actions in the header of the page or actions in the table, you should visit the [Testing actions](testing-actions) section. Below are some common examples of other tests that you can run on the list page.
 
-##### Routing & render
-
-To ensure that the Create page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
+To [test that the table search is working](testing-tables#testing-that-a-column-can-be-searched), you can use the `searchTable()` method to search for a specific record. You can also use the `assertCanSeeTableRecords()` and `assertCanNotSeeTableRecords()` methods to check if the correct records are being displayed in the table:
 
 ```php
-use PostResource\PostResource;it('can render page', function () {
-    $this->get(PostResource::getUrl('create'))->assertSuccessful();
+use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Models\User;
+
+it('can search users by `name` or `email`', function () {
+    $users = User::factory()->count(5)->create();
+
+    livewire(ListUsers::class)
+        ->assertCanSeeTableRecords($users)
+        ->searchTable($users->first()->name)
+        ->assertCanSeeTableRecords($users->take(1))
+        ->assertCanNotSeeTableRecords($users->skip(1))
+        ->searchTable($users->last()->email)
+        ->assertCanSeeTableRecords($users->take(-1))
+        ->assertCanNotSeeTableRecords($users->take($users->count() - 1));
 });
 ```
 
-##### Creating
-
-You may check that data is correctly saved into the database by calling `fillForm()` with your form data, and then asserting that the database contains a matching record:
+To [test that the table sorting is working](testing-tables#testing-that-a-column-can-be-sorted), you can use the `sortTable()` method to sort the table by a specific column. You can also use the `assertCanSeeTableRecords()` method to check if the records are being displayed in the correct order:
 
 ```php
-use function Pest\Livewire\livewire;
+use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Models\User;
 
-it('can create', function () {
-    $newData = Post::factory()->make();
+it('can sort users by `name`', function () {
+    $users = User::factory()->count(5)->create();
 
-    livewire(PostResource\Pages\CreatePost::class)
+    livewire(ListUsers::class)
+        ->assertCanSeeTableRecords($users)
+        ->sortTable('name')
+        ->assertCanSeeTableRecords($users->sortBy('name'), inOrder: true)
+        ->sortTable('name', 'desc')
+        ->assertCanSeeTableRecords($users->sortByDesc('name'), inOrder: true);
+});
+```
+
+To [test that the table filtering is working](testing-tables#testing-filters), you can use the `filterTable()` method to filter the table by a specific column. You can also use the `assertCanSeeTableRecords()` and `assertCanNotSeeTableRecords()` methods to check if the correct records are being displayed in the table:
+
+```php
+use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Models\User;
+
+it('can filter users by `locale`', function () {
+    $users = User::factory()->count(5)->create();
+
+    livewire(ListUsers::class)
+        ->assertCanSeeTableRecords($users)
+        ->filterTable('locale', $users->first()->locale)
+        ->assertCanSeeTableRecords($users->where('locale', $users->first()->locale))
+        ->assertCanNotSeeTableRecords($users->where('locale', '!=', $users->first()->locale));
+});
+```
+
+To [test that the table bulk actions are working](testing-actions#testing-table-bulk-actions), you can use the `selectTableRecords()` method to select multiple records in the table. You can also use the `callAction()` method to call a specific action on the selected records:
+
+```php
+use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Models\User;
+use Filament\Actions\Testing\TestAction;
+use function Pest\Laravel\assertDatabaseMissing;
+
+it('can bulk delete users', function () {
+    $users = User::factory()->count(5)->create();
+
+    livewire(ListUsers::class)
+        ->assertCanSeeTableRecords($users)
+        ->selectTableRecords($users)
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
+        ->assertNotified()
+        ->assertCanNotSeeTableRecords($users);
+
+    $users->each(fn (User $user) => assertDatabaseMissing($user));
+});
+```
+
+## Testing a resource create page
+
+To test if the create page is able to load, test the create page as a Livewire component, and call `assertOk()` to ensure that the HTTP response was 200 OK:
+
+```php
+use App\Filament\Resources\Users\Pages\CreateUser;
+use App\Models\User;
+
+it('can load the page', function () {
+    livewire(CreateUser::class)
+        ->assertOk();
+});
+```
+
+To test the form on the create page, you should visit the [Testing schemas](testing-schemas) section. To test any actions in the header of the page or in the form, you should visit the [Testing actions](testing-actions) section. Below are some common examples of other tests that you can run on the create page.
+
+To test that the form is creating records correctly, you can use the `fillForm()` method to fill in the form fields, and then use the `call('create')` method to create the record. You can also use the `assertNotified()` method to check if a notification was displayed, and the `assertRedirect()` method to check if the user was redirected to another page:
+
+```php
+use App\Filament\Resources\Users\Pages\CreateUser;
+use App\Models\User;
+use function Pest\Laravel\assertDatabaseHas;
+
+it('can create a user', function () {
+    $newUserData = User::factory()->make();
+
+    livewire(CreateUser::class)
         ->fillForm([
-            'author_id' => $newData->author->getKey(),
-            'content' => $newData->content,
-            'tags' => $newData->tags,
-            'title' => $newData->title,
+            'name' => $newUserData->name,
+            'email' => $newUserData->email,
         ])
         ->call('create')
-        ->assertHasNoFormErrors();
+        ->assertNotified()
+        ->assertRedirect();
 
-    $this->assertDatabaseHas(Post::class, [
-        'author_id' => $newData->author->getKey(),
-        'content' => $newData->content,
-        'tags' => json_encode($newData->tags),
-        'title' => $newData->title,
+    assertDatabaseHas(User::class, [
+        'name' => $newUserData->name,
+        'email' => $newUserData->email,
     ]);
 });
 ```
 
-##### Validation
-
-Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
+To test that the form is validating properly, you can use the `fillForm()` method to fill in the form fields, and then use the `call('create')` method to create the record. You can also use the `assertHasFormErrors()` method to check if the form has any errors, and the `assertNotNotified()` method to check if no notification was displayed. You can also use the `assertNoRedirect()` method to check if the user was not redirected to another page. In this example, we use a [Pest dataset](https://pestphp.com/docs/datasets#content-bound-datasets) to test multiple rules without having to repeat the test code:
 
 ```php
-use function Pest\Livewire\livewire;
+use App\Filament\Resources\Users\Pages\CreateUser;
+use App\Models\User;
+use Illuminate\Support\Str;
 
-it('can validate input', function () {
-    livewire(PostResource\Pages\CreatePost::class)
+it('validates the form data', function (array $data, array $errors) {
+    $newUserData = User::factory()->make();
+
+    livewire(CreateUser::class)
         ->fillForm([
-            'title' => null,
+            'name' => $newUserData->name,
+            'email' => $newUserData->email,
+            ...$data,
         ])
         ->call('create')
-        ->assertHasFormErrors(['title' => 'required']);
-});
+        ->assertHasFormErrors($errors)
+        ->assertNotNotified()
+        ->assertNoRedirect();
+})->with([
+    '`name` is required' => [['name' => null], ['name' => 'required']],
+    '`name` is max 255 characters' => [['name' => Str::random(256)], ['name' => 'max']],
+    '`email` is a valid email address' => [['email' => Str::random()], ['email' => 'email']],
+    '`email` is required' => [['email' => null], ['email' => 'required']],
+    '`email` is max 255 characters' => [['email' => Str::random(256)], ['email' => 'max']],
+]);
 ```
 
-#### Edit
+## Testing a resource edit page
 
-##### Routing & render
-
-To ensure that the Edit page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
+To test if the edit page is able to load, test the edit page as a Livewire component, and call `assertOk()` to ensure that the HTTP response was 200 OK. You can also use the `assertSchemaStateSet()` method to check if the form fields are set to the correct values:
 
 ```php
-use PostResource\PostResource;it('can render page', function () {
-    $this->get(PostResource::getUrl('edit', [
-        'record' => Post::factory()->create(),
-    ]))->assertSuccessful();
-});
-```
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Models\User;
 
-##### Filling existing data
+it('can load the page', function () {
+    $user = User::factory()->create();
 
-To check that the form is filled with the correct data from the database, you may `assertSchemaStateSet()` that the data in the form matches that of the record:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can retrieve data', function () {
-    $post = Post::factory()->create();
-
-    livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getRouteKey(),
+    livewire(EditUser::class, [
+        'record' => $user->id,
     ])
+        ->assertOk()
         ->assertSchemaStateSet([
-            'author_id' => $post->author->getKey(),
-            'content' => $post->content,
-            'tags' => $post->tags,
-            'title' => $post->title,
+            'name' => $user->name,
+            'email' => $user->email,
         ]);
 });
 ```
 
-##### Saving
-
-You may check that data is correctly saved into the database by calling `fillForm()` with your form data, and then asserting that the database contains a matching record:
+To test the form on the edit page, you should visit the [Testing schemas](testing-schemas) section. To test any actions in the header of the page or in the form, you should visit the [Testing actions](testing-actions) section. Below are some common examples of other tests that you can run on the edit page.
 
 ```php
-use function Pest\Livewire\livewire;
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Models\User;
+use function Pest\Laravel\assertDatabaseHas;
 
-it('can save', function () {
-    $post = Post::factory()->create();
-    $newData = Post::factory()->make();
+it('can update a user', function () {
+    $user = User::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getRouteKey(),
+    $newUserData = User::factory()->make();
+
+    livewire(EditUser::class, [
+        'record' => $user->id,
     ])
         ->fillForm([
-            'author_id' => $newData->author->getKey(),
-            'content' => $newData->content,
-            'tags' => $newData->tags,
-            'title' => $newData->title,
+            'name' => $newUserData->name,
+            'email' => $newUserData->email,
         ])
         ->call('save')
-        ->assertHasNoFormErrors();
+        ->assertNotified();
 
-    expect($post->refresh())
-        ->author_id->toBe($newData->author->getKey())
-        ->content->toBe($newData->content)
-        ->tags->toBe($newData->tags)
-        ->title->toBe($newData->title);
+    assertDatabaseHas(User::class, [
+        'id' => $user->id,
+        'name' => $newUserData->name,
+        'email' => $newUserData->email,
+    ]);
 });
 ```
 
-##### Validation
-
-Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
+To test that the form is validating properly, you can use the `fillForm()` method to fill in the form fields, and then use the `call('save')` method to save the record. You can also use the `assertHasFormErrors()` method to check if the form has any errors, and the `assertNotNotified()` method to check if no notification was displayed. In this example, we use a [Pest dataset](https://pestphp.com/docs/datasets#content-bound-datasets) to test multiple rules without having to repeat the test code:
 
 ```php
-use function Pest\Livewire\livewire;
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Models\User;
+use Illuminate\Support\Str;
 
-it('can validate input', function () {
-    $post = Post::factory()->create();
+it('validates the form data', function (array $data, array $errors) {
+    $user = User::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getRouteKey(),
+    $newUserData = User::factory()->make();
+
+    livewire(EditUser::class, [
+        'record' => $user->id,
     ])
         ->fillForm([
-            'title' => null,
+            'name' => $newUserData->name,
+            'email' => $newUserData->email,
+            ...$data,
         ])
         ->call('save')
-        ->assertHasFormErrors(['title' => 'required']);
-});
+        ->assertHasFormErrors($errors)
+        ->assertNotNotified();
+})->with([
+    '`name` is required' => [['name' => null], ['name' => 'required']],
+    '`name` is max 255 characters' => [['name' => Str::random(256)], ['name' => 'max']],
+    '`email` is a valid email address' => [['email' => Str::random()], ['email' => 'email']],
+    '`email` is required' => [['email' => null], ['email' => 'required']],
+    '`email` is max 255 characters' => [['email' => Str::random(256)], ['email' => 'max']],
+]);
 ```
 
-##### Deleting
-
-You can test the `DeleteAction` using `callAction()`:
+To [test that an action is working](testing-actions), such as the `DeleteAction`, you can use the `callAction()` method to call the delete action. You can also use the `assertNotified()` method to check if a notification was displayed, and the `assertRedirect()` method to check if the user was redirected to another page:
 
 ```php
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Models\User;
 use Filament\Actions\DeleteAction;
-use function Pest\Livewire\livewire;
+use function Pest\Laravel\assertDatabaseMissing;
 
-it('can delete', function () {
-    $post = Post::factory()->create();
+it('can delete a user', function () {
+    $user = User::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getRouteKey(),
+    livewire(EditUser::class, [
+        'record' => $user->id,
     ])
-        ->callAction(DeleteAction::class);
+        ->callAction(DeleteAction::class)
+        ->assertNotified()
+        ->assertRedirect();
 
-    $this->assertModelMissing($post);
+    assertDatabaseMissing($user);
 });
 ```
 
-You can ensure that a particular user is not able to see a `DeleteAction` using `assertActionHidden()`:
+## Testing a resource view page
+
+To test if the view page is able to load, test the view page as a Livewire component, and call `assertOk()` to ensure that the HTTP response was 200 OK. You can also use the `assertSchemaStateSet()` method to check if the infolist entries are set to the correct values:
 
 ```php
-use Filament\Actions\DeleteAction;
-use function Pest\Livewire\livewire;
+use App\Filament\Resources\Users\Pages\ViewUser;
+use App\Models\User;
 
-it('can not delete', function () {
-    $post = Post::factory()->create();
+it('can load the page', function () {
+    $user = User::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getRouteKey(),
+    livewire(ViewUser::class, [
+        'record' => $user->id,
     ])
-        ->assertActionHidden(DeleteAction::class);
-});
-```
-
-#### View
-
-##### Routing & render
-
-To ensure that the View page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
-
-```php
-use PostResource\PostResource;it('can render page', function () {
-    $this->get(PostResource::getUrl('view', [
-        'record' => Post::factory()->create(),
-    ]))->assertSuccessful();
-});
-```
-
-##### Filling existing data
-
-To check that the form is filled with the correct data from the database, you may `assertSchemaStateSet()` that the data in the form matches that of the record:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can retrieve data', function () {
-    $post = Post::factory()->create();
-
-    livewire(PostResource\Pages\ViewPost::class, [
-        'record' => $post->getRouteKey(),
-    ])
+        ->assertOk()
         ->assertSchemaStateSet([
-            'author_id' => $post->author->getKey(),
-            'content' => $post->content,
-            'tags' => $post->tags,
-            'title' => $post->title,
+            'name' => $user->name,
+            'email' => $user->email,
         ]);
 });
 ```
 
-### Relation managers
+To test the infolist on the view page, you should visit the [Testing schemas](testing-schemas) section. To test any actions in the header of the page or in the infolist, you should visit the [Testing actions](testing-actions) section.
 
-##### Render
+## Testing relation managers
 
-To ensure that a relation manager is able to render successfully, mount the Livewire component:
+To test if a relation manager is rendered on a page, such as the edit page of a resource, you can use the `assertSeeLivewire()` method to check if the relation manager is being rendered:
 
 ```php
-use App\Filament\Resources\Categories\Pages\EditCategory;
-use function Pest\Livewire\livewire;
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Filament\Resources\Users\RelationManagers\PostsRelationManager;
+use App\Models\User;
 
-it('can render relation manager', function () {
-    $category = Category::factory()
-        ->has(Post::factory()->count(10))
-        ->create();
+it('can load the relation manager', function () {
+    $user = User::factory()->create();
 
-    livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [
-        'ownerRecord' => $category,
-        'pageClass' => EditCategory::class,
+    livewire(EditUser::class, [
+        'record' => $user->id,
     ])
-        ->assertSuccessful();
+        ->assertSeeLivewire(PostsRelationManager::class);
 });
 ```
 
-##### Table
-
-Filament includes a selection of helpers for testing tables. A full guide to testing tables can be found [in the Table Builder documentation](../tables/testing).
-
-To use a table [testing helper](../tables/testing), make assertions on the relation manager class, which holds the table:
+Since relation managers are Livewire components, you can also test a relation manager's functionality itself, like its ability to load successfully with a 200 OK response, with the correct records in the table. When testing a relation manager, you need to pass in the `ownerRecord`, which is the record from the resource you are inside, and the `pageClass`, which is the class of the page you are on:
 
 ```php
-use App\Filament\Resources\Categories\Pages\EditCategory;
-use function Pest\Livewire\livewire;
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Filament\Resources\Users\RelationManagers\PostsRelationManager;
+use App\Models\Post;
+use App\Models\User;
 
-it('can list posts', function () {
-    $category = Category::factory()
-        ->has(Post::factory()->count(10))
+it('can load the relation manager', function () {
+    $user = User::factory()
+        ->has(Post::factory()->count(5))
         ->create();
 
-    livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [
-        'ownerRecord' => $category,
-        'pageClass' => EditCategory::class,
+    livewire(PostsRelationManager::class, [
+        'ownerRecord' => $user,
+        'pageClass' => EditUser::class,
     ])
-        ->assertCanSeeTableRecords($category->posts);
+        ->assertOk()
+        ->assertCanSeeTableRecords($user->posts);
+});
+```
+
+You can [test searching](testing-tables#testing-that-a-column-can-be-searched), [sorting](testing-tables#testing-that-a-column-can-be-sorted), and [filtering](testing-tables#testing-filters) in the same way as you would on a resource list page.
+
+You can also [test actions](testing-actions), for example, the `CreateAction` in the header of the table:
+
+```php
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Filament\Resources\Users\RelationManagers\PostsRelationManager;
+use App\Models\Post;
+use App\Models\User;
+use Filament\Actions\Testing\TestAction;
+use function Pest\Laravel\assertDatabaseHas;
+
+it('can create a post', function () {
+    $user = User::factory()->create();
+
+    $newPostData = Post::factory()->make();
+
+    livewire(PostsRelationManager::class, [
+        'ownerRecord' => $user,
+        'pageClass' => EditUser::class,
+    ])
+        ->callAction(TestAction::make(CreateAction::class)->table(), [
+            'title' => $newPostData->title,
+            'content' => $newPostData->content,
+        ])
+        ->assertNotified();
+
+    assertDatabaseHas(Post::class, [
+        'title' => $newPostData->title,
+        'content' => $newPostData->content,
+        'user_id' => $user->id,
+    ]);
 });
 ```
 

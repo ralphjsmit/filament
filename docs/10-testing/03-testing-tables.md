@@ -67,26 +67,6 @@ it('can not render post comments', function () {
 
 This helper will assert that the HTML for this column is not shown by default in the present table.
 
-### Testing that a column can be sorted
-
-To sort table records, you can call `sortTable()`, passing the name of the column to sort by. You can use `'desc'` in the second parameter of `sortTable()` to reverse the sorting direction.
-
-Once the table is sorted, you can ensure that the table records are rendered in order using `assertCanSeeTableRecords()` with the `inOrder` parameter:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can sort posts by title', function () {
-    $posts = Post::factory()->count(10)->create();
-
-    livewire(PostResource\Pages\ListPosts::class)
-        ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
-        ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
-});
-```
-
 ### Testing that a column can be searched
 
 To search the table, call the `searchTable()` method with your search query.
@@ -122,6 +102,26 @@ it('can search posts by title column', function () {
         ->searchTableColumns(['title' => $title])
         ->assertCanSeeTableRecords($posts->where('title', $title))
         ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
+});
+```
+
+### Testing that a column can be sorted
+
+To sort table records, you can call `sortTable()`, passing the name of the column to sort by. You can use `'desc'` in the second parameter of `sortTable()` to reverse the sorting direction.
+
+Once the table is sorted, you can ensure that the table records are rendered in order using `assertCanSeeTableRecords()` with the `inOrder` parameter:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can sort posts by title', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->sortTable('title')
+        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
+        ->sortTable('title', 'desc')
+        ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
 });
 ```
 
