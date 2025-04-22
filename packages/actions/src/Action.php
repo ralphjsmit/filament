@@ -5,6 +5,7 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Enums\ActionStatus;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
@@ -626,6 +627,10 @@ class Action extends ViewComponent implements Arrayable
 
     public function toHtml(): string
     {
+        if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
+            return $this->toEmbeddedHtml();
+        }
+
         return match ($this->getView()) {
             static::BADGE_VIEW => $this->toBadgeHtml(),
             static::BUTTON_VIEW => $this->toButtonHtml(),
