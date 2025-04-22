@@ -174,6 +174,10 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
     <Checkbox value="support" model="packages">
         Blade UI components
     </Checkbox>
+
+    <Checkbox value="spatie-translatable-plugin" model="packages">
+        Spatie Translatable Plugin
+    </Checkbox>
 </Checkboxes>
 
 ### High-impact changes
@@ -295,6 +299,14 @@ Be aware when using `all` as it will cause performance issues when dealing with 
         ->paginationPageOptions([5, 10, 25, 50, 'all']));
     ```
 </Aside>
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('spatie-translatable-plugin')">
+<span slot="summary">The official Spatie Translatable Plugin is now deprecated</span>
+
+Last year, the Filament team decided to hand over maintenance of the Spatie Translatable Plugin to the team at [Lara Zeus](https://larazeus.com), who are trusted developers of many Filament plugins. They have maintained a fork of the plugin ever since.
+
+The official Spatie Translatable Plugin will not recieve v4 support, and is now deprecated. You can use the [Lara Zeus Translatable Plugin](https://github.com/lara-zeus/translatable) as a direct replacement. The plugin is compatible with the same version of Spatie Translatable as the official plugin, and has been tested with Filament v4. It also fixes some long-standing bugs in the official plugin.
 </Disclosure>
 
 ### Medium-impact changes
