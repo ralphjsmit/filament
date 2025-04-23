@@ -27,6 +27,8 @@ trait CanBeValidated
      */
     protected array | Arrayable | string | Closure | null $inValidationRuleValues = null;
 
+    protected bool | Closure $shouldUniqueValidationIgnoreRecordByDefault = true;
+
     /**
      * @var array<mixed>
      */
@@ -504,9 +506,11 @@ trait CanBeValidated
         return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
-    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, bool $ignoreRecord = true, ?Closure $modifyRuleUsing = null): static
+    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = null, ?Closure $modifyRuleUsing = null): static
     {
         $this->rule(static function (Field $component, ?string $model) use ($column, $ignorable, $ignoreRecord, $modifyRuleUsing, $table) {
+            $ignoreRecord ??= $component->shouldUniqueValidationIgnoreRecordByDefault();
+
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
             $ignorable = ($ignoreRecord && (! $ignorable)) ?
@@ -532,6 +536,18 @@ trait CanBeValidated
         }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
 
         return $this;
+    }
+
+    public function uniqueValidationIgnoresRecordByDefault(bool | Closure $condition = true): static
+    {
+        $this->shouldUniqueValidationIgnoreRecordByDefault = $condition;
+
+        return $this;
+    }
+
+    public function shouldUniqueValidationIgnoreRecordByDefault(): bool
+    {
+        return (bool) $this->evaluate($this->shouldUniqueValidationIgnoreRecordByDefault);
     }
 
     public function distinct(bool | Closure $condition = true): static

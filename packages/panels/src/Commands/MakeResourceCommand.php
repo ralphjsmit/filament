@@ -30,6 +30,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
+use function Filament\Support\discover_app_classes;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\suggest;
 
@@ -287,10 +288,7 @@ class MakeResourceCommand extends Command
 
             $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
         } else {
-            $modelFqns = collect(get_declared_classes())
-                ->filter(fn (string $class): bool => is_subclass_of($class, Model::class) &&
-                    (! str((new ReflectionClass($class))->getFileName())->startsWith(base_path('vendor'))))
-                ->all();
+            $modelFqns = discover_app_classes(parentClass: Model::class);
 
             $this->modelFqn = suggest(
                 label: 'What is the model?',
@@ -528,6 +526,7 @@ class MakeResourceCommand extends Command
         $this->writeFile($path, app(ResourceFormSchemaClassGenerator::class, [
             'fqn' => $this->formSchemaFqn,
             'modelFqn' => $this->modelFqn,
+            'parentResourceFqn' => $this->parentResourceFqn,
             'isGenerated' => $this->isGenerated,
         ]));
     }
@@ -554,6 +553,9 @@ class MakeResourceCommand extends Command
 
         $this->writeFile($path, app(ResourceInfolistSchemaClassGenerator::class, [
             'fqn' => $this->infolistSchemaFqn,
+            'modelFqn' => $this->modelFqn,
+            'parentResourceFqn' => $this->parentResourceFqn,
+            'isGenerated' => $this->isGenerated,
         ]));
     }
 
@@ -577,6 +579,7 @@ class MakeResourceCommand extends Command
         $this->writeFile($path, app(ResourceTableClassGenerator::class, [
             'fqn' => $this->tableFqn,
             'modelFqn' => $this->modelFqn,
+            'parentResourceFqn' => $this->parentResourceFqn,
             'hasViewOperation' => $this->hasViewOperation,
             'isGenerated' => $this->isGenerated,
             'isSoftDeletable' => $this->isSoftDeletable,
@@ -700,6 +703,10 @@ class MakeResourceCommand extends Command
 
     protected function createViewPage(): void
     {
+        if (! $this->hasViewOperation) {
+            return;
+        }
+
         if ($this->isSimple) {
             return;
         }

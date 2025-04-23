@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Actions\Testing\Fixtures\TestAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
@@ -86,7 +86,7 @@ it('will make the recovery code field visible when the user requests it', functi
             fn (TextInput $field): bool => $field->isHidden(),
         )
         ->callAction(TestAction::make('useRecoveryCode')
-            ->schemaComponent("multiFactorChallengeForm.{$googleTwoFactorAuthentication->getId()}.code"))
+            ->schemaComponent("{$googleTwoFactorAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
         ->assertFormFieldExists(
             "{$googleTwoFactorAuthentication->getId()}.recoveryCode",
             'multiFactorChallengeForm',
@@ -110,7 +110,7 @@ it('will authenticate the user after a valid recovery code is used', function ()
         ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
         ->assertNoRedirect()
         ->callAction(TestAction::make('useRecoveryCode')
-            ->schemaComponent("multiFactorChallengeForm.{$googleTwoFactorAuthentication->getId()}.code"))
+            ->schemaComponent("{$googleTwoFactorAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
         ->fillForm([
             $googleTwoFactorAuthentication->getId() => [
                 'recoveryCode' => Arr::random($recoveryCodes),
@@ -296,7 +296,7 @@ it('will not authenticate the user when an invalid recovery code is used', funct
             fn (TextInput $field): bool => $field->isHidden(),
         )
         ->callAction(TestAction::make('useRecoveryCode')
-            ->schemaComponent("multiFactorChallengeForm.{$googleTwoFactorAuthentication->getId()}.code"))
+            ->schemaComponent("{$googleTwoFactorAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
         ->assertFormFieldExists(
             "{$googleTwoFactorAuthentication->getId()}.recoveryCode",
             'multiFactorChallengeForm',

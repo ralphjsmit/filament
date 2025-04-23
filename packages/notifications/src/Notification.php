@@ -310,7 +310,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
             Assert::assertNotSame(
                 collect($expectedNotification)->except(['id'])->toArray(),
                 collect($notification->toArray())->except(['id'])->toArray(),
-                'The notification with the given configration was sent'
+                'The notification with the given configuration was sent'
             );
 
             return;

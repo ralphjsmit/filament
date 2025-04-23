@@ -14,10 +14,7 @@ use Laravel\SerializableClosure\Serializers\Native;
  */
 class MenuItem extends Component
 {
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $color = null;
+    protected string | Closure | null $color = null;
 
     protected string | BackedEnum | Closure | null $icon = null;
 
@@ -45,10 +42,7 @@ class MenuItem extends Component
         return $static;
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
-     */
-    public function color(string | array | Closure | null $color): static
+    public function color(string | Closure | null $color): static
     {
         $this->color = $color;
 
@@ -126,10 +120,7 @@ class MenuItem extends Component
         return ! $this->evaluate($this->isVisible);
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getColor(): string | array | null
+    public function getColor(): ?string
     {
         return $this->evaluate($this->color);
     }

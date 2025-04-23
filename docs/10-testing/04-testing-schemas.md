@@ -2,13 +2,7 @@
 title: Testing schemas
 ---
 
-## Introduction
-
-All examples in this guide will be written using [Pest](https://pestphp.com). To use Pest's Livewire plugin for testing, you can follow the installation instructions in the Pest documentation on plugins: [Livewire plugin for Pest](https://pestphp.com/docs/plugins#livewire). However, you can easily adapt this to PHPUnit.
-
-Since the Form Builder works on Livewire components, you can use the [Livewire testing helpers](https://livewire.laravel.com/docs/testing). However, we have custom testing helpers that you can use with forms:
-
-## Filling a form
+## Filling a form in a test
 
 To fill a form with data, pass the data to `fillForm()`:
 
@@ -22,9 +16,11 @@ livewire(CreatePost::class)
     ]);
 ```
 
-> If you have multiple forms on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
 
-To check that a form has data, use `assertFormSet()`:
+## Testing form field and infolist entry state
+
+To check that a form has data, use `assertSchemaStateSet()`:
 
 ```php
 use Illuminate\Support\Str;
@@ -37,15 +33,15 @@ it('can automatically generate a slug from the title', function () {
         ->fillForm([
             'title' => $title,
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'slug' => Str::slug($title),
         ]);
 });
 ```
 
-> If you have multiple forms on a Livewire component, you can specify which form you want to check using `assertFormSet([...], 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can specify which schema you want to check using `assertSchemaStateSet([...], 'createPostForm')`.
 
-You may also find it useful to pass a function to the `assertFormSet()` method, which allows you to access the form `$state` and perform additional assertions:
+You may also find it useful to pass a function to the `assertSchemaStateSet()` method, which allows you to access the form `$state` and perform additional assertions:
 
 ```php
 use Illuminate\Support\Str;
@@ -58,7 +54,7 @@ it('can automatically generate a slug from the title without any spaces', functi
         ->fillForm([
             'title' => $title,
         ])
-        ->assertFormSet(function (array $state): array {
+        ->assertSchemaStateSet(function (array $state): array {
             expect($state['slug'])
                 ->not->toContain(' ');
                 
@@ -69,9 +65,9 @@ it('can automatically generate a slug from the title without any spaces', functi
 });
 ```
 
-You can return an array from the function if you want Filament to continue to assert the form state after the function has been run.
+You can return an array from the function if you want Filament to continue to assert the achema state after the function has been run.
 
-## Validation
+## Testing form validation
 
 Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
 
@@ -102,9 +98,9 @@ livewire(CreatePost::class)
     ->assertHasNoFormErrors();
 ```
 
-> If you have multiple forms on a Livewire component, you can pass the name of a specific form as the second parameter like `assertHasFormErrors(['title' => 'required'], 'createPostForm')` or `assertHasNoFormErrors([], 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can pass the name of a specific form as the second parameter like `assertHasFormErrors(['title' => 'required'], 'createPostForm')` or `assertHasNoFormErrors([], 'createPostForm')`.
 
-## Form existence
+## Testing the existence of a form
 
 To check that a Livewire component has a form, use `assertFormExists()`:
 
@@ -117,9 +113,9 @@ it('has a form', function () {
 });
 ```
 
-> If you have multiple forms on a Livewire component, you can pass the name of a specific form like `assertFormExists('createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can pass the name of a specific form like `assertFormExists('createPostForm')`.
 
-## Fields
+## Testing the existence of form fields
 
 To ensure that a form has a given field, pass the field name to `assertFormFieldExists()`:
 
@@ -132,7 +128,7 @@ it('has a title field', function () {
 });
 ```
 
-You may pass a function as an additional argument in order to assert that a field passes a given "truth test". This is useful for asserting that a field has a specific configuration:
+You may pass a function as an additional argument to assert that a field passes a given "truth test". This is useful for asserting that a field has a specific configuration:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -156,9 +152,9 @@ it('does not have a conditional field', function () {
 });
 ```
 
-> If you have multiple forms on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
 
-### Hidden fields
+## Testing the visibility of form fields
 
 To ensure that a field is visible, pass the name to `assertFormFieldVisible()`:
 
@@ -184,7 +180,7 @@ test('title is hidden', function () {
 
 > For both `assertFormFieldHidden()` and `assertFormFieldVisible()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldHidden('title', 'createPostForm')`.
 
-### Disabled fields
+## Testing disabled form fields
 
 To ensure that a field is enabled, pass the name to `assertFormFieldEnabled()`:
 
@@ -210,12 +206,14 @@ test('title is disabled', function () {
 
 > For both `assertFormFieldEnabled()` and `assertFormFieldDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldEnabled('title', 'createPostForm')`.
 
-## Layout components
+## Testing the 
 
-If you need to check if a particular layout component exists rather than a field, you may use `assertFormComponentExists()`.  As layout components do not have names, this method uses the `key()` provided by the developer:
+## Testing other schema components
+
+If you need to check if a particular schema component exists rather than a field, you may use `asserSchemaComponentExists()`.  As components do not have names, this method uses the `key()` provided by the developer:
 
 ```php
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 
 Section::make('Comments')
     ->key('comments-section')
@@ -229,22 +227,22 @@ use function Pest\Livewire\livewire;
 
 test('comments section exists', function () {
     livewire(EditPost::class)
-        ->assertFormComponentExists('comments-section');
+        ->asserSchemaComponentExists('comments-section');
 });
 ```
 
-To assert that a form does not have a given component, pass the component key to `assertFormComponentDoesNotExist()`:
+To assert that a schema does not have a given component, pass the component key to `asserSchemaComponentDoesNotExist()`:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('does not have a conditional component', function () {
     livewire(CreatePost::class)
-        ->assertFormComponentDoesNotExist('no-such-section');
+        ->asserSchemaComponentDoesNotExist('no-such-section');
 });
 ```
 
-To check if the component exists and passes a given truth test, you can pass a function to the second argument of `assertFormComponentExists()`, returning true or false if the component passes the test or not:
+To check if the component exists and passes a given truth test, you can pass a function to the second argument of `asserSchemaComponentExists()`, returning true or false if the component passes the test or not:
 
 ```php
 use Filament\Forms\Components\Component;
@@ -253,7 +251,7 @@ use function Pest\Livewire\livewire;
 
 test('comments section has heading', function () {
     livewire(EditPost::class)
-        ->assertFormComponentExists(
+        ->asserSchemaComponentExists(
             'comments-section',
             function (Component $component): bool {
                 return $component->getHeading() === 'Comments';
@@ -272,7 +270,7 @@ use function Pest\Livewire\livewire;
 
 test('comments section is enabled', function () {
     livewire(EditPost::class)
-        ->assertFormComponentExists(
+        ->asserSchemaComponentExists(
             'comments-section',
             function (Component $component): bool {
                 Assert::assertTrue(
@@ -286,7 +284,124 @@ test('comments section is enabled', function () {
 });
 ```
 
-### Wizard
+## Testing repeaters
+
+Internally, repeaters generate UUIDs for items to keep track of them in the Livewire HTML easier. This means that when you are testing a form with a repeater, you need to ensure that the UUIDs are consistent between the form and the test. This can be tricky, and if you don't do it correctly, your tests can fail as the tests are expecting a UUID, not a numeric key.
+
+However, since Livewire doesn't need to keep track of the UUIDs in a test, you can disable the UUID generation and replace them with numeric keys, using the `Repeater::fake()` method at the start of your test:
+
+```php
+use Filament\Forms\Components\Repeater;
+use function Pest\Livewire\livewire;
+
+$undoRepeaterFake = Repeater::fake();
+
+livewire(EditPost::class, ['record' => $post])
+    ->assertSchemaStateSet([
+        'quotes' => [
+            [
+                'content' => 'First quote',
+            ],
+            [
+                'content' => 'Second quote',
+            ],
+        ],
+        // ...
+    ]);
+
+$undoRepeaterFake();
+```
+
+You may also find it useful to test the number of items in a repeater by passing a function to the `assertSchemaStateSet()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+use function Pest\Livewire\livewire;
+
+$undoRepeaterFake = Repeater::fake();
+
+livewire(EditPost::class, ['record' => $post])
+    ->assertSchemaStateSet(function (array $state) {
+        expect($state['quotes'])
+            ->toHaveCount(2);
+    });
+
+$undoRepeaterFake();
+```
+
+### Testing repeater actions
+
+In order to test that repeater actions are working as expected, you can utilize the `callFormComponentAction()` method to call your repeater actions and then [perform additional assertions](../testing#actions).
+
+To interact with an action on a particular repeater item, you need to pass in the `item` argument with the key of that repeater item. If your repeater is reading from a relationship, you should prefix the ID (key) of the related record with `record-` to form the key of the repeater item:
+
+```php
+use App\Models\Quote;
+use Filament\Forms\Components\Repeater;
+use function Pest\Livewire\livewire;
+
+$quote = Quote::first();
+
+livewire(EditPost::class, ['record' => $post])
+    ->callAction(TestAction::make('sendQuote')->schemaComponent('quotes')->arguments([
+        'item' => "record-{$quote->getKey()}",
+    ]))
+    ->assertNotified('Quote sent!');
+```
+
+## Testing builders
+
+Internally, builders generate UUIDs for items to keep track of them in the Livewire HTML easier. This means that when you are testing a form with a builder, you need to ensure that the UUIDs are consistent between the form and the test. This can be tricky, and if you don't do it correctly, your tests can fail as the tests are expecting a UUID, not a numeric key.
+
+However, since Livewire doesn't need to keep track of the UUIDs in a test, you can disable the UUID generation and replace them with numeric keys, using the `Builder::fake()` method at the start of your test:
+
+```php
+use Filament\Forms\Components\Builder;
+use function Pest\Livewire\livewire;
+
+$undoBuilderFake = Builder::fake();
+
+livewire(EditPost::class, ['record' => $post])
+    ->assertSchemaStateSet([
+        'content' => [
+            [
+                'type' => 'heading',
+                'data' => [
+                    'content' => 'Hello, world!',
+                    'level' => 'h1',
+                ],
+            ],
+            [
+                'type' => 'paragraph',
+                'data' => [
+                    'content' => 'This is a test post.',
+                ],
+            ],
+        ],
+        // ...
+    ]);
+
+$undoBuilderFake();
+```
+
+You may also find it useful to access test the number of items in a repeater by passing a function to the `assertSchemaStateSet()` method:
+
+```php
+use Filament\Forms\Components\Builder;
+use function Pest\Livewire\livewire;
+
+$undoBuilderFake = Builder::fake();
+
+livewire(EditPost::class, ['record' => $post])
+    ->assertSchemaStateSet(function (array $state) {
+        expect($state['content'])
+            ->toHaveCount(2);
+    });
+
+$undoBuilderFake();
+```
+
+## Testing wizards
 
 To go to a wizard's next step, use `goToNextWizardStep()`:
 
@@ -324,275 +439,14 @@ it('moves to the wizards second step', function () {
 });
 ```
 
-If you have multiple forms on a single Livewire component, any of the wizard test helpers can accept a `formName` parameter:
+If you have multiple schemas on a single Livewire component, any of the wizard test helpers can accept a `schema` parameter:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('moves to next wizard step only for fooForm', function () {
     livewire(CreatePost::class)
-        ->goToNextWizardStep(formName: 'fooForm')
-        ->assertHasFormErrors(['title'], formName: 'fooForm');
-});
-```
-
-## Actions
-
-You can call an action by passing its form component name, and then the name of the action to `callFormComponentAction()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can send invoices', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->callFormComponentAction('customer_id', 'send');
-
-    expect($invoice->refresh())
-        ->isSent()->toBeTrue();
-});
-```
-
-To pass an array of data into an action, use the `data` parameter:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can send invoices', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->callFormComponentAction('customer_id', 'send', data: [
-            'email' => $email = fake()->email(),
-        ])
-        ->assertHasNoFormComponentActionErrors();
-
-    expect($invoice->refresh())
-        ->isSent()->toBeTrue()
-        ->recipient_email->toBe($email);
-});
-```
-
-If you ever need to only set an action's data without immediately calling it, you can use `setFormComponentActionData()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can send invoices', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->mountAction('customer_id', 'send')
-        ->setFormComponentActionData([
-            'email' => $email = fake()->email(),
-        ])
-});
-```
-
-### Execution
-
-To check if an action has been halted, you can use `assertFormComponentActionHalted()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('stops sending if invoice has no email address', function () {
-    $invoice = Invoice::factory(['email' => null])->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->callFormComponentAction('customer_id', 'send')
-        ->assertFormComponentActionHalted('customer_id', 'send');
-});
-```
-
-### Errors
-
-`assertHasNoFormComponentActionErrors()` is used to assert that no validation errors occurred when submitting the action form.
-
-To check if a validation error has occurred with the data, use `assertHasFormComponentActionErrors()`, similar to `assertHasErrors()` in Livewire:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can validate invoice recipient email', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->callFormComponentAction('customer_id', 'send', data: [
-            'email' => Str::random(),
-        ])
-        ->assertHasFormComponentActionErrors(['email' => ['email']]);
-});
-```
-
-To check if an action is pre-filled with data, you can use the `assertFormComponentActionDataSet()` method:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can send invoices to the primary contact by default', function () {
-    $invoice = Invoice::factory()->create();
-    $recipientEmail = $invoice->company->primaryContact->email;
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->mountAction('customer_id', 'send')
-        ->assertFormComponentActionDataSet([
-            'email' => $recipientEmail,
-        ])
-        ->callMountedAction()
-        ->assertHasNoFormComponentActionErrors();
-        
-    expect($invoice->refresh())
-        ->isSent()->toBeTrue()
-        ->recipient_email->toBe($recipientEmail);
-});
-```
-
-### Action state
-
-To ensure that an action exists or doesn't in a form, you can use the `assertFormComponentActionExists()` or  `assertFormComponentActionDoesNotExist()` method:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can send but not unsend invoices', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertFormComponentActionExists('customer_id', 'send')
-        ->assertFormComponentActionDoesNotExist('customer_id', 'unsend');
-});
-```
-
-To ensure an action is hidden or visible for a user, you can use the `assertFormComponentActionHidden()` or `assertFormComponentActionVisible()` methods:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can only print customers', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertFormComponentActionHidden('customer_id', 'send')
-        ->assertFormComponentActionVisible('customer_id', 'print');
-});
-```
-
-To ensure an action is enabled or disabled for a user, you can use the `assertFormComponentActionEnabled()` or `assertFormComponentActionDisabled()` methods:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can only print a customer for a sent invoice', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertFormComponentActionDisabled('customer_id', 'send')
-        ->assertFormComponentActionEnabled('customer_id', 'print');
-});
-```
-
-To check if an action is hidden to a user, you can use the `assertFormComponentActionHidden()` method:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can not send invoices', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertFormComponentActionHidden('customer_id', 'send');
-});
-```
-
-### Button appearance
-
-To ensure an action has the correct label, you can use `assertFormComponentActionHasLabel()` and `assertFormComponentActionDoesNotHaveLabel()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('send action has correct label', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertFormComponentActionHasLabel('customer_id', 'send', 'Email Invoice')
-        ->assertFormComponentActionDoesNotHaveLabel('customer_id', 'send', 'Send');
-});
-```
-
-To ensure an action's button is showing the correct icon, you can use `assertFormComponentActionHasIcon()` or `assertFormComponentActionDoesNotHaveIcon()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('when enabled the send button has correct icon', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertFormComponentActionEnabled('customer_id', 'send')
-        ->assertFormComponentActionHasIcon('customer_id', 'send', 'envelope-open')
-        ->assertFormComponentActionDoesNotHaveIcon('customer_id', 'send', 'envelope');
-});
-```
-
-To ensure that an action's button is displaying the right color, you can use `assertFormComponentActionHasColor()` or `assertFormComponentActionDoesNotHaveColor()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('actions display proper colors', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertFormComponentActionHasColor('customer_id', 'delete', 'danger')
-        ->assertFormComponentActionDoesNotHaveColor('customer_id', 'print', 'danger');
-});
-```
-
-### URL
-
-To ensure an action has the correct URL, you can use `assertFormComponentActionHasUrl()`, `assertFormComponentActionDoesNotHaveUrl()`, `assertFormComponentActionShouldOpenUrlInNewTab()`, and `assertFormComponentActionShouldNotOpenUrlInNewTab()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('links to the correct Filament sites', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertFormComponentActionHasUrl('customer_id', 'filament', 'https://filamentphp.com/')
-        ->assertFormComponentActionDoesNotHaveUrl('customer_id', 'filament', 'https://github.com/filamentphp/filament')
-        ->assertFormComponentActionShouldOpenUrlInNewTab('customer_id', 'filament')
-        ->assertFormComponentActionShouldNotOpenUrlInNewTab('customer_id', 'github');
+        ->goToNextWizardStep(schema: 'fooForm')
+        ->assertHasFormErrors(['title'], schema: 'fooForm');
 });
 ```

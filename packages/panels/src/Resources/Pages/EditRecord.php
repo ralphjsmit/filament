@@ -23,12 +23,12 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
-
-use function Filament\Support\is_app_url;
 
 /**
  * @property-read Schema $form
@@ -147,8 +147,6 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -161,6 +159,8 @@ class EditRecord extends Page
             throw $exception;
         }
 
+        $this->commitDatabaseTransaction();
+
         $this->rememberData();
 
         if ($shouldSendSavedNotification) {
@@ -168,7 +168,7 @@ class EditRecord extends Page
         }
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 
@@ -196,8 +196,6 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -209,6 +207,8 @@ class EditRecord extends Page
 
             throw $exception;
         }
+
+        $this->commitDatabaseTransaction();
 
         $this->rememberData();
     }
@@ -223,7 +223,7 @@ class EditRecord extends Page
 
         return Notification::make()
             ->success()
-            ->title($this->getSavedNotificationTitle());
+            ->title($title);
     }
 
     protected function getSavedNotificationTitle(): ?string
@@ -350,7 +350,29 @@ class EditRecord extends Page
 
     protected function getRedirectUrl(): ?string
     {
-        return null;
+        try {
+            $this->authorizeAccess();
+
+            return null;
+        } catch (AuthorizationException | HttpExceptionInterface) {
+            // Do nothing.
+        }
+
+        $resource = static::getResource();
+
+        if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
+            return $this->getResourceUrl('view', $this->getRedirectUrlParameters());
+        }
+
+        return $this->getResourceUrl(parameters: $this->getRedirectUrlParameters());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getRedirectUrlParameters(): array
+    {
+        return [];
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool
@@ -419,5 +441,10 @@ class EditRecord extends Page
     protected function hasFullWidthFormActions(): bool
     {
         return false;
+    }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
     }
 }

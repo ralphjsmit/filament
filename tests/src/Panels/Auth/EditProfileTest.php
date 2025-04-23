@@ -27,7 +27,7 @@ it('can render page', function (): void {
 
 it('can retrieve data', function (): void {
     livewire(EditProfile::class)
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'name' => $this->user->name,
             'email' => $this->user->email,
         ]);
@@ -83,7 +83,7 @@ it('can send email change verification', function (): void {
         ->call('save')
         ->assertHasNoFormErrors()
         ->assertNotified('Email address change request sent')
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'email' => $oldEmail,
         ]);
 
@@ -122,7 +122,7 @@ it('can save password', function (): void {
         ->call('save')
         ->assertHasNoFormErrors()
         ->assertNotified('Saved')
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'password' => '',
             'passwordConfirmation' => '',
         ]);

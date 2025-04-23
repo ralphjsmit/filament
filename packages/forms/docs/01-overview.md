@@ -7,6 +7,8 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
+<AutoScreenshot name="forms/overview" alt="Account settings form example" version="4.x" />
+
 Form field classes can be found in the `Filament\Form\Components` namespace. They reside within the schema array of components. Filament ships with many types of field, suitable for editing different types of data:
 
 - [Text input](text-input)
@@ -89,6 +91,10 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
     ->label(__('fields.name'))
 ```
+
+<Aside variant="tip">
+    You can also [use a JavaScript expression](#using-javascript-to-determine-text-content) to determine the content of the label, which can read the current values of fields in the form.
+</Aside>
 
 ### Hiding a field's label
 
@@ -284,9 +290,9 @@ Select::make('role')
     ])
 
 Toggle::make('is_admin')
-    ->hiddenJs(>>>JS
-        \$get('role') !== 'staff'
-    JS)
+    ->hiddenJs(<<<'JS'
+        $get('role') !== 'staff'
+        JS)
 ```
 
 Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on field to be `live()`.
@@ -302,11 +308,11 @@ Select::make('role')
         'user' => 'User',
         'staff' => 'Staff',
     ])
-    
+
 Toggle::make('is_admin')
-    ->visibleJs(>>>JS
-        \$get('role') === 'staff'
-    JS)
+    ->visibleJs(<<<'JS'
+        $get('role') === 'staff'
+        JS)
 ```
 
 <Aside variant="info">
@@ -391,7 +397,7 @@ TextInput::make('name')
 
 ### Using inline labels in multiple places at once
 
-If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/section) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all fields within it will have their labels displayed inline:
+If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/sections) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all fields within it will have their labels displayed inline:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -399,7 +405,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->fields([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -433,7 +439,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->fields([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -482,7 +488,7 @@ TextInput::make('name')
 
 ## Adding extra content to a field
 
-Fields contain many "slots" where content can be inserted in a child schema. Slots can accept text, [any schema component](../schemas/overview), [actions](../actions) and [action groups](../actions/grouping-actions). Usually, [prime components](../schemas/primes) are used for content.
+Fields contain many "slots" where content can be inserted in a child schema. Slots can accept text, [any schema component](../schemas), [actions](../actions) and [action groups](../actions/grouping-actions). Usually, [prime components](../schemas/primes) are used for content.
 
 The following slots are available for all fields:
 
@@ -819,7 +825,9 @@ TextInput::make('name')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+<Aside variant="tip">
+    By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ### Adding extra HTML attributes to the input element of a field
 
@@ -834,7 +842,9 @@ TextInput::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraInputAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+<Aside variant="tip">
+    By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ### Adding extra HTML attributes to the field wrapper
 
@@ -849,7 +859,9 @@ TextInput::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraFieldWrapperAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraFieldWrapperAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+<Aside variant="tip">
+    By default, calling `extraFieldWrapperAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+</Aside>
 
 ## Field utility injection
 
@@ -999,6 +1011,23 @@ function (Request $request, Set $set) {
 }
 ```
 
+### Using JavaScript to determine text content
+
+Methods that allow HTML to be rendered, such as [`label()`](#setting-a-fields-label) and [`Text::make()` passed to a `belowContent()` method](#adding-extra-content-to-a-field) can use JavaScript to calculate their content instead. This is achieved by passing a `JsContent` object to the method, which is `Htmlable`:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\JsContent;
+
+TextInput::make('greetingResponse')
+    ->label(JsContent::make(<<<'JS'
+        ($get('name') === 'John Doe') ? 'Hello, John!' : 'Hello, stranger!'
+        JS
+    ))
+```
+
+The [`$state`](#injecting-the-current-state-of-the-field) and [`$get`](#injecting-the-state-of-another-field) utilities are available in this JavaScript context, so you can use them to access the state of the field and other fields in the schema.
+
 ## The basics of reactivity
 
 [Livewire](https://livewire.laravel.com) is a tool that allows Blade-rendered HTML to dynamically re-render without requiring a full page reload. Filament schemas are built on top of Livewire, so they are able to re-render dynamically, allowing their content to adapt after they are initially rendered.
@@ -1089,7 +1118,11 @@ TextInput::make('name')
 
 <UtilityInjection set="formFields" version="4.x" extras="Old state;;mixed;;$old;;The old value of the field, before it was updated.||Old raw state;;mixed;;$oldRaw;;The old value of the field, before state casts were applied.||Set function;;Filament\Schemas\Components\Utilities\Set;;$set;;A function to set values in the current form data.">The `afterStateUpdated()` method injects various utilities into the function as parameters.</UtilityInjection>
 
-### Setting the state of another field
+<Aside variant="tip">
+    When using `afterStateUpdated()` on a reactive field, interactions will not feel instant since a network request is made. There are a few ways you can [optimize and avoid rendering](#field-rendering) which will make the interaction feel faster.
+</Aside>
+
+#### Setting the state of another field
 
 In a similar way to `$get`, you may also set the value of another field from within `afterStateUpdated()`, using a `$set` parameter:
 
@@ -1147,6 +1180,82 @@ If your schema auto-saves data to the database, like in a [resource](../resource
     Even when a field is not dehydrated, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-dehydrated) section.
 </Aside>
 
+### Field rendering
+
+Each time a reactive field is updated, the HTML entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
+
+#### Field partial rendering
+
+In this example, the value of the "name" input is used in the label of the "email" input. The "name" input is [`live()`](#the-basics-of-reactivity), so when the user types in the "name" input, the entire schema is re-rendered. This is not ideal, since only the "email" input needs to be re-rendered:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+
+TextInput::make('name')
+    ->live()
+    
+TextInput::make('email')
+    ->label(fn (Get $get): string => filled($get('name')) ? "Email address for {$get('name')}" : 'Email address')
+```
+
+In this case, a simple call to `partiallyRenderComponentsAfterStateUpdated()`, passing the names of other fields to re-render, will make the schema re-render only the specified fields [after the state is updated](#field-updates):
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->live()
+    ->partiallyRenderComponentsAfterStateUpdated(['email'])
+```
+
+Alternatively, you can instruct Filament to re-render the current component only, using `partiallyRenderAfterStateUpdated()`. This is useful if the reactive component is the only one that depends on its current state:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->live()
+    ->partiallyRenderAfterStateUpdated()
+    ->belowContent(fn (Get $get): ?string => filled($get('name')) ? "Hi, {$get('name')}!" : null)
+```
+
+#### Preventing the Livewire component from rendering after a field is updated
+
+If you wish to prevent the Livewire component from re-rendering when a field is [updated](#field-updates), you can use the `skipRenderAfterStateUpdated()` method. This is useful if you want to perform some action when the field is updated, but you don't want the Livewire component to re-render:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->live()
+    ->skipRenderAfterStateUpdated()
+    ->afterStateUpdated(function (string $state) {
+        // Do something with the state, but don't re-render the Livewire component.
+    })
+```
+
+Since [setting the state of another field](#setting-the-state-of-another-field) from an `afterStateUpdated()` function using the `$set()` method will actually just mutate the frontend state of fields, you don't even need a network request in the first place. The `afterStateUpdatedJs()` method accepts a JavaScript expression that runs each time the value of the field changes. The [`$state`](#injecting-the-current-state-of-the-field), [`$get()`](#injecting-the-state-of-another-field) and [`$set()`](#setting-the-state-of-another-field) utilities are available in the JavaScript context, so you can use them to set the state of other fields:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Set;
+
+// Old name input that is `live()`, so it makes a network request and render each time it is updated.
+TextInput::make('name')
+    ->live()
+    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('email', ((string) str($state)->replace(' ', '.')->lower()) . '@example.com'))
+
+// New name input that uses `afterStateUpdatedJs()` to set the state of the email field and doesn't make a network request.
+TextInput::make('name')
+    ->afterStateUpdatedJs(<<<'JS'
+        $set('email', ($state ?? '').replace(' ', '.').toLowerCase() + '@example.com')
+        JS)
+    
+TextInput::make('email')
+    ->label('Email address')
+```
+
 ## Reactive forms cookbook
 
 This section contains a collection of recipes for common tasks you may need to perform when building an advanced form.
@@ -1182,6 +1291,11 @@ Checkbox::make('is_company')
 TextInput::make('company_name')
     ->visible(fn (Get $get): bool => $get('is_company'))
 ```
+
+<Aside variant="tip">
+    Using `live()` means the schema reloads every time the field changes, triggering a network request.
+    Alternatively, you can use [JavaScript to hide the field based on another field's value](#hiding-a-field-using-javascript).
+</Aside>
 
 ### Conditionally making a field required
 
@@ -1388,6 +1502,10 @@ TextInput::make('password')
     ->required(fn (string $operation): bool => $operation === 'create')
 ```
 
+<Aside variant="info">
+    In this example, `Hash::make($state)` shows how to use a [dehydration function](#field-dehydration). However, you don't need to do this if your Model uses `'password' => 'hashed'` in its [casts function — Laravel will handle hashing automatically](https://laravel.com/docs/eloquent-mutators#attribute-casting).
+</Aside>
+
 ## Saving data to relationships
 
 As well as being able to give structure to fields, [layout components](../schemas/layouts) are also able to "teleport" their nested fields into a relationship. Filament will handle loading data from a `HasOne`, `BelongsTo` or `MorphOne` Eloquent relationship, and then it will save the data back to the same relationship. To set this behavior up, you can use the `relationship()` method on any layout component:
@@ -1428,11 +1546,31 @@ Group::make()
     ])
 ```
 
-### Saving data to a `BelongsTo` relationship
+### Saving data to a `BelongsTo` or `MorphTo` relationship
 
-Please note that if you are saving the data to a `BelongsTo` relationship, then the foreign key column in your database must be `nullable()`. This is because Filament saves the schema first, before saving the relationship. Since the schema is saved first, the foreign ID does not exist yet, so it must be nullable. Immediately after the schema is saved, Filament saves the relationship, which will then fill in the foreign ID and save it again.
+Please note that if you are saving the data to a `BelongsTo` or `MorphTo` relationship, then the foreign key column in your database must be `nullable()`. This is because Filament saves the schema first, before saving the relationship. Since the schema is saved first, the foreign ID does not exist yet, so it must be nullable. Immediately after the schema is saved, Filament saves the relationship, which will then fill in the foreign ID and save it again.
 
-It is worth noting that if you have an observer on your schema model, then you may need to adapt it to ensure that it does not depend on the relationship existing when it it created. For example, if you have an observer that sends an email to a related record when a schema is created, you may need to switch to using a different hook that runs after the relationship is attached, like `updated()`.
+It is worth noting that if you have an observer on your schema model, then you may need to adapt it to ensure that it does not depend on the relationship existing when it is created. For example, if you have an observer that sends an email to a related record when a schema is created, you may need to switch to using a different hook that runs after the relationship is attached, like `updated()`.
+
+#### Specifying the related model for a `MorphTo` relationship
+
+If you are using a `MorphTo` relationship, and you want Filament to be able to create `MorphTo` records instead of just updating them, you need to specify the related model using the `relatedModel` parameter of the `relationship()` method:
+
+```php
+use App\Models\Organization;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+
+Group::make()
+    ->relationship('customer', relatedModel: Organization::class)
+    ->schema([
+        // ...
+    ])
+```
+
+In this example, `customer` is a `MorphTo` relationship, and could be an `Individual` or `Organization`. By specifying the `relatedModel` parameter, Filament will be able to create `Organization` records when the form is submitted. If you do not specify this parameter, Filament will only be able to update existing records.
+
+<UtilityInjection set="formFields" version="4.x">The `relatedModel` parameter also accepts a function that returns the related model class name. This is useful if you want to dynamically determine the related model based on the current state of the form. You can inject various utilities into this function.</UtilityInjection>
 
 ### Conditionally saving data to a relationship
 

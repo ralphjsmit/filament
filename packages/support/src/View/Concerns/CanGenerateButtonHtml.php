@@ -209,10 +209,10 @@ trait CanGenerateButtonHtml
             <?php if (filled($badge)) { ?>
                 <div class="fi-btn-badge-ctn">
                     <span class="<?= Arr::toCssClasses([
-                            'fi-badge',
-                            ...get_component_color_classes(BadgeComponent::class, $badgeColor),
-                            ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
-                        ]) ?>">
+                        'fi-badge',
+                        ...get_component_color_classes(BadgeComponent::class, $badgeColor),
+                        ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
+                    ]) ?>">
                         <?= e($badge) ?>
                     </span>
                 </div>

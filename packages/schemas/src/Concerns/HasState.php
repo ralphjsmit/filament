@@ -340,23 +340,33 @@ trait HasState
     }
 
     /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     *
      * @return Model | array<string, mixed>
      */
     public function getConstantState(): Model | array
     {
-        $state = $this->constantState ?? $this->getParentComponent()?->getContainer()->getConstantState();
+        return $this->constantState ?? $this->getRecord(withParentComponentRecord: false) ?? $this->getParentComponent()?->getContainer()->getConstantState() ?? $this->getRecord() ?? throw new Exception('Schema has no [record()] or [state()] set.');
+    }
 
-        if ($state !== null) {
-            return $state;
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function getConstantStatePath(): ?string
+    {
+        if ($this->constantState !== null) {
+            return $this->getStatePath();
         }
 
-        $record = $this->getRecord();
-
-        if (! $record) {
-            throw new Exception('Infolist has no [record()] or [state()] set.');
+        if ($this->getRecord(withParentComponentRecord: false) !== null) {
+            return $this->getStatePath();
         }
 
-        return $record;
+        if ($this->getParentComponent()?->getContainer()->getConstantState() !== null) {
+            return $this->getParentComponent()->getContainer()->getStatePath();
+        }
+
+        return $this->getParentComponent()?->getRecordConstantStatePath();
     }
 
     /**

@@ -93,7 +93,7 @@ trait EvaluatesClosures
             return $parameter->getDefaultValue();
         }
 
-        if ($parameter->isOptional()) {
+        if ($parameter->isOptional() || $parameter->allowsNull()) {
             return null;
         }
 

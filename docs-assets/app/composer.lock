@@ -1231,7 +1231,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Filament\\Schemas\\SchemaServiceProvider"
+                        "Filament\\Schemas\\SchemasServiceProvider"
                     ]
                 }
             },

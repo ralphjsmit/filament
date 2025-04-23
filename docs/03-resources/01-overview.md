@@ -1,10 +1,11 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
-Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app - using tables and forms.
+Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app using tables and forms.
 
 ## Creating a resource
 
@@ -18,19 +19,27 @@ This will create several files in the `app/Filament/Resources` directory:
 
 ```
 .
-+-- CustomerResource.php
-+-- CustomerResource
++-- Customers
+|   +-- CustomerResource.php
 |   +-- Pages
 |   |   +-- CreateCustomer.php
 |   |   +-- EditCustomer.php
 |   |   +-- ListCustomers.php
+|   +-- Schemas
+|   |   +-- CustomerForm.php
+|   +-- Tables
+|   |   +-- CustomersTable.php
 ```
 
 Your new resource class lives in `CustomerResource.php`.
 
 The classes in the `Pages` directory are used to customize the pages in the app that interact with your resource. They're all full-page [Livewire](https://livewire.laravel.com) components that you can customize in any way you wish.
 
-> Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
+The classes in the `Schemas` directory are used to define the content of the [forms](../forms) and [infolists](../infolists) for your resource. The classes in the `Tables` directory are used to build the table for your resource.
+
+<Aside variant="tip">
+    Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
+</Aside>
 
 ### Simple (modal) resources
 
@@ -42,7 +51,7 @@ php artisan make:filament-resource Customer --simple
 
 Your resource will have a "Manage" page, which is a List page with modals added.
 
-Additionally, your simple resource will have no `getRelations()` method, as [relation managers](relation-managers) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
+Additionally, your simple resource will have no `getRelations()` method, as [relation managers](managing-relationships) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
 ### Automatically generating forms and tables
 
@@ -70,7 +79,7 @@ By default, only List, Create and Edit pages are generated for your resource. If
 php artisan make:filament-resource Customer --view
 ```
 
-### Specifiying a custom model namespace
+### Specifying a custom model namespace
 
 By default, Filament will assume that your model exists in the `App\Models` directory. You can pass a different namespace for the model using the `--model-namespace` flag:
 
@@ -102,30 +111,65 @@ protected static ?string $recordTitleAttribute = 'name';
 
 This is required for features like [global search](global-search) to work.
 
-> You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is inadequate at identifying a record.
+<Aside variant="tip">
+    You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is inadequate at identifying a record.
+</Aside>
 
 ## Resource forms
 
-Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
+Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages.
+
+By default, Filament creates a form schema file for you, which is referenced in the `form()` method. This is to keep your resource class clean and organized, otherwise it can get quite large:
 
 ```php
-use Filament\Forms;
+use App\Filament\Resources\Customers\Schemas\CustomerForm;
 use Filament\Schemas\Schema;
 
-public static function form(Schema $form): Schema
+public static function form(Schema $schema): Schema
 {
-    return $form
-        ->schema([
-            Forms\Components\TextInput::make('name')->required(),
-            Forms\Components\TextInput::make('email')->email()->required(),
+    return CustomerForm::configure($schema);
+}
+```
+
+In the `CustomerForm` class, you can define the fields and layout of your form:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+public static function configure(Schema $schema): Schema
+{
+    return $schema
+        ->components([
+            TextInput::make('name')->required(),
+            TextInput::make('email')->email()->required(),
             // ...
         ]);
 }
 ```
 
-The `schema()` method is used to define the structure of your form. It is an array of [fields](../../forms/fields#available-fields) and [layout components](../../schemas/layout#available-layout-components), in the order they should appear in your form.
+The `components()` method is used to define the structure of your form. It is an array of [fields](../forms#available-fields) and [layout components](../schemas/layout#available-layout-components), in the order they should appear in your form.
 
-Check out the Forms docs for a [guide](../../forms/getting-started) on how to build forms with Filament.
+Check out the Forms docs for a [guide](../forms) on how to build forms with Filament.
+
+<Aside variant="tip">
+    If you would prefer to define the form directly in the resource class, you can do so and delete the form schema class altogether:
+
+    ```php
+    use Filament\Forms\Components\TextInput;
+    use Filament\Schemas\Schema;
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')->required(),
+                TextInput::make('email')->email()->required(),
+                // ...
+            ]);
+    }
+    ```
+</Aside>
 
 ### Hiding components based on the current operation
 
@@ -134,80 +178,116 @@ The `hiddenOn()` method of form components allows you to dynamically hide fields
 In this example, we hide the `password` field on the `edit` page:
 
 ```php
-use Livewire\Component;
+use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\Operation;
 
-Forms\Components\TextInput::make('password')
+TextInput::make('password')
     ->password()
     ->required()
-    ->hiddenOn('edit'),
+    ->hiddenOn(Operation::Edit),
 ```
 
 Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page or action:
 
 ```php
-use Livewire\Component;
+use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\Operation;
 
-Forms\Components\TextInput::make('password')
+TextInput::make('password')
     ->password()
     ->required()
-    ->visibleOn('create'),
+    ->visibleOn(Operation::Create),
 ```
 
 ## Resource tables
 
-Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
+Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records).
+
+By default, Filament creates a table file for you, which is referenced in the `table()` method. This is to keep your resource class clean and organized, otherwise it can get quite large:
 
 ```php
-use Filament\Tables;
+use App\Filament\Resources\Customers\Schemas\CustomersTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 public static function table(Table $table): Table
 {
+    return CustomersTable::configure($table);
+}
+```
+
+In the `CustomersTable` class, you can define the columns, filters and actions of the table:
+
+```php
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+
+public static function configure(Table $table): Table
+{
     return $table
         ->columns([
-            Tables\Columns\TextColumn::make('name'),
-            Tables\Columns\TextColumn::make('email'),
+            TextColumn::make('name'),
+            TextColumn::make('email'),
             // ...
         ])
         ->filters([
-            Tables\Filters\Filter::make('verified')
+            Filter::make('verified')
                 ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             // ...
         ])
         ->actions([
-            \Filament\Actions\EditAction::make(),
+            EditAction::make(),
         ])
         ->bulkActions([
-            \Filament\Actions\BulkActionGroup::make([
-                \Filament\Actions\DeleteBulkAction::make(),
+            BulkActionGroup::make([
+                DeleteBulkAction::make(),
             ]),
         ]);
 }
 ```
 
-Check out the [tables](../../tables/getting-started) docs to find out how to add table columns, filters, actions and more.
+Check out the [tables](../tables) docs to find out how to add table columns, filters, actions and more.
 
-## Authorization
+<Aside variant="tip">
+    If you would prefer to define the table directly in the resource class, you can do so and delete the table class altogether:
 
-For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
-
-- `viewAny()` is used to completely hide resources from the navigation menu, and prevents the user from accessing any pages.
-- `create()` is used to control [creating new records](creating-records).
-- `update()` is used to control [editing a record](editing-records).
-- `view()` is used to control [viewing a record](viewing-records).
-- `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
-- `forceDelete()` is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant.
-- `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant.
-- `reorder()` is used to control [reordering a record](listing-records#reordering-records).
-
-### Skipping authorization
-
-If you'd like to skip authorization for a resource, you may set the `$shouldSkipAuthorization` property to `true`:
-
-```php
-protected static bool $shouldSkipAuthorization = true;
-```
+    ```php
+    use Filament\Actions\BulkActionGroup;
+    use Filament\Actions\DeleteBulkAction;
+    use Filament\Actions\EditAction;
+    use Filament\Tables\Columns\TextColumn;
+    use Filament\Tables\Filters\Filter;
+    use Filament\Tables\Table;
+    use Illuminate\Database\Eloquent\Builder;
+    
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email'),
+                // ...
+            ])
+            ->filters([
+                Filter::make('verified')
+                    ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
+                // ...
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+    ```
+</Aside>
 
 ## Customizing the model label
 
@@ -353,7 +433,9 @@ public static function getNavigationParentItem(): ?string
 }
 ```
 
-> If you're reaching for a third level of navigation like this, you should consider using [clusters](clusters) instead, which are a logical grouping of resources and [custom pages](../pages), which can share their own separate navigation.
+<Aside variant="tip">
+    If you're reaching for a third level of navigation like this, you should consider using [clusters](../navigation/clusters) instead, which are a logical grouping of resources and [custom pages](../navigation/custom-pages), which can share their own separate navigation.
+</Aside>
 
 ## Generating URLs to resource pages
 
@@ -474,30 +556,31 @@ Sub-navigation allows the user to navigate between different pages within a reso
 - View customer, a [`ViewRecord` page](viewing-records) that provides a read-only view of the customer's details.
 - Edit customer, an [`EditRecord` page](editing-records) that allows the user to edit the customer's details.
 - Edit customer contact, an [`EditRecord` page](editing-records) that allows the user to edit the customer's contact details. You can [learn how to create more than one Edit page](editing-records#creating-another-edit-page).
-- Manage addresses, a [`ManageRelatedRecords` page](relation-managers#relation-pages) that allows the user to manage the customer's addresses.
-- Manage payments, a [`ManageRelatedRecords` page](relation-managers#relation-pages) that allows the user to manage the customer's payments.
+- Manage addresses, a [`ManageRelatedRecords` page](managing-relationships#relation-pages) that allows the user to manage the customer's addresses.
+- Manage payments, a [`ManageRelatedRecords` page](managing-relationships#relation-pages) that allows the user to manage the customer's payments.
 
 To add a sub-navigation to each "singular record" page in the resource, you can add the `getRecordSubNavigation()` method to the resource class:
 
 ```php
-use App\Filament\Resources\Customers\Pages;
 use Filament\Resources\Pages\Page;
 
 public static function getRecordSubNavigation(Page $page): array
 {
     return $page->generateNavigationItems([
-        Pages\ViewCustomer::class,
-        Pages\EditCustomer::class,
-        Pages\EditCustomerContact::class,
-        Pages\ManageCustomerAddresses::class,
-        Pages\ManageCustomerPayments::class,
+        ViewCustomer::class,
+        EditCustomer::class,
+        EditCustomerContact::class,
+        ManageCustomerAddresses::class,
+        ManageCustomerPayments::class,
     ]);
 }
 ```
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
 
-> If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../pages), you might be looking for [clusters](../clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
+<Aside variant="tip">
+    If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../navigation/custom-pages), you might be looking for [clusters](../navigation/clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
+</Aside>
 
 ### Setting the sub-navigation position for a resource
 
@@ -519,10 +602,54 @@ For example, you may have a resource with records that may not be created by any
 public static function getPages(): array
 {
     return [
-        'index' => Pages\ListCustomers::route('/'),
-        'edit' => Pages\EditCustomer::route('/{record}/edit'),
+        'index' => ListCustomers::route('/'),
+        'edit' => EditCustomer::route('/{record}/edit'),
     ];
 }
 ```
 
 Deleting a page will not delete any actions that link to that page. Any actions will open a modal instead of sending the user to the non-existent page. For instance, the `CreateAction` on the List page, the `EditAction` on the table or View page, or the `ViewAction` on the table or Edit page. If you want to remove those buttons, you must delete the actions as well.
+
+## Security
+
+## Authorization
+
+For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
+
+- `viewAny()` is used to completely hide resources from the navigation menu, and prevents the user from accessing any pages.
+- `create()` is used to control [creating new records](creating-records).
+- `update()` is used to control [editing a record](editing-records).
+- `view()` is used to control [viewing a record](viewing-records).
+- `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant. When using a `DeleteBulkAction`, if you want to call the `delete()` method for each record anyway, you should use the `DeleteBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
+- `forceDelete()` is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant. When using a `ForceDeleteBulkAction`, if you want to call the `forceDelete()` method for each record anyway, you should use the `ForceDeleteBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
+- `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant. When using a `RestoreBulkAction`, if you want to call the `restore()` method for each record anyway, you should use the `RestoreBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
+- `reorder()` is used to control [reordering records in a table](listing-records#reordering-records).
+
+### Skipping authorization
+
+If you'd like to skip authorization for a resource, you may set the `$shouldSkipAuthorization` property to `true`:
+
+```php
+protected static bool $shouldSkipAuthorization = true;
+```
+
+### Protecting model attributes
+
+Filament will expose all model attributes to JavaScript, except if they are `$hidden` on your model. This is Livewire's behavior for model binding. We preserve this functionality to facilitate the dynamic addition and removal of form fields after they are initially loaded, while preserving the data they may need.
+
+<Aside variant="danger">
+    While attributes may be visible in JavaScript, only those with a form field are actually editable by the user. This is not an issue with mass assignment.
+</Aside>
+
+To remove certain attributes from JavaScript on the Edit and View pages, you may override [the `mutateFormDataBeforeFill()` method](editing-records#customizing-data-before-filling-the-form):
+
+```php
+protected function mutateFormDataBeforeFill(array $data): array
+{
+    unset($data['is_admin']);
+
+    return $data;
+}
+```
+
+In this example, we remove the `is_admin` attribute from JavaScript, as it's not being used by the form.

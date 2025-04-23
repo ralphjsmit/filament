@@ -144,7 +144,7 @@ Tabs::make('Tabs')
     ->tabs([
         Tab::make('Notifications')
             ->badge(5)
-            ->badgeColor('success')
+            ->badgeColor('info')
             ->schema([
                 // ...
             ]),
@@ -153,6 +153,8 @@ Tabs::make('Tabs')
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="schemas/layout/tabs/badges-color" alt="Tabs with badges with color" version="4.x" />
 
 ## Using grid columns within a tab
 
@@ -203,7 +205,7 @@ Tabs::make('Tabs')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-## Persisting the current tab
+## Persisting the current tab in the user's session
 
 By default, the current tab is not persisted in the browser's local storage. You can change this behavior using the `persistTab()` method. You must also pass in a unique `id()` for the tabs component, to distinguish it from all other sets of tabs in the app. This ID will be used as the key in the local storage to store the current tab:
 
@@ -259,7 +261,7 @@ Tabs::make('Tabs')
     ->persistTabInQueryString()
 ```
 
-By default, the current tab is persisted in the URL's query string using the `tab` key. You can change this key by passing it to the `persistTabInQueryString()` method:
+When enabled, the current tab is persisted in the URL's query string using the `tab` key. You can change this key by passing it to the `persistTabInQueryString()` method:
 
 ```php
 use Filament\Schemas\Components\Tabs;

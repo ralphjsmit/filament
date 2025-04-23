@@ -4,15 +4,21 @@ namespace Livewire\Features\SupportTesting {
 
     use BackedEnum;
     use Closure;
-    use Filament\Actions\Testing\Fixtures\TestAction;
+    use Filament\Actions\Testing\TestAction;
 
     class Testable {
         public function mountAction(string | TestAction | array $actions, array $arguments = []): static {}
 
         public function unmountAction(): static {}
 
+        /**
+         * @deprecated Use `fillForm()` instead.
+         */
         public function setActionData(array $data): static {}
 
+        /**
+         * @deprecated Use `assertSchemaStateSet()` instead.
+         */
         public function assertActionDataSet(array | Closure $data): static {}
 
         public function callAction(string | TestAction | array $actions, array $data = [], array $arguments = []): static {}
@@ -57,15 +63,21 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertActionHalted(string | TestAction | array $actions = []): static {}
 
+        /**
+         * @deprecated Use `assertHasFormErrors()` instead.
+         */
         public function assertHasActionErrors(array $keys = []): static {}
 
+        /**
+         * @deprecated Use `assertHasNoFormErrors()` instead.
+         */
         public function assertHasNoActionErrors(array $keys = []): static {}
 
         public function parseActionName(string | TestAction | array $actions): string {}
 
         public function parseNestedActionName(string | array $name): array {}
 
-        public function parseNestedActions(string | TestAction | array $actions, array $arguments = []): array {}
+        public function parseNestedActions(string | TestAction | array $actions, array $arguments = [], bool $areRelativeToMountedActions = true): array {}
     }
 
 }

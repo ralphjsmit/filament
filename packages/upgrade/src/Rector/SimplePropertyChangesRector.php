@@ -15,12 +15,12 @@ use Filament\Widgets\Widget;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\UnionType;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class SimplePropertyChangesRector extends AbstractRector
 {
@@ -53,7 +53,7 @@ class SimplePropertyChangesRector extends AbstractRector
                 ],
                 'changes' => [
                     'maxWidth' => function (Property $node): void {
-                        $node->type = new Name('\Filament\Support\Enums\Width | string | null');
+                        $node->type = new UnionType([new FullyQualified('Filament\\Support\\Enums\\Width'), new Name('string'), new Name('null')]);
                     },
                 ],
             ],
@@ -63,7 +63,7 @@ class SimplePropertyChangesRector extends AbstractRector
                 ],
                 'changes' => [
                     'maxContentWidth' => function (Property $node): void {
-                        $node->type = new Name('\Filament\Support\Enums\Width | string | null');
+                        $node->type = new UnionType([new FullyQualified('Filament\\Support\\Enums\\Width'), new Name('string'), new Name('null')]);
                     },
                 ],
             ],
@@ -78,6 +78,9 @@ class SimplePropertyChangesRector extends AbstractRector
                     },
                     'navigationIcon' => function (Property $node): void {
                         $node->type = new Name('string | \BackedEnum | null');
+                    },
+                    'navigationGroup' => function (Property $node): void {
+                        $node->type = new Name('string | \UnitEnum | null');
                     },
                     'subNavigationPosition' => function (Property $node): void {
                         $node->type = new Name('?\Filament\Pages\Enums\SubNavigationPosition');
@@ -161,19 +164,6 @@ class SimplePropertyChangesRector extends AbstractRector
         }
 
         return $touched ? $node : null;
-    }
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition(
-            'Fix property definitions',
-            [
-                new CodeSample(
-                    'protected static string | array $middlewares = [];',
-                    'protected static string | array $routeMiddleware = [];',
-                ),
-            ]
-        );
     }
 
     /**

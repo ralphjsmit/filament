@@ -99,7 +99,7 @@ class Component extends ViewComponent
     {
         $record = $this->getRecord();
 
-        if (! $record) {
+        if ((! $record) || is_array($record)) {
             return match ($parameterType) {
                 Get::class => [$this->makeGetUtility()],
                 Set::class => [$this->makeSetUtility()],

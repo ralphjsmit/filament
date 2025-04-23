@@ -6,7 +6,6 @@ use Closure;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Enums\ArgumentValue;
 use Filament\Tables\Columns\Summarizers\Summarizer;
-use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
@@ -59,8 +58,8 @@ trait CanFormatState
                 return $state;
             }
 
-            $currency = $summarizer->evaluate($currency) ?? Table::$defaultCurrency;
-            $locale = $summarizer->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+            $currency = $summarizer->evaluate($currency) ?? $summarizer->getTable()->getDefaultCurrency();
+            $locale = $summarizer->evaluate($locale) ?? $summarizer->getTable()->getDefaultNumberLocale() ?? config('app.locale');
             $decimalPlaces = $summarizer->evaluate($decimalPlaces);
 
             if ($divideBy) {
@@ -100,7 +99,7 @@ trait CanFormatState
                 );
             }
 
-            $locale = $summarizer->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+            $locale = $summarizer->evaluate($locale) ?? $summarizer->getTable()->getDefaultNumberLocale() ?? config('app.locale');
 
             return Number::format($state, $decimalPlaces, $summarizer->evaluate($maxDecimalPlaces), locale: $locale);
         });

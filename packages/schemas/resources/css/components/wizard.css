@@ -137,6 +137,10 @@
         & > .fi-hidden {
             @apply hidden;
         }
+
+        & > .fi-disabled {
+            @apply pointer-events-none opacity-70;
+        }
     }
 
     &.fi-contained {

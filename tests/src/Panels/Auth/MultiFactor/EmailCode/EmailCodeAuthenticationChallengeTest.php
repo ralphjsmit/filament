@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Actions\Testing\Fixtures\TestAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Auth\MultiFactor\EmailCode\Notifications\VerifyEmailCodeAuthentication;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
@@ -100,7 +100,7 @@ it('can resend the code to the user', function (): void {
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent("multiFactorChallengeForm.{$emailCodeAuthentication->getId()}.code"));
+            ->schemaComponent("{$emailCodeAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });
@@ -125,7 +125,7 @@ it('can not resend the code to the user more than once per minute', function ():
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent("multiFactorChallengeForm.{$emailCodeAuthentication->getId()}.code"));
+            ->schemaComponent("{$emailCodeAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
 
@@ -133,7 +133,7 @@ it('can not resend the code to the user more than once per minute', function ():
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent("multiFactorChallengeForm.{$emailCodeAuthentication->getId()}.code"));
+            ->schemaComponent("{$emailCodeAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });

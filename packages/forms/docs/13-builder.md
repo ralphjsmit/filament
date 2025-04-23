@@ -527,7 +527,7 @@ The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, w
 
 ## Builder validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to builders.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to builders.
 
 ### Number of items validation
 
@@ -548,7 +548,7 @@ Builder::make('content')
 
 ## Customizing the builder item actions
 
-This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/trigger-button). The following methods are available to customize the actions:
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/overview). The following methods are available to customize the actions:
 
 - `addAction()`
 - `addBetweenAction()`
@@ -660,56 +660,4 @@ $state[Str::uuid()] = [
 
 // Set the new data for the builder
 $component->state($state);
-```
-
-## Testing builders
-
-Internally, builders generate UUIDs for items to keep track of them in the Livewire HTML easier. This means that when you are testing a form with a builder, you need to ensure that the UUIDs are consistent between the form and the test. This can be tricky, and if you don't do it correctly, your tests can fail as the tests are expecting a UUID, not a numeric key.
-
-However, since Livewire doesn't need to keep track of the UUIDs in a test, you can disable the UUID generation and replace them with numeric keys, using the `Builder::fake()` method at the start of your test:
-
-```php
-use Filament\Forms\Components\Builder;
-use function Pest\Livewire\livewire;
-
-$undoBuilderFake = Builder::fake();
-
-livewire(EditPost::class, ['record' => $post])
-    ->assertFormSet([
-        'content' => [
-            [
-                'type' => 'heading',
-                'data' => [
-                    'content' => 'Hello, world!',
-                    'level' => 'h1',
-                ],
-            ],
-            [
-                'type' => 'paragraph',
-                'data' => [
-                    'content' => 'This is a test post.',
-                ],
-            ],
-        ],
-        // ...
-    ]);
-
-$undoBuilderFake();
-```
-
-You may also find it useful to access test the number of items in a repeater by passing a function to the `assertFormSet()` method:
-
-```php
-use Filament\Forms\Components\Builder;
-use function Pest\Livewire\livewire;
-
-$undoBuilderFake = Builder::fake();
-
-livewire(EditPost::class, ['record' => $post])
-    ->assertFormSet(function (array $state) {
-        expect($state['content'])
-            ->toHaveCount(2);
-    });
-
-$undoBuilderFake();
 ```

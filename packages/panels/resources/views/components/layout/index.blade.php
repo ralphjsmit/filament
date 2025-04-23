@@ -35,6 +35,19 @@
     <div class="fi-layout">
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::LAYOUT_START, scopes: $renderHookScopes) }}
 
+        @if ($hasNavigation)
+            <div
+                x-cloak
+                x-data="{}"
+                x-on:click="$store.sidebar.close()"
+                x-show="$store.sidebar.isOpen"
+                x-transition.opacity.300ms
+                class="fi-sidebar-close-overlay"
+            ></div>
+
+            @livewire(\Filament\Livewire\Sidebar::class)
+        @endif
+
         <div
             @if ($isSidebarCollapsibleOnDesktop)
                 x-data="{}"
@@ -71,19 +84,6 @@
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::FOOTER, scopes: $renderHookScopes) }}
         </div>
-
-        @if ($hasNavigation)
-            <div
-                x-cloak
-                x-data="{}"
-                x-on:click="$store.sidebar.close()"
-                x-show="$store.sidebar.isOpen"
-                x-transition.opacity.300ms
-                class="fi-sidebar-close-overlay"
-            ></div>
-
-            @livewire(\Filament\Livewire\Sidebar::class)
-        @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::LAYOUT_END, scopes: $renderHookScopes) }}
     </div>

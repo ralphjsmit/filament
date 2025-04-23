@@ -27,7 +27,7 @@ trait CanReorderRecords
                 in_array($orderColumn, $relationship->getPivotColumns())
             ) {
                 foreach ($order as $index => $recordKey) {
-                    $this->getTableRecord($recordKey)->{$relationship->getPivotAccessor()}->update([
+                    $this->getTableRecord($recordKey)->getRelationValue($relationship->getPivotAccessor())->update([
                         $orderColumn => $index + 1,
                     ]);
                 }
@@ -37,6 +37,7 @@ trait CanReorderRecords
 
             $model = app($this->getTable()->getModel());
             $modelKeyName = $model->getKeyName();
+            $wrappedModelKeyName = $model->getConnection()?->getQueryGrammar()?->wrap($modelKeyName) ?? $modelKeyName;
 
             $model
                 ->newModelQuery()
@@ -44,7 +45,7 @@ trait CanReorderRecords
                 ->update([
                     $orderColumn => new Expression(
                         'case ' . collect($order)
-                            ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $modelKeyName . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($recordIndex + 1))
+                            ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $wrappedModelKeyName . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($recordIndex + 1))
                             ->implode(' ') . ' end'
                     ),
                 ]);

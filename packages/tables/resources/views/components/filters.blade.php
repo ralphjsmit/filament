@@ -26,13 +26,6 @@
             >
                 {{ __('filament-tables::table.filters.actions.reset.label') }}
             </x-filament::link>
-
-            {{
-                \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                    'wire:target' => 'tableFilters,applyTableFilters,resetTableFiltersForm',
-                ]))
-            }}
         </div>
     </div>
 

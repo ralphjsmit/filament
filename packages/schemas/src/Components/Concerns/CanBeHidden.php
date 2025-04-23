@@ -6,6 +6,7 @@ use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Enums\Operation;
 use Illuminate\Support\Arr;
 use Livewire\Component as LivewireComponent;
 
@@ -27,12 +28,16 @@ trait CanBeHidden
     }
 
     /**
-     * @param  string | array<string>  $operations
+     * @param  string | Operation | array<string | Operation>  $operations
      */
-    public function hiddenOn(string | array $operations): static
+    public function hiddenOn(string | Operation | array $operations): static
     {
         $this->hidden(static function (LivewireComponent & HasSchemas $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $hiddenOperation) {
+                if ($hiddenOperation instanceof Operation) {
+                    $hiddenOperation = $hiddenOperation->value;
+                }
+
                 if ($hiddenOperation === $operation || $livewire instanceof $hiddenOperation) {
                     return true;
                 }
@@ -107,12 +112,16 @@ trait CanBeHidden
     }
 
     /**
-     * @param  string | array<string>  $operations
+     * @param  string | Operation | array<string | Operation>  $operations
      */
-    public function visibleOn(string | array $operations): static
+    public function visibleOn(string | Operation | array $operations): static
     {
         $this->visible(static function (LivewireComponent & HasSchemas $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $visibleOperation) {
+                if ($visibleOperation instanceof Operation) {
+                    $visibleOperation = $visibleOperation->value;
+                }
+
                 if ($visibleOperation === $operation || $livewire instanceof $visibleOperation) {
                     return true;
                 }

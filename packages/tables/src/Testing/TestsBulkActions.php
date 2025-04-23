@@ -55,7 +55,7 @@ class TestsBulkActions
     public function setTableBulkActionData(): Closure
     {
         return function (array $data): static {
-            $this->setActionData($data);
+            $this->fillForm($data);
 
             return $this;
         };
@@ -64,7 +64,7 @@ class TestsBulkActions
     public function assertTableBulkActionDataSet(): Closure
     {
         return function (array | Closure $data): static {
-            $this->assertActionDataSet($data);
+            $this->assertSchemaStateSet($data);
 
             return $this;
         };
@@ -307,7 +307,7 @@ class TestsBulkActions
     public function assertHasTableBulkActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasActionErrors($keys);
+            $this->assertHasFormErrors($keys);
 
             return $this;
         };
@@ -316,7 +316,7 @@ class TestsBulkActions
     public function assertHasNoTableBulkActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasNoActionErrors($keys);
+            $this->assertHasNoFormErrors($keys);
 
             return $this;
         };

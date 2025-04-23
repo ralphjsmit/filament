@@ -10,10 +10,7 @@ trait HasIconColor
         getIconColor as getBaseIconColor;
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getIconColor(): string | array | null
+    public function getIconColor(): ?string
     {
         return $this->getBaseIconColor() ?? $this->getStatus();
     }

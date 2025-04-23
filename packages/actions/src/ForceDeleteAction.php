@@ -36,7 +36,7 @@ class ForceDeleteAction extends Action
         $this->modalIcon(FilamentIcon::resolve('actions::force-delete-action.modal') ?? Heroicon::OutlinedTrash);
 
         $this->action(function (): void {
-            $result = $this->process(static fn (Model $record) => $record->forceDelete());
+            $result = $this->process(static fn (Model $record): ?bool => $record->forceDelete());
 
             if (! $result) {
                 $this->failure();

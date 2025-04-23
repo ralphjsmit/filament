@@ -23,7 +23,6 @@ use Livewire\Attributes\Locked;
 use Throwable;
 
 use function Filament\authorize;
-use function Filament\Support\is_app_url;
 
 /**
  * @property-read Schema $form
@@ -123,8 +122,6 @@ abstract class EditTenantProfile extends Page
             $this->handleRecordUpdate($this->tenant, $data);
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -137,10 +134,12 @@ abstract class EditTenantProfile extends Page
             throw $exception;
         }
 
+        $this->commitDatabaseTransaction();
+
         $this->getSavedNotification()?->send();
 
         if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 
@@ -164,7 +163,7 @@ abstract class EditTenantProfile extends Page
 
         return Notification::make()
             ->success()
-            ->title($this->getSavedNotificationTitle());
+            ->title($title);
     }
 
     protected function getSavedNotificationTitle(): ?string
@@ -251,5 +250,10 @@ abstract class EditTenantProfile extends Page
     protected function hasFullWidthFormActions(): bool
     {
         return false;
+    }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
     }
 }

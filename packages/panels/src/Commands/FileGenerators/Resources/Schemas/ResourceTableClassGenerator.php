@@ -7,6 +7,8 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 
@@ -21,6 +23,7 @@ class ResourceTableClassGenerator extends ClassGenerator
     final public function __construct(
         protected string $fqn,
         protected string $modelFqn,
+        protected ?string $parentResourceFqn,
         protected bool $hasViewOperation,
         protected bool $isGenerated,
         protected bool $isSoftDeletable,
@@ -59,7 +62,7 @@ class ResourceTableClassGenerator extends ClassGenerator
             ->setPublic()
             ->setStatic()
             ->setReturnType(Table::class)
-            ->setBody($this->generateTableMethodBody($this->getModelFqn()));
+            ->setBody($this->generateTableMethodBody($this->getModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate())));
         $method->addParameter('table')
             ->setType(Table::class);
 
@@ -67,6 +70,47 @@ class ResourceTableClassGenerator extends ClassGenerator
     }
 
     protected function configureConfigureMethod(Method $method): void {}
+
+    public function getForeignKeyColumnToNotGenerate(): ?string
+    {
+        if (! class_exists($this->getParentResourceFqn())) {
+            return null;
+        }
+
+        $model = $this->getParentResourceFqn()::getModel();
+
+        if (! class_exists($model)) {
+            return null;
+        }
+
+        $modelInstance = app($model);
+        $relationshipName = (string) str($this->getModelBasename())->plural()->camel();
+
+        if (! method_exists($modelInstance, $relationshipName)) {
+            return null;
+        }
+
+        $relationship = $modelInstance->{$relationshipName}();
+
+        if (! ($relationship instanceof HasMany)) {
+            return null;
+        }
+
+        return $relationship->getForeignKeyName();
+    }
+
+    public function getModelBasename(): string
+    {
+        return class_basename($this->getModelFqn());
+    }
+
+    /**
+     * @return ?class-string
+     */
+    public function getParentResourceFqn(): ?string
+    {
+        return $this->parentResourceFqn;
+    }
 
     public function getFqn(): string
     {

@@ -175,6 +175,31 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
+                    ->id('tabsBadgesColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Tabs::make('Tabs')
+                            ->statePath('tabsBadgesColor')
+                            ->schema([
+                                Tab::make('Notifications')
+                                    ->badge(5)
+                                    ->badgeColor('info')
+                                    ->schema([
+                                        Checkbox::make('enabled')
+                                            ->default(true),
+                                        Select::make('frequency')
+                                            ->default('hourly')
+                                            ->options([
+                                                'hourly' => 'Hourly',
+                                            ]),
+                                    ]),
+                                Tab::make('Security'),
+                                Tab::make('Meta'),
+                            ]),
+                    ]),
+                Group::make()
                     ->id('wizard')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
@@ -488,6 +513,36 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                 TextInput::make('maximum')
                                     ->default(100),
                                 Textarea::make('notes')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(3),
+                    ]),
+                Group::make()
+                    ->id('sectionSecondary')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Section::make('Rate limiting')
+                            ->description('Prevent abuse by limiting the number of requests per period')
+                            ->statePath('sectionSecondary')
+                            ->schema([
+                                TextInput::make('hits')
+                                    ->default(30),
+                                Select::make('period')
+                                    ->default('hour')
+                                    ->options([
+                                        'hour' => 'Hour',
+                                    ]),
+                                TextInput::make('maximum')
+                                    ->default(100),
+                                Section::make('Notes')
+                                    ->compact()
+                                    ->secondary()
+                                    ->schema([
+                                        Textarea::make('notes')
+                                            ->hiddenLabel(),
+                                    ])
                                     ->columnSpanFull(),
                             ])
                             ->columns(3),

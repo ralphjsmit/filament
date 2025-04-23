@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'default_filesystem_disk' => env('FILESYSTEM_DISK', 'public'),
+    'default_filesystem_disk' => env('FILESYSTEM_DISK', 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -104,5 +104,17 @@ return [
     'file_generation' => [
         'flags' => [],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | System Route Prefix
+    |--------------------------------------------------------------------------
+    |
+    | This is the prefix used for the system routes that Filament registers,
+    | such as the routes for downloading exports and failed import rows.
+    |
+    */
+
+    'system_route_prefix' => 'filament',
 
 ];

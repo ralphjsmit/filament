@@ -59,7 +59,7 @@ $schema
     ])
 ```
 
-Although text can be rendered in a schema using an [infolist text entry](../infolists/text), entries are intended to render a label-value detail about an entity (like an Eloquent model), and not to render arbitrary text. Prime components are more suitable for this purpose. Infolists can be considered more similar to [description lists](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dl) in HTML.
+Although text can be rendered in a schema using an [infolist text entry](../infolists/text-entry), entries are intended to render a label-value detail about an entity (like an Eloquent model), and not to render arbitrary text. Prime components are more suitable for this purpose. Infolists can be considered more similar to [description lists](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dl) in HTML.
 
 Prime component classes can be found in the `Filament\Schemas\Components` namespace. They reside within the schema array of components.
 
@@ -242,6 +242,21 @@ Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="primes/text/tooltip" alt="Text with a tooltip" version="4.x" />
+
+### Using JavaScript to determine the content of the text
+
+You can use JavaScript to determine the content of the text. This is useful if you want to display a different message depending on the state of a [form field](../forms/fields), without making a request to the server to re-render the schema. To allow this, you can use the `js()` method:
+
+```php
+use Filament\Schemas\Components\Text;
+
+Text::make(<<<'JS'
+    $get('name') ? `Hello, ${$get('name')}` : 'Please enter your name.'
+    JS)
+    ->js()
+```
+
+The [`$state`](../forms/fields#injecting-the-current-state-of-the-field) and [`$get()`](../forms/fields#injecting-the-state-of-another-field) utilities are available in the JavaScript context, so you can use them to get the state of fields in the schema.
 
 ## Icon component
 

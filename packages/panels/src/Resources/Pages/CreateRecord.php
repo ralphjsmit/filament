@@ -20,8 +20,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 use Throwable;
 
-use function Filament\Support\is_app_url;
-
 /**
  * @property-read Schema $form
  */
@@ -95,8 +93,6 @@ class CreateRecord extends Page
             $this->form->model($this->getRecord())->saveRelationships();
 
             $this->callHook('afterCreate');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -108,6 +104,8 @@ class CreateRecord extends Page
 
             throw $exception;
         }
+
+        $this->commitDatabaseTransaction();
 
         $this->rememberData();
 
@@ -130,7 +128,7 @@ class CreateRecord extends Page
 
         $redirectUrl = $this->getRedirectUrl();
 
-        $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+        $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
     }
 
     /**
@@ -297,7 +295,7 @@ class CreateRecord extends Page
             return $this->getResourceUrl('edit', $this->getRedirectUrlParameters());
         }
 
-        return $this->getResourceUrl();
+        return $this->getResourceUrl(parameters: $this->getRedirectUrlParameters());
     }
 
     /**
@@ -383,5 +381,10 @@ class CreateRecord extends Page
     protected function hasFullWidthFormActions(): bool
     {
         return false;
+    }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
     }
 }

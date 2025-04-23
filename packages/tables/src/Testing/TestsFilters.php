@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Testing;
 
+use BackedEnum;
 use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
@@ -39,11 +40,11 @@ class TestsFilters
             } elseif ($filter instanceof SelectFilter) {
                 if ($filter->isMultiple()) {
                     $data = ['values' => array_map(
-                        fn ($record) => $record instanceof Model ? $record->getKey() : $record,
+                        fn ($data) => $data instanceof Model ? $data->getKey() : ($data instanceof BackedEnum ? $data->value : $data),
                         Arr::wrap($data ?? []),
                     )];
                 } else {
-                    $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
+                    $data = ['value' => $data instanceof Model ? $data->getKey() : ($data instanceof BackedEnum ? $data->value : $data)];
                 }
             } elseif (! is_array($data)) {
                 $data = ['isActive' => $data === true || $data === null];

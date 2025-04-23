@@ -7,14 +7,15 @@ use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\ActionName;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
-use Filament\Actions\Testing\Fixtures\TestAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
+use ReflectionClass;
 
 use function Livewire\store;
 
@@ -67,9 +68,7 @@ class TestsActions
     public function setActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::dot($data, prepend: 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.') as $key => $value) {
-                $this->set($key, $value);
-            }
+            $this->fillForm($data);
 
             return $this;
         };
@@ -78,18 +77,7 @@ class TestsActions
     public function assertActionDataSet(): Closure
     {
         return function (array | Closure $data): static {
-            $mountedActions = $this->instance()->mountedActions;
-            $mountedActionIndex = array_key_last($mountedActions);
-
-            if ($data instanceof Closure) {
-                $data = $data($mountedActions[$mountedActionIndex]['data'] ?? []);
-            }
-
-            if (is_array($data)) {
-                foreach (Arr::dot($data, prepend: "mountedActions.{$mountedActionIndex}.data.") as $key => $value) {
-                    $this->assertSet($key, $value);
-                }
-            }
+            $this->assertSchemaStateSet($data);
 
             return $this;
         };
@@ -106,11 +94,7 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->mountAction($actions, $arguments);
 
-            /** @var array<array<string, mixed>> $actions */
-            /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedActions($actions, $arguments);
-
-            if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count($actions))) {
+            if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count(Arr::wrap($actions)))) {
                 return $this;
             }
 
@@ -118,8 +102,10 @@ class TestsActions
                 return $this;
             }
 
-            /** @phpstan-ignore-next-line */
-            $this->setActionData($data);
+            if (filled($data)) {
+                /** @phpstan-ignore-next-line */
+                $this->fillForm($data);
+            }
 
             /** @phpstan-ignore-next-line */
             $this->callMountedAction($arguments);
@@ -433,7 +419,7 @@ class TestsActions
 
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedActions($actions);
+            $actions = $this->parseNestedActions($actions, areRelativeToMountedActions: false);
 
             $actionNestingIndexOffset = count($this->instance()->mountedActions) - count($actions);
 
@@ -482,7 +468,7 @@ class TestsActions
 
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedActions($actions);
+            $actions = $this->parseNestedActions($actions, areRelativeToMountedActions: false);
 
             $actionNestingIndexOffset = count($this->instance()->mountedActions) - count($actions);
 
@@ -537,17 +523,7 @@ class TestsActions
     public function assertHasActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasErrors(
-                collect($keys)
-                    ->mapWithKeys(function ($value, $key): array {
-                        if (is_int($key)) {
-                            return [$key => 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $value];
-                        }
-
-                        return ['mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $key => $value];
-                    })
-                    ->all(),
-            );
+            $this->assertHasFormErrors($keys);
 
             return $this;
         };
@@ -556,17 +532,7 @@ class TestsActions
     public function assertHasNoActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasNoErrors(
-                collect($keys)
-                    ->mapWithKeys(function ($value, $key): array {
-                        if (is_int($key)) {
-                            return [$key => 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $value];
-                        }
-
-                        return ['mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $key => $value];
-                    })
-                    ->all(),
-            );
+            $this->assertHasNoFormErrors($keys);
 
             return $this;
         };
@@ -581,6 +547,10 @@ class TestsActions
             $names = array_map(function (string $name): string {
                 if (! class_exists($name)) {
                     return $name;
+                }
+
+                if ($actionClassNameAttributes = (new ReflectionClass($name))->getAttributes(ActionName::class)) {
+                    $name = (string) Arr::first($actionClassNameAttributes)->newInstance();
                 }
 
                 if (! is_subclass_of($name, Action::class)) {
@@ -638,7 +608,9 @@ class TestsActions
 
     public function parseNestedActions(): Closure
     {
-        return function (string | TestAction | array $actions, array $arguments = []): array {
+        return function (string | TestAction | array $actions, array $arguments = [], bool $areRelativeToMountedActions = true): array {
+            $initialMountedActionsCount = $areRelativeToMountedActions ? count($this->instance()->mountedActions) : 0;
+
             if (is_string($actions)) {
                 $actions = explode('.', $actions);
             } elseif (
@@ -656,10 +628,17 @@ class TestsActions
                         'name' => $action,
                     ];
                 } elseif ($action instanceof TestAction) {
-                    $action = $action->toArray();
+                    $action = $action->toArray(defaultSchema: ($initialMountedActionsCount + $actionNestingIndex) ? ('mountedActionSchema' . ($initialMountedActionsCount + $actionNestingIndex - 1)) : $this->instance()->getDefaultTestingSchemaName());
                 }
 
                 $actionName = $action['name'] ?? throw new Exception("Action name at index [{$actionNestingIndex}] is not specified.");
+
+                if (
+                    class_exists($actionName) &&
+                    ($actionClassNameAttributes = (new ReflectionClass($actionName))->getAttributes(ActionName::class))
+                ) {
+                    $action['name'] = $actionName = (string) Arr::first($actionClassNameAttributes)->newInstance();
+                }
 
                 if (
                     class_exists($actionName) &&
@@ -679,14 +658,6 @@ class TestsActions
                             ...$action['arguments'] ?? [],
                         ];
                     }
-                }
-
-                if (
-                    ($actionNestingIndex > 0) &&
-                    filled($schemaComponent = $action['context']['schemaComponent'] ?? null) &&
-                    (! str($schemaComponent)->startsWith('mountedActionSchema' . ($actionNestingIndex - 1) . '.'))
-                ) {
-                    $action['context']['schemaComponent'] = 'mountedActionSchema' . ($actionNestingIndex - 1) . ".{$schemaComponent}";
                 }
 
                 if (

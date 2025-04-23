@@ -776,7 +776,7 @@ Select::make('feedback')
 
 ## Select validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to selects.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to selects.
 
 ### Selected items validation
 
@@ -801,7 +801,7 @@ Select::make('technologies')
 
 ## Customizing the select action objects
 
-This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/trigger-button) or [customize its modal](../actions/modals). The following methods are available to customize the actions:
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/overview) or [customize its modal](../actions/modals). The following methods are available to customize the actions:
 
 - `createOptionAction()`
 - `editOptionAction()`

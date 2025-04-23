@@ -3,6 +3,7 @@
 namespace Filament\Auth\Http\Requests;
 
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -35,11 +36,18 @@ class EmailChangeVerificationRequest extends FormRequest
 
     public function fulfill(): void
     {
-        $this->user()->update([
+        /** @var Model $user */
+        $user = $this->user();
+
+        $user->update([
             'email' => decrypt($this->route('email')),
         ]);
 
         cache()->forget($this->query('signature'));
+
+        if (method_exists($user, 'markEmailAsVerified')) {
+            $user->markEmailAsVerified();
+        }
     }
 
     public function withValidator(Validator $validator): Validator

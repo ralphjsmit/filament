@@ -197,7 +197,7 @@ trait CanGenerateModelForms
                 TextInput::class,
                 Textarea::class,
             ])) {
-                if (isset($column['length'])) {
+                if (isset($column['length'])) { /** @phpstan-ignore isset.offset */
                     $componentData['maxLength'] = [$column['length']];
                 }
 

@@ -204,4 +204,9 @@ class RequestPasswordReset extends SimplePage
                     ->fullWidth($this->hasFullWidthFormActions()),
             ]);
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
+    }
 }

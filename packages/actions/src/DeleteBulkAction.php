@@ -47,23 +47,23 @@ class DeleteBulkAction extends BulkAction
             ]);
         });
 
-        $this->missingBulkAuthorizationFailureNotificationMessage(function (int $count, bool $isAll): string {
+        $this->missingBulkAuthorizationFailureNotificationMessage(function (int $failureCount, int $totalCount): string {
             return trans_choice(
-                $isAll
+                ($failureCount === $totalCount)
                     ? 'filament-actions::delete.multiple.notifications.deleted_none.missing_authorization_failure_message'
                     : 'filament-actions::delete.multiple.notifications.deleted_partial.missing_authorization_failure_message',
-                $count,
-                ['count' => Number::format($count)],
+                $failureCount,
+                ['count' => Number::format($failureCount)],
             );
         });
 
-        $this->missingBulkProcessingFailureNotificationMessage(function (int $count, bool $isAll): string {
+        $this->missingBulkProcessingFailureNotificationMessage(function (int $failureCount, int $totalCount): string {
             return trans_choice(
-                $isAll
+                ($failureCount === $totalCount)
                     ? 'filament-actions::delete.multiple.notifications.deleted_none.missing_processing_failure_message'
                     : 'filament-actions::delete.multiple.notifications.deleted_partial.missing_processing_failure_message',
-                $count,
-                ['count' => Number::format($count)],
+                $failureCount,
+                ['count' => Number::format($failureCount)],
             );
         });
 

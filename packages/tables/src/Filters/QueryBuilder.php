@@ -29,7 +29,7 @@ class QueryBuilder extends BaseFilter
 
         $this->label(__('filament-tables::filters/query-builder.label'));
 
-        $this->form(fn (QueryBuilder $filter): array => [
+        $this->schema(fn (QueryBuilder $filter): array => [
             RuleBuilder::make('rules')
                 ->label($filter->getLabel())
                 ->constraints($filter->getConstraints())
@@ -214,7 +214,7 @@ class QueryBuilder extends BaseFilter
 
     protected function getRuleBuilder(): RuleBuilder
     {
-        $builder = $this->getForm()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+        $builder = $this->getSchema()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {
             throw new Exception('No rule builder component found.');

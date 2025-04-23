@@ -150,7 +150,7 @@ abstract class Page extends BasePage
     /**
      * @return array<string>
      */
-    public function getBreadcrumbs(): array
+    public function getResourceBreadcrumbs(): array
     {
         $breadcrumbs = [];
 
@@ -206,6 +206,17 @@ abstract class Page extends BasePage
         }
 
         return $breadcrumbs;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getBreadcrumbs(): array
+    {
+        return [
+            ...$this->getResourceBreadcrumbs(),
+            $this->getBreadcrumb(),
+        ];
     }
 
     /**

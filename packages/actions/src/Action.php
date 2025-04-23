@@ -5,6 +5,7 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Enums\ActionStatus;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
@@ -62,8 +63,8 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasAction;
     use Concerns\HasArguments;
+    use Concerns\HasData;
     use Concerns\HasExtraModalWindowAttributes;
-    use Concerns\HasForm;
     use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;
     use Concerns\HasKeyBindings;
@@ -458,18 +459,18 @@ class Action extends ViewComponent implements Arrayable
     {
         return match ($parameterName) {
             'arguments' => [$this->getArguments()],
-            'component', 'schemaComponent' => [$this->getSchemaComponent()],
-            'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
-            'data' => [$this->getFormData()],
-            'get' => [$this->getSchemaComponent()->makeGetUtility()],
+            'data' => [$this->getData()],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel() ?? $this->getSchemaContainer()?->getModel() ?? $this->getSchemaComponent()?->getModel()],
             'mountedActions' => [$this->getLivewire()->getMountedActions()],
             'record' => [$this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
-            'records', 'selectedRecords' => [$this->getSelectedRecords()],
+            'selectedRecords', 'records' => [$this->getSelectedRecords()],
             'schema' => [$this->getSchemaContainer()],
-            'set' => [$this->getSchemaComponent()->makeSetUtility()],
-            'state' => [$this->getSchemaComponent()->getState()],
+            'schemaComponent', 'component' => [$this->getSchemaComponent()],
+            'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
+            'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()],
+            'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()],
+            'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
@@ -626,6 +627,10 @@ class Action extends ViewComponent implements Arrayable
 
     public function toHtml(): string
     {
+        if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
+            return $this->toEmbeddedHtml();
+        }
+
         return match ($this->getView()) {
             static::BADGE_VIEW => $this->toBadgeHtml(),
             static::BUTTON_VIEW => $this->toButtonHtml(),

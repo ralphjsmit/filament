@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns\Summarizers;
 
 use Carbon\CarbonImmutable;
 use Closure;
-use Filament\Tables\Table;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 
@@ -38,7 +37,7 @@ class Range extends Summarizer
 
     public function minimalDateTimeDifference(): static
     {
-        $this->formatStateUsing(static function (array $state): array {
+        $this->formatStateUsing(static function (Range $summarizer, array $state): array {
             if (blank($state[1])) {
                 unset($state[1]);
             }
@@ -54,15 +53,15 @@ class Range extends Summarizer
             $originalFrom = CarbonImmutable::make($state[0]);
             $originalTo = CarbonImmutable::make($state[1]);
 
-            $fromDate = $originalFrom->translatedFormat(Table::$defaultDateDisplayFormat);
-            $toDate = $originalTo->translatedFormat(Table::$defaultDateDisplayFormat);
+            $fromDate = $originalFrom->translatedFormat($defaultDateDisplayFormat = $summarizer->getTable()->getDefaultDateDisplayFormat());
+            $toDate = $originalTo->translatedFormat($defaultDateDisplayFormat);
 
             if ($fromDate !== $toDate) {
                 return [$fromDate, $toDate];
             }
 
-            $fromDateTime = $originalFrom->translatedFormat(Table::$defaultDateTimeDisplayFormat);
-            $toDateTime = $originalTo->translatedFormat(Table::$defaultDateTimeDisplayFormat);
+            $fromDateTime = $originalFrom->translatedFormat($defaultDateTimeDisplayFormat = $summarizer->getTable()->getDefaultDateTimeDisplayFormat());
+            $toDateTime = $originalTo->translatedFormat($defaultDateTimeDisplayFormat);
 
             if ($fromDateTime === $toDateTime) {
                 return [$fromDateTime];

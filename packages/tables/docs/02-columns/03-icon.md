@@ -2,29 +2,41 @@
 title: Icon column
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-Icon columns render an [icon](../../styling/icons) representing their contents:
+Icon columns render an [icon](../../styling/icons) representing the state of the column:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
 
 IconColumn::make('status')
     ->icon(fn (string $state): string => match ($state) {
-        'draft' => 'heroicon-o-pencil',
-        'reviewing' => 'heroicon-o-clock',
-        'published' => 'heroicon-o-check-circle',
+        'draft' => Heroicon::OutlinedPencil,
+        'reviewing' => Heroicon::OutlinedClock,
+        'published' => Heroicon::OutlinedCheckCircle,
     })
 ```
 
-In the function, `$state` is the value of the column, and `$record` can be used to access the underlying Eloquent record.
+<UtilityInjection set="tableColumns" version="4.x">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/icon/simple" alt="Icon column" version="4.x" />
 
 ## Customizing the color
 
-Icon columns may also have a set of icon [colors](../../styling/colors), using the same syntax:
+You may change the [color](../../styling/colors) of the icon, using the `color()` method:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+
+IconColumn::make('status')
+    ->color('success')
+```
+
+By passing a function to `color()`, you can customize the color based on the state of the column:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
@@ -38,26 +50,29 @@ IconColumn::make('status')
     })
 ```
 
-In the function, `$state` is the value of the column, and `$record` can be used to access the underlying Eloquent record.
+<UtilityInjection set="tableColumns" version="4.x">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/icon/color" alt="Icon column with color" version="4.x" />
 
 ## Customizing the size
 
-The default icon size is `IconColumnSize::Large`, but you may customize the size to be either `IconColumnSize::ExtraSmall`, `IconColumnSize::Small`, `IconColumnSize::Medium`, `IconColumnSize::ExtraLarge` or `IconColumnSize::TwoExtraLarge`:
+The default icon size is `IconSize::Large`, but you may customize the size to be either `IconSize::ExtraSmall`, `IconSize::Small`, `IconSize::Medium`, `IconSize::ExtraLarge` or `IconSize::TwoExtraLarge`:
 
 ```php
+use Filament\Tables\Columns\IconColumn;
 use Filament\Support\Enums\IconSize;
 
 IconColumn::make('status')
     ->size(IconSize::Medium)
 ```
 
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 <AutoScreenshot name="tables/columns/icon/medium" alt="Medium-sized icon column" version="4.x" />
 
 ## Handling booleans
 
-Icon columns can display a check or cross icon based on the contents of the database column, either true or false, using the `boolean()` method:
+Icon columns can display a check or "X" icon based on the state of the column, either true or false, using the `boolean()` method:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
@@ -70,18 +85,32 @@ IconColumn::make('is_featured')
 
 <AutoScreenshot name="tables/columns/icon/boolean" alt="Icon column to display a boolean" version="4.x" />
 
-### Customizing the boolean icons
-
-You may customize the icon representing each state. Icons are the name of a Blade component present. By default, [Heroicons](https://heroicons.com) are installed:
+Optionally, you may pass a boolean value to control if the icon should be boolean or not:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
-    ->boolean()
-    ->trueIcon('heroicon-o-check-badge')
-    ->falseIcon('heroicon-o-x-mark')
+    ->boolean(FeatureFlag::active())
 ```
+
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Customizing the boolean icons
+
+You may customize the [icon](../../styling/icons) representing each state:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
+
+IconColumn::make('is_featured')
+    ->boolean()
+    ->trueIcon(Heroicon::OutlinedCheckBadge)
+    ->falseIcon(Heroicon::OutlinedXMark)
+```
+
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/icon/boolean-icon" alt="Icon column to display a boolean with custom icons" version="4.x" />
 
@@ -98,6 +127,8 @@ IconColumn::make('is_featured')
     ->falseColor('warning')
 ```
 
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 <AutoScreenshot name="tables/columns/icon/boolean-color" alt="Icon column to display a boolean with custom colors" version="4.x" />
 
 ## Wrapping multiple icons
@@ -111,5 +142,6 @@ IconColumn::make('icon')
     ->wrap()
 ```
 
-Note: the "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
-
+<Aside variant="tip">
+    The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
+</Aside>

@@ -818,7 +818,7 @@ test('components can set their own state after they are hydrated', function (): 
                 ->statePath('data');
         }
     })
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => 'bar',
         ]);
 });
@@ -839,7 +839,7 @@ test('components can set their own state after they are updated', function (): v
         ->fillForm([
             'foo' => 'baz',
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => 'bar',
         ]);
 });
@@ -860,7 +860,7 @@ test('components can inject their own state after they are updated', function ()
         ->fillForm([
             'foo' => $state = Str::random(),
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => strrev($state),
         ]);
 });
@@ -881,7 +881,7 @@ test('components can get their own state from the component object', function ()
         ->fillForm([
             'foo' => $state = Str::random(),
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => strrev($state),
         ]);
 });
@@ -930,7 +930,7 @@ test('components can inject their old state after it is updated', function (): v
             'foo' => $state = Str::random(),
         ])
         ->assertSet('storedOldState', $oldState)
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => $state,
         ]);
 });

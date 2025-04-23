@@ -48,7 +48,7 @@ it('has fields on multiple forms', function (): void {
 it('can fill fields on multiple forms', function (): void {
     livewire(TestComponentWithMultipleForms::class)
         ->fillForm(['title' => 'value'], 'fooForm')
-        ->assertFormSet(['title' => 'value'], 'fooForm');
+        ->assertSchemaStateSet(['title' => 'value'], 'fooForm');
 });
 
 it('can have disabled fields', function (): void {
@@ -111,11 +111,11 @@ it('does not have layout components', function (): void {
 
 it('can go to next wizard step on multiple forms', function (): void {
     livewire(TestComponentWithMultipleWizardForms::class)
-        ->assertHasNoFormErrors(formName: 'fooForm')
-        ->assertHasNoFormErrors(formName: 'barForm')
+        ->assertHasNoFormErrors(form: 'fooForm')
+        ->assertHasNoFormErrors(form: 'barForm')
 
         ->assertWizardStepExists(2, 'fooForm')
-        ->goToWizardStep(2, formName: 'fooForm')
+        ->goToWizardStep(2, schema: 'fooForm')
         ->assertHasFormErrors(['title'], 'fooForm')
         ->assertHasNoFormErrors(['title'], 'barForm');
 });

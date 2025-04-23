@@ -32,7 +32,7 @@ Wizard::make([
 <AutoScreenshot name="schemas/layout/wizard/simple" alt="Wizard" version="4.x" />
 
 <Aside variant="tip">
-    We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../resources/creating-records#using-a-wizard) or an [action modal](../actions/modals#using-a-wizard-as-a-modal-form). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
+    We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../resources/creating-records#using-a-wizard) or an [action modal](../actions/modals#rendering-a-wizard-in-a-modal). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
 </Aside>
 
 ## Rendering a submit button on the last step
@@ -71,11 +71,11 @@ Wizard::make([
 BLADE)))
 ```
 
-You could use this component in a separate Blade view if you want.
+You could extract this component to a separate Blade view if you prefer.
 
-## Setting up step icons
+## Setting a step icon
 
-Steps may also have an [icon](../styling/icons), set using the `icon()` method:
+Steps may have an [icon](../styling/icons), which you can set using the `icon()` method:
 
 ```php
 use Filament\Schemas\Components\Wizard\Step;
@@ -181,7 +181,7 @@ Wizard::make([
 ])->persistStepInQueryString()
 ```
 
-By default, the current step is persisted in the URL's query string using the `step` key. You can change this key by passing it to the `persistStepInQueryString()` method:
+When enabled, the current step is persisted in the URL's query string using the `step` key. You can change this key by passing it to the `persistStepInQueryString()` method:
 
 ```php
 use Filament\Schemas\Components\Wizard;
@@ -257,7 +257,7 @@ Wizard::make([
 
 ## Customizing the wizard action objects
 
-This component uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/trigger-button). The following methods are available to customize the actions:
+This component uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/overview). The following methods are available to customize the actions:
 
 - `nextAction()`
 - `previousAction()`

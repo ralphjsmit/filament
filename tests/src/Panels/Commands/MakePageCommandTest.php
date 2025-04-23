@@ -272,7 +272,7 @@ it('can generate a view page class in a resource', function (): void {
     ];
 
     $this->artisan('make:filament-page', [
-        'name' => 'EditUser',
+        'name' => 'ViewUser',
         '--panel' => 'admin',
         '--resource' => 'Users\\UserResource',
         '--type' => 'view',
@@ -413,7 +413,6 @@ it('can generate a manage related records page class in a resource with a genera
         ->expectsQuestion($questions['hasRelatedResource'], false)
         ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['isGenerated'], true)
-        ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
         ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
         ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['hasTableClass'], false)

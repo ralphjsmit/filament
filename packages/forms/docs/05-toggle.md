@@ -90,13 +90,13 @@ Toggle::make('is_admin')
     ->inline(false)
 ```
 
-<AutoScreenshot name="forms/fields/toggle/not-inline" alt="Toggle with its label above" version="4.x" />
-
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `inline()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/toggle/not-inline" alt="Toggle with its label above" version="4.x" />
 
 ## Toggle validation
 
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to toggles.
+As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to toggles.
 
 ### Accepted validation
 

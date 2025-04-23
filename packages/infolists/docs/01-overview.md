@@ -7,14 +7,16 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
+<AutoScreenshot name="infolists/overview" alt="Product infolist example" version="4.x" />
+
 Entry classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema array of components. Filament includes a number of entries built-in:
 
-- [Text entry](text)
-- [Icon entry](icon)
-- [Image entry](image)
-- [Color entry](color)
-- [Key-value entry](key-value)
-- [Repeatable entry](repeatable)
+- [Text entry](text-entry)
+- [Icon entry](icon-entry)
+- [Image entry](image-entry)
+- [Color entry](color-entry)
+- [Key-value entry](key-value-entry)
+- [Repeatable entry](repeatable-entry)
 
 You may also [create your own custom entries](custom-entries) to display data however you wish.
 
@@ -32,7 +34,7 @@ TextEntry::make('author.name')
 
 ## Entry content (state)
 
-Entries may feel a bit magic at first, but they are designed to be simple to use and optimized to display data from an Eloquent record. Despite this, they are flexible and you can display data from any source, not just an Eloquent record.
+Entries may feel a bit magic at first, but they are designed to be simple to use and optimized to display data from an Eloquent record. Despite this, they are flexible and you can display data from any source, not just an Eloquent record attribute.
 
 The data that an entry displays is called its "state". When using a [panel resource](../resources), the infolist is aware of the record it is displaying. This means that the state of the entry is set based on the value of the attribute on the record. For example, if the entry is used in the infolist of a `PostResource`, then the `title` attribute value of the current post will be displayed.
 
@@ -73,7 +75,7 @@ TextEntry::make('title')
 
 ### Setting the default state of an entry
 
-When an entry is empty (its state is `null`), you can use the `default()` method to define alternative state to use instead. This method will treat the default state as if it were real, so entries like [image](image) or [color](color) will display the default image or color.
+When an entry is empty (its state is `null`), you can use the `default()` method to define alternative state to use instead. This method will treat the default state as if it were real, so entries like [image](image-entry) or [color](color-entry) will display the default image or color.
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -272,9 +274,9 @@ Select::make('role')
 
 IconEntry::make('is_admin')
     ->boolean()
-    ->hiddenJs(>>>JS
-        \$get('role') !== 'staff'
-    JS)
+    ->hiddenJs(<<<'JS'
+        $get('role') !== 'staff'
+        JS)
 ```
 
 Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on entry to be `live()`.
@@ -293,9 +295,9 @@ Select::make('role')
     
 IconEntry::make('is_admin')
     ->boolean()
-    ->visibleJs(>>>JS
-        \$get('role') === 'staff'
-    JS)
+    ->visibleJs(<<<'JS'
+        $get('role') === 'staff'
+        JS)
 ```
 
 <Aside variant="info">
@@ -360,6 +362,84 @@ IconEntry::make('is_admin')
     The `visibleOn()` method will overwrite any previous calls to the `visible()` method, and vice versa.
 </Aside>
 
+## Inline labels
+
+Entries may have their labels displayed inline with the entry, rather than above it. This is useful for infolists with many entries, where vertical space is at a premium. To display an entry's label inline, use the `inlineLabel()` method:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextInput::make('name')
+    ->inlineLabel()
+```
+
+<AutoScreenshot name="infolists/entries/inline-label" alt="Infolist entry with inline label" version="4.x" />
+
+Optionally, you may pass a boolean value to control if the label should be displayed inline or not:
+
+```php
+use Filament\Infolists\Components\TextInput;
+
+TextInput::make('name')
+    ->inlineLabel(FeatureFlag::active())
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `inlineLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Using inline labels in multiple places at once
+
+If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/section) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all entries within it will have their labels displayed inline:
+
+```php
+use Filament\Infolists\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make('Details')
+    ->inlineLabel()
+    ->entries([
+        TextInput::make('name'),
+        TextInput::make('email')
+            ->label('Email address'),
+        TextInput::make('phone')
+            ->label('Phone number'),
+    ])
+```
+
+<AutoScreenshot name="infolists/entries/inline-label/section" alt="Infolist entries with inline labels in a section" version="4.x" />
+
+You can also use `inlineLabel()` on the entire schema to display all labels inline:
+
+```php
+use Filament\Schemas\Schema;
+
+public function infolist(Schema $schema): Schema
+{
+    return $schema
+        ->inlineLabel()
+        ->components([
+            // ...
+        ]);
+}
+```
+
+When using `inlineLabel()` on a layout component or schema, you can still opt-out of inline labels for individual entries by using the `inlineLabel(false)` method on the entry:
+
+```php
+use Filament\Infolists\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make('Details')
+    ->inlineLabel()
+    ->entries([
+        TextInput::make('name'),
+        TextInput::make('email')
+            ->label('Email address'),
+        TextInput::make('phone')
+            ->label('Phone number')
+            ->inlineLabel(false),
+    ])
+```
+
 ## Adding a tooltip to an entry
 
 You may specify a tooltip to display when you hover over an entry:
@@ -403,6 +483,276 @@ TextEntry::make('title')
 ```
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `alignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Adding extra content to an entry
+
+Entries contain many "slots" where content can be inserted in a child schema. Slots can accept text, [any schema component](../schemas), [actions](../actions) and [action groups](../actions/grouping-actions). Usually, [prime components](../schemas/primes) are used for content.
+
+The following slots are available for all entries:
+
+- `aboveLabel()`
+- `beforeLabel()`
+- `afterLabel()`
+- `belowLabel()`
+- `aboveContent()`
+- `beforeContent()`
+- `afterContent()`
+- `belowContent()`
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the slot methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+To insert plain text, you can pass a string to these methods:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('name')
+    ->belowContent('This is the user\'s full name.')
+```
+
+<AutoScreenshot name="infolists/entries/below-content/text" alt="Infolist entry with text below content" version="4.x" />
+
+To insert a schema component, often a [prime component](../schemas/primes), you can pass the component to the method:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Text;
+use Filament\Support\Enums\FontWeight;
+
+TextEntry::make('name')
+    ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold))
+```
+
+<AutoScreenshot name="infolists/entries/below-content/component" alt="Infolist entry with component below content" version="4.x" />
+
+To insert an [action](../actions) or [action group](../actions/grouping-actions), you can pass the action or action group to the method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('name')
+    ->belowContent(Action::make('generate'))
+```
+
+<AutoScreenshot name="infolists/entries/below-content/action" alt="Infolist entry with action below content" version="4.x" />
+
+You can insert any combination of content into the slots by passing an array of content to the method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->belowContent([
+        Icon::make(Heroicon::InformationCircle),
+        'This is the user\'s full name.',
+        Action::make('generate'),
+    ])
+```
+
+<AutoScreenshot name="infolists/entries/below-content" alt="Infolist entry with multiple components below content" version="4.x" />
+
+You can also align the content in the slots by passing the array of content to either `Schema::start()` (default), `Schema::end()` or `Schema::between()`:
+
+```php
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Icon;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->belowContent(Schema::end([
+        Icon::make(Heroicon::InformationCircle),
+        'This is the user\'s full name.',
+        Action::make('generate'),
+    ]))
+
+TextEntry::make('name')
+    ->belowContent(Schema::between([
+        Icon::make(Heroicon::InformationCircle),
+        'This is the user\'s full name.',
+        Action::make('generate'),
+    ]))
+
+TextEntry::make('name')
+    ->belowContent(Schema::between([
+        Flex::make([
+            Icon::make(Heroicon::InformationCircle)
+                ->grow(false),
+            'This is the user\'s full name.',
+        ]),
+        Action::make('generate'),
+    ]))
+```
+
+<Aside variant="tip">
+    As you can see in the above example for `Schema::between()`, a [`Flex` component](../schemas/layouts#flex-component) is used to group the icon and text together so they do not have space between them. The icon uses `grow(false)` to prevent it from taking up half of the horizontal space, allowing the text to consume the remaining space.
+</Aside>
+
+<AutoScreenshot name="infolists/entries/below-content/alignment" alt="Infolist entry with aligned components below content" version="4.x" />
+
+### Adding extra content above an entry's label
+
+You can insert extra content above an entry's label using the `aboveLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->aboveLabel([
+        Icon::make(Heroicon::Star),
+        'This is the content above the entry\'s label'
+    ])
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `aboveLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/above-label" alt="Infolist entry with extra content above label" version="4.x" />
+
+### Adding extra content before an entry's label
+
+You can insert extra content before an entry's label using the `beforeLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->beforeLabel(Icon::make(Heroicon::Star))
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `beforeLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/before-label" alt="Infolist entry with extra content before label" version="4.x" />
+
+### Adding extra content after an entry's label
+
+You can insert extra content after an entry's label using the `afterLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->afterLabel([
+        Icon::make(Heroicon::Star),
+        'This is the content after the entry\'s label'
+    ])
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/after-label" alt="Infolist entry with extra content after label" version="4.x" />
+
+By default, the content in the `afterLabel()` schema is aligned to the end of the container. If you wish to align it to the start of the container, you should pass a `Schema::start()` object containing the content:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Icon;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->afterLabel(Schema::start([
+        Icon::make(Heroicon::Star),
+        'This is the content after the entry\'s label'
+    ]))
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/after-label/aligned-start" alt="Infolist entry with extra content after label aligned to the start" version="4.x" />
+
+### Adding extra content below an entry's label
+
+You can insert extra content below an entry's label using the `belowLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->belowLabel([
+        Icon::make(Heroicon::Star),
+        'This is the content below the entry\'s label'
+    ])
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `belowLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/below-label" alt="Infolist entry with extra content below label" version="4.x" />
+
+<Aside variant="info">
+    This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-a-entries-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the entry, not below the label, since the label is displayed in a separate column to the entry content.
+</Aside>
+
+### Adding extra content above an entry's content
+
+You can insert extra content above an entry's content using the `aboveContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->aboveContent([
+        Icon::make(Heroicon::Star),
+        'This is the content above the entry\'s content'
+    ])
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `aboveContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/above-content" alt="Infolist entry with extra content above content" version="4.x" />
+
+<Aside variant="info">
+    This may seem like the same as the [`belowLabel()` method](#adding-extra-content-below-a-entries-label). However, when using [inline labels](#inline-labels), the `belowLabel()` method will place the content below the label, not above the entry's content, since the label is displayed in a separate column to the entry content.
+</Aside>
+
+### Adding extra content before an entry's content
+
+You can insert extra content before an entry's content using the `beforeContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->beforeContent(Icon::make(Heroicon::Star))
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `beforeContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/before-content" alt="Infolist entry with extra content before content" version="4.x" />
+
+### Adding extra content after an entry's content
+
+You can insert extra content after an entry's content using the `afterContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('name')
+    ->afterContent(Icon::make(Heroicon::Star))
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `afterContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/after-content" alt="Infolist entry with extra content after content" version="4.x" />
 
 ## Adding extra HTML attributes to an entry
 
@@ -460,7 +810,7 @@ These injected utilities require specific parameter names to be used. Otherwise,
 
 ### Injecting the current state of the entry
 
-If you wish to access the current value (state) of the entry, define a `$state` parameter:
+If you wish to access the current [value (state)](#entry-content-state) of the entry, define a `$state` parameter:
 
 ```php
 function ($state) {
@@ -540,11 +890,11 @@ function (Entry $component) {
 The parameters are injected dynamically using reflection, so you are able to combine multiple parameters in any order:
 
 ```php
+use App\Models\User;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Livewire\Component as Livewire;
 
-function (Livewire $livewire, Get $get, Set $set) {
+function (Livewire $livewire, Get $get, User $record) {
     // ...
 }
 ```
@@ -554,24 +904,23 @@ function (Livewire $livewire, Get $get, Set $set) {
 You may inject anything from Laravel's container like normal, alongside utilities:
 
 ```php
-use Filament\Schemas\Components\Utilities\Set;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-function (Request $request, Set $set) {
+function (Request $request, User $record) {
     // ...
 }
 ```
 
 ## Global settings
 
-If you wish to change the default behavior of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`words(10)`](text#limiting-word-count), you can do it like so:
+If you wish to change the default behavior of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`words(10)`](text-entry#limiting-word-count), you can do it like so:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::configureUsing(function (TextEntry $entry): void {
-    $entry
-        ->words(10);
+    $entry->words(10);
 });
 ```
 

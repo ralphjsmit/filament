@@ -8,10 +8,11 @@ use Exception;
 use Filament\Support\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use UnitEnum;
 
 class NavigationItem extends Component
 {
-    protected string | Closure | null $group = null;
+    protected string | UnitEnum | Closure | null $group = null;
 
     protected string | Closure | null $parentItem = null;
 
@@ -25,10 +26,7 @@ class NavigationItem extends Component
 
     protected string | Closure | null $badge = null;
 
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $badgeColor = null;
+    protected string | Closure | null $badgeColor = null;
 
     protected string | Closure | null $badgeTooltip = null;
 
@@ -73,7 +71,7 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function group(string | Closure | null $group): static
+    public function group(string | UnitEnum | Closure | null $group): static
     {
         $this->group = $group;
 
@@ -163,10 +161,7 @@ class NavigationItem extends Component
         return $this->evaluate($this->badge);
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public function getBadgeColor(): string | array | null
+    public function getBadgeColor(): ?string
     {
         return $this->evaluate($this->badgeColor);
     }
@@ -176,7 +171,7 @@ class NavigationItem extends Component
         return $this->evaluate($this->badgeTooltip);
     }
 
-    public function getGroup(): ?string
+    public function getGroup(): string | UnitEnum | null
     {
         return $this->evaluate($this->group);
     }

@@ -18,10 +18,10 @@ By default, the View page will display a disabled form with the record's data. I
 use Filament\Infolists;
 use Filament\Schemas\Schema;
 
-public static function infolist(Schema $infolist): Schema
+public static function infolist(Schema $schema): Schema
 {
-    return $infolist
-        ->schema([
+    return $schema
+        ->components([
             Infolists\Components\TextEntry::make('name'),
             Infolists\Components\TextEntry::make('email'),
             Infolists\Components\TextEntry::make('notes')
@@ -30,9 +30,9 @@ public static function infolist(Schema $infolist): Schema
 }
 ```
 
-The `schema()` method is used to define the structure of your infolist. It is an array of [entries](../../infolists/entries#available-entries) and [layout components](../../schemas/layout#available-layout-components), in the order they should appear in your infolist.
+The `components()` method is used to define the structure of your infolist. It is an array of [entries](../infolists#available-entries) and [layout components](../schemas/layout#available-layout-components), in the order they should appear in your infolist.
 
-Check out the Infolists docs for a [guide](../../infolists/getting-started) on how to build infolists with Filament.
+Check out the Infolists docs for a [guide](../infolists) on how to build infolists with Filament.
 
 ## Adding a View page to an existing resource
 
@@ -91,7 +91,7 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
-Alternatively, if you're viewing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/view#customizing-data-before-filling-the-form).
+Alternatively, if you're viewing records in a modal action, check out the [Actions documentation](../actions/view#customizing-data-before-filling-the-form).
 
 ## Lifecycle hooks
 
@@ -152,14 +152,53 @@ Now, you can define the `infolist()` or `form()` for this page, which can contai
 ```php
 use Filament\Schemas\Schema;
 
-public function infolist(Schema $infolist): Schema
+public function infolist(Schema $schema): Schema
 {
-    return $infolist
-        ->schema([
+    return $schema
+        ->components([
             // ...
         ]);
 }
 ```
+
+## Customizing relation managers for a specific view page
+
+You can specify which relation managers should appear on a view page by defining a `getAllRelationManagers()` method:
+
+```php
+protected function getAllRelationManagers(): array
+{
+    return [
+        CustomerAddressesRelationManager::class,
+        CustomerContactsRelationManager::class,
+    ];
+}
+```
+
+This is useful when you have [multiple view pages](#creating-another-view-page) and need different relation managers on
+each page:
+
+```php
+// ViewCustomer.php
+protected function getAllRelationManagers(): array
+{
+    return [
+        RelationManagers\OrdersRelationManager::class,
+        RelationManagers\SubscriptionsRelationManager::class,
+    ];
+}
+
+// ViewCustomerContact.php 
+protected function getAllRelationManagers(): array
+{
+    return [
+        RelationManagers\ContactsRelationManager::class,
+        RelationManagers\AddressesRelationManager::class,
+    ];
+}
+```
+
+If `getAllRelationManagers()` isn't defined, any relation managers defined in the resource will be used.
 
 ## Adding view pages to resource sub-navigation
 
@@ -178,7 +217,28 @@ public static function getRecordSubNavigation(Page $page): array
 }
 ```
 
-## Custom view
+## Custom page content
+
+Each page in Filament has its own [schema](../schemas), which defines the overall structure and content. You can override the schema for the page by defining a `content()` method on it. The `content()` method for the View page contains the following components by default:
+
+```php
+use Filament\Schemas\Schema;
+
+public function content(Schema $schema): Schema
+{
+    return $schema
+        ->components([
+            $this->hasInfolist() // This method returns `true` if the page has an infolist defined
+                ? $this->getInfolistContentComponent() // This method returns a component to display the infolist that is defined in this resource
+                : $this->getFormContentComponent(), // This method returns a component to display the form that is defined in this resource
+            $this->getRelationManagersContentComponent(), // This method returns a component to display the relation managers that are defined in this resource
+        ]);
+}
+```
+
+Inside the `components()` array, you can insert any [schema component](../schemas). You can reorder the components by changing the order of the array or remove any of the components that are not needed.
+
+### Using a custom Blade view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
 
@@ -186,27 +246,12 @@ For further customization opportunities, you can override the static `$view` pro
 protected string $view = 'filament.resources.users.pages.view-user';
 ```
 
-This assumes that you have created a view at `resources/views/filament/resources/users/pages/view-user.blade.php`.
-
-Here's a basic example of what that view might contain:
+This assumes that you have created a view at `resources/views/filament/resources/users/pages/view-user.blade.php`:
 
 ```blade
 <x-filament-panels::page>
-    @if ($this->hasInfolist())
-        {{ $this->infolist }}
-    @else
-        {{ $this->form }}
-    @endif
-
-    @if (count($relationManagers = $this->getRelationManagers()))
-        <x-filament-panels::resources.relation-managers
-            :active-manager="$this->activeRelationManager"
-            :managers="$relationManagers"
-            :owner-record="$record"
-            :page-class="static::class"
-        />
-    @endif
+    {{-- `$this->getRecord()` will return the current Eloquent record for this page --}}
+    
+    {{ $this->content }} {{-- This will render the content of the page defined in the `content()` method, which can be removed if you want to start from scratch --}}
 </x-filament-panels::page>
 ```
-
-To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/view-record.blade.php` file in your project.

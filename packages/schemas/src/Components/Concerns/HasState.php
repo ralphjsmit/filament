@@ -3,6 +3,7 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
+use Exception;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
@@ -850,6 +851,9 @@ trait HasState
         return $state;
     }
 
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
     public function getConstantState(): mixed
     {
         if ($this->hasConstantState) {
@@ -859,7 +863,7 @@ trait HasState
 
             $state = $containerState instanceof Model ?
                 $this->getConstantStateFromRecord($containerState) :
-                data_get($containerState, $this->getStatePath());
+                data_get($containerState, $this->getConstantStatePath());
         }
 
         if (is_string($state) && ($separator = $this->getSeparator())) {
@@ -876,6 +880,42 @@ trait HasState
         return $state;
     }
 
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function getConstantStatePath(): ?string
+    {
+        $statePath = $this->getStatePath();
+
+        if (blank($statePath)) {
+            return null;
+        }
+
+        $containerConstantStatePath = $this->getContainer()->getConstantStatePath();
+
+        if (blank($containerConstantStatePath)) {
+            return $statePath;
+        }
+
+        if (! str($statePath)->startsWith("{$containerConstantStatePath}.")) {
+            throw new Exception("The current component\'s state path [$statePath] does not start with the container\'s constant state path [$containerConstantStatePath].");
+        }
+
+        return (string) str($statePath)->after("{$containerConstantStatePath}.");
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function getRecordConstantStatePath(): ?string
+    {
+        if ($this->getRecord(withContainerRecord: false)) {
+            return $this->getStatePath();
+        }
+
+        return $this->getContainer()->getConstantStatePath();
+    }
+
     public function separator(string | Closure | null $separator = ','): static
     {
         $this->separator = $separator;
@@ -888,9 +928,12 @@ trait HasState
         return $this->evaluate($this->separator);
     }
 
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
     public function getConstantStateFromRecord(Model $record): mixed
     {
-        $state = data_get($record, $this->getStatePath());
+        $state = data_get($record, $this->getConstantStatePath());
 
         if ($state !== null) {
             return $state;

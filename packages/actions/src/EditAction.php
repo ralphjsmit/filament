@@ -60,7 +60,7 @@ class EditAction extends Action
                 $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
 
                 if ($relationship instanceof BelongsToMany) {
-                    $pivot = $record->{$relationship->getPivotAccessor()};
+                    $pivot = $record->getRelationValue($relationship->getPivotAccessor());
 
                     $pivotColumns = $relationship->getPivotColumns();
                     $pivotData = Arr::only($data, $pivotColumns);

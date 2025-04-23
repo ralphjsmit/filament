@@ -94,23 +94,23 @@ trait HasComponents
             }
 
             foreach ($component->getChildSchemas() as $childSchema) {
-                $childSchemaKey = $childSchema->getKey(isAbsolute: false);
+                $childSchemaName = $childSchema->getKey(isAbsolute: false);
 
-                if (filled($childSchemaKey)) {
+                if (filled($childSchemaName)) {
                     if (blank($componentNestedContainerKey)) {
                         continue;
                     }
 
                     if (
-                        ($componentNestedContainerKey !== $childSchemaKey)
-                        && (! str($componentNestedContainerKey)->startsWith("{$childSchemaKey}."))
+                        ($componentNestedContainerKey !== $childSchemaName)
+                        && (! str($componentNestedContainerKey)->startsWith("{$childSchemaName}."))
                     ) {
                         continue;
                     }
 
-                    $childSchemaNestedContainerKey = ($componentNestedContainerKey === $childSchemaKey)
+                    $childSchemaNestedContainerKey = ($componentNestedContainerKey === $childSchemaName)
                         ? null
-                        : (string) str($componentNestedContainerKey)->after("{$childSchemaKey}.");
+                        : (string) str($componentNestedContainerKey)->after("{$childSchemaName}.");
                 } else {
                     $childSchemaNestedContainerKey = $componentNestedContainerKey;
                 }

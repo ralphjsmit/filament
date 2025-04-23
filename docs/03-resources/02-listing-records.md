@@ -44,7 +44,7 @@ public function getTabs(): array
 
 ### Adding icons to filter tabs
 
-You can add icons to the tabs by passing an [icon](../../styling/icons) into the `icon()` method of the tab:
+You can add icons to the tabs by passing an [icon](../styling/icons) into the `icon()` method of the tab:
 
 ```php
 use use Filament\Schemas\Components\Tabs\Tab;
@@ -142,7 +142,30 @@ public static function table(Table $table): Table
 }
 ```
 
-## Custom list page view
+## Custom page content
+
+Each page in Filament has its own [schema](../schemas), which defines the overall structure and content. You can override the schema for the page by defining a `content()` method on it. The `content()` method for the List page contains the following components by default:
+
+```php
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\RenderHook;
+use Filament\Schemas\Schema;
+
+public function content(Schema $schema): Schema
+{
+    return $schema
+        ->components([
+            $this->getTabsContentComponent(), // This method returns a component to display the tabs above a table
+            RenderHook::make(PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_BEFORE),
+            EmbeddedTable::make(), // This is the component that renders the table that is defined in this resource
+            RenderHook::make(PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_AFTER),
+        ]);
+}
+```
+
+Inside the `components()` array, you can insert any [schema component](../schemas). You can reorder the components by changing the order of the array or remove any of the components that are not needed.
+
+### Using a custom Blade view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
 
@@ -150,14 +173,10 @@ For further customization opportunities, you can override the static `$view` pro
 protected string $view = 'filament.resources.users.pages.list-users';
 ```
 
-This assumes that you have created a view at `resources/views/filament/resources/users/pages/list-users.blade.php`.
-
-Here's a basic example of what that view might contain:
+This assumes that you have created a view at `resources/views/filament/resources/users/pages/list-users.blade.php`:
 
 ```blade
 <x-filament-panels::page>
-    {{ $this->table }}
+    {{ $this->content }} {{-- This will render the content of the page defined in the `content()` method, which can be removed if you want to start from scratch --}}
 </x-filament-panels::page>
 ```
-
-To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/list-records.blade.php` file in your project.

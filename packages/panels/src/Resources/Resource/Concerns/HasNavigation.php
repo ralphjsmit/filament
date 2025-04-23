@@ -9,6 +9,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use UnitEnum;
 
 use function Filament\Support\original_request;
 
@@ -20,7 +21,7 @@ trait HasNavigation
 
     protected static ?string $navigationBadgeTooltip = null;
 
-    protected static ?string $navigationGroup = null;
+    protected static string | UnitEnum | null $navigationGroup = null;
 
     protected static ?string $navigationParentItem = null;
 
@@ -42,7 +43,7 @@ trait HasNavigation
             return;
         }
 
-        if (static::getParentResource()) {
+        if (static::getParentResourceRegistration()) {
             return;
         }
 
@@ -90,7 +91,7 @@ trait HasNavigation
         return Filament::getSubNavigationPosition();
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string | UnitEnum | null
     {
         return static::$navigationGroup;
     }
@@ -140,10 +141,7 @@ trait HasNavigation
         return static::$navigationBadgeTooltip;
     }
 
-    /**
-     * @return string | array<int | string, string | int> | null
-     */
-    public static function getNavigationBadgeColor(): string | array | null
+    public static function getNavigationBadgeColor(): ?string
     {
         return null;
     }

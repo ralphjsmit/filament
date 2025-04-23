@@ -30,17 +30,11 @@ class IconEntry extends Entry implements HasEmbeddedView
 
     protected bool | Closure | null $isBoolean = null;
 
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $falseColor = null;
+    protected string | Closure | null $falseColor = null;
 
     protected string | BackedEnum | Closure | null $falseIcon = null;
 
-    /**
-     * @var string | array<int | string, string | int> | Closure | null
-     */
-    protected string | array | Closure | null $trueColor = null;
+    protected string | Closure | null $trueColor = null;
 
     protected string | BackedEnum | Closure | null $trueIcon = null;
 
@@ -66,10 +60,7 @@ class IconEntry extends Entry implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
-     */
-    public function falseColor(string | array | Closure | null $color): static
+    public function falseColor(string | Closure | null $color): static
     {
         $this->boolean();
         $this->falseColor = $color;
@@ -96,10 +87,7 @@ class IconEntry extends Entry implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
-     */
-    public function trueColor(string | array | Closure | null $color): static
+    public function trueColor(string | Closure | null $color): static
     {
         $this->boolean();
         $this->trueColor = $color;
@@ -166,10 +154,7 @@ class IconEntry extends Entry implements HasEmbeddedView
         return $state ? $this->getTrueColor() : $this->getFalseColor();
     }
 
-    /**
-     * @return string | array<int | string, string | int>
-     */
-    public function getFalseColor(): string | array
+    public function getFalseColor(): string
     {
         return $this->evaluate($this->falseColor) ?? 'danger';
     }
@@ -181,10 +166,7 @@ class IconEntry extends Entry implements HasEmbeddedView
             ?? Heroicon::OutlinedXCircle;
     }
 
-    /**
-     * @return string | array<int | string, string | int>
-     */
-    public function getTrueColor(): string | array
+    public function getTrueColor(): string
     {
         return $this->evaluate($this->trueColor) ?? 'success';
     }

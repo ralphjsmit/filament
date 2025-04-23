@@ -15,7 +15,7 @@ protected function mutateFormDataBeforeCreate(array $data): array
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/create#customizing-data-before-saving).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#customizing-data-before-saving).
 
 ## Customizing the creation process
 
@@ -30,7 +30,7 @@ protected function handleRecordCreation(array $data): Model
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/create#customizing-the-creation-process).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#customizing-the-creation-process).
 
 ## Customizing redirects
 
@@ -69,7 +69,7 @@ protected function getCreatedNotificationTitle(): ?string
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/create#customizing-the-save-notification).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#customizing-the-save-notification).
 
 You may customize the entire notification by overriding the `getCreatedNotification()` method on the create page class:
 
@@ -191,7 +191,7 @@ class CreateUser extends CreateRecord
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/create#lifecycle-hooks).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#lifecycle-hooks).
 
 ## Halting the creation process
 
@@ -221,7 +221,7 @@ protected function beforeCreate(): void
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/create#halting-the-creation-process).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#halting-the-creation-process).
 
 ## Authorization
 
@@ -254,7 +254,7 @@ class CreateCategory extends CreateRecord
 }
 ```
 
-Inside the `getSteps()` array, return your [wizard steps](../../schemas/layouts/wizard):
+Inside the `getSteps()` array, return your [wizard steps](../schemas/wizards):
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -294,7 +294,7 @@ protected function getSteps(): array
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/create#using-a-wizard).
+Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#using-a-wizard).
 
 Now, create a new record to see your wizard in action! Edit will still use the form defined within the resource class.
 
@@ -318,10 +318,10 @@ use Filament\Schemas\Schema;
 
 class CategoryResource extends Resource
 {
-    public static function form(Schema $form): Schema
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 static::getNameFormField(),
                 static::getSlugFormField(),
                 // ...
@@ -389,7 +389,7 @@ protected function getHeaderActions(): array
 }
 ```
 
-The "importer" class [needs to be created](../../actions/prebuilt-actions/import#creating-an-importer) to tell Filament how to import each row of the CSV. You can learn everything about the `ImportAction` in the [Actions documentation](../../actions/prebuilt-actions/import).
+The "importer" class [needs to be created](../actions/import#creating-an-importer) to tell Filament how to import each row of the CSV. You can learn everything about the `ImportAction` in the [Actions documentation](../actions/import).
 
 ## Custom actions
 
@@ -443,7 +443,7 @@ class CreateUser extends CreateRecord
 }
 ```
 
-To view the entire actions API, please visit the [pages section](../pages#adding-actions-to-pages).
+To view the entire actions API, please visit the [pages section](../navigation/custom-pages#adding-actions-to-pages).
 
 ### Adding a create action button to the header
 
@@ -468,7 +468,25 @@ protected function getFormActions(): array
 }
 ```
 
-## Custom view
+## Custom page content
+
+Each page in Filament has its own [schema](../schemas), which defines the overall structure and content. You can override the schema for the page by defining a `content()` method on it. The `content()` method for the Create page contains the following components by default:
+
+```php
+use Filament\Schemas\Schema;
+
+public function content(Schema $schema): Schema
+{
+    return $schema
+        ->components([
+            $this->getFormContentComponent(), // This method returns a component to display the form that is defined in this resource
+        ]);
+}
+```
+
+Inside the `components()` array, you can insert any [schema component](../schemas). You can reorder the components by changing the order of the array or remove any of the components that are not needed.
+
+### Using a custom Blade view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
 
@@ -476,21 +494,10 @@ For further customization opportunities, you can override the static `$view` pro
 protected string $view = 'filament.resources.users.pages.create-user';
 ```
 
-This assumes that you have created a view at `resources/views/filament/resources/users/pages/create-user.blade.php`.
-
-Here's a basic example of what that view might contain:
+This assumes that you have created a view at `resources/views/filament/resources/users/pages/create-user.blade.php`:
 
 ```blade
 <x-filament-panels::page>
-    <x-filament-panels::form wire:submit="create">
-        {{ $this->form }}
-
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
+    {{ $this->content }} {{-- This will render the content of the page defined in the `content()` method, which can be removed if you want to start from scratch --}}
 </x-filament-panels::page>
 ```
-
-To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/create-record.blade.php` file in your project.

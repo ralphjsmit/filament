@@ -74,7 +74,7 @@ class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthenti
         return filled($this->google_two_factor_authentication_secret);
     }
 
-    public function getGoogleTwoFactorAuthenticationSecret(): string
+    public function getGoogleTwoFactorAuthenticationSecret(): ?string
     {
         return $this->google_two_factor_authentication_secret ?? '';
     }
@@ -85,9 +85,9 @@ class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthenti
         $this->save();
     }
 
-    public function getGoogleTwoFactorAuthenticationRecoveryCodes(): array
+    public function getGoogleTwoFactorAuthenticationRecoveryCodes(): ?array
     {
-        return $this->google_two_factor_authentication_recovery_codes ?? [];
+        return $this->google_two_factor_authentication_recovery_codes;
     }
 
     public function saveGoogleTwoFactorAuthenticationRecoveryCodes(?array $codes): void
@@ -106,9 +106,9 @@ class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthenti
         return filled($this->email_code_authentication_secret);
     }
 
-    public function getEmailCodeAuthenticationSecret(): string
+    public function getEmailCodeAuthenticationSecret(): ?string
     {
-        return $this->email_code_authentication_secret ?? '';
+        return $this->email_code_authentication_secret;
     }
 
     public function saveEmailCodeAuthenticationSecret(?string $secret): void

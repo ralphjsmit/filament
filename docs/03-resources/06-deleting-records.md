@@ -106,6 +106,8 @@ Users may delete records if the `delete()` method of the model policy returns `t
 
 They also have the ability to bulk-delete records if the `deleteAny()` method of the policy returns `true`. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
 
+You can use the `authorizeIndividualRecords()` method on the `BulkDeleteAction` to check the `delete()` policy for each record individually.
+
 ### Authorizing soft deletes
 
 The `forceDelete()` policy method is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant.

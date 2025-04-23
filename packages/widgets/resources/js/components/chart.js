@@ -93,10 +93,16 @@ export default function chart({ cachedData, options, type }) {
             options.scales.y.grid ??= {}
             options.scales.y.grid.color ??= gridColor
 
+            if (['doughnut', 'pie'].includes(type)) {
+                options.scales.x.display ??= false
+                options.scales.y.display ??= false
+                options.scales.y.grid.display ??= false
+            }
+
             return new Chart(this.$refs.canvas, {
-                type: type,
+                type,
                 data: data ?? cachedData,
-                options: options,
+                options,
                 plugins: window.filamentChartJsPlugins ?? [],
             })
         },

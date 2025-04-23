@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Actions\Testing\Fixtures\TestAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Auth\MultiFactor\EmailCode\Notifications\VerifyEmailCodeAuthentication;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
@@ -41,10 +41,10 @@ it('can disable authentication when valid challenge code is used', function (): 
     livewire(EditProfile::class)
         ->callAction(
             TestAction::make('disableEmailCodeAuthentication')
-                ->schemaComponent('content.email_code'),
+                ->schemaComponent('email_code', schema: 'content'),
             ['code' => $emailCodeAuthentication->getCurrentCode($user)],
         )
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($user->hasEmailCodeAuthentication())
         ->toBeFalse();
@@ -66,7 +66,7 @@ it('can resend the code to the user', function (): void {
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('disableEmailCodeAuthentication')
-            ->schemaComponent('content.email_code'));
+            ->schemaComponent('email_code', schema: 'content'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
 
@@ -74,7 +74,7 @@ it('can resend the code to the user', function (): void {
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('mountedActionSchema0.code'));
+            ->schemaComponent('code'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });
@@ -84,13 +84,13 @@ it('can resend the code to the user more than once per minute', function (): voi
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('disableEmailCodeAuthentication')
-            ->schemaComponent('content.email_code'));
+            ->schemaComponent('email_code', schema: 'content'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('mountedActionSchema0.code'));
+            ->schemaComponent('code'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
 
@@ -98,7 +98,7 @@ it('can resend the code to the user more than once per minute', function (): voi
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('mountedActionSchema0.code'));
+            ->schemaComponent('code'));
 
     Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
 });
@@ -117,10 +117,10 @@ it('will not disable authentication when an invalid code is used', function (): 
     livewire(EditProfile::class)
         ->callAction(
             TestAction::make('disableEmailCodeAuthentication')
-                ->schemaComponent('content.email_code'),
+                ->schemaComponent('email_code', schema: 'content'),
             ['code' => ($emailCodeAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000'],
         )
-        ->assertHasActionErrors();
+        ->assertHasFormErrors();
 
     expect($user->hasEmailCodeAuthentication())
         ->toBeTrue();
@@ -141,10 +141,10 @@ test('codes are required', function (): void {
     livewire(EditProfile::class)
         ->callAction(
             TestAction::make('disableEmailCodeAuthentication')
-                ->schemaComponent('content.email_code'),
+                ->schemaComponent('email_code', schema: 'content'),
             ['code' => ''],
         )
-        ->assertHasActionErrors([
+        ->assertHasFormErrors([
             'code' => 'required',
         ]);
 
@@ -169,10 +169,10 @@ test('codes must be 6 digits', function (): void {
     livewire(EditProfile::class)
         ->callAction(
             TestAction::make('disableEmailCodeAuthentication')
-                ->schemaComponent('content.email_code'),
+                ->schemaComponent('email_code', schema: 'content'),
             ['code' => Str::limit($emailCodeAuthentication->getCurrentCode($user), limit: 5, end: '')],
         )
-        ->assertHasActionErrors([
+        ->assertHasFormErrors([
             'code' => 'digits',
         ]);
 

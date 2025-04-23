@@ -138,6 +138,12 @@ trait CanSearchRecords
             return $query;
         }
 
+        if ($this->getTable()->hasSearchUsingCallback()) {
+            $this->getTable()->callSearchUsing($query, $search);
+
+            return $query;
+        }
+
         if (! $this->getTable()->shouldSplitSearchTerms()) {
             $query->where(function (Builder $query) use ($search): void {
                 $isFirst = true;

@@ -39,7 +39,7 @@ trait HasFilters
 
     protected bool | Closure $shouldDeselectAllRecordsWhenFiltered = true;
 
-    protected bool | Closure $hasDeferredFilters = false;
+    protected bool | Closure $hasDeferredFilters = true;
 
     protected ?Closure $modifyFiltersApplyActionUsing = null;
 
@@ -184,7 +184,7 @@ trait HasFilters
 
         foreach ($this->getFilters() as $filterName => $filter) {
             $filters[$filterName] = Group::make()
-                ->schema($filter->getFormSchema())
+                ->schema($filter->getSchemaComponents())
                 ->statePath($filterName)
                 ->key($filterName)
                 ->columnSpan($filter->getColumnSpan())
