@@ -1,22 +1,7 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $id = $getId();
-    $isDisabled = $isDisabled();
-    $statePath = $getStatePath();
-    $range = $getRange();
-    $step = $getStep();
-    $start = $getStart();
-    $margin = $getMargin();
-    $limit = $getLimit();
-    $padding = $getPadding();
-    $connect = $getConnect();
-    $direction = $getDirection();
-    $orientation = $getOrientation();
-    $behaviour = $getBehaviour();
-    $tooltips = $getTooltips();
-    $format = $getFormat();
+    $isVertical = $isVertical();
     $pips = $getPips();
-    $ariaFormat = $getAriaFormat();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -24,35 +9,33 @@
         x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms') }}"
         x-data="sliderFormComponent({
-                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
-                    range: @js($range),
-                    step: @js($step),
-                    start: @js($start),
-                    margin: @js($margin),
-                    limit: @js($limit),
-                    padding: @js($padding),
-                    connect: @js($connect),
-                    direction: @js($direction),
-                    orientation: @js($orientation),
-                    behaviour: @js($behaviour),
-                    tooltips: @js($tooltips),
-                    format: @js($format),
+                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }},
+                    maxValue: @js($getMaxValue()),
+                    minValue: @js($getMinValue()),
+                    step: @js($getStep()),
+                    margin: @js($getMargin()),
+                    limit: @js($getLimit()),
+                    padding: @js($getPadding()),
+                    connect: @js($getConnect()),
+                    isRtl: @js($isRtl()),
+                    isVertical: @js($isVertical),
+                    behavior: @js($getBehavior()),
+                    tooltips: @js($getTooltips()),
+                    format: @js($getFormat()),
                     pips: @js($pips),
-                    ariaFormat: @js($ariaFormat),
+                    ariaFormat: @js($getAriaFormat()),
                 })"
         {{
             $attributes
                 ->merge([
-                    'disabled' => $isDisabled,
-                    'id' => $id,
-                    'wire:target' => $statePath,
+                    'disabled' => $isDisabled(),
+                    'id' => $getId(),
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
                     'fi-fo-slider',
-                    'fi-fo-slider-orientation-vertical' => $orientation === Filament\Forms\Components\Enums\SliderOrientation::Vertical->value,
-                    'fi-fo-slider-orientation-horizontal' => $orientation === Filament\Forms\Components\Enums\SliderOrientation::Horizontal->value,
+                    'fi-fo-slider-vertical' => $isVertical,
                     'fi-fo-slider-pips' => $pips,
                 ])
         }}

@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\Enums;
 
-enum SliderBehaviour: string
+enum SliderBehavior: string
 {
     case Drag = 'drag';
     case DragAll = 'drag-all';

@@ -74,7 +74,7 @@ Some changes in Filament v4 can be reverted using the configuration file. If you
 php artisan vendor:publish --tag=filament-config
 ```
 
-Firstly, the `default_filesystem_disk` in v4 is set to the `FILESYSTEM_DISK` variable instead of `FILAMENT_FILESYSTEM_DISK`. To preserve the v3 behaviour, make sure you use this setting:
+Firstly, the `default_filesystem_disk` in v4 is set to the `FILESYSTEM_DISK` variable instead of `FILAMENT_FILESYSTEM_DISK`. To preserve the v3 behavior, make sure you use this setting:
 
 ```php
 return [

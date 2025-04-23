@@ -3,51 +3,53 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\Components\Enums\SliderBehaviour;
-use Filament\Forms\Components\Enums\SliderDirection;
-use Filament\Forms\Components\Enums\SliderOrientation;
+use Filament\Forms\Components\Concerns\HasStep;
+use Filament\Forms\Components\Enums\SliderBehavior;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
-use InvalidArgumentException;
+use Illuminate\Support\Arr;
 
 class Slider extends Field
 {
-    use Concerns\CanBeValidated;
-    use Concerns\HasAffixes;
-    use Concerns\HasExtraInputAttributes;
     use HasExtraAlpineAttributes;
+    use HasStep;
 
     /**
      * @var view-string
      */
     protected string $view = 'filament-forms::components.slider';
 
-    /** @var array<string, int>|Closure|null */
-    protected array | Closure | null $range = null;
+    protected int | float | Closure $minValue = 0;
 
-    protected int | Closure | null $step = null;
-
-    /** @var array<int>|int|Closure|null */
-    protected array | int | Closure | null $start = null;
+    protected int | float | Closure $maxValue = 100;
 
     protected int | Closure | null $margin = null;
 
     protected int | Closure | null $limit = null;
 
-    /** @var array<int, int>|Closure|null */
-    protected array | Closure | null $padding = null;
+    /**
+     * @var int | array<int> | Closure | null
+     */
+    protected int | array | Closure | null $padding = null;
 
-    /** @var array<int, int>|Closure|null */
-    protected bool | array | Closure | null $connect = null;
+    /**
+     * @var bool | string | array<bool> | Closure
+     */
+    protected bool | string | array | Closure $connect = false;
 
-    protected string | Closure | null $direction = null;
+    protected bool | Closure $isVertical = false;
 
-    protected string | Closure | null $orientation = null;
+    protected bool | Closure | null $isRtl = null;
 
-    protected string | Closure | null $behaviour = null;
+    /**
+     * @var SliderBehavior | array<SliderBehavior> | Closure | null
+     */
+    protected SliderBehavior | array | Closure | null $behavior = null;
 
-    /** @var array<int, bool>|bool|Closure|null */
-    protected array | bool | Closure | null $tooltips = null;
+    /**
+     * @var bool | RawJs | array<bool | RawJs> | Closure
+     */
+    protected bool | RawJs | array | Closure $tooltips = false;
 
     protected RawJs | Closure | null $format = null;
 
@@ -55,33 +57,24 @@ class Slider extends Field
 
     protected RawJs | Closure | null $pips = null;
 
-    /** @param array<string, int>|Closure $range */
-    public function range(array | Closure $range): static
+    public function range(int | float | Closure $minValue, int | float | Closure $maxValue): static
     {
-        if (is_array($range) && (! array_key_exists('min', $range) || ! array_key_exists('max', $range) || count($range) !== 2)) {
-            throw new InvalidArgumentException("The range array must have 'min' and 'max' keys.");
-        }
-
-        $this->range = $range;
+        $this->minValue($minValue);
+        $this->maxValue($maxValue);
 
         return $this;
     }
 
-    public function step(int | Closure | null $step = null): static
+    public function minValue(int | float | Closure $minValue): static
     {
-        $this->step = $step;
+        $this->minValue = $minValue;
 
         return $this;
     }
 
-    /** @param array<int>|int|Closure $start */
-    public function start(array | int | Closure $start): static
+    public function maxValue(int | float | Closure $maxValue): static
     {
-        if (empty($start)) {
-            $start = null;
-        }
-
-        $this->start = $start;
+        $this->maxValue = $maxValue;
 
         return $this;
     }
@@ -100,7 +93,10 @@ class Slider extends Field
         return $this;
     }
 
-    public function padding(int | Closure | null $padding = null): static
+    /**
+     * @param  int | array<int> | Closure | null  $padding
+     */
+    public function padding(int | array | Closure | null $padding = null): static
     {
         $this->padding = $padding;
 
@@ -108,54 +104,43 @@ class Slider extends Field
     }
 
     /**
-     * @param  array<int, bool>|bool|Closure|null  $connect
+     * @param  bool | string | array<bool> | Closure  $connect
      */
-    public function connect(array | bool | Closure | null $connect = null): static
+    public function connect(bool | string | array | Closure $connect = true): static
     {
         $this->connect = $connect;
 
         return $this;
     }
 
-    public function direction(SliderDirection | Closure | null $direction = SliderDirection::LTR): static
+    public function vertical(bool | Closure $condition = true): static
     {
-        if ($direction instanceof SliderDirection) {
-            $direction = $direction->value;
-        }
-
-        $this->direction = $direction;
+        $this->isVertical = $condition;
 
         return $this;
     }
 
-    public function orientation(SliderOrientation | Closure | null $orientation = SliderOrientation::Horizontal): static
+    public function rtl(bool | Closure | null $condition = true): static
     {
-        if ($orientation instanceof SliderOrientation) {
-            $orientation = $orientation->value;
-        }
-
-        $this->orientation = $orientation;
+        $this->isRtl = $condition;
 
         return $this;
     }
 
-    /** @param array<SliderBehaviour>|SliderBehaviour|Closure|null $behaviour */
-    public function behaviour(array | SliderBehaviour | Closure | null $behaviour = null): static
+    /**
+     * @param  SliderBehavior | array<SliderBehavior> | Closure | null  $behavior
+     */
+    public function behavior(SliderBehavior | array | Closure | null $behavior = null): static
     {
-        if (is_array($behaviour)) {
-            $behaviourStrings = array_map(fn ($item) => $item->value, $behaviour);
-            $behaviour = implode('-', $behaviourStrings);
-        } elseif ($behaviour instanceof SliderBehaviour) {
-            $behaviour = $behaviour->value;
-        }
-
-        $this->behaviour = $behaviour;
+        $this->behavior = $behavior;
 
         return $this;
     }
 
-    /** @param array<int, bool>|bool|Closure|null $tooltips */
-    public function tooltips(array | bool | Closure | null $tooltips = false): static
+    /**
+     * @param  bool | RawJs | array<bool | RawJs> | Closure  $tooltips
+     */
+    public function tooltips(bool | RawJs | array | Closure $tooltips = true): static
     {
         $this->tooltips = $tooltips;
 
@@ -183,21 +168,14 @@ class Slider extends Field
         return $this;
     }
 
-    /** @return array<string, int>|null */
-    public function getRange(): ?array
+    public function getMinValue(): int | float
     {
-        return $this->evaluate($this->range ?? ['min' => 0, 'max' => 100]);
+        return $this->evaluate($this->minValue) ?? 0;
     }
 
-    public function getStep(): ?int
+    public function getMaxValue(): int | float
     {
-        return $this->evaluate($this->step);
-    }
-
-    /** @return int|array<int>|null */
-    public function getStart(): int | array | null
-    {
-        return $this->evaluate($this->start ?? 0);
+        return $this->evaluate($this->maxValue) ?? 100;
     }
 
     public function getMargin(): ?int
@@ -210,38 +188,47 @@ class Slider extends Field
         return $this->evaluate($this->limit);
     }
 
-    public function getPadding(): ?int
+    /**
+     * @return int | array<int> | null
+     */
+    public function getPadding(): int | array | null
     {
         return $this->evaluate($this->padding);
     }
 
-    /** @return bool|array<int, bool>|null */
-    public function getConnect(): array | bool | null
+    /**
+     * @return bool | string | array<bool>
+     */
+    public function getConnect(): bool | string | array
     {
         return $this->evaluate($this->connect);
     }
 
-    public function getDirection(): ?string
+    public function isVertical(): bool
     {
-        return $this->evaluate($this->direction);
+        return (bool) $this->evaluate($this->isVertical);
     }
 
-    public function getOrientation(): string
+    public function isRtl(): bool
     {
-        if (! $this->orientation) {
-            return SliderOrientation::Horizontal->value;
+        return (bool) ($this->evaluate($this->isRtl) ?? (__('filament-panels::layout.direction') === 'rtl'));
+    }
+
+    public function getBehavior(): ?string
+    {
+        $behaviour = Arr::wrap($this->evaluate($this->behavior));
+
+        if (blank($behaviour)) {
+            return null;
         }
 
-        return $this->evaluate($this->orientation);
+        return implode('-', $behaviour);
     }
 
-    public function getBehaviour(): ?string
-    {
-        return $this->evaluate($this->behaviour);
-    }
-
-    /** @return bool|array<int, bool>|null */
-    public function getTooltips(): bool | array | null
+    /**
+     * @return bool | RawJs | array<bool | RawJs>
+     */
+    public function getTooltips(): bool | RawJs | array
     {
         return $this->evaluate($this->tooltips);
     }

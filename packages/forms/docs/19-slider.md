@@ -184,18 +184,18 @@ Slider::make('slider')
     ->range(['min' => 0, 'max' => 200]),
 ```
 
-## Slider Behaviour
+## Slider behavior
 
-The Slider component offers several ways to handle user interaction. The range can be made draggable, or handles can move to tapped positions. All these effects are optional, and can be enabled by adding their keyword to the behaviour option.
+The Slider component offers several ways to handle user interaction. The range can be made draggable, or handles can move to tapped positions. All these effects are optional, and can be enabled by adding their keyword to the behavior option.
 
-The slider handle can be `tapped`, `dragged`, `fixed` etc. The slider behaviour is defined by `SliderBehaviour::Drag`,`SliderBehaviour::DragAll`,`SliderBehaviour::Tap`,`SliderBehaviour::Fixed`,`SliderBehaviour::Snap`,`SliderBehaviour::Unconstrained`,`SliderBehaviour::InvertConnects` and `SliderBehaviour::None`.
+The slider handle can be `tapped`, `dragged`, `fixed` etc. The slider behavior is defined by `Sliderbehavior::Drag`,`Sliderbehavior::DragAll`,`Sliderbehavior::Tap`,`Sliderbehavior::Fixed`,`Sliderbehavior::Snap`,`Sliderbehavior::Unconstrained`,`Sliderbehavior::InvertConnects` and `Sliderbehavior::None`.
 
 ```php
 use Filament\Forms\Components\Slider;
-use Filament\Forms\Components\Enums\SliderBehaviour;
+use Filament\Forms\Components\Enums\Sliderbehavior;
 
 Slider::make('slider')
-    ->behaviour([SliderBehaviour::Drag]),
+    ->behavior([Sliderbehavior::Drag]),
 ```
 
 ## Advanced
