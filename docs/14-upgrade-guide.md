@@ -37,7 +37,7 @@ You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 ### Cleaning up your code style after upgrading to v4
 
-The automated upgrade script uses [Rector](https://getrector.org) to make changes to your code. Sometimes, the tool may change how your code is formatted, or introduce references to classes that are not yet imported.
+The automated upgrade script uses [Rector](https://getrector.org) to make changes to your code. Sometimes, the tool may change how your code is formatted or introduce references to classes that are not yet imported.
 
 Filament suggests using [Laravel Pint](https://laravel.com/docs/12.x/pint) or [PHP CS Fixer](https://cs.symfony.com) to clean up your code style after running the upgrade script.
 
@@ -181,6 +181,37 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 </Checkboxes>
 
 ### High-impact changes
+
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">Custom themes need to be upgraded to Tailwind CSS v4</span>
+
+Previously, custom theme CSS files contained this:
+
+```cs
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@config 'tailwind.config.js';
+```
+
+Now, they should contain this:
+
+```css
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament';
+@source '../../../../resources/views/filament';
+```
+
+This will load Tailwind CSS. The `@source` entries tell Tailwind where to find the classes that are used in your app. You should check the `content` paths in your old `tailwind.config.js` file, and add them as `@source` entries like this. You **don't** need to include `vendor/filament` as a `@source`, but check plugins you have installed to see if they require `@source` entries.
+
+Finally, you should use the [Tailwind upgrade tool](https://tailwindcss.com/docs/upgrade-guide#using-the-upgrade-tool) to automatically adjust your configuration files to use Tailwind v4, and install Tailwind v4 packages to replace Tailwind v3 ones:
+
+```bash
+npx @tailwindcss/upgrade
+```
+
+The `tailwind.config.js` file for your theme is no longer used, since Tailwind CSS v4 defines [configuration in CSS](https://tailwindcss.com/docs/adding-custom-styles). Any customizations you made to the `tailwind.config.js` file should be added to the CSS file.
+</Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Changes to table filters are deferred by default</span>
