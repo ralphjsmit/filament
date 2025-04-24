@@ -84,8 +84,8 @@ return [
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is after :date',
-                    'inverse' => ':attribute is not after :date',
+                    'direct' => ':attribute ist nach :date',
+                    'inverse' => ':attribute ist vor :date',
                 ],
 
             ],
@@ -99,7 +99,7 @@ return [
 
                 'summary' => [
                     'direct' => ':attribute ist vor :date',
-                    'inverse' => ':attribute ist nicht vor :date',
+                    'inverse' => ':attribute ist nach :date',
                 ],
 
             ],
@@ -121,7 +121,7 @@ return [
             'is_month' => [
 
                 'label' => [
-                    'direct' => 'ist ein ',
+                    'direct' => 'ist ein Monat',
                     'inverse' => 'ist kein Monat',
                 ],
 
