@@ -4,7 +4,10 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\Concerns\HasStep;
-use Filament\Forms\Components\Enums\SliderBehavior;
+use Filament\Forms\Components\Slider\Enums\Behavior;
+use Filament\Forms\Components\Slider\Enums\PipsMode;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\SliderStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
 use Illuminate\Support\Arr;
@@ -42,25 +45,58 @@ class Slider extends Field
     protected bool | Closure | null $isRtl = null;
 
     /**
-     * @var SliderBehavior | array<SliderBehavior> | Closure | null
+     * @var Behavior | array<Behavior> | Closure | null
      */
-    protected SliderBehavior | array | Closure | null $behavior = null;
+    protected Behavior | array | Closure | null $behavior = null;
 
     /**
      * @var bool | RawJs | array<bool | RawJs> | Closure
      */
     protected bool | RawJs | array | Closure $tooltips = false;
 
-    protected RawJs | Closure | null $format = null;
+    protected PipsMode | Closure | null $pipsMode = null;
 
-    protected RawJs | Closure | null $ariaFormat = null;
+    protected int | Closure | null $pipsDensity = null;
 
-    protected RawJs | Closure | null $pips = null;
+    protected RawJs | Closure | null $pipsFormatter = null;
+
+    /**
+     * @var int | float | array<int | float> | Closure | null
+     */
+    protected int | float | array | Closure | null $pipsValues = null;
+
+    protected bool | Closure $arePipsStepped = false;
+
+    protected RawJs | Closure | null $pipsFilter = null;
+
+    /**
+     * @var array<string, int | float> | Closure | null
+     */
+    protected array | Closure | null $nonLinearPoints = null;
+
+    protected int | Closure | null $decimalPlaces = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->default(fn (Slider $component): float | int => $component->getMinValue());
+    }
 
     public function range(int | float | Closure $minValue, int | float | Closure $maxValue): static
     {
         $this->minValue($minValue);
         $this->maxValue($maxValue);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, int | float> | Closure | null  $points
+     */
+    public function nonLinearPoints(array | Closure | null $points): static
+    {
+        $this->nonLinearPoints = $points;
 
         return $this;
     }
@@ -128,9 +164,9 @@ class Slider extends Field
     }
 
     /**
-     * @param  SliderBehavior | array<SliderBehavior> | Closure | null  $behavior
+     * @param  Behavior | array<Behavior> | Closure | null  $behavior
      */
-    public function behavior(SliderBehavior | array | Closure | null $behavior = null): static
+    public function behavior(Behavior | array | Closure | null $behavior = null): static
     {
         $this->behavior = $behavior;
 
@@ -147,23 +183,55 @@ class Slider extends Field
         return $this;
     }
 
-    public function format(RawJs | Closure | null $format = null): static
+    public function pips(PipsMode | Closure | null $mode = PipsMode::Range, int | Closure | null $density = null): static
     {
-        $this->format = $format;
+        $this->pipsMode($mode);
+        $this->pipsDensity($density);
 
         return $this;
     }
 
-    public function pips(RawJs | Closure | null $pips = null): static
+    public function pipsMode(PipsMode | Closure | null $mode): static
     {
-        $this->pips = $pips;
+        $this->pipsMode = $mode;
 
         return $this;
     }
 
-    public function ariaFormat(RawJs | Closure | null $ariaFormat = null): static
+    public function pipsDensity(int | Closure | null $density): static
     {
-        $this->ariaFormat = $ariaFormat;
+        $this->pipsDensity = $density;
+
+        return $this;
+    }
+
+    public function pipsFormatter(RawJs | Closure | null $formatter): static
+    {
+        $this->pipsFormatter = $formatter;
+
+        return $this;
+    }
+
+    /**
+     * @param  int | float | array<int | float> | Closure | null  $values
+     */
+    public function pipsValues(int | float | array | Closure | null $values): static
+    {
+        $this->pipsValues = $values;
+
+        return $this;
+    }
+
+    public function steppedPips(bool | Closure $condition = true): static
+    {
+        $this->arePipsStepped = $condition;
+
+        return $this;
+    }
+
+    public function pipsFilter(RawJs | Closure | null $filter): static
+    {
+        $this->pipsFilter = $filter;
 
         return $this;
     }
@@ -233,18 +301,123 @@ class Slider extends Field
         return $this->evaluate($this->tooltips);
     }
 
-    public function getFormat(): ?RawJs
+    /**
+     * @return bool | RawJs | array<bool | RawJs>
+     */
+    public function getTooltipsForJs(): bool | RawJs | array
     {
-        return $this->evaluate($this->format);
+        return $this->convertRawJsExpressionsToFormatterObjects($this->getTooltips());
     }
 
-    public function getPips(): ?RawJs
+    protected function convertRawJsExpressionsToFormatterObjects(mixed $value): mixed
     {
-        return $this->evaluate($this->pips);
+        if ($value instanceof RawJs) {
+            return RawJs::make("{ to: (\$value) => {$value} }");
+        }
+
+        if (is_array($value)) {
+            return array_map(
+                fn (mixed $value): mixed => $this->convertRawJsExpressionsToFormatterObjects($value),
+                $value,
+            );
+        }
+
+        return $value;
     }
 
-    public function getAriaFormat(): ?RawJs
+    public function hasTooltips(): bool
     {
-        return $this->evaluate($this->ariaFormat);
+        $tooltips = $this->getTooltips();
+
+        if (is_array($tooltips)) {
+            foreach ($tooltips as $tooltip) {
+                if ($tooltip !== false) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return $tooltips !== false;
+    }
+
+    public function getPipsMode(): ?PipsMode
+    {
+        return $this->evaluate($this->pipsMode);
+    }
+
+    public function getPipsDensity(): ?int
+    {
+        return $this->evaluate($this->pipsDensity);
+    }
+
+    public function getPipsFormatter(): ?RawJs
+    {
+        return $this->evaluate($this->pipsFormatter);
+    }
+
+    public function getPipsFormatterForJs(): ?RawJs
+    {
+        return $this->convertRawJsExpressionsToFormatterObjects($this->getPipsFormatter());
+    }
+
+    /**
+     * @return int | float | array<int | float> | null
+     */
+    public function getPipsValues(): int | float | array | null
+    {
+        return $this->evaluate($this->pipsValues);
+    }
+
+    public function arePipsStepped(): bool
+    {
+        return (bool) $this->evaluate($this->arePipsStepped);
+    }
+
+    public function getPipsFilter(): ?RawJs
+    {
+        return $this->evaluate($this->pipsFilter);
+    }
+
+    public function getPipsFilterForJs(): ?RawJs
+    {
+        $filter = $this->getPipsFilter();
+
+        if ($filter instanceof RawJs) {
+            return RawJs::make("(\$value) => {$filter}");
+        }
+
+        return $filter;
+    }
+
+    /**
+     * @return ?array<string, int | float>
+     */
+    public function getNonLinearPoints(): ?array
+    {
+        return $this->evaluate($this->nonLinearPoints);
+    }
+
+    public function decimalPlaces(int | Closure | null $decimalPlaces): static
+    {
+        $this->decimalPlaces = $decimalPlaces;
+
+        return $this;
+    }
+
+    public function getDecimalPlaces(): ?int
+    {
+        return $this->evaluate($this->decimalPlaces);
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        return [
+            app(SliderStateCast::class, ['decimalPlaces' => $this->getDecimalPlaces()]),
+        ];
     }
 }

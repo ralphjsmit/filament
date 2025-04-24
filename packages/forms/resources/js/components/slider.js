@@ -1,21 +1,26 @@
 import noUiSlider from 'nouislider'
 
 export default function sliderFormComponent({
-    state,
-    minValue,
-    maxValue,
-    step,
-    margin,
-    limit,
-    padding,
+    arePipsStepped,
+    behavior,
     connect,
+    decimalPlaces,
     isRtl,
     isVertical,
-    behavior,
+    limit,
+    margin,
+    maxValue,
+    minValue,
+    nonLinearPoints,
+    padding,
+    pipsDensity,
+    pipsFilter,
+    pipsFormatter,
+    pipsMode,
+    pipsValues,
+    state,
+    step,
     tooltips,
-    format,
-    pips,
-    ariaFormat,
 }) {
     return {
         state,
@@ -24,8 +29,19 @@ export default function sliderFormComponent({
 
         init: function () {
             this.slider = noUiSlider.create(this.$el, {
-                range: { min: minValue, max: maxValue },
-                start: Alpine.raw(this.state || minValue),
+                range: {
+                    min: minValue,
+                    ...(nonLinearPoints ?? {}),
+                    max: maxValue,
+                },
+                start: Alpine.raw(this.state),
+                format: {
+                    from: (value) => value,
+                    to: (value) =>
+                        decimalPlaces !== null
+                            ? +value.toFixed(decimalPlaces)
+                            : value,
+                },
                 step,
                 margin,
                 limit,
@@ -35,13 +51,24 @@ export default function sliderFormComponent({
                 orientation: isVertical ? 'vertical' : 'horizontal',
                 behavior,
                 tooltips,
-                format,
-                pips,
-                ariaFormat,
+                pips: pipsMode
+                    ? {
+                          mode: pipsMode,
+                          density: pipsDensity ?? 10,
+                          filter: pipsFilter,
+                          format: pipsFormatter,
+                          values: pipsValues,
+                          stepped: arePipsStepped,
+                      }
+                    : null,
             })
 
-            this.slider.on('update', (values) => {
+            this.slider.on('change', (values) => {
                 this.state = values.length > 1 ? values : values[0]
+            })
+
+            this.$watch('state', () => {
+                this.slider.set(Alpine.raw(this.state))
             })
         },
     }

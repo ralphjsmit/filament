@@ -1,7 +1,7 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
     $isVertical = $isVertical();
-    $pips = $getPips();
+    $pipsMode = $getPipsMode();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -9,22 +9,29 @@
         x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms') }}"
         x-data="sliderFormComponent({
-                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }},
-                    maxValue: @js($getMaxValue()),
-                    minValue: @js($getMinValue()),
-                    step: @js($getStep()),
-                    margin: @js($getMargin()),
-                    limit: @js($getLimit()),
-                    padding: @js($getPadding()),
+                    arePipsStepped: @js($arePipsStepped()),
+                    behavior: @js($getBehavior()),
                     connect: @js($getConnect()),
+                    decimalPlaces: @js($getDecimalPlaces()),
                     isRtl: @js($isRtl()),
                     isVertical: @js($isVertical),
-                    behavior: @js($getBehavior()),
-                    tooltips: @js($getTooltips()),
-                    format: @js($getFormat()),
-                    pips: @js($pips),
-                    ariaFormat: @js($getAriaFormat()),
+                    limit: @js($getLimit()),
+                    margin: @js($getMargin()),
+                    maxValue: @js($getMaxValue()),
+                    minValue: @js($getMinValue()),
+                    nonLinearPoints: @js($getNonLinearPoints()),
+                    padding: @js($getPadding()),
+                    pipsDensity: @js($getPipsDensity()),
+                    pipsFilter: @js($getPipsFilterForJs()),
+                    pipsFormatter: @js($getPipsFormatterForJs()),
+                    pipsMode: @js($pipsMode),
+                    pipsValues: @js($getPipsValues()),
+                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }},
+                    step: @js($getStep()),
+                    tooltips: @js($getTooltipsForJs()),
                 })"
+        x-cloak
+        wire:ignore
         {{
             $attributes
                 ->merge([
@@ -35,8 +42,9 @@
                 ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
                     'fi-fo-slider',
+                    'fi-fo-slider-has-pips' => $pipsMode,
+                    'fi-fo-slider-has-tooltips' => $hasTooltips(),
                     'fi-fo-slider-vertical' => $isVertical,
-                    'fi-fo-slider-pips' => $pips,
                 ])
         }}
     ></div>

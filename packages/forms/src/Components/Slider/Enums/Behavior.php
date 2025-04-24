@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Forms\Components\Enums;
+namespace Filament\Forms\Components\Slider\Enums;
 
-enum SliderBehavior: string
+enum Behavior: string
 {
     case Drag = 'drag';
     case DragAll = 'drag-all';

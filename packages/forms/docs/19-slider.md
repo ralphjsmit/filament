@@ -131,9 +131,9 @@ Slider::make('slider')
 ## Orientation
 
 The orientation of the slider can be set to `horizontal` or `vertical`:
+
 ```php
-use Filament\Forms\Components\Slider;
-use Filament\Forms\Components\Enums\SliderOrientation;
+use Filament\Forms\Components\Slider;use Filament\Forms\Components\Slider\Enums\SliderOrientation;
 
 Slider::make('slider')
     ->orientation(SliderOrientation::Vertical),
@@ -142,9 +142,9 @@ Slider::make('slider')
 ## Direction
 
 The direction of the slider can be set to `ltr` or `rtl`:
+
 ```php
-use Filament\Forms\Components\Slider;
-use Filament\Forms\Components\Enums\SliderDirection;
+use Filament\Forms\Components\Slider;use Filament\Forms\Components\Slider\Enums\SliderDirection;
 
 Slider::make('slider')
     ->direction(SliderDirection::LTR),
@@ -191,11 +191,10 @@ The Slider component offers several ways to handle user interaction. The range c
 The slider handle can be `tapped`, `dragged`, `fixed` etc. The slider behavior is defined by `Sliderbehavior::Drag`,`Sliderbehavior::DragAll`,`Sliderbehavior::Tap`,`Sliderbehavior::Fixed`,`Sliderbehavior::Snap`,`Sliderbehavior::Unconstrained`,`Sliderbehavior::InvertConnects` and `Sliderbehavior::None`.
 
 ```php
-use Filament\Forms\Components\Slider;
-use Filament\Forms\Components\Enums\Sliderbehavior;
+use Filament\Forms\Components\Slider;use Filament\Forms\Components\Slider\Enums\Behavior;
 
 Slider::make('slider')
-    ->behavior([Sliderbehavior::Drag]),
+    ->behavior([Behavior::Drag]),
 ```
 
 ## Advanced
