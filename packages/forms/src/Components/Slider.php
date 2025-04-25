@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Concerns\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Concerns\HasStep;
 use Filament\Forms\Components\Slider\Enums\Behavior;
 use Filament\Forms\Components\Slider\Enums\PipsMode;
@@ -12,9 +13,10 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
 use Illuminate\Support\Arr;
 
-class Slider extends Field
+class Slider extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use HasExtraAlpineAttributes;
+    use HasNestedRecursiveValidationRules;
     use HasStep;
 
     /**
@@ -36,9 +38,9 @@ class Slider extends Field
     protected int | array | Closure | null $padding = null;
 
     /**
-     * @var bool | string | array<bool> | Closure
+     * @var array<bool> | Closure | null
      */
-    protected bool | string | array | Closure $connect = false;
+    protected array | Closure | null $fill = null;
 
     protected bool | Closure $isVertical = false;
 
@@ -81,6 +83,56 @@ class Slider extends Field
         parent::setUp();
 
         $this->default(fn (Slider $component): float | int => $component->getMinValue());
+
+        $this->rule('numeric', static fn (Slider $component): bool => ! $component->isMultiple());
+
+        $this->rule(static function (Slider $component): string {
+            $value = $component->getMinValue();
+
+            return "min:{$value}";
+        }, static fn (Slider $component): bool => ! $component->isMultiple());
+
+        $this->rule(static function (Slider $component): string {
+            $value = $component->getMaxValue();
+
+            return "max:{$value}";
+        }, static fn (Slider $component): bool => ! $component->isMultiple());
+
+        $this->rule(static function (Slider $component): string {
+            $step = $component->getStep();
+
+            if ($step === 1) {
+                return 'integer';
+            }
+
+            return "multiple_of:{$step}";
+        }, static fn (Slider $component): bool => (! $component->isMultiple()) && filled($component->getStep()));
+
+        $this->rule('array', static fn (Slider $component): bool => $component->isMultiple());
+
+        $this->nestedRecursiveRule('numeric', static fn (Slider $component): bool => $component->isMultiple());
+
+        $this->nestedRecursiveRule(static function (Slider $component): string {
+            $value = $component->getMinValue();
+
+            return "min:{$value}";
+        }, static fn (Slider $component): bool => $component->isMultiple());
+
+        $this->nestedRecursiveRule(static function (Slider $component): string {
+            $value = $component->getMaxValue();
+
+            return "max:{$value}";
+        }, static fn (Slider $component): bool => $component->isMultiple());
+
+        $this->nestedRecursiveRule(static function (Slider $component): string {
+            $step = $component->getStep();
+
+            if ($step === 1) {
+                return 'integer';
+            }
+
+            return "multiple_of:{$step}";
+        }, static fn (Slider $component): bool => $component->isMultiple() && filled($component->getStep()));
     }
 
     public function range(int | float | Closure $minValue, int | float | Closure $maxValue): static
@@ -140,11 +192,11 @@ class Slider extends Field
     }
 
     /**
-     * @param  bool | string | array<bool> | Closure  $connect
+     * @param  array<bool> | Closure | null  $fill
      */
-    public function connect(bool | string | array | Closure $connect = true): static
+    public function fill(array | Closure | null $fill = [true, false]): static
     {
-        $this->connect = $connect;
+        $this->fill = $fill;
 
         return $this;
     }
@@ -265,11 +317,11 @@ class Slider extends Field
     }
 
     /**
-     * @return bool | string | array<bool>
+     * @return ?array<bool>
      */
-    public function getConnect(): bool | string | array
+    public function getFill(): ?array
     {
-        return $this->evaluate($this->connect);
+        return $this->evaluate($this->fill);
     }
 
     public function isVertical(): bool
@@ -279,7 +331,7 @@ class Slider extends Field
 
     public function isRtl(): bool
     {
-        return (bool) ($this->evaluate($this->isRtl) ?? (__('filament-panels::layout.direction') === 'rtl'));
+        return (bool) ($this->evaluate($this->isRtl) ?? ($this->isVertical() || (__('filament-panels::layout.direction') === 'rtl')));
     }
 
     public function getBehavior(): ?string
@@ -419,5 +471,10 @@ class Slider extends Field
         return [
             app(SliderStateCast::class, ['decimalPlaces' => $this->getDecimalPlaces()]),
         ];
+    }
+
+    public function isMultiple(): bool
+    {
+        return is_array($this->getRawState());
     }
 }

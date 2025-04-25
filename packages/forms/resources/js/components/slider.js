@@ -3,8 +3,8 @@ import noUiSlider from 'nouislider'
 export default function sliderFormComponent({
     arePipsStepped,
     behavior,
-    connect,
     decimalPlaces,
+    fill,
     isRtl,
     isVertical,
     limit,
@@ -29,12 +29,9 @@ export default function sliderFormComponent({
 
         init: function () {
             this.slider = noUiSlider.create(this.$el, {
-                range: {
-                    min: minValue,
-                    ...(nonLinearPoints ?? {}),
-                    max: maxValue,
-                },
-                start: Alpine.raw(this.state),
+                behavior,
+                direction: isRtl ? 'rtl' : 'ltr',
+                connect: fill,
                 format: {
                     from: (value) => value,
                     to: (value) =>
@@ -42,25 +39,28 @@ export default function sliderFormComponent({
                             ? +value.toFixed(decimalPlaces)
                             : value,
                 },
-                step,
-                margin,
                 limit,
-                padding,
-                connect,
-                direction: isRtl ? 'rtl' : 'ltr',
+                margin,
                 orientation: isVertical ? 'vertical' : 'horizontal',
-                behavior,
-                tooltips,
+                padding,
                 pips: pipsMode
                     ? {
-                          mode: pipsMode,
                           density: pipsDensity ?? 10,
                           filter: pipsFilter,
                           format: pipsFormatter,
-                          values: pipsValues,
+                          mode: pipsMode,
                           stepped: arePipsStepped,
+                          values: pipsValues,
                       }
                     : null,
+                range: {
+                    min: minValue,
+                    ...(nonLinearPoints ?? {}),
+                    max: maxValue,
+                },
+                start: Alpine.raw(this.state),
+                step,
+                tooltips,
             })
 
             this.slider.on('change', (values) => {

@@ -1,202 +1,56 @@
 ---
 title: Slider
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
-The slider component allows you to select a value from a range of values. The component uses the [noUiSlider library](https://refreshless.com/nouislider/).
+The slider component allows you to drag a handle across a track to select one or more numeric values:
+
+```php
+use Filament\Forms\Components\Slider;
+
+Slider::make('slider')
+```
 
 <AutoScreenshot name="forms/fields/slider/simple" alt="Slider" version="4.x" />
 
+The [noUiSlider](https://refreshless.com/nouislider) package is used for this component, and much of its API is based upon that library.
 
-## Range
+If you're saving multiple slider values using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
-All values on the slider are part of a range. The range has a minimum and maximum value. By default, the slider has a range of 0 to 100. This can be changed using the `range()` method:
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model
+{
+    protected $casts = [
+        'slider' => 'array',
+    ];
+
+    // ...
+}
+```
+
+<Aside variant="warning">
+    Due to their nature, slider fields can never be empty. The value of the field can never be `null` or an empty array. If a slider field is empty, the user will not have a handle to drag across the track.
+
+    Because of this, slider fields have a default value set out of the box, which is set to the minimum value allowed in the [range](#controlling-the-range-of-the-slider) of the slider. The default value is used when a form is empty, for example on the Create page of a resource. To learn more about default values, check out the [`default()` documentation](overview#setting-the-default-value-of-a-field).
+</Aside>
+
+## Controlling the range of the slider
+
+The minimum and maximum values that can be selected by the slider are 0 and 100 by default. You can adjust these with the `range()` method:
 
 ```php
 use Filament\Forms\Components\Slider;
 
 Slider::make('slider')
-    ->range(['min' => 0, 'max' => 300]),
+    ->range(minValue: 40, maxValue: 80)
 ```
 
-## Pips
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `range()` method also accepts functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-Pips allows the generation of points along the slider by injecting Javascript code into the slider component:
-
-```php
-use Filament\Forms\Components\Slider;
-
-Slider::make('slider')
-    ->pips(RawJs::make(<<<'JS'
-        {
-            mode: 'range',
-            density: 5,
-        }
-    JS))
-]);
-```
-
-<AutoScreenshot name="forms/fields/slider/pips" alt="Slider" version="4.x" />
-
-## Multiple Handles
-
-The number of handles can be set using the `start()` method. This option accepts an array of initial handle positions. A handle is created for every provided value.
-
-```php
-use Filament\Forms\Components\Slider;
-
-Slider::make('slider')
-    ->connect(true)
-    ->pips(RawJs::make(<<<'JS'
-        {
-            mode: 'range',
-            density: 5,
-        }
-    JS))
-    ->start([50, 150])
-    ->range(['min' => 0, 'max' => 200]),
-```
-
-<AutoScreenshot name="forms/fields/slider/increased" alt="Slider" version="4.x" />
-
-## Connect
-
-The `connect()` method is used to control the bar between the handles or the edges of the slider.
-```php
-use Filament\Forms\Components\Slider;
-
-Slider::make('slider')
-    ->connect(true)
-    ->start([10, 100])
-    ->range(['min' => 0, 'max' => 200]),
-```
-
-## Margin
-
-The `margin()` method sets the minimum distance between the handles:
-```php
-use Filament\Forms\Components\Slider;
-
-Slider::make('slider')
-    ->connect(true)
-    ->step(1)
-    ->start([10, 50])
-    ->margin(90)
-    ->range(['min' => 0, 'max' => 200]),
-```
-
-## Limit
-
-The `limit()` method limits the maximum distance between the handles:
-
-```php
-use Filament\Forms\Components\Slider;
-
-Slider::make('slider')
-    ->connect(true)
-    ->step(1)
-    ->start([10, 50])
-    ->limit(90)
-    ->range(['min' => 0, 'max' => 200]),
-```
-In order to use this method you need at least 2 handles.
-
-## Padding
-
-The `padding()` method limits how close to the slider edges handles can be:
-
-```php
-use Filament\Forms\Components\Slider;
-
-Slider::make('slider')
-    ->start([20, 80])
-    ->padding([10,15])
-    ->range(['min' => 0, 'max' => 100]),
-```
-
-## Step
-
-You can add steps to the slider, which determines the amount the slider changes on movement, allowing it to "snap" into values. This can enabled using the `step()` method:
-
-```php
-use Filament\Forms\Components\Slider;
-
-Slider::make('slider')
-    ->step(1),
-```
-
-## Orientation
-
-The orientation of the slider can be set to `horizontal` or `vertical`:
-
-```php
-use Filament\Forms\Components\Slider;use Filament\Forms\Components\Slider\Enums\SliderOrientation;
-
-Slider::make('slider')
-    ->orientation(SliderOrientation::Vertical),
-```
-
-## Direction
-
-The direction of the slider can be set to `ltr` or `rtl`:
-
-```php
-use Filament\Forms\Components\Slider;use Filament\Forms\Components\Slider\Enums\SliderDirection;
-
-Slider::make('slider')
-    ->direction(SliderDirection::LTR),
-```
-
-## Tooltips
-
-You can add and even format tooltips to the slider handles:
-
-<AutoScreenshot name="forms/fields/slider/tooltips" alt="Slider" version="4.x" />
-
-```php
-use Filament\Forms\Components\Slider;
-
-Slider::make('slider')
-    ->connect(true)
-    ->tooltips(true)
-    ->format(RawJs::make(<<<'JS'
-        wNumb({decimals: 1})
-    JS))
-    ->start([50, 150])
-    ->range(['min' => 0, 'max' => 200]),
-```
-
-If you would like to use Aria format for the tooltips, you should use the `ariaFormat()` method:
-
-```php
-use Filament\Forms\Components\Slider;
-
-Slider::make('slider')
-    ->connect(true)
-    ->tooltips(true)
-    ->ariaFormat(RawJs::make(<<<'JS'
-        wNumb({decimals: 3})
-    JS))
-    ->start([50, 150])
-    ->range(['min' => 0, 'max' => 200]),
-```
-
-## Slider behavior
-
-The Slider component offers several ways to handle user interaction. The range can be made draggable, or handles can move to tapped positions. All these effects are optional, and can be enabled by adding their keyword to the behavior option.
-
-The slider handle can be `tapped`, `dragged`, `fixed` etc. The slider behavior is defined by `Sliderbehavior::Drag`,`Sliderbehavior::DragAll`,`Sliderbehavior::Tap`,`Sliderbehavior::Fixed`,`Sliderbehavior::Snap`,`Sliderbehavior::Unconstrained`,`Sliderbehavior::InvertConnects` and `Sliderbehavior::None`.
-
-```php
-use Filament\Forms\Components\Slider;use Filament\Forms\Components\Slider\Enums\Behavior;
-
-Slider::make('slider')
-    ->behavior([Behavior::Drag]),
-```
-
-## Advanced
-
-Show slider value live in the hint (WIP)
+<AutoScreenshot name="forms/fields/slider/range" alt="Slider with a customized range" version="4.x" />

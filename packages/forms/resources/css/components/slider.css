@@ -22,13 +22,17 @@
         @apply rounded-md border-0 bg-white text-gray-950 shadow-sm ring-1 ring-gray-950/10 dark:bg-gray-800 dark:text-white dark:ring-white/20;
     }
 
-    &.fi-fo-slider-vertical {
-        @apply mt-4 h-40;
-    }
-
     & .noUi-pips {
         & .noUi-value {
             @apply text-gray-950 dark:text-white;
+        }
+    }
+
+    &.fi-fo-slider-vertical {
+        @apply mt-4 h-40;
+
+        &.fi-fo-slider-has-tooltips {
+            @apply ms-10;
         }
     }
 

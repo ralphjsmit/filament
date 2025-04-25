@@ -11,8 +11,8 @@
         x-data="sliderFormComponent({
                     arePipsStepped: @js($arePipsStepped()),
                     behavior: @js($getBehavior()),
-                    connect: @js($getConnect()),
                     decimalPlaces: @js($getDecimalPlaces()),
+                    fill: @js($getFill()),
                     isRtl: @js($isRtl()),
                     isVertical: @js($isVertical),
                     limit: @js($getLimit()),
