@@ -19,6 +19,10 @@ import Disclosure from "@components/Disclosure.astro"
 
 ## Running the automated upgrade script
 
+<Aside variant="info">
+    The upgrade script is not a replacement for the upgrade guide. It handles many small changes that are not mentioned in the upgrade guide, but it does not handle all breaking changes. You should still read the [manual upgrade steps](#breaking-changes-that-must-be-handled-manually) to see what changes you need to make to your code.
+</Aside>
+
 The first set to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
 
 ```bash
@@ -26,6 +30,10 @@ composer require filament/upgrade:"^4.0" -W --dev
 
 vendor/bin/filament-v4
 ```
+
+<Aside variant="warning">
+    If installing the upgrade script fails, make sure that your PHPStan version is at least v2, or your Larastan version is at least v3. The script uses Rector v2, which requires PHPStan v2 or higher.
+</Aside>
 
 Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
 
