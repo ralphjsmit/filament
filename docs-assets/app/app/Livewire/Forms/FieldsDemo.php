@@ -1666,7 +1666,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Slider::make('sliderFill')
                             ->label('Slider')
-                            ->fill()
+                            ->fillTrack()
                             ->default(50),
                     ]),
                 Group::make()
@@ -1677,7 +1677,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Slider::make('sliderFillMultiple')
                             ->label('Slider')
-                            ->fill([false, true, false])
+                            ->fillTrack([false, true, false])
                             ->default([20, 70]),
                     ]),
                 Group::make()
@@ -1688,7 +1688,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Slider::make('sliderFillVertical')
                             ->label('Slider')
-                            ->fill()
+                            ->fillTrack()
                             ->vertical()
                             ->default(50),
                     ]),
@@ -1767,7 +1767,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         'class' => 'p-16 max-w-xl',
                     ])
                     ->schema([
-                        Slider::make('sliderPipsSteps')
+                        Slider::make('sliderPipsStepsDensity')
                             ->label('Slider')
                             ->step(10)
                             ->pips(PipsMode::Steps, density: 5)
@@ -1815,7 +1815,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         'class' => 'p-16 max-w-xl',
                     ])
                     ->schema([
-                        Slider::make('sliderPipsValues')
+                        Slider::make('sliderPipsValuesDensity')
                             ->label('Slider')
                             ->pips(PipsMode::Values, density: 5)
                             ->pipsValues([5, 15, 25, 35, 45, 55, 65, 75, 85, 95])

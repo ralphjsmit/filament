@@ -4,20 +4,20 @@ export default function sliderFormComponent({
     arePipsStepped,
     behavior,
     decimalPlaces,
-    fill,
+    fillTrack,
     isRtl,
     isVertical,
-    limit,
-    margin,
+    maxDifference,
+    minDifference,
     maxValue,
     minValue,
     nonLinearPoints,
-    padding,
     pipsDensity,
     pipsFilter,
     pipsFormatter,
     pipsMode,
     pipsValues,
+    rangePadding,
     state,
     step,
     tooltips,
@@ -29,9 +29,9 @@ export default function sliderFormComponent({
 
         init: function () {
             this.slider = noUiSlider.create(this.$el, {
-                behavior,
+                behaviour: behavior,
                 direction: isRtl ? 'rtl' : 'ltr',
-                connect: fill,
+                connect: fillTrack,
                 format: {
                     from: (value) => value,
                     to: (value) =>
@@ -39,10 +39,10 @@ export default function sliderFormComponent({
                             ? +value.toFixed(decimalPlaces)
                             : value,
                 },
-                limit,
-                margin,
+                limit: maxDifference,
+                margin: minDifference,
                 orientation: isVertical ? 'vertical' : 'horizontal',
-                padding,
+                padding: rangePadding,
                 pips: pipsMode
                     ? {
                           density: pipsDensity ?? 10,
