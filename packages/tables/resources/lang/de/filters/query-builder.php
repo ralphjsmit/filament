@@ -79,13 +79,13 @@ return [
             'is_after' => [
 
                 'label' => [
-                    'direct' => 'nach',
-                    'inverse' => 'vor',
+                    'direct' => 'ist nach',
+                    'inverse' => 'ist nicht nach',
                 ],
 
                 'summary' => [
                     'direct' => ':attribute ist nach :date',
-                    'inverse' => ':attribute ist vor :date',
+                    'inverse' => ':attribute ist nicht nach :date',
                 ],
 
             ],
@@ -94,12 +94,12 @@ return [
 
                 'label' => [
                     'direct' => 'ist vor',
-                    'inverse' => 'ist nach',
+                    'inverse' => 'ist nicht vor',
                 ],
 
                 'summary' => [
                     'direct' => ':attribute ist vor :date',
-                    'inverse' => ':attribute ist nach :date',
+                    'inverse' => ':attribute ist nicht vor :date',
                 ],
 
             ],
