@@ -19,7 +19,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->userMenuItems([
-            Action::make()
+            Action::make('navigateToSettings')
                 ->label('Settings')
                 ->url(fn (): string => Settings::getUrl())
                 ->icon('heroicon-o-cog-6-tooth'),
