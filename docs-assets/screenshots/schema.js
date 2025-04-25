@@ -1186,6 +1186,222 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/slider/simple': {
+        url: 'forms/fields',
+        selector: '#slider',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/range': {
+        url: 'forms/fields',
+        selector: '#sliderRange',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/multiple': {
+        url: 'forms/fields',
+        selector: '#sliderMultiple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/vertical': {
+        url: 'forms/fields',
+        selector: '#sliderVertical',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/tooltips': {
+        url: 'forms/fields',
+        selector: '#sliderTooltips',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/tooltips-multiple': {
+        url: 'forms/fields',
+        selector: '#sliderTooltipsMultiple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/tooltips-vertical': {
+        url: 'forms/fields',
+        selector: '#sliderTooltipsVertical',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/tooltips-formatting': {
+        url: 'forms/fields',
+        selector: '#sliderTooltipsFormatting',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/fill': {
+        url: 'forms/fields',
+        selector: '#sliderFill',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/fill-multiple': {
+        url: 'forms/fields',
+        selector: '#sliderFillMultiple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/fill-vertical': {
+        url: 'forms/fields',
+        selector: '#sliderFillVertical',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips': {
+        url: 'forms/fields',
+        selector: '#sliderPips',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-multiple': {
+        url: 'forms/fields',
+        selector: '#sliderPipsMultiple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-vertical': {
+        url: 'forms/fields',
+        selector: '#sliderPipsVertical',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-density': {
+        url: 'forms/fields',
+        selector: '#sliderPipsDensity',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-formatting': {
+        url: 'forms/fields',
+        selector: '#sliderPipsFormatting',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-steps': {
+        url: 'forms/fields',
+        selector: '#sliderPipsSteps',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-steps-density': {
+        url: 'forms/fields',
+        selector: '#sliderPipsStepsDensity',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-positions': {
+        url: 'forms/fields',
+        selector: '#sliderPipsPositions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-count': {
+        url: 'forms/fields',
+        selector: '#sliderPipsCount',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-values': {
+        url: 'forms/fields',
+        selector: '#sliderPipsValues',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-values-density': {
+        url: 'forms/fields',
+        selector: '#sliderPipsValuesDensity',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/pips-filter': {
+        url: 'forms/fields',
+        selector: '#sliderPipsFilter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/slider/non-linear': {
+        url: 'forms/fields',
+        selector: '#sliderNonLinear',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/actions/suffix': {
         url: 'forms/fields',
         selector: '#suffixAction',
