@@ -19,8 +19,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->userMenuItems([
-            Action::make()
-                ->label('Settings')
+            Action::make('settings')
                 ->url(fn (): string => Settings::getUrl())
                 ->icon('heroicon-o-cog-6-tooth'),
             // ...
@@ -91,8 +90,7 @@ You can send a `POST` HTTP request from a user menu item by passing a URL to the
 ```php
 use Filament\Actions\Action;
 
-Action::make()
-    ->label('Lock session')
+Action::make('lockSession')
     ->url(fn (): string => route('lock-session'))
     ->postToUrl()
 ```
