@@ -435,13 +435,14 @@ Action::make('settings')
 
 ### Sending a `POST` HTTP request from a tenant menu item
 
-You can send a `POST` HTTP request from a tenant menu item by passing a URL to the `postAction()` method:
+You can send a `POST` HTTP request from a tenant menu item by passing a URL to the `url()` method, and also using `postToUrl()`:
 
 ```php
 use Filament\Actions\Action;
 
 Action::make('lockSession')
-    ->postAction(fn (): string => route('lock-session'))
+    ->url(fn (): string => route('lock-session'))
+    ->postToUrl()
 ```
 
 ### Hiding the tenant menu
