@@ -20,7 +20,6 @@ public function panel(Panel $panel): Panel
         // ...
         ->userMenuItems([
             Action::make('settings')
-                ->label('Settings')
                 ->url(fn (): string => Settings::getUrl())
                 ->icon('heroicon-o-cog-6-tooth'),
             // ...
