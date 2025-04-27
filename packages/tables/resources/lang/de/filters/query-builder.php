@@ -33,7 +33,7 @@ return [
 
     ],
 
-    'no_rules' => '(Keine Bedinungen)',
+    'no_rules' => '(Keine Bedingungen)',
 
     'item_separators' => [
         'and' => 'UND',
@@ -107,7 +107,7 @@ return [
             'is_date' => [
 
                 'label' => [
-                    'direct' => 'ist Datum',
+                    'direct' => 'ist ein Datum',
                     'inverse' => 'ist kein Datum',
                 ],
 
