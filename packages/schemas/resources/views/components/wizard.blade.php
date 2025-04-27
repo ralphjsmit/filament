@@ -23,7 +23,6 @@
             })"
     x-on:next-wizard-step.window="if ($event.detail.key === @js($key)) goToNextStep()"
     wire:ignore.self
-    x-cloak
     {{
         $attributes
             ->merge([
@@ -54,6 +53,7 @@
             aria-label="{{ $label }}"
         @endif
         role="list"
+        x-cloak
         x-ref="header"
         class="fi-sc-wizard-header"
     >
@@ -150,7 +150,7 @@
         {{ $step }}
     @endforeach
 
-    <div class="fi-sc-wizard-footer">
+    <div x-cloak class="fi-sc-wizard-footer">
         <div
             x-cloak
             @if (! $previousAction->isDisabled())
