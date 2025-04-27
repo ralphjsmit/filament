@@ -6,17 +6,17 @@ use Filament\Tests\TestCase;
 uses(TestCase::class);
 
 it('will run `setUp()` for new objects', function (): void {
-    $component = new ChildComponent();
+    $component = new ChildComponent;
     $component->configure();
 
     expect($component->id)->toBe('child');
 });
 
 it('will run `configureUsing()` callbacks for new objects', function (): void {
-    ChildComponent::configureUsing(function (ChildComponent $component) {
+    ChildComponent::configureUsing(function (ChildComponent $component): void {
         $component->id = 'child-configured';
-    }, during: function () {
-        $component = new ChildComponent();
+    }, during: function (): void {
+        $component = new ChildComponent;
         $component->configure();
 
         expect($component->id)->toBe('child-configured');
@@ -24,11 +24,11 @@ it('will run `configureUsing()` callbacks for new objects', function (): void {
 });
 
 it('will run `configureUsing()` callbacks registered for parents when a child object is instantiated', function (): void {
-    ParentComponent::configureUsing(function (ParentComponent $component) {
+    ParentComponent::configureUsing(function (ParentComponent $component): void {
         $component->id = 'parent-configured';
         $component->configuredFrom = 'parent';
-    }, during: function () {
-        $component = new ChildComponent();
+    }, during: function (): void {
+        $component = new ChildComponent;
         $component->configure();
 
         expect($component->id)->toBe('child');
@@ -37,27 +37,27 @@ it('will run `configureUsing()` callbacks registered for parents when a child ob
 });
 
 it('will run `configureUsing()` callbacks registered for parents before their children', function (): void {
-    GrandparentComponent::configureUsing(function (GrandparentComponent $component) {
+    GrandparentComponent::configureUsing(function (GrandparentComponent $component): void {
         $component->id = 'grandparent-configured';
         $component->configuredFrom = 'grandparent';
-    }, during: function () {
-        ParentComponent::configureUsing(function (ParentComponent $component) {
+    }, during: function (): void {
+        ParentComponent::configureUsing(function (ParentComponent $component): void {
             $component->id = 'parent-configured';
             $component->configuredFrom = 'parent';
-        }, during: function () {
-            $component = new GrandParentComponent();
+        }, during: function (): void {
+            $component = new GrandParentComponent;
             $component->configure();
 
             expect($component->id)->toBe('grandparent-configured');
             expect($component->configuredFrom)->toBe('grandparent');
 
-            $component = new ParentComponent();
+            $component = new ParentComponent;
             $component->configure();
 
             expect($component->id)->toBe('parent-configured');
             expect($component->configuredFrom)->toBe('parent');
 
-            $component = new ChildComponent();
+            $component = new ChildComponent;
             $component->configure();
 
             expect($component->id)->toBe('child');
@@ -65,27 +65,27 @@ it('will run `configureUsing()` callbacks registered for parents before their ch
         });
     });
 
-    ParentComponent::configureUsing(function (ParentComponent $component) {
+    ParentComponent::configureUsing(function (ParentComponent $component): void {
         $component->id = 'parent-configured';
         $component->configuredFrom = 'parent';
-    }, during: function () {
-        GrandparentComponent::configureUsing(function (GrandparentComponent $component) {
+    }, during: function (): void {
+        GrandparentComponent::configureUsing(function (GrandparentComponent $component): void {
             $component->id = 'grandparent-configured';
             $component->configuredFrom = 'grandparent';
-        }, during: function () {
-            $component = new GrandParentComponent();
+        }, during: function (): void {
+            $component = new GrandParentComponent;
             $component->configure();
 
             expect($component->id)->toBe('grandparent-configured');
             expect($component->configuredFrom)->toBe('grandparent');
 
-            $component = new ParentComponent();
+            $component = new ParentComponent;
             $component->configure();
 
             expect($component->id)->toBe('parent-configured');
             expect($component->configuredFrom)->toBe('parent');
 
-            $component = new ChildComponent();
+            $component = new ChildComponent;
             $component->configure();
 
             expect($component->id)->toBe('child');
