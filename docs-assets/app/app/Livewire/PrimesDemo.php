@@ -48,8 +48,6 @@ class PrimesDemo extends Component implements HasSchemas
                                     ->color('neutral'),
                                 UnorderedList::make(fn (): array => array_map(
                                     fn (string $recoveryCode): \Filament\Schemas\Components\Component => Text::make($recoveryCode)
-                                        ->copyable()
-                                        ->copyMessage('Copied')
                                         ->fontFamily(FontFamily::Mono)
                                         ->size(TextSize::ExtraSmall)
                                         ->color('neutral'),
