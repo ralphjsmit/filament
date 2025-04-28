@@ -54,7 +54,6 @@ class SetUpGoogleTwoFactorAuthenticationAction
             ->modalWidth(Width::Large)
             ->closeModalByClickingAway(false)
             ->closeModalByEscaping(false)
-            ->modalCloseButton(false)
             ->modalIcon(Heroicon::OutlinedLockClosed)
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/google-two-factor/actions/set-up.modal.heading'))
