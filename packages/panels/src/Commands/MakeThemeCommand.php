@@ -25,12 +25,12 @@ class MakeThemeCommand extends Command
     {
         $packageJson = file_get_contents(base_path('package.json')) ?: '';
 
-        $isTailwindV4Installed = str_contains($packageJson, '"@tailwindcss/postcss": "^4')
+        $isTailwindV4Installed = (str_contains($packageJson, '"tailwindcss": "^4') || str_contains($packageJson, '"tailwindcss": "4')) && (
+            str_contains($packageJson, '"@tailwindcss/postcss": "^4')
             || str_contains($packageJson, '"@tailwindcss/postcss": "4')
             || str_contains($packageJson, '"@tailwindcss/vite": "^4')
             || str_contains($packageJson, '"@tailwindcss/vite": "4')
-            || str_contains($packageJson, '"tailwindcss": "^4')
-            || str_contains($packageJson, '"tailwindcss": "4');
+        );
 
         $pm = $this->option('pm') ?? 'npm';
 
