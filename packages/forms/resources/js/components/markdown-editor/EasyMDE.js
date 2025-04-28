@@ -2,6 +2,7 @@
  * Source: https://github.com/Ionaru/easy-markdown-editor/blob/master/src/js/easymde.js
  * Changes:
  * - Removal of line 1 to 15, awaiting https://github.com/Ionaru/easy-markdown-editor/pull/263
+ * - Added `moveToNextField()` and `moveToPreviousField()` functions, and changed `Tab` and `Shift-Tab` key bindings to only indent the content when there is a selection in the editor. See https://github.com/filamentphp/filament/pull/16144.
  */
 
 // Some variables
