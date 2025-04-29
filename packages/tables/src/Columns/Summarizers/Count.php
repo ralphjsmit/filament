@@ -47,11 +47,12 @@ class Count extends Summarizer
             $columnState = $column->getState();
             $color = json_encode($column->getColor($columnState));
             $icon = $column->getIcon($columnState);
+            $iconKey = serialize($icon);
 
             $state[$color] ??= [];
-            $state[$color][$icon] ??= 0;
+            $state[$color][$iconKey] ??= 0;
 
-            $state[$color][$icon] += $query->clone()->where($attribute, $value)->count();
+            $state[$color][$iconKey] += $query->clone()->where($attribute, $value)->count();
         }
 
         return $state;
@@ -136,7 +137,7 @@ class Count extends Summarizer
                                     </span>
 
                                     <?= generate_icon_html(
-                                        $icon,
+                                        unserialize($icon),
                                         attributes: (new ComponentAttributeBag)->color(IconComponent::class, $color),
                                         size: IconSize::Large,
                                     )->toHtml() ?>

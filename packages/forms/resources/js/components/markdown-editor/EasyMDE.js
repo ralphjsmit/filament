@@ -2345,7 +2345,11 @@ EasyMDE.prototype.render = function (el) {
         if (form) {
             const elements = Array.from(form.elements)
             const index = elements.indexOf(cm.getInputField())
-            if (index !== -1 && index + 1 < elements.length && elements[index + 1]) {
+            if (
+                index !== -1 &&
+                index + 1 < elements.length &&
+                elements[index + 1]
+            ) {
                 elements[index + 1].focus()
             }
         }
