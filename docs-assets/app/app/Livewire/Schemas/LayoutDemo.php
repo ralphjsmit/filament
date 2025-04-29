@@ -570,7 +570,7 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->columns(3),
                     ]),
                 Group::make()
-                    ->id('split')
+                    ->id('flex')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
@@ -588,7 +588,7 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                     ->default(true),
                                 Toggle::make('is_featured'),
                             ])->grow(false),
-                        ])->statePath('split'),
+                        ])->statePath('flex'),
                     ]),
                 Group::make()
                     ->id('independentActions')
