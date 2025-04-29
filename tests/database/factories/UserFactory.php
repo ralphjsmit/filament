@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Database\Factories;
 
-use Filament\Auth\MultiFactor\EmailCode\EmailCodeAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\GoogleTwoFactor\GoogleTwoFactorAuthentication;
 use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,12 +24,12 @@ class UserFactory extends Factory
         ];
     }
 
-    public function hasEmailCodeAuthentication(): self
+    public function hasEmailAuthentication(): self
     {
-        $emailCodeAuthentication = EmailCodeAuthentication::make();
+        $emailAuthentication = EmailAuthentication::make();
 
         return $this->state(fn (): array => [
-            'email_code_authentication_secret' => $emailCodeAuthentication->generateSecret(),
+            'email_authentication_secret' => $emailAuthentication->generateSecret(),
         ]);
     }
 

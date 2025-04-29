@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Fixtures\Providers;
 
-use Filament\Auth\MultiFactor\EmailCode\EmailCodeAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\GoogleTwoFactor\GoogleTwoFactorAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -40,7 +40,7 @@ class SlugsPanelProvider extends PanelProvider
             ->emailVerificationRouteSlug('verify-test')
             ->emailVerificationRoutePrefix('email-verification-test')
             ->multiFactorAuthentication([
-                EmailCodeAuthentication::make(),
+                EmailAuthentication::make(),
                 GoogleTwoFactorAuthentication::make(),
             ], isRequired: true)
             ->setUpRequiredMultiFactorAuthenticationRouteSlug('set-up-test')

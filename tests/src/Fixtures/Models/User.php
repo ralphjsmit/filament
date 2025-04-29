@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Fixtures\Models;
 
-use Filament\Auth\MultiFactor\EmailCode\Contracts\HasEmailCodeAuthentication;
+use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Auth\MultiFactor\GoogleTwoFactor\Contracts\HasGoogleTwoFactorAuthentication;
 use Filament\Auth\MultiFactor\GoogleTwoFactor\Contracts\HasGoogleTwoFactorAuthenticationRecovery;
 use Filament\Models\Contracts\FilamentUser;
@@ -18,7 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 
-class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthentication, HasGoogleTwoFactorAuthentication, HasGoogleTwoFactorAuthenticationRecovery, HasTenants, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasEmailAuthentication, HasGoogleTwoFactorAuthentication, HasGoogleTwoFactorAuthenticationRecovery, HasTenants, MustVerifyEmail
 {
     use HasFactory;
     use Notifiable;
@@ -30,7 +30,7 @@ class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthenti
         'remember_token',
         'google_two_factor_authentication_secret',
         'google_two_factor_authentication_recovery_codes',
-        'email_code_authentication_secret',
+        'email_authentication_secret',
     ];
 
     /**
@@ -41,12 +41,12 @@ class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthenti
         'email_verified_at' => 'datetime',
         'google_two_factor_authentication_secret' => 'encrypted',
         'google_two_factor_authentication_recovery_codes' => 'encrypted:array',
-        'email_code_authentication_secret' => 'encrypted',
+        'email_authentication_secret' => 'encrypted',
     ];
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($panel->getId(), ['admin', 'slugs', 'google-two-factor-authentication', 'email-code-authentication', 'required-multi-factor-authentication']);
+        return in_array($panel->getId(), ['admin', 'slugs', 'google-two-factor-authentication', 'email-authentication', 'required-multi-factor-authentication']);
     }
 
     public function posts(): HasMany
@@ -101,19 +101,19 @@ class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthenti
         return $this->email;
     }
 
-    public function hasEmailCodeAuthentication(): bool
+    public function hasEmailAuthentication(): bool
     {
-        return filled($this->email_code_authentication_secret);
+        return filled($this->email_authentication_secret);
     }
 
-    public function getEmailCodeAuthenticationSecret(): ?string
+    public function getEmailAuthenticationSecret(): ?string
     {
-        return $this->email_code_authentication_secret;
+        return $this->email_authentication_secret;
     }
 
-    public function saveEmailCodeAuthenticationSecret(?string $secret): void
+    public function saveEmailAuthenticationSecret(?string $secret): void
     {
-        $this->email_code_authentication_secret = $secret;
+        $this->email_authentication_secret = $secret;
         $this->save();
     }
 

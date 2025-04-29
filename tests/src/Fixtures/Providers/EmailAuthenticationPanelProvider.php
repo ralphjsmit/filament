@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Fixtures\Providers;
 
-use Filament\Auth\MultiFactor\EmailCode\EmailCodeAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -16,15 +16,15 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class EmailCodeAuthenticationPanelProvider extends PanelProvider
+class EmailAuthenticationPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('email-code-authentication')
-            ->path('email-code-authentication')
+            ->id('email-authentication')
+            ->path('email-authentication')
             ->login()
-            ->multiFactorAuthentication(EmailCodeAuthentication::make())
+            ->multiFactorAuthentication(EmailAuthentication::make())
             ->profile()
             ->resources([])
             ->pages([])

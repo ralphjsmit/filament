@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table): void {
             $table->after('password', function (Blueprint $table): void {
                 $table->json('json')->nullable();
-                $table->string('email_code_authentication_secret')->nullable();
+                $table->string('email_authentication_secret')->nullable();
                 $table->string('google_two_factor_authentication_secret')->nullable();
                 $table->text('google_two_factor_authentication_recovery_codes')->nullable();
             });
@@ -28,7 +28,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table): void {
             $table->dropColumn([
-                'email_code_authentication_secret',
+                'email_authentication_secret',
                 'google_two_factor_authentication_secret',
                 'google_two_factor_authentication_recovery_codes',
             ]);

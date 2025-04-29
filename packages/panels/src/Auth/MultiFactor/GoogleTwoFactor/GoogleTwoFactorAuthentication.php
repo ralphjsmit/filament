@@ -63,7 +63,7 @@ class GoogleTwoFactorAuthentication implements MultiFactorAuthenticationProvider
     public function isEnabled(Authenticatable $user): bool
     {
         if (! ($user instanceof HasGoogleTwoFactorAuthentication)) {
-            throw new Exception('The user model must implement the [' . HasGoogleTwoFactorAuthentication::class . '] interface to use email code authentication.');
+            throw new Exception('The user model must implement the [' . HasGoogleTwoFactorAuthentication::class . '] interface to use Google two-factor authentication.');
         }
 
         return $user->hasGoogleTwoFactorAuthentication();

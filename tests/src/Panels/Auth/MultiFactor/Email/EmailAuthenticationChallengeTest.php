@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Actions\Testing\TestAction;
-use Filament\Auth\MultiFactor\EmailCode\Notifications\VerifyEmailCodeAuthentication;
+use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
@@ -15,16 +15,16 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 beforeEach(function (): void {
-    Filament::setCurrentPanel('email-code-authentication');
+    Filament::setCurrentPanel('email-authentication');
 
     Notification::fake();
 });
 
 it('can render the challenge form after valid login credentials are successfully used', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     $livewire = livewire(Login::class)
@@ -42,20 +42,20 @@ it('can render the challenge form after valid login credentials are successfully
 
     $this->assertGuest();
 
-    Notification::assertSentTo($userToAuthenticate, VerifyEmailCodeAuthentication::class, function (VerifyEmailCodeAuthentication $notification) use ($emailCodeAuthentication, $userToAuthenticate): bool {
-        if ($notification->codeWindow !== $emailCodeAuthentication->getCodeWindow()) {
+    Notification::assertSentTo($userToAuthenticate, VerifyEmailAuthentication::class, function (VerifyEmailAuthentication $notification) use ($emailAuthentication, $userToAuthenticate): bool {
+        if ($notification->codeWindow !== $emailAuthentication->getCodeWindow()) {
             return false;
         }
 
-        return $notification->code === $emailCodeAuthentication->getCurrentCode($userToAuthenticate);
+        return $notification->code === $emailAuthentication->getCurrentCode($userToAuthenticate);
     });
 });
 
 it('will authenticate the user after a valid challenge code is used', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     livewire(Login::class)
@@ -67,8 +67,8 @@ it('will authenticate the user after a valid challenge code is used', function (
         ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
         ->assertNoRedirect()
         ->fillForm([
-            $emailCodeAuthentication->getId() => [
-                'code' => $emailCodeAuthentication->getCurrentCode($userToAuthenticate),
+            $emailAuthentication->getId() => [
+                'code' => $emailAuthentication->getCurrentCode($userToAuthenticate),
             ],
         ], 'multiFactorChallengeForm')
         ->call('authenticate')
@@ -81,10 +81,10 @@ it('will authenticate the user after a valid challenge code is used', function (
 it('can resend the code to the user', function (): void {
     $this->travelTo(now()->subMinute());
 
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     $livewire = livewire(Login::class)
@@ -94,24 +94,24 @@ it('can resend the code to the user', function (): void {
         ])
         ->call('authenticate');
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
     $this->travelBack();
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent("{$emailCodeAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+            ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 });
 
 it('can not resend the code to the user more than once per minute', function (): void {
     $this->travelTo(now()->subMinute());
 
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     $livewire = livewire(Login::class)
@@ -121,26 +121,26 @@ it('can not resend the code to the user more than once per minute', function ():
         ])
         ->call('authenticate');
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent("{$emailCodeAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+            ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
     $this->travelBack();
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent("{$emailCodeAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+            ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 });
 
 it('will not render the challenge form after invalid login credentials are used', function (): void {
     $userToAuthenticate = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     livewire(Login::class)
@@ -155,7 +155,7 @@ it('will not render the challenge form after invalid login credentials are used'
 
     $this->assertGuest();
 
-    Notification::assertNotSentTo($userToAuthenticate, VerifyEmailCodeAuthentication::class);
+    Notification::assertNotSentTo($userToAuthenticate, VerifyEmailAuthentication::class);
 });
 
 it('will not render the challenge form if a user does not have multi-factor authentication enabled', function (): void {
@@ -173,14 +173,14 @@ it('will not render the challenge form if a user does not have multi-factor auth
 
     $this->assertAuthenticatedAs($userToAuthenticate);
 
-    Notification::assertNotSentTo($userToAuthenticate, VerifyEmailCodeAuthentication::class);
+    Notification::assertNotSentTo($userToAuthenticate, VerifyEmailAuthentication::class);
 });
 
 it('will not authenticate the user when an invalid challenge code is used', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     livewire(Login::class)
@@ -192,15 +192,15 @@ it('will not authenticate the user when an invalid challenge code is used', func
         ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
         ->assertNoRedirect()
         ->fillForm([
-            $emailCodeAuthentication->getId() => [
-                'code' => ($emailCodeAuthentication->getCurrentCode($userToAuthenticate) === '000000')
+            $emailAuthentication->getId() => [
+                'code' => ($emailAuthentication->getCurrentCode($userToAuthenticate) === '000000')
                     ? '111111'
                     : '000000',
             ],
         ], 'multiFactorChallengeForm')
         ->call('authenticate')
         ->assertHasFormErrors([
-            "{$emailCodeAuthentication->getId()}.code",
+            "{$emailAuthentication->getId()}.code",
         ], 'multiFactorChallengeForm')
         ->assertNoRedirect();
 
@@ -208,10 +208,10 @@ it('will not authenticate the user when an invalid challenge code is used', func
 });
 
 test('challenge codes are required', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     livewire(Login::class)
@@ -223,13 +223,13 @@ test('challenge codes are required', function (): void {
         ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
         ->assertNoRedirect()
         ->fillForm([
-            $emailCodeAuthentication->getId() => [
+            $emailAuthentication->getId() => [
                 'code' => '',
             ],
         ], 'multiFactorChallengeForm')
         ->call('authenticate')
         ->assertHasFormErrors([
-            "{$emailCodeAuthentication->getId()}.code" => 'required',
+            "{$emailAuthentication->getId()}.code" => 'required',
         ], 'multiFactorChallengeForm')
         ->assertNoRedirect();
 
@@ -237,10 +237,10 @@ test('challenge codes are required', function (): void {
 });
 
 test('challenge codes must be numeric', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     livewire(Login::class)
@@ -252,13 +252,13 @@ test('challenge codes must be numeric', function (): void {
         ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
         ->assertNoRedirect()
         ->fillForm([
-            $emailCodeAuthentication->getId() => [
+            $emailAuthentication->getId() => [
                 'code' => Str::random(6),
             ],
         ], 'multiFactorChallengeForm')
         ->call('authenticate')
         ->assertHasFormErrors([
-            "{$emailCodeAuthentication->getId()}.code" => 'numeric',
+            "{$emailAuthentication->getId()}.code" => 'numeric',
         ], 'multiFactorChallengeForm')
         ->assertNoRedirect();
 
@@ -266,10 +266,10 @@ test('challenge codes must be numeric', function (): void {
 });
 
 test('challenge codes must be 6 digits', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     livewire(Login::class)
@@ -281,13 +281,13 @@ test('challenge codes must be 6 digits', function (): void {
         ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
         ->assertNoRedirect()
         ->fillForm([
-            $emailCodeAuthentication->getId() => [
-                'code' => Str::limit($emailCodeAuthentication->getCurrentCode($userToAuthenticate), limit: 5, end: ''),
+            $emailAuthentication->getId() => [
+                'code' => Str::limit($emailAuthentication->getCurrentCode($userToAuthenticate), limit: 5, end: ''),
             ],
         ], 'multiFactorChallengeForm')
         ->call('authenticate')
         ->assertHasFormErrors([
-            "{$emailCodeAuthentication->getId()}.code" => 'digits',
+            "{$emailAuthentication->getId()}.code" => 'digits',
         ], 'multiFactorChallengeForm')
         ->assertNoRedirect();
 

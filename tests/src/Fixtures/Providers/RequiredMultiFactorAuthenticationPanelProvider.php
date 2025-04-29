@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Fixtures\Providers;
 
-use Filament\Auth\MultiFactor\EmailCode\EmailCodeAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\GoogleTwoFactor\GoogleTwoFactorAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -27,7 +27,7 @@ class RequiredMultiFactorAuthenticationPanelProvider extends PanelProvider
             ->path('required-multi-factor-authentication')
             ->login()
             ->multiFactorAuthentication([
-                EmailCodeAuthentication::make(),
+                EmailAuthentication::make(),
                 GoogleTwoFactorAuthentication::make(),
             ], isRequired: true)
             ->profile()

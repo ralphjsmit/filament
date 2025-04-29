@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Actions\Testing\TestAction;
-use Filament\Auth\MultiFactor\EmailCode\Notifications\VerifyEmailCodeAuthentication;
+use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
@@ -16,7 +16,7 @@ use function Pest\Laravel\actingAs;
 uses(TestCase::class);
 
 beforeEach(function (): void {
-    Filament::setCurrentPanel('email-code-authentication');
+    Filament::setCurrentPanel('email-authentication');
 
     actingAs(User::factory()->create());
 
@@ -24,12 +24,12 @@ beforeEach(function (): void {
 });
 
 it('can generate a secret when the action is mounted', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
+        ->mountAction(TestAction::make('setUpEmailAuthentication')
             ->schemaComponent('email_code', schema: 'content'))
-        ->assertActionMounted(TestAction::make('setUpEmailCodeAuthentication')
+        ->assertActionMounted(TestAction::make('setUpEmailAuthentication')
             ->schemaComponent('email_code', schema: 'content')
             ->arguments(function (array $actualArguments): bool {
                 $encrypted = decrypt($actualArguments['encrypted']);
@@ -48,42 +48,42 @@ it('can generate a secret when the action is mounted', function (): void {
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];
 
-    Notification::assertSentTo(auth()->user(), VerifyEmailCodeAuthentication::class, function (VerifyEmailCodeAuthentication $notification) use ($emailCodeAuthentication, $secret): bool {
-        if ($notification->codeWindow !== $emailCodeAuthentication->getCodeWindow()) {
+    Notification::assertSentTo(auth()->user(), VerifyEmailAuthentication::class, function (VerifyEmailAuthentication $notification) use ($emailAuthentication, $secret): bool {
+        if ($notification->codeWindow !== $emailAuthentication->getCodeWindow()) {
             return false;
         }
 
-        return $notification->code === $emailCodeAuthentication->getCurrentCode(auth()->user(), $secret);
+        return $notification->code === $emailAuthentication->getCurrentCode(auth()->user(), $secret);
     });
 });
 
 it('can save the secret to the user when the action is submitted', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
 
-    expect($user->hasEmailCodeAuthentication())
+    expect($user->hasEmailAuthentication())
         ->toBeFalse();
 
-    expect($user->getEmailCodeAuthenticationSecret())
+    expect($user->getEmailAuthenticationSecret())
         ->toBeEmpty();
 
     $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
+        ->mountAction(TestAction::make('setUpEmailAuthentication')
             ->schemaComponent('email_code', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];
 
     $livewire
-        ->fillForm(['code' => $emailCodeAuthentication->getCurrentCode($user, $secret)])
+        ->fillForm(['code' => $emailAuthentication->getCurrentCode($user, $secret)])
         ->callMountedAction()
         ->assertHasNoFormErrors();
 
-    expect($user->hasEmailCodeAuthentication())
+    expect($user->hasEmailAuthentication())
         ->toBeTrue();
 
-    expect($user->getEmailCodeAuthenticationSecret())
+    expect($user->getEmailAuthenticationSecret())
         ->toBe($secret);
 });
 
@@ -91,10 +91,10 @@ it('can resend the code to the user', function (): void {
     $this->travelTo(now()->subMinute());
 
     $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
+        ->mountAction(TestAction::make('setUpEmailAuthentication')
             ->schemaComponent('email_code', schema: 'content'));
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
     $this->travelBack();
 
@@ -102,23 +102,23 @@ it('can resend the code to the user', function (): void {
         ->callAction(TestAction::make('resend')
             ->schemaComponent('code'));
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 });
 
 it('can resend the code to the user more than once per minute', function (): void {
     $this->travelTo(now()->subMinute());
 
     $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
+        ->mountAction(TestAction::make('setUpEmailAuthentication')
             ->schemaComponent('email_code', schema: 'content'));
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
     $livewire
         ->callAction(TestAction::make('resend')
             ->schemaComponent('code'));
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 1);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
     $this->travelBack();
 
@@ -126,22 +126,22 @@ it('can resend the code to the user more than once per minute', function (): voi
         ->callAction(TestAction::make('resend')
             ->schemaComponent('code'));
 
-    Notification::assertSentTimes(VerifyEmailCodeAuthentication::class, 2);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 });
 
 it('will not set up authentication when an invalid code is used', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
 
-    expect($user->hasEmailCodeAuthentication())
+    expect($user->hasEmailAuthentication())
         ->toBeFalse();
 
-    expect($user->getEmailCodeAuthenticationSecret())
+    expect($user->getEmailAuthenticationSecret())
         ->toBeEmpty();
 
     $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
+        ->mountAction(TestAction::make('setUpEmailAuthentication')
             ->schemaComponent('email_code', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
@@ -149,29 +149,29 @@ it('will not set up authentication when an invalid code is used', function (): v
 
     $livewire
         ->fillForm([
-            'code' => ($emailCodeAuthentication->getCurrentCode($user, $secret) === '000000') ? '111111' : '000000',
+            'code' => ($emailAuthentication->getCurrentCode($user, $secret) === '000000') ? '111111' : '000000',
         ])
         ->callMountedAction()
         ->assertHasFormErrors();
 
-    expect($user->hasEmailCodeAuthentication())
+    expect($user->hasEmailAuthentication())
         ->toBeFalse();
 
-    expect($user->getEmailCodeAuthenticationSecret())
+    expect($user->getEmailAuthenticationSecret())
         ->toBeEmpty();
 });
 
 test('codes are required', function (): void {
     $user = auth()->user();
 
-    expect($user->hasEmailCodeAuthentication())
+    expect($user->hasEmailAuthentication())
         ->toBeFalse();
 
-    expect($user->getEmailCodeAuthenticationSecret())
+    expect($user->getEmailAuthenticationSecret())
         ->toBeEmpty();
 
     livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
+        ->mountAction(TestAction::make('setUpEmailAuthentication')
             ->schemaComponent('email_code', schema: 'content'))
         ->fillForm(['code' => ''])
         ->callMountedAction()
@@ -179,26 +179,26 @@ test('codes are required', function (): void {
             'code' => 'required',
         ]);
 
-    expect($user->hasEmailCodeAuthentication())
+    expect($user->hasEmailAuthentication())
         ->toBeFalse();
 
-    expect($user->getEmailCodeAuthenticationSecret())
+    expect($user->getEmailAuthenticationSecret())
         ->toBeEmpty();
 });
 
 test('codes must be 6 digits', function (): void {
-    $emailCodeAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
 
-    expect($user->hasEmailCodeAuthentication())
+    expect($user->hasEmailAuthentication())
         ->toBeFalse();
 
-    expect($user->getEmailCodeAuthenticationSecret())
+    expect($user->getEmailAuthenticationSecret())
         ->toBeEmpty();
 
     $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailCodeAuthentication')
+        ->mountAction(TestAction::make('setUpEmailAuthentication')
             ->schemaComponent('email_code', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
@@ -206,16 +206,16 @@ test('codes must be 6 digits', function (): void {
 
     $livewire
         ->fillForm([
-            'code' => Str::limit($emailCodeAuthentication->getCurrentCode($user, $secret), limit: 5, end: ''),
+            'code' => Str::limit($emailAuthentication->getCurrentCode($user, $secret), limit: 5, end: ''),
         ])
         ->callMountedAction()
         ->assertHasFormErrors([
             'code' => 'digits',
         ]);
 
-    expect($user->hasEmailCodeAuthentication())
+    expect($user->hasEmailAuthentication())
         ->toBeFalse();
 
-    expect($user->getEmailCodeAuthenticationSecret())
+    expect($user->getEmailAuthenticationSecret())
         ->toBeEmpty();
 });

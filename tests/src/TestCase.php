@@ -21,7 +21,7 @@ use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Providers\AdminPanelProvider;
 use Filament\Tests\Fixtures\Providers\CustomPanelProvider;
 use Filament\Tests\Fixtures\Providers\DomainTenancyPanelProvider;
-use Filament\Tests\Fixtures\Providers\EmailCodeAuthenticationPanelProvider;
+use Filament\Tests\Fixtures\Providers\EmailAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\Fixtures\Providers\SingleDomainPanel;
 use Filament\Tests\Fixtures\Providers\GoogleTwoFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\MultiDomainPanel;
@@ -61,7 +61,7 @@ abstract class TestCase extends BaseTestCase
             WidgetsServiceProvider::class,
             AdminPanelProvider::class,
             CustomPanelProvider::class,
-            EmailCodeAuthenticationPanelProvider::class,
+            EmailAuthenticationPanelProvider::class,
             GoogleTwoFactorAuthenticationPanelProvider::class,
             RequiredMultiFactorAuthenticationPanelProvider::class,
             DomainTenancyPanelProvider::class,
