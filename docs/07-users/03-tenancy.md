@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: Multi-tenancy
 ---
 import Aside from "@components/Aside.astro"
 
