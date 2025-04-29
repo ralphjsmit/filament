@@ -2,8 +2,8 @@
 
 namespace Filament\Tests\Database\Factories;
 
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
-use Filament\Auth\MultiFactor\GoogleTwoFactor\GoogleTwoFactorAuthentication;
 use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -36,15 +36,15 @@ class UserFactory extends Factory
     /**
      * @param  ?array<string>  $recoveryCodes
      */
-    public function hasGoogleTwoFactorAuthentication(?array $recoveryCodes = null): self
+    public function hasAppAuthentication(?array $recoveryCodes = null): self
     {
-        $googleTwoFactorAuthentication = GoogleTwoFactorAuthentication::make();
+        $appAuthentication = AppAuthentication::make();
 
         return $this->state(fn (): array => [
-            'google_two_factor_authentication_secret' => $googleTwoFactorAuthentication->generateSecret(),
-            'google_two_factor_authentication_recovery_codes' => array_map(
+            'app_authentication_secret' => $appAuthentication->generateSecret(),
+            'app_authentication_recovery_codes' => array_map(
                 fn (string $code): string => Hash::make($code),
-                $recoveryCodes ?? $googleTwoFactorAuthentication->generateRecoveryCodes(),
+                $recoveryCodes ?? $appAuthentication->generateRecoveryCodes(),
             ),
         ]);
     }

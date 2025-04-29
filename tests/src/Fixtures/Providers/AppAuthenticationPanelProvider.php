@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Fixtures\Providers;
 
-use Filament\Auth\MultiFactor\GoogleTwoFactor\GoogleTwoFactorAuthentication;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -16,15 +16,15 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class GoogleTwoFactorAuthenticationPanelProvider extends PanelProvider
+class AppAuthenticationPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('google-two-factor-authentication')
-            ->path('google-two-factor-authentication')
+            ->id('app-authentication')
+            ->path('app-authentication')
             ->login()
-            ->multiFactorAuthentication(GoogleTwoFactorAuthentication::make()->recoverable())
+            ->multiFactorAuthentication(AppAuthentication::make()->recoverable())
             ->profile()
             ->resources([])
             ->pages([])

@@ -2,9 +2,9 @@
 
 namespace Filament\Tests\Fixtures\Models;
 
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
-use Filament\Auth\MultiFactor\GoogleTwoFactor\Contracts\HasGoogleTwoFactorAuthentication;
-use Filament\Auth\MultiFactor\GoogleTwoFactor\Contracts\HasGoogleTwoFactorAuthenticationRecovery;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -18,7 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 
-class User extends Authenticatable implements FilamentUser, HasEmailAuthentication, HasGoogleTwoFactorAuthentication, HasGoogleTwoFactorAuthenticationRecovery, HasTenants, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasEmailAuthentication, HasTenants, MustVerifyEmail
 {
     use HasFactory;
     use Notifiable;
@@ -28,8 +28,8 @@ class User extends Authenticatable implements FilamentUser, HasEmailAuthenticati
     protected $hidden = [
         'password',
         'remember_token',
-        'google_two_factor_authentication_secret',
-        'google_two_factor_authentication_recovery_codes',
+        'app_authentication_secret',
+        'app_authentication_recovery_codes',
         'email_authentication_secret',
     ];
 
@@ -39,14 +39,14 @@ class User extends Authenticatable implements FilamentUser, HasEmailAuthenticati
     protected $casts = [
         'json' => 'array',
         'email_verified_at' => 'datetime',
-        'google_two_factor_authentication_secret' => 'encrypted',
-        'google_two_factor_authentication_recovery_codes' => 'encrypted:array',
+        'app_authentication_secret' => 'encrypted',
+        'app_authentication_recovery_codes' => 'encrypted:array',
         'email_authentication_secret' => 'encrypted',
     ];
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($panel->getId(), ['admin', 'slugs', 'google-two-factor-authentication', 'email-authentication', 'required-multi-factor-authentication']);
+        return in_array($panel->getId(), ['admin', 'slugs', 'app-authentication', 'email-authentication', 'required-multi-factor-authentication']);
     }
 
     public function posts(): HasMany
@@ -69,34 +69,34 @@ class User extends Authenticatable implements FilamentUser, HasEmailAuthenticati
         return Team::all();
     }
 
-    public function hasGoogleTwoFactorAuthentication(): bool
+    public function hasAppAuthentication(): bool
     {
-        return filled($this->google_two_factor_authentication_secret);
+        return filled($this->app_authentication_secret);
     }
 
-    public function getGoogleTwoFactorAuthenticationSecret(): ?string
+    public function getAppAuthenticationSecret(): ?string
     {
-        return $this->google_two_factor_authentication_secret ?? '';
+        return $this->app_authentication_secret ?? '';
     }
 
-    public function saveGoogleTwoFactorAuthenticationSecret(?string $secret): void
+    public function saveAppAuthenticationSecret(?string $secret): void
     {
-        $this->google_two_factor_authentication_secret = $secret;
+        $this->app_authentication_secret = $secret;
         $this->save();
     }
 
-    public function getGoogleTwoFactorAuthenticationRecoveryCodes(): ?array
+    public function getAppAuthenticationRecoveryCodes(): ?array
     {
-        return $this->google_two_factor_authentication_recovery_codes;
+        return $this->app_authentication_recovery_codes;
     }
 
-    public function saveGoogleTwoFactorAuthenticationRecoveryCodes(?array $codes): void
+    public function saveAppAuthenticationRecoveryCodes(?array $codes): void
     {
-        $this->google_two_factor_authentication_recovery_codes = $codes;
+        $this->app_authentication_recovery_codes = $codes;
         $this->save();
     }
 
-    public function getGoogleTwoFactorAuthenticationHolderName(): string
+    public function getAppAuthenticationHolderName(): string
     {
         return $this->email;
     }

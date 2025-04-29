@@ -19,11 +19,11 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Providers\AdminPanelProvider;
+use Filament\Tests\Fixtures\Providers\AppAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\CustomPanelProvider;
 use Filament\Tests\Fixtures\Providers\DomainTenancyPanelProvider;
 use Filament\Tests\Fixtures\Providers\EmailAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\Fixtures\Providers\SingleDomainPanel;
-use Filament\Tests\Fixtures\Providers\GoogleTwoFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\MultiDomainPanel;
 use Filament\Tests\Fixtures\Providers\RequiredMultiFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\SlugsPanelProvider;
@@ -62,7 +62,7 @@ abstract class TestCase extends BaseTestCase
             AdminPanelProvider::class,
             CustomPanelProvider::class,
             EmailAuthenticationPanelProvider::class,
-            GoogleTwoFactorAuthenticationPanelProvider::class,
+            AppAuthenticationPanelProvider::class,
             RequiredMultiFactorAuthenticationPanelProvider::class,
             DomainTenancyPanelProvider::class,
             MultiDomainPanel::class,

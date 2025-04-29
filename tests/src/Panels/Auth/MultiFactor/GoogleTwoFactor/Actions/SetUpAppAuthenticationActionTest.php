@@ -15,17 +15,17 @@ use function Pest\Laravel\actingAs;
 uses(TestCase::class);
 
 beforeEach(function (): void {
-    Filament::setCurrentPanel('google-two-factor-authentication');
+    Filament::setCurrentPanel('app-authentication');
 
     actingAs(User::factory()->create());
 });
 
 it('can generate a secret and recovery codes when the action is mounted', function (): void {
     livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('google_two_factor', schema: 'content'))
-        ->assertActionMounted(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('google_two_factor', schema: 'content')
+        ->mountAction(TestAction::make('setUpAppAuthentication')
+            ->schemaComponent('app', schema: 'content'))
+        ->assertActionMounted(TestAction::make('setUpAppAuthentication')
+            ->schemaComponent('app', schema: 'content')
             ->arguments(function (array $actualArguments): bool {
                 $encrypted = decrypt($actualArguments['encrypted']);
 
@@ -60,153 +60,153 @@ it('can generate a secret and recovery codes when the action is mounted', functi
 });
 
 it('can save the secret and recovery codes to the user when the action is submitted', function (): void {
-    $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
 
-    expect($user->hasGoogleTwoFactorAuthentication())
+    expect($user->hasAppAuthentication())
         ->toBeFalse();
 
-    expect($user->getGoogleTwoFactorAuthenticationSecret())
+    expect($user->getAppAuthenticationSecret())
         ->toBeEmpty();
 
-    expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
+    expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeNull();
 
     $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('google_two_factor', schema: 'content'));
+        ->mountAction(TestAction::make('setUpAppAuthentication')
+            ->schemaComponent('app', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];
     $recoveryCodes = $encryptedActionArguments['recoveryCodes'];
 
     $livewire
-        ->fillForm(['code' => $googleTwoFactorAuthentication->getCurrentCode($user, $secret)])
+        ->fillForm(['code' => $appAuthentication->getCurrentCode($user, $secret)])
         ->callMountedAction()
         ->assertHasNoFormErrors();
 
-    expect($user->hasGoogleTwoFactorAuthentication())
+    expect($user->hasAppAuthentication())
         ->toBeTrue();
 
-    expect($user->getGoogleTwoFactorAuthenticationSecret())
+    expect($user->getAppAuthenticationSecret())
         ->toBe($secret);
 
-    expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
+    expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeArray()
         ->toHaveCount(8);
 
-    foreach ($user->getGoogleTwoFactorAuthenticationRecoveryCodes() as $hashedRecoveryCode) {
+    foreach ($user->getAppAuthenticationRecoveryCodes() as $hashedRecoveryCode) {
         expect(Hash::check(array_shift($recoveryCodes), $hashedRecoveryCode))
             ->toBeTrue();
     }
 });
 
 it('will not set up authentication when an invalid code is used', function (): void {
-    $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
 
-    expect($user->hasGoogleTwoFactorAuthentication())
+    expect($user->hasAppAuthentication())
         ->toBeFalse();
 
-    expect($user->getGoogleTwoFactorAuthenticationSecret())
+    expect($user->getAppAuthenticationSecret())
         ->toBeEmpty();
 
-    expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
+    expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeNull();
 
     $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('google_two_factor', schema: 'content'));
+        ->mountAction(TestAction::make('setUpAppAuthentication')
+            ->schemaComponent('app', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];
 
     $livewire
         ->fillForm([
-            'code' => ($googleTwoFactorAuthentication->getCurrentCode($user, $secret) === '000000') ? '111111' : '000000',
+            'code' => ($appAuthentication->getCurrentCode($user, $secret) === '000000') ? '111111' : '000000',
         ])
         ->callMountedAction()
         ->assertHasFormErrors();
 
-    expect($user->hasGoogleTwoFactorAuthentication())
+    expect($user->hasAppAuthentication())
         ->toBeFalse();
 
-    expect($user->getGoogleTwoFactorAuthenticationSecret())
+    expect($user->getAppAuthenticationSecret())
         ->toBeEmpty();
 
-    expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
+    expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeNull();
 });
 
 test('codes are required', function (): void {
     $user = auth()->user();
 
-    expect($user->hasGoogleTwoFactorAuthentication())
+    expect($user->hasAppAuthentication())
         ->toBeFalse();
 
-    expect($user->getGoogleTwoFactorAuthenticationSecret())
+    expect($user->getAppAuthenticationSecret())
         ->toBeEmpty();
 
-    expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
+    expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeNull();
 
     livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('google_two_factor', schema: 'content'))
+        ->mountAction(TestAction::make('setUpAppAuthentication')
+            ->schemaComponent('app', schema: 'content'))
         ->fillForm(['code' => ''])
         ->callMountedAction()
         ->assertHasFormErrors([
             'code' => 'required',
         ]);
 
-    expect($user->hasGoogleTwoFactorAuthentication())
+    expect($user->hasAppAuthentication())
         ->toBeFalse();
 
-    expect($user->getGoogleTwoFactorAuthenticationSecret())
+    expect($user->getAppAuthenticationSecret())
         ->toBeEmpty();
 
-    expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
+    expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeNull();
 });
 
 test('codes must be 6 digits', function (): void {
-    $googleTwoFactorAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $user = auth()->user();
 
-    expect($user->hasGoogleTwoFactorAuthentication())
+    expect($user->hasAppAuthentication())
         ->toBeFalse();
 
-    expect($user->getGoogleTwoFactorAuthenticationSecret())
+    expect($user->getAppAuthenticationSecret())
         ->toBeEmpty();
 
-    expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
+    expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeNull();
 
     $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpGoogleTwoFactorAuthentication')
-            ->schemaComponent('google_two_factor', schema: 'content'));
+        ->mountAction(TestAction::make('setUpAppAuthentication')
+            ->schemaComponent('app', schema: 'content'));
 
     $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
     $secret = $encryptedActionArguments['secret'];
 
     $livewire
         ->fillForm([
-            'code' => Str::limit($googleTwoFactorAuthentication->getCurrentCode($user, $secret), limit: 5, end: ''),
+            'code' => Str::limit($appAuthentication->getCurrentCode($user, $secret), limit: 5, end: ''),
         ])
         ->callMountedAction()
         ->assertHasFormErrors([
             'code' => 'digits',
         ]);
 
-    expect($user->hasGoogleTwoFactorAuthentication())
+    expect($user->hasAppAuthentication())
         ->toBeFalse();
 
-    expect($user->getGoogleTwoFactorAuthenticationSecret())
+    expect($user->getAppAuthenticationSecret())
         ->toBeEmpty();
 
-    expect($user->getGoogleTwoFactorAuthenticationRecoveryCodes())
+    expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeNull();
 });
