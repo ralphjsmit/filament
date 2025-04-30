@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Exception;
 use Filament\Support\Authorization\DenyResponse;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
@@ -55,6 +56,15 @@ trait InteractsWithSelectedRecords
         $this->successfulSelectedRecordsCount = $this->totalSelectedRecordsCount;
 
         return $records;
+    }
+
+    public function getSelectedRecordsQuery(): Builder
+    {
+        if (! $this->canAccessSelectedRecords()) {
+            throw new Exception("The action [{$this->getName()}] is attempting to access the selected records query from the table, but it is not using [accessSelectedRecords()], so they are not available.");
+        }
+
+        return $this->getLivewire()->getSelectedTableRecordsQuery($this->shouldFetchSelectedRecords(), $this->getSelectedRecordsChunkSize());
     }
 
     public function getIndividuallyAuthorizedSelectedRecords(): EloquentCollection | Collection | LazyCollection
@@ -133,6 +143,26 @@ trait InteractsWithSelectedRecords
         $this->successfulSelectedRecordsCount--;
     }
 
+    public function reportBulkProcessingSuccessfulRecordsCount(int $count): void
+    {
+        $this->bulkProcessingFailureWithoutMessageCount = $this->successfulSelectedRecordsCount - $count;
+        $this->successfulSelectedRecordsCount = $count;
+    }
+
+    public function reportCompleteBulkProcessingFailure(?string $key = null, string | Closure | null $message = null): void
+    {
+        if (filled($key)) {
+            $this->bulkProcessingFailureMessages[$key] = [
+                'message' => $message,
+                'count' => $this->getTotalSelectedRecordsCount(),
+            ];
+        } else {
+            $this->bulkProcessingFailureWithoutMessageCount += $this->getTotalSelectedRecordsCount();
+        }
+
+        $this->successfulSelectedRecordsCount = 0;
+    }
+
     /**
      * @return array<string>
      */
@@ -157,5 +187,10 @@ trait InteractsWithSelectedRecords
             },
             initial: [],
         );
+    }
+
+    public function getTotalSelectedRecordsCount(): int
+    {
+        return $this->totalSelectedRecordsCount;
     }
 }
