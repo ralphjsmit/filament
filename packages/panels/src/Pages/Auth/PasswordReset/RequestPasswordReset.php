@@ -60,7 +60,7 @@ class RequestPasswordReset extends SimplePage
         $data = $this->form->getState();
 
         $status = Password::broker(Filament::getAuthPasswordBroker())->sendResetLink(
-            $data,
+            $this->getCredentialsFromFormData($data),
             function (CanResetPassword $user, string $token): void {
                 if (! method_exists($user, 'notify')) {
                     $userClass = $user::class;
@@ -179,5 +179,16 @@ class RequestPasswordReset extends SimplePage
     protected function hasFullWidthFormActions(): bool
     {
         return true;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function getCredentialsFromFormData(array $data): array
+    {
+        return [
+            'email' => $data['email'],
+        ];
     }
 }
