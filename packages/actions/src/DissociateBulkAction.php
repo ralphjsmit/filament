@@ -9,6 +9,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\LazyCollection;
 use Throwable;
 
 class DissociateBulkAction extends BulkAction
@@ -41,7 +42,7 @@ class DissociateBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::dissociate-action.modal') ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
-            $this->process(function (DissociateBulkAction $action, Collection $records, Table $table): void {
+            $this->process(function (DissociateBulkAction $action, Collection | LazyCollection $records, Table $table): void {
                 $isFirstException = true;
 
                 $records->each(function (Model $record) use ($action, &$isFirstException, $table): void {

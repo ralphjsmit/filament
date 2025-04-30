@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 
 trait HasBulkActions
 {
@@ -26,7 +27,7 @@ trait HasBulkActions
 
     public bool $isTrackingDeselectedTableRecords = false;
 
-    protected Collection $cachedSelectedTableRecords;
+    protected EloquentCollection | Collection | LazyCollection $cachedSelectedTableRecords;
 
     /**
      * @deprecated Use the `callMountedAction()` method instead.
@@ -194,7 +195,7 @@ trait HasBulkActions
         return $this->getFilteredTableQuery()?->count() ?? $this->cachedTableRecords->count();
     }
 
-    public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true): EloquentCollection | Collection
+    public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection
     {
         if (isset($this->cachedSelectedTableRecords)) {
             return $this->cachedSelectedTableRecords;
@@ -227,7 +228,9 @@ trait HasBulkActions
                 $query = $table->getQuery()->whereKey($this->selectedTableRecords);
             }
 
-            $this->applySortingToTableQuery($query);
+            if (! $chunkSize) {
+                $this->applySortingToTableQuery($query);
+            }
 
             if ($shouldFetchSelectedRecords) {
                 foreach ($this->getTable()->getColumns() as $column) {
@@ -240,9 +243,15 @@ trait HasBulkActions
                 $this->filterTableQuery($query);
             }
 
-            return $this->cachedSelectedTableRecords = $shouldFetchSelectedRecords ?
-                $query->get() :
-                $query->pluck($query->getModel()->getQualifiedKeyName());
+            if (! $shouldFetchSelectedRecords) {
+                return $this->cachedSelectedTableRecords = $query->pluck($query->getModel()->getQualifiedKeyName());
+            }
+
+            if ($chunkSize) {
+                return $this->cachedSelectedTableRecords = $query->lazyById($chunkSize);
+            }
+
+            return $this->cachedSelectedTableRecords = $query->get();
         }
 
         /** @var BelongsToMany $relationship */

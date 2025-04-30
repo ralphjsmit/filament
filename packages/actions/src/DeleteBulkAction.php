@@ -9,6 +9,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Number;
 use Throwable;
 
@@ -76,7 +77,7 @@ class DeleteBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::delete-action.modal') ?? Heroicon::OutlinedTrash);
 
         $this->action(function (): void {
-            $this->process(static function (DeleteBulkAction $action, Collection $records): void {
+            $this->process(static function (DeleteBulkAction $action, Collection | LazyCollection $records): void {
                 $isFirstException = true;
 
                 $records->each(static function (Model $record) use ($action, &$isFirstException): void {
@@ -86,9 +87,9 @@ class DeleteBulkAction extends BulkAction
                         $action->reportBulkProcessingFailure();
 
                         if ($isFirstException) {
-                            // Only report the first exception so as to not flood error logs. Even
-                            // if Filament did not catch exceptions like this, only the first
-                            // would be reported as the rest of the process would be halted.
+                            // Only report the first exception to not flood error logs. Even if Filament
+                            // did not catch exceptions like this, only the first would be reported
+                            // as the rest of the process would be halted.
                             report($exception);
 
                             $isFirstException = false;

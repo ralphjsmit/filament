@@ -7,6 +7,7 @@ use Exception;
 use Filament\Support\Authorization\DenyResponse;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 
 trait InteractsWithSelectedRecords
 {
@@ -42,72 +43,80 @@ trait InteractsWithSelectedRecords
         return (bool) $this->evaluate($this->canAccessSelectedRecords);
     }
 
-    public function getSelectedRecords(): EloquentCollection | Collection
+    public function getSelectedRecords(): EloquentCollection | Collection | LazyCollection
     {
         if (! $this->canAccessSelectedRecords()) {
             throw new Exception("The action [{$this->getName()}] is attempting to access the selected records from the table, but it is not using [accessSelectedRecords()], so they are not available.");
         }
 
-        $records = $this->getLivewire()->getSelectedTableRecords($this->shouldFetchSelectedRecords());
+        $records = $this->getLivewire()->getSelectedTableRecords($this->shouldFetchSelectedRecords(), $this->getSelectedRecordsChunkSize());
 
         $this->totalSelectedRecordsCount = $records->count();
         $this->successfulSelectedRecordsCount = $this->totalSelectedRecordsCount;
 
+        return $records;
+    }
+
+    public function getIndividuallyAuthorizedSelectedRecords(): EloquentCollection | Collection | LazyCollection
+    {
         if (! $this->shouldAuthorizeIndividualRecords()) {
-            return $records;
+            return $this->getSelectedRecords();
         }
+
+        $this->successfulSelectedRecordsCount = 0;
 
         $authorizationResponses = [];
         $failureCountsByAuthorizationResponse = [];
         $failureCountWithoutAuthorizationResponse = 0;
 
-        foreach ($records as $recordIndex => $record) {
-            $response = $this->getIndividualRecordAuthorizationResponse($record);
+        try {
+            return $this->getSelectedRecords()->filter(function ($record) use (&$authorizationResponses, &$failureCountsByAuthorizationResponse, &$failureCountWithoutAuthorizationResponse) {
+                $response = $this->getIndividualRecordAuthorizationResponse($record);
 
-            if ($response->allowed()) {
-                continue;
-            }
-
-            if ($response instanceof DenyResponse) {
-                $responseKey = $response->getKey();
-
-                $authorizationResponses[$responseKey] ??= $response;
-                $failureCountsByAuthorizationResponse[$responseKey] ??= 0;
-                $failureCountsByAuthorizationResponse[$responseKey]++;
-            } elseif (filled($responseMessage = $response->message())) {
-                $responseKey = array_search($responseMessage, $authorizationResponses);
-
-                if ($responseKey === false) {
-                    $authorizationResponses[] = $responseMessage;
-                    $responseKey = array_key_last($authorizationResponses);
-                    $failureCountsByAuthorizationResponse[$responseKey] = 0;
+                if ($response->allowed()) {
+                    return true;
                 }
 
-                $failureCountsByAuthorizationResponse[$responseKey]++;
-            } else {
-                $failureCountWithoutAuthorizationResponse++;
-            }
-
-            $records->offsetUnset($recordIndex);
-            $this->successfulSelectedRecordsCount--;
-        }
-
-        $failureMessages = [];
-
-        if ($this->totalSelectedRecordsCount > $this->successfulSelectedRecordsCount) {
-            foreach ($authorizationResponses as $responseKey => $response) {
                 if ($response instanceof DenyResponse) {
-                    $failureMessages[] = $response->message($failureCountsByAuthorizationResponse[$responseKey], $this->totalSelectedRecordsCount);
+                    $responseKey = $response->getKey();
+
+                    $authorizationResponses[$responseKey] ??= $response;
+                    $failureCountsByAuthorizationResponse[$responseKey] ??= 0;
+                    $failureCountsByAuthorizationResponse[$responseKey]++;
+                } elseif (filled($responseMessage = $response->message())) {
+                    $responseKey = array_search($responseMessage, $authorizationResponses);
+
+                    if ($responseKey === false) {
+                        $authorizationResponses[] = $responseMessage;
+                        $responseKey = array_key_last($authorizationResponses);
+                        $failureCountsByAuthorizationResponse[$responseKey] = 0;
+                    }
+
+                    $failureCountsByAuthorizationResponse[$responseKey]++;
                 } else {
-                    $failureMessages[] = $response;
+                    $failureCountWithoutAuthorizationResponse++;
+                }
+
+                $this->successfulSelectedRecordsCount--;
+
+                return false;
+            });
+        } finally {
+            $failureMessages = [];
+
+            if ($this->totalSelectedRecordsCount > $this->successfulSelectedRecordsCount) {
+                foreach ($authorizationResponses as $responseKey => $response) {
+                    if ($response instanceof DenyResponse) {
+                        $failureMessages[] = $response->message($failureCountsByAuthorizationResponse[$responseKey], $this->totalSelectedRecordsCount);
+                    } else {
+                        $failureMessages[] = $response;
+                    }
                 }
             }
+
+            $this->bulkAuthorizationFailureWithoutMessageCount = $failureCountWithoutAuthorizationResponse;
+            $this->bulkAuthorizationFailureMessages = $failureMessages;
         }
-
-        $this->bulkAuthorizationFailureWithoutMessageCount = $failureCountWithoutAuthorizationResponse;
-        $this->bulkAuthorizationFailureMessages = $failureMessages;
-
-        return $records;
     }
 
     public function reportBulkProcessingFailure(?string $key = null, string | Closure | null $message = null): void

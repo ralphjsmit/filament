@@ -464,7 +464,7 @@ class Action extends ViewComponent implements Arrayable
             'model' => [$this->getModel() ?? $this->getSchemaContainer()?->getModel() ?? $this->getSchemaComponent()?->getModel()],
             'mountedActions' => [$this->getLivewire()->getMountedActions()],
             'record' => [$this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
-            'selectedRecords', 'records' => [$this->getSelectedRecords()],
+            'selectedRecords', 'records' => [$this->getIndividuallyAuthorizedSelectedRecords()],
             'schema' => [$this->getSchemaContainer()],
             'schemaComponent', 'component' => [$this->getSchemaComponent()],
             'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
@@ -484,7 +484,7 @@ class Action extends ViewComponent implements Arrayable
         $record = $this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord();
 
         return match ($parameterType) {
-            EloquentCollection::class, Collection::class => [$this->getSelectedRecords()],
+            EloquentCollection::class, Collection::class => [$this->getIndividuallyAuthorizedSelectedRecords()],
             Model::class, ($record instanceof Model) ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };

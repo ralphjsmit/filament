@@ -9,6 +9,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\LazyCollection;
 use Throwable;
 
 class DetachBulkAction extends BulkAction
@@ -41,7 +42,7 @@ class DetachBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::detach-action.modal') ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
-            $this->process(function (DetachBulkAction $action, Collection $records, Table $table): void {
+            $this->process(function (DetachBulkAction $action, Collection | LazyCollection $records, Table $table): void {
                 /** @var BelongsToMany $relationship */
                 $relationship = $table->getRelationship();
                 $relationshipPivotAccessor = $relationship->getPivotAccessor();
