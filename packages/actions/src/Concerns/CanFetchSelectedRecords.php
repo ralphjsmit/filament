@@ -22,7 +22,7 @@ trait CanFetchSelectedRecords
         return (bool) $this->evaluate($this->shouldFetchSelectedRecords);
     }
 
-    public function chunkSelectedRecords(int | Closure | null $chunkSize = 250): static
+    public function chunkSelectedRecords(int | Closure | null $chunkSize = 100): static
     {
         $this->selectedRecordsChunkSize = $chunkSize;
 
