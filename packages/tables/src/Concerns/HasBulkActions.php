@@ -19,6 +19,13 @@ trait HasBulkActions
      */
     public array $selectedTableRecords = [];
 
+    /**
+     * @var array<int | string>
+     */
+    public array $deselectedTableRecords = [];
+
+    public bool $isTrackingDeselectedTableRecords = false;
+
     protected Collection $cachedSelectedTableRecords;
 
     /**
@@ -46,7 +53,7 @@ trait HasBulkActions
     }
 
     /**
-     * @deprecated Use the `mountAction()` method instead.
+     * @deprecated Use the `replaceMountedAction()` method instead.
      *
      * @param  array<int | string> | null  $selectedRecords
      */
@@ -206,11 +213,20 @@ trait HasBulkActions
                     $table->evaluate($resolveSelectedRecords, [
                         'keys' => $this->selectedTableRecords,
                         'records' => $this->selectedTableRecords,
+                        'deselectedKeys' => $this->deselectedTableRecords,
+                        'deselectedRecords' => $this->deselectedTableRecords,
+                        'isTrackingDeselectedKeys' => $this->isTrackingDeselectedTableRecords,
+                        'isTrackingDeselectedRecords' => $this->isTrackingDeselectedTableRecords,
                     ]) :
-                    $this->getTableRecords()->only($this->selectedTableRecords);
+                    ($this->isTrackingDeselectedTableRecords ? $this->getTableRecords()->except($this->deselectedTableRecords) : $this->getTableRecords()->only($this->selectedTableRecords));
             }
 
-            $query = $table->getQuery()->whereKey($this->selectedTableRecords);
+            if ($this->isTrackingDeselectedTableRecords) {
+                $query = $table->getQuery()->whereKeyNot($this->deselectedTableRecords);
+            } else {
+                $query = $table->getQuery()->whereKey($this->selectedTableRecords);
+            }
+
             $this->applySortingToTableQuery($query);
 
             if ($shouldFetchSelectedRecords) {
@@ -235,7 +251,11 @@ trait HasBulkActions
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords);
+        if ($this->isTrackingDeselectedTableRecords) {
+            $relationship->wherePivotNotIn($pivotKeyName, $this->deselectedTableRecords);
+        } else {
+            $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords);
+        }
 
         foreach ($this->getTable()->getColumns() as $column) {
             $column->applyEagerLoading($relationship);
