@@ -378,6 +378,33 @@ public function table(Table $table): Table
 }
 ```
 
+### Improving the performance of detach bulk actions
+
+By default, the `DetachBulkAction` will load all Eloquent records into memory, before looping over them and detaching them one by one.
+
+If you are detaching a large number of records, you may want to use the `chunkSelectedRecords()` method to fetch a smaller number of records at a time. This will reduce the memory usage of your application:
+
+```php
+use Filament\Actions\DetachBulkAction;
+
+DetachBulkAction::make()
+    ->chunkSelectedRecords(250)
+```
+
+Filament loads Eloquent records into memory before detaching them for two reasons:
+
+- To allow individual records in the collection to be authorized with a model policy before detaching (using `authorizeIndividualRecords('delete')`, for example).
+- To ensure that model events are run when detaching records, such as the `deleting` and `deleted` events in a model observer.
+
+If you do not require individual record policy authorization and model events, you can use the `fetchSelectedRecords(false)` method, which will not fetch the records into memory before detaching them, and instead will detach them in a single query:
+
+```php
+use Filament\Actions\DetachBulkAction;
+
+DetachBulkAction::make()
+    ->fetchSelectedRecords(false)
+```
+
 ## Associating and dissociating records
 
 Filament is able to associate and dissociate records for `HasMany` and `MorphMany` relationships.
@@ -473,6 +500,33 @@ AssociateAction::make()
     ->recordSelect(
         fn (Select $select) => $select->placeholder('Select a post'),
     )
+```
+
+### Improving the performance of dissociate bulk actions
+
+By default, the `DissociateBulkAction` will load all Eloquent records into memory, before looping over them and dissociating them one by one.
+
+If you are dissociating a large number of records, you may want to use the `chunkSelectedRecords()` method to fetch a smaller number of records at a time. This will reduce the memory usage of your application:
+
+```php
+use Filament\Actions\DissociateBulkAction;
+
+DissociateBulkAction::make()
+    ->chunkSelectedRecords(250)
+```
+
+Filament loads Eloquent records into memory before dissociating them for two reasons:
+
+- To allow individual records in the collection to be authorized with a model policy before dissociation (using `authorizeIndividualRecords('update')`, for example).
+- To ensure that model events are run when dissociating records, such as the `updating` and `updated` events in a model observer.
+
+If you do not require individual record policy authorization and model events, you can use the `fetchSelectedRecords(false)` method, which will not fetch the records into memory before dissociating them, and instead will dissociate them in a single query:
+
+```php
+use Filament\Actions\DissociateBulkAction;
+
+DissociateBulkAction::make()
+    ->fetchSelectedRecords(false)
 ```
 
 ## Viewing related records
