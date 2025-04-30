@@ -44,7 +44,9 @@ class Count extends Summarizer
 
         foreach ($query->clone()->distinct()->pluck($attribute) as $value) {
             $column->record($this->getQuery()->getModel()->setKeyName($attribute)->setAttribute($attribute, $value));
+            $column->clearCachedState();
             $columnState = $column->getState();
+            $column->clearCachedState();
             $color = json_encode($column->getColor($columnState));
             $icon = $column->getIcon($columnState);
             $iconKey = serialize($icon);

@@ -397,4 +397,29 @@ trait HasCellState
 
         return $this->cachedState[$recordKey] = $state();
     }
+
+    protected function cacheState(Closure $state): mixed
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return null;
+        }
+
+        if ($this instanceof Column) {
+            $recordKey = $this->getLivewire()->getTableRecordKey($record);
+        } else {
+            $recordKey = (string) $record->getKey();
+        }
+
+        if (blank($recordKey)) {
+            return $state();
+        }
+
+        if (array_key_exists($recordKey, $this->cachedState)) {
+            return $this->cachedState[$recordKey];
+        }
+
+        return $this->cachedState[$recordKey] = $state();
+    }
 }
