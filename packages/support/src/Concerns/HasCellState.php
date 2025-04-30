@@ -4,7 +4,6 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
