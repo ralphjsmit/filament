@@ -116,7 +116,11 @@
         'fi-loading' => $records === null,
     ])
 >
-    <input type="hidden" value="{{ $allSelectableRecordsCount }}" x-ref="allSelectableRecordsCount" />
+    <input
+        type="hidden"
+        value="{{ $allSelectableRecordsCount }}"
+        x-ref="allSelectableRecordsCount"
+    />
 
     <div
         @class([

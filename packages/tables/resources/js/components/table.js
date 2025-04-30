@@ -46,9 +46,21 @@ export default function table() {
         },
 
         mountAction: function (...args) {
-            this.$wire.set('isTrackingDeselectedTableRecords', this.isTrackingDeselectedRecords, false)
-            this.$wire.set('selectedTableRecords', [...this.selectedRecords], false)
-            this.$wire.set('deselectedTableRecords', [...this.deselectedRecords], false)
+            this.$wire.set(
+                'isTrackingDeselectedTableRecords',
+                this.isTrackingDeselectedRecords,
+                false,
+            )
+            this.$wire.set(
+                'selectedTableRecords',
+                [...this.selectedRecords],
+                false,
+            )
+            this.$wire.set(
+                'deselectedTableRecords',
+                [...this.deselectedRecords],
+                false,
+            )
 
             this.$wire.mountAction(...args)
         },
@@ -101,7 +113,11 @@ export default function table() {
 
         getSelectedRecordsCount: function () {
             if (this.isTrackingDeselectedRecords) {
-                return (this.$refs.allSelectableRecordsCount?.value ?? this.deselectedRecords.size) - this.deselectedRecords.size
+                return (
+                    (this.$refs.allSelectableRecordsCount?.value ??
+                        this.deselectedRecords.size) -
+                    this.deselectedRecords.size
+                )
             }
 
             return this.selectedRecords.size
@@ -128,7 +144,7 @@ export default function table() {
                 if (this.isTrackingDeselectedRecords) {
                     this.deselectedRecords.delete(key)
 
-                    continue;
+                    continue
                 }
 
                 this.selectedRecords.add(key)
@@ -171,7 +187,7 @@ export default function table() {
 
         isRecordSelected: function (key) {
             if (this.isTrackingDeselectedRecords) {
-                return ! this.deselectedRecords.has(key)
+                return !this.deselectedRecords.has(key)
             }
 
             return this.selectedRecords.has(key)
