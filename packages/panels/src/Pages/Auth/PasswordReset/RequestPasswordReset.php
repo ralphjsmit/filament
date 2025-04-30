@@ -60,7 +60,7 @@ class RequestPasswordReset extends SimplePage
         $data = $this->form->getState();
 
         $status = Password::broker(Filament::getAuthPasswordBroker())->sendResetLink(
-            $data,
+            $this->getCredentialsFromFormData($data),
             function (CanResetPassword $user, string $token): void {
                 if (! method_exists($user, 'notify')) {
                     $userClass = $user::class;
@@ -76,18 +76,12 @@ class RequestPasswordReset extends SimplePage
         );
 
         if ($status !== Password::RESET_LINK_SENT) {
-            Notification::make()
-                ->title(__($status))
-                ->danger()
-                ->send();
+            $this->getFailureNotification($status)?->send();
 
             return;
         }
 
-        Notification::make()
-            ->title(__($status))
-            ->success()
-            ->send();
+        $this->getSentNotification($status)?->send();
 
         $this->form->fill();
     }
@@ -104,6 +98,20 @@ class RequestPasswordReset extends SimplePage
                 'minutes' => $exception->minutesUntilAvailable,
             ]) : null)
             ->danger();
+    }
+
+    protected function getFailureNotification(string $status): ?Notification
+    {
+        return Notification::make()
+            ->title(__($status))
+            ->danger();
+    }
+
+    protected function getSentNotification(string $status): ?Notification
+    {
+        return Notification::make()
+            ->title(__($status))
+            ->success();
     }
 
     public function form(Form $form): Form
@@ -179,5 +187,16 @@ class RequestPasswordReset extends SimplePage
     protected function hasFullWidthFormActions(): bool
     {
         return true;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function getCredentialsFromFormData(array $data): array
+    {
+        return [
+            'email' => $data['email'],
+        ];
     }
 }
