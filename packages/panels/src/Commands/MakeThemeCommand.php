@@ -25,8 +25,8 @@ class MakeThemeCommand extends Command
     {
         $packageJson = file_get_contents(base_path('package.json')) ?: '';
 
-        $shouldInstallTailwindV3 = str_contains($packageJson, '"tailwindcss": "^3"')
-            || str_contains($packageJson, '"tailwindcss": "3"')
+        $shouldInstallTailwindV3 = str_contains($packageJson, '"tailwindcss": "^3')
+            || str_contains($packageJson, '"tailwindcss": "3')
             || (! str_contains($packageJson, '"tailwindcss": "'));
 
         $pm = $this->option('pm') ?? 'npm';
