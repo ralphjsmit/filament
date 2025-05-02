@@ -205,7 +205,7 @@
             @if ($hasTenancy)
                 x-persist="topbar.end.tenant-{{ filament()->getTenant()?->getKey() }}"
             @else
-                x-persist="topbar.end"
+                x-persist="topbar.end.{{ filament()->getID() }}"
             @endif
             class="fi-topbar-end"
         >
