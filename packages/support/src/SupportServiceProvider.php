@@ -274,6 +274,10 @@ class SupportServiceProvider extends PackageServiceProvider
                 'notifications',
                 'support',
                 'tables',
+                'actions',
+                'infolists',
+                'schemas',
+                'widgets',
             ];
 
             AboutCommand::add('Filament', static fn () => [
