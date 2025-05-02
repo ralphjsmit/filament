@@ -1,12 +1,12 @@
 import { EditorView, basicSetup } from 'codemirror-v6'
-import { EditorState } from '@codemirror/state'
-import { keymap } from '@codemirror/view'
 import { indentWithTab } from '@codemirror/commands'
 import { css } from '@codemirror/lang-css'
 import { html } from '@codemirror/lang-html'
 import { javascript } from '@codemirror/lang-javascript'
 import { json } from '@codemirror/lang-json'
 import { php } from '@codemirror/lang-php'
+import { EditorState } from '@codemirror/state'
+import { keymap } from '@codemirror/view'
 
 export default function codeEditorFormComponent({ isDisabled, state }) {
     return {
