@@ -31,14 +31,8 @@ class MorphToSelect extends Component
      */
     protected array | Closure $types = [];
 
-    /**
-     * @var ?Closure
-     */
     protected ?Closure $modifyTypeSelectUsing = null;
 
-    /**
-     * @var ?Closure
-     */
     protected ?Closure $modifyKeySelectUsing = null;
 
     final public function __construct(string $name)
