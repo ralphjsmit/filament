@@ -8,6 +8,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -1852,6 +1853,26 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->nonLinearPoints(['20%' => 50, '50%' => 75])
                             ->pips()
                             ->default(50),
+                    ]),
+                Group::make()
+                    ->id('codeEditor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CodeEditor::make('code')
+                            ->default(<<<PHP
+                                <?php
+
+                                namespace App\Models;
+
+                                use Illuminate\Database\Eloquent\Model;
+
+                                class Post extends Model
+                                {
+                                    // ...
+                                }
+                                PHP),
                     ]),
             ]);
     }
