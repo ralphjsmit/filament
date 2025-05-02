@@ -3,6 +3,7 @@
 namespace App\Livewire\Infolists;
 
 use Filament\Actions\Action;
+use Filament\Infolists\Components\CodeEntry;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
@@ -24,6 +25,8 @@ use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Component;
+use Phiki\Grammar\Grammar;
+use Phiki\Theme\Theme;
 
 class EntriesDemo extends Component implements HasSchemas
 {
@@ -622,6 +625,50 @@ class EntriesDemo extends Component implements HasSchemas
                             ->copyable()
                             ->copyMessage('Copied!')
                             ->copyMessageDuration(1500),
+                    ]),
+                Group::make()
+                    ->id('code')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CodeEntry::make('code')
+                            ->grammar(Grammar::Php)
+                            ->state(<<<PHP
+                                <?php
+
+                                namespace App\Models;
+
+                                use Illuminate\Database\Eloquent\Model;
+
+                                class Post extends Model
+                                {
+                                    // ...
+                                }
+                                PHP),
+                    ]),
+                Group::make()
+                    ->id('codeDracula')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CodeEntry::make('code')
+                            ->grammar(Grammar::Php)
+                            ->lightTheme(Theme::Dracula)
+                            ->darkTheme(Theme::Dracula)
+                            ->state(<<<PHP
+                                <?php
+
+                                namespace App\Models;
+
+                                use Illuminate\Database\Eloquent\Model;
+
+                                class Post extends Model
+                                {
+                                    // ...
+                                }
+                                PHP),
                     ]),
                 Group::make()
                     ->id('keyValue')

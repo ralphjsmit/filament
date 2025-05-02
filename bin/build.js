@@ -108,6 +108,7 @@ compile({
 
 const formComponents = [
     'checkbox-list',
+    'code-editor',
     'color-picker',
     'date-time-picker',
     'file-upload',

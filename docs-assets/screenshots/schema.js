@@ -1402,6 +1402,20 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/code-editor/simple': {
+        url: 'forms/fields',
+        selector: '#codeEditor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.waitForNetworkIdle()
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'forms/fields/actions/suffix': {
         url: 'forms/fields',
         selector: '#suffixAction',
@@ -2063,6 +2077,24 @@ export default {
             await page.click('#colorCopyable .fi-in-color-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'infolists/entries/code/simple': {
+        url: 'infolists/entries',
+        selector: '#code',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/code/dracula': {
+        url: 'infolists/entries',
+        selector: '#codeDracula',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
         },
     },
     'infolists/entries/key-value/simple': {
