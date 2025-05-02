@@ -23,7 +23,7 @@
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms') }}"
             x-data="codeEditorFormComponent({
                         isDisabled: @js($isDisabled),
-                        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
+                        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     })"
             wire:ignore
             {{ $getExtraAlpineAttributeBag() }}
