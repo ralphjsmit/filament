@@ -203,7 +203,7 @@
 
         <div
             @if ($hasTenancy)
-                x-persist="topbar.end.tenant-{{ filament()->getTenant()?->getKey() }}"
+                x-persist="topbar.end.panel-{{ filament()->getId() }}.tenant-{{ filament()->getTenant()?->getKey() }}"
             @else
                 x-persist="topbar.end.panel-{{ filament()->getId() }}"
             @endif
