@@ -1,5 +1,7 @@
 <div>
-    <x-filament-panels::user-menu />
+    @if (filament()->hasUserMenu())
+        <x-filament-panels::user-menu />
+    @else
 
     <x-filament-actions::modals />
 </div>
