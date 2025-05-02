@@ -53,6 +53,7 @@ For displaying data in a label-value "description list" format, Filament include
 - [Icon entry](../infolists/icon-entry)
 - [Image entry](../infolists/image-entry)
 - [Color entry](../infolists/color-entry)
+- [Code entry](../infolists/code-entry)
 - [Key-value entry](../infolists/key-value-entry)
 - [Repeatable entry](../infolists/repeatable-entry)
 - Or, build your own [custom infolist entry](../infolists/custom-entries)
