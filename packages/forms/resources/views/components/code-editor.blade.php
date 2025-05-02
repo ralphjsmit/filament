@@ -3,12 +3,14 @@
 
     $fieldWrapperView = $getFieldWrapperView();
     $extraInputAttributeBag = $getExtraAttributeBag();
+    $isDisabled = $isDisabled();
     $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <x-filament::input.wrapper
+        :disabled="$isDisabled"
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraInputAttributeBag)
@@ -20,6 +22,7 @@
             {{-- prettier-ignore-end --}}
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms') }}"
             x-data="codeEditorFormComponent({
+                        isDisabled: @js($isDisabled),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     })"
             wire:ignore

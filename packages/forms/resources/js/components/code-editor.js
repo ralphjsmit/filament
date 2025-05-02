@@ -8,7 +8,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { json } from '@codemirror/lang-json'
 import { php } from '@codemirror/lang-php'
 
-export default function codeEditorFormComponent({ state }) {
+export default function codeEditorFormComponent({ isDisabled, state }) {
     return {
         editor: null,
 
@@ -22,6 +22,8 @@ export default function codeEditorFormComponent({ state }) {
                     extensions: [
                         basicSetup,
                         keymap.of([indentWithTab]),
+                        EditorState.readOnly.of(isDisabled),
+                        EditorView.editable.of(!isDisabled),
                         EditorView.updateListener.of((viewUpdate) => {
                             if (!viewUpdate.docChanged) {
                                 return

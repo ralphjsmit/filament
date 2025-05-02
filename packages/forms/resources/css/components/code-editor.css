@@ -36,4 +36,34 @@
             @apply me-1 rounded-e-md;
         }
     }
+
+    &.fi-disabled {
+        & .cm-editor {
+            & .cm-gutters {
+                & .cm-gutter {
+                    &.cm-lineNumbers {
+                        & .cm-gutterElement {
+                            &.cm-activeLineGutter {
+                                @apply bg-transparent!;
+                            }
+                        }
+                    }
+
+                    &.cm-foldGutter {
+                        & .cm-gutterElement {
+                            &.cm-activeLineGutter {
+                                @apply bg-transparent!;
+                            }
+                        }
+                    }
+                }
+            }
+
+            & .cm-line {
+                &.cm-activeLine {
+                    @apply bg-transparent!;
+                }
+            }
+        }
+    }
 }
