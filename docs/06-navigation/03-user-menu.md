@@ -94,3 +94,18 @@ Action::make('lockSession')
     ->url(fn (): string => route('lock-session'))
     ->postToUrl()
 ```
+
+## Disabling the user menu
+
+You may disable the user menu entirely by passing `false` to the `userMenu()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->userMenu(false);
+}
+```

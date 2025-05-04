@@ -224,7 +224,9 @@
                     ])
                 @endif
 
-                <x-filament-panels::user-menu />
+                @if (filament()->hasUserMenu())
+                    <x-filament-panels::user-menu />
+                @endif
             @endif
         </div>
 
