@@ -4,7 +4,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "ext-intl": "*",
         "composer-runtime-api": "^2.1"
     },
     "require-dev": {
