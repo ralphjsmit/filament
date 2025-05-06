@@ -83,16 +83,6 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 {
     // ...
 
-    public function hasAppAuthentication(): bool
-    {
-        // This method should return true if the user has enabled app authentication.
-        // We know that the user has enabled it if the secret is not null, but if your app has
-        // another mechanism for disabling two-factor authentication even when a secret is
-        // set, you should check that here.
-        
-        return filled($this->app_authentication_secret);
-    }
-
     public function getAppAuthenticationSecret(): ?string
     {
         // This method should return the user's saved app authentication secret.

@@ -30,7 +30,7 @@ it('can disable authentication when valid challenge code is used', function (): 
 
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -48,7 +48,7 @@ it('can disable authentication when valid challenge code is used', function (): 
         )
         ->assertHasNoFormErrors();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
 
     expect($user->getAppAuthenticationSecret())
@@ -61,7 +61,7 @@ it('can disable authentication when valid challenge code is used', function (): 
 it('can disable authentication when a valid recovery code is used', function (): void {
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -82,7 +82,7 @@ it('can disable authentication when a valid recovery code is used', function ():
         ->callMountedAction()
         ->assertHasNoFormErrors();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
 
     expect($user->getAppAuthenticationSecret())
@@ -97,7 +97,7 @@ it('will not disable authentication when an invalid code is used', function (): 
 
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -115,7 +115,7 @@ it('will not disable authentication when an invalid code is used', function (): 
         )
         ->assertHasFormErrors();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -129,7 +129,7 @@ it('will not disable authentication when an invalid code is used', function (): 
 test('codes are required without a recovery code', function (): void {
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -149,7 +149,7 @@ test('codes are required without a recovery code', function (): void {
             'code' => 'required',
         ]);
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -165,7 +165,7 @@ test('codes must be 6 digits', function (): void {
 
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -185,7 +185,7 @@ test('codes must be 6 digits', function (): void {
             'code' => 'digits',
         ]);
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -199,7 +199,7 @@ test('codes must be 6 digits', function (): void {
 it('will not disable authentication when an invalid recovery code is used', function (): void {
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -220,7 +220,7 @@ it('will not disable authentication when an invalid recovery code is used', func
         ->callMountedAction()
         ->assertHasFormErrors();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -237,7 +237,7 @@ it('will not disable authentication with a recovery code if recovery is disabled
 
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -255,7 +255,7 @@ it('will not disable authentication with a recovery code if recovery is disabled
         )
         ->assertHasFormErrors();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())

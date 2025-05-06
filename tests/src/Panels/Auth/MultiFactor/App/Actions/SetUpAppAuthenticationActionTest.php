@@ -64,7 +64,7 @@ it('can save the secret and recovery codes to the user when the action is submit
 
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
 
     expect($user->getAppAuthenticationSecret())
@@ -86,7 +86,7 @@ it('can save the secret and recovery codes to the user when the action is submit
         ->callMountedAction()
         ->assertHasNoFormErrors();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeTrue();
 
     expect($user->getAppAuthenticationSecret())
@@ -107,7 +107,7 @@ it('will not set up authentication when an invalid code is used', function (): v
 
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
 
     expect($user->getAppAuthenticationSecret())
@@ -130,7 +130,7 @@ it('will not set up authentication when an invalid code is used', function (): v
         ->callMountedAction()
         ->assertHasFormErrors();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
 
     expect($user->getAppAuthenticationSecret())
@@ -143,7 +143,7 @@ it('will not set up authentication when an invalid code is used', function (): v
 test('codes are required', function (): void {
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
 
     expect($user->getAppAuthenticationSecret())
@@ -161,7 +161,7 @@ test('codes are required', function (): void {
             'code' => 'required',
         ]);
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
 
     expect($user->getAppAuthenticationSecret())
@@ -176,7 +176,7 @@ test('codes must be 6 digits', function (): void {
 
     $user = auth()->user();
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
 
     expect($user->getAppAuthenticationSecret())
@@ -201,7 +201,7 @@ test('codes must be 6 digits', function (): void {
             'code' => 'digits',
         ]);
 
-    expect($user->hasAppAuthentication())
+    expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
 
     expect($user->getAppAuthenticationSecret())
