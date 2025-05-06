@@ -13,7 +13,7 @@ import Disclosure from "@components/Disclosure.astro"
 ## New requirements
 
 - PHP 8.2+
-- Laravel v11.15+
+- Laravel v11.28+
 - Tailwind CSS v4.0+, if you are currently using Tailwind CSS v3.0 with Filament. This does not apply if you are just using a Filament panel without a custom theme CSS file.
 - Filament no longer requires `doctrine/dbal`, but if your application still does, and you do not have it installed directly, you should add it to your `composer.json` file.
 
