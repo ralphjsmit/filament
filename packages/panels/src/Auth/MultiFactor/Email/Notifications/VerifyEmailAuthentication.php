@@ -2,8 +2,6 @@
 
 namespace Filament\Auth\MultiFactor\Email\Notifications;
 
-use Exception;
-use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -28,10 +26,6 @@ class VerifyEmailAuthentication extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        if (! ($notifiable instanceof HasEmailAuthentication)) {
-            throw new Exception('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
-        }
-
         return (new MailMessage)
             ->subject(__('filament-panels::auth/multi-factor/email/notifications/verify-email-authentication.subject'))
             ->line(trans_choice('filament-panels::auth/multi-factor/email/notifications/verify-email-authentication.lines.0', $this->codeExpiryMinutes, ['code' => $this->code, 'minutes' => $this->codeExpiryMinutes]))
