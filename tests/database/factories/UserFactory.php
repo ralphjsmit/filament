@@ -3,7 +3,6 @@
 namespace Filament\Tests\Database\Factories;
 
 use Filament\Auth\MultiFactor\App\AppAuthentication;
-use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -26,10 +25,8 @@ class UserFactory extends Factory
 
     public function hasEmailAuthentication(): self
     {
-        $emailAuthentication = EmailAuthentication::make();
-
         return $this->state(fn (): array => [
-            'email_authentication_secret' => $emailAuthentication->generateSecret(),
+            'has_email_authentication' => true,
         ]);
     }
 

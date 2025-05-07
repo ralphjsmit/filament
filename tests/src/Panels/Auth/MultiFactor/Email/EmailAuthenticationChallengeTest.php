@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Actions\Testing\TestAction;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
@@ -21,11 +22,15 @@ beforeEach(function (): void {
 });
 
 it('can render the challenge form after valid login credentials are successfully used', function (): void {
+    /** @var EmailAuthentication $emailAuthentication */
     $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
         ->hasEmailAuthentication()
         ->create();
+
+    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $emailAuthentication->generateCodesUsing(fn (): string => $code);
 
     $livewire = livewire(Login::class)
         ->fillForm([
@@ -42,21 +47,25 @@ it('can render the challenge form after valid login credentials are successfully
 
     $this->assertGuest();
 
-    Notification::assertSentTo($userToAuthenticate, VerifyEmailAuthentication::class, function (VerifyEmailAuthentication $notification) use ($emailAuthentication, $userToAuthenticate): bool {
-        if ($notification->codeWindow !== $emailAuthentication->getCodeWindow()) {
+    Notification::assertSentTo($userToAuthenticate, VerifyEmailAuthentication::class, function (VerifyEmailAuthentication $notification) use ($code, $emailAuthentication): bool {
+        if ($notification->codeExpiryMinutes !== $emailAuthentication->getCodeExpiryMinutes()) {
             return false;
         }
 
-        return $notification->code === $emailAuthentication->getCurrentCode($userToAuthenticate);
+        return $notification->code === $code;
     });
 });
 
 it('will authenticate the user after a valid challenge code is used', function (): void {
+    /** @var EmailAuthentication $emailAuthentication */
     $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
     $userToAuthenticate = User::factory()
         ->hasEmailAuthentication()
         ->create();
+
+    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $emailAuthentication->generateCodesUsing(fn (): string => $code);
 
     livewire(Login::class)
         ->fillForm([
@@ -68,7 +77,7 @@ it('will authenticate the user after a valid challenge code is used', function (
         ->assertNoRedirect()
         ->fillForm([
             $emailAuthentication->getId() => [
-                'code' => $emailAuthentication->getCurrentCode($userToAuthenticate),
+                'code' => $code,
             ],
         ], 'multiFactorChallengeForm')
         ->call('authenticate')
@@ -105,7 +114,7 @@ it('can resend the code to the user', function (): void {
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 });
 
-it('can not resend the code to the user more than once per minute', function (): void {
+it('can not resend the code to the user more than twice per minute', function (): void {
     $this->travelTo(now()->subMinute());
 
     $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
@@ -127,7 +136,13 @@ it('can not resend the code to the user more than once per minute', function ():
         ->callAction(TestAction::make('resend')
             ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+
+    $livewire
+        ->callAction(TestAction::make('resend')
+            ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 
     $this->travelBack();
 
@@ -135,7 +150,7 @@ it('can not resend the code to the user more than once per minute', function ():
         ->callAction(TestAction::make('resend')
             ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+    Notification::assertSentTimes(VerifyEmailAuthentication::class, 3);
 });
 
 it('will not render the challenge form after invalid login credentials are used', function (): void {
@@ -193,9 +208,7 @@ it('will not authenticate the user when an invalid challenge code is used', func
         ->assertNoRedirect()
         ->fillForm([
             $emailAuthentication->getId() => [
-                'code' => ($emailAuthentication->getCurrentCode($userToAuthenticate) === '000000')
-                    ? '111111'
-                    : '000000',
+                'code' => str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT),
             ],
         ], 'multiFactorChallengeForm')
         ->call('authenticate')
@@ -282,7 +295,7 @@ test('challenge codes must be 6 digits', function (): void {
         ->assertNoRedirect()
         ->fillForm([
             $emailAuthentication->getId() => [
-                'code' => Str::limit($emailAuthentication->getCurrentCode($userToAuthenticate), limit: 5, end: ''),
+                'code' => str_pad((string) random_int(0, 99999), 5, '0', STR_PAD_LEFT),
             ],
         ], 'multiFactorChallengeForm')
         ->call('authenticate')

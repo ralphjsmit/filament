@@ -12,7 +12,7 @@ When MFA is enabled, users must perform an extra step before they are authentica
 Filament includes two methods of MFA which you can enable out of the box:
 
 - [App authentication](#app-authentication) uses a Google Authenticator-compatible app (such as the Google Authenticator, Authy, or Microsoft Authenticator apps) to generate a time-based one-time password (TOTP) that is used to verify the user.
-- [Email authentication](#email-authentication) sends a time-based one-time password (TOTP) to the user's email address, which they must enter to verify their identity.
+- [Email authentication](#email-authentication) sends a one-time code to the user's email address, which they must enter to verify their identity.
 
 In Filament, users set up multi-factor authentication from their [profile page](overview#authentication-features). If you use Filament's profile page feature, setting up multi-factor authentication will automatically add the correct UI elements to the profile page:
 
@@ -315,20 +315,20 @@ public function panel(Panel $panel): Panel
 
 ## Email authentication
 
-Email authentication sends the user time-based one-time passwords (TOTP) to their email address, which they must enter to verify their identity. These TOTP codes are generated using the same algorithm as [app authentication](#app-authentication).
+Email authentication sends the user one-time codes to their email address, which they must enter to verify their identity.
 
-To enable email authentication in a panel, you must first add a new column to your `users` table (or whichever table is being used for your "authenticatable" Eloquent model in this panel). The column needs to store the secret key used to generate and verify the time-based one-time passwords. It can be a normal `text()` column in a migration:
+To enable email authentication in a panel, you must first add a new column to your `users` table (or whichever table is being used for your "authenticatable" Eloquent model in this panel). The column needs to store a boolean indicating whether or not email authentication is enabled:
 
 ```php
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 Schema::table('users', function (Blueprint $table) {
-    $table->text('email_authentication_secret')->nullable();
+    $table->boolean('has_email_authentication')->default(false);
 });
 ```
 
-In the `User` model, you need to ensure that this column is encrypted and `$hidden`, since this is incredibly sensitive information that should be stored securely:
+In the `User` model, you need to ensure that this column is cast to a boolean:
 
 ```php
 use Filament\Models\Contracts\FilamentUser;
@@ -338,28 +338,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     // ...
-
-    /**
-     * @var array<string>
-     */
-    protected $hidden = [
-        // ...
-        'email_authentication_secret',
-    ];
-    
     /**
      * @var array<string, string>
      */
     protected $casts = [
         // ...
-        'email_authentication_secret' => 'encrypted',
+        'has_email_authentication' => 'boolean',
     ];
     
     // ...
 }
 ```
 
-Next, you should implement the `HasEmailAuthentication` interface on the `User` model. This provides Filament with the necessary methods to interact with the secret code and other information about the integration:
+Next, you should implement the `HasEmailAuthentication` interface on the `User` model. This provides Filament with the necessary methods to interact with the column that indicates whether or not email authentication is enabled:
 
 ```php
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
@@ -374,32 +365,22 @@ class User extends Authenticatable implements FilamentUser, HasEmailAuthenticati
     public function hasEmailAuthentication(): bool
     {
         // This method should return true if the user has enabled email authentication.
-        // We know that the user has enabled it if the secret is not null, but if your app has
-        // another mechanism for disabling email authentication even when a secret is
-        // set, you should check that here.
         
-        return filled($this->email_authentication_secret);
+        return $this->has_email_authentication;
     }
 
-    public function getEmailAuthenticationSecret(): ?string
+    public function toggleEmailAuthentication(bool $condition): void
     {
-        // This method should return the user's saved email authentication secret.
+        // This method should save whether or not the user has enabled email authentication.
     
-        return $this->email_authentication_secret;
-    }
-
-    public function saveEmailAuthenticationSecret(?string $secret): void
-    {
-        // This method should save the user's email authentication secret.
-    
-        $this->email_authentication_secret = $secret;
+        $this->has_email_authentication = $condition;
         $this->save();
     }
 }
 ```
 
 <Aside variant="tip">
-    Since Filament uses an interface on your `User` model instead of assuming that the `email_authentication_secret` column exists, you can use any column name you want. You could even use a different model entirely if you want to store the secret in a different table.
+    Since Filament uses an interface on your `User` model instead of assuming that the `has_email_authentication` column exists, you can use any column name you want. You could even use a different model entirely if you want to store the setting in a different table.
 </Aside>
 
 Finally, you should activate the email authentication feature in your panel. To do this, use the `multiFactorAuthentication()` method in the [configuration](../panel-configuration), and pass an `EmailAuthentication` instance to it:
@@ -420,9 +401,9 @@ public function panel(Panel $panel): Panel
 
 ### Changing the email code expiration time
 
-Email codes are issued using a time-based one-time password (TOTP) algorithm, which means that they are only valid for a short period of time before and after the time they are generated. The time is defined in a "window" of time. By default, Filament uses an expiration window of `8`, which allows the code to be valid for 4 minutes after it is generated.
+Email codes are issued with an lifetime of 4 minutes, after which they expire.
 
-To change the window, for example to only be valid for 2 minutes after it is generated, you can use the `codeWindow()` method on the `EmailAuthentication` instance, set to `4`:
+To change the expiration period, for example to only be valid for 2 minutes after codes are generated, you can use the `codeExpiryMinutes()` method on the `EmailAuthentication` instance, set to `2`:
 
 ```php
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
@@ -434,7 +415,7 @@ public function panel(Panel $panel): Panel
         // ...
         ->multiFactorAuthentication([
             EmailAuthentication::make()
-                ->codeWindow(4),
+                ->codeExpiryMinutes(2),
         ]);
 }
 ```

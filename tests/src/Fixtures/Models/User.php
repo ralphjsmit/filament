@@ -30,7 +30,6 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         'remember_token',
         'app_authentication_secret',
         'app_authentication_recovery_codes',
-        'email_authentication_secret',
     ];
 
     /**
@@ -41,7 +40,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         'email_verified_at' => 'datetime',
         'app_authentication_secret' => 'encrypted',
         'app_authentication_recovery_codes' => 'encrypted:array',
-        'email_authentication_secret' => 'encrypted',
+        'has_email_authentication' => 'boolean',
     ];
 
     public function canAccessPanel(Panel $panel): bool
@@ -69,14 +68,9 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         return Team::all();
     }
 
-    public function hasAppAuthentication(): bool
-    {
-        return filled($this->app_authentication_secret);
-    }
-
     public function getAppAuthenticationSecret(): ?string
     {
-        return $this->app_authentication_secret ?? '';
+        return $this->app_authentication_secret;
     }
 
     public function saveAppAuthenticationSecret(?string $secret): void
@@ -103,17 +97,12 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 
     public function hasEmailAuthentication(): bool
     {
-        return filled($this->email_authentication_secret);
+        return (bool) $this->has_email_authentication;
     }
 
-    public function getEmailAuthenticationSecret(): ?string
+    public function toggleEmailAuthentication(bool $condition): void
     {
-        return $this->email_authentication_secret;
-    }
-
-    public function saveEmailAuthenticationSecret(?string $secret): void
-    {
-        $this->email_authentication_secret = $secret;
+        $this->has_email_authentication = $condition;
         $this->save();
     }
 

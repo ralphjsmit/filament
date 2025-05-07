@@ -15,7 +15,7 @@ class VerifyEmailAuthentication extends Notification implements ShouldQueue
 
     public function __construct(
         public string $code,
-        public int $codeWindow,
+        public int $codeExpiryMinutes,
     ) {}
 
     /**
@@ -32,11 +32,9 @@ class VerifyEmailAuthentication extends Notification implements ShouldQueue
             throw new Exception('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
         }
 
-        $expiryMinutes = ceil($this->codeWindow / 2);
-
         return (new MailMessage)
             ->subject(__('filament-panels::auth/multi-factor/email/notifications/verify-email-authentication.subject'))
-            ->line(trans_choice('filament-panels::auth/multi-factor/email/notifications/verify-email-authentication.lines.0', $expiryMinutes, ['code' => $this->code, 'minutes' => $expiryMinutes]))
-            ->line(trans_choice('filament-panels::auth/multi-factor/email/notifications/verify-email-authentication.lines.1', $expiryMinutes, ['code' => $this->code, 'minutes' => $expiryMinutes]));
+            ->line(trans_choice('filament-panels::auth/multi-factor/email/notifications/verify-email-authentication.lines.0', $this->codeExpiryMinutes, ['code' => $this->code, 'minutes' => $this->codeExpiryMinutes]))
+            ->line(trans_choice('filament-panels::auth/multi-factor/email/notifications/verify-email-authentication.lines.1', $this->codeExpiryMinutes, ['code' => $this->code, 'minutes' => $this->codeExpiryMinutes]));
     }
 }
