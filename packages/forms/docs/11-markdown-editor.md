@@ -35,37 +35,17 @@ use Filament\Forms\Components\MarkdownEditor;
 
 MarkdownEditor::make('content')
     ->toolbarButtons([
-        'attachFiles',
-        'blockquote',
-        'bold',
-        'bulletList',
-        'codeBlock',
-        'heading',
-        'italic',
-        'link',
-        'orderedList',
-        'redo',
-        'strike',
-        'table',
-        'undo',
+        ['bold', 'italic', 'strike', 'link'],
+        ['heading'],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['table', 'attachFiles'],
+        ['undo', 'redo'],
     ])
 ```
+
+Each nested array in the main array represents a group of buttons in the toolbar.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
-Alternatively, you may disable specific buttons using the `disableToolbarButtons()` method:
-
-```php
-use Filament\Forms\Components\MarkdownEditor;
-
-MarkdownEditor::make('content')
-    ->disableToolbarButtons([
-        'blockquote',
-        'strike',
-    ])
-```
-
-To disable all toolbar buttons, set an empty array with `toolbarButtons([])` or use `disableAllToolbarButtons()`.
 
 ## Uploading images to the editor
 

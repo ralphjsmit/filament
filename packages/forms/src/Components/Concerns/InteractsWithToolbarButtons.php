@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Exception;
 
 trait InteractsWithToolbarButtons
 {
@@ -16,25 +17,45 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string>  $buttonsToDisable
+     * @param  array<string | array<string>>  $buttonsToDisable
      */
     public function disableToolbarButtons(array $buttonsToDisable = []): static
     {
-        $this->toolbarButtons = array_values(array_filter(
-            $this->getToolbarButtons(),
-            static fn ($button) => ! in_array($button, $buttonsToDisable),
-        ));
+        if ($this->toolbarButtons instanceof Closure) {
+            throw new Exception('You cannot use the `disableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, do not return the disabled buttons from the function.');
+        }
+
+        $this->toolbarButtons = array_reduce(
+            $this->toolbarButtons,
+            function ($carry, $button) use ($buttonsToDisable) {
+                if (is_array($button)) {
+                    $carry[] = array_values(array_filter(
+                        $button,
+                        static fn ($button) => ! in_array($button, $buttonsToDisable),
+                    ));
+                } elseif (! in_array($button, $buttonsToDisable)) {
+                    $carry[] = $button;
+                }
+
+                return $carry;
+            },
+            initial: [],
+        );
 
         return $this;
     }
 
     /**
-     * @param  array<string>  $buttonsToEnable
+     * @param  array<string | array<string | array<string>>>  $buttonsToEnable
      */
     public function enableToolbarButtons(array $buttonsToEnable = []): static
     {
+        if ($this->toolbarButtons instanceof Closure) {
+            throw new Exception('You cannot use the `enableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, return the enabled buttons from the function.');
+        }
+
         $this->toolbarButtons = [
-            ...$this->getToolbarButtons(),
+            ...$this->toolbarButtons,
             ...$buttonsToEnable,
         ];
 
@@ -42,7 +63,7 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string> | Closure  $buttons
+     * @param  array<string | array<string>> | Closure  $buttons
      */
     public function toolbarButtons(array | Closure $buttons = []): static
     {
@@ -52,11 +73,36 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @return array<string>
+     * @return array<array<string>>
      */
     public function getToolbarButtons(): array
     {
-        return $this->evaluate($this->toolbarButtons);
+        $toolbar = [];
+        $newButtonGroup = [];
+
+        foreach ($this->evaluate($this->toolbarButtons) as $buttonGroup) {
+            if (blank($buttonGroup)) {
+                continue;
+            }
+
+            if (! is_array($buttonGroup)) {
+                $newButtonGroup[] = $buttonGroup;
+
+                continue;
+            }
+
+            if (filled($newButtonGroup)) {
+                $toolbar[] = $newButtonGroup;
+
+                $newButtonGroup = [];
+
+                continue;
+            }
+
+            $toolbar[] = $buttonGroup;
+        }
+
+        return $toolbar;
     }
 
     /**
@@ -64,12 +110,18 @@ trait InteractsWithToolbarButtons
      */
     public function hasToolbarButton(string | array $button): bool
     {
-        if (is_array($button)) {
-            $buttons = $button;
-
-            return (bool) count(array_intersect($buttons, $this->getToolbarButtons()));
+        foreach ($this->getToolbarButtons() as $buttonGroup) {
+            if (is_array($button)) {
+                foreach ($button as $singleButton) {
+                    if (in_array($singleButton, $buttonGroup)) {
+                        return true;
+                    }
+                }
+            } elseif (in_array($button, $buttonGroup)) {
+                return true;
+            }
         }
 
-        return in_array($button, $this->getToolbarButtons());
+        return false;
     }
 }

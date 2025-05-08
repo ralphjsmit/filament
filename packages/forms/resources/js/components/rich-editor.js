@@ -126,6 +126,10 @@ export default function richEditorFormComponent({
             return editor
         },
 
+        $getEditor: function () {
+            return this.getEditor()
+        },
+
         setEditorSelection: function (selection) {
             if (!selection) {
                 return

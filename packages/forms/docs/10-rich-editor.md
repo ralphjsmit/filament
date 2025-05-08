@@ -35,40 +35,17 @@ use Filament\Forms\Components\RichEditor;
 
 RichEditor::make('content')
     ->toolbarButtons([
-        'attachFiles',
-        'blockquote',
-        'bold',
-        'bulletList',
-        'codeBlock',
-        'h2',
-        'h3',
-        'italic',
-        'link',
-        'orderedList',
-        'redo',
-        'strike',
-        'sub',
-        'sup',
-        'underline',
-        'undo',
+        ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
+        ['h2', 'h3'],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['attachFiles'],
+        ['undo', 'redo'],
     ])
 ```
+
+Each nested array in the main array represents a group of buttons in the toolbar.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
-Alternatively, you may disable specific buttons using the `disableToolbarButtons()` method:
-
-```php
-use Filament\Forms\Components\RichEditor;
-
-RichEditor::make('content')
-    ->disableToolbarButtons([
-        'blockquote',
-        'strike',
-    ])
-```
-
-To disable all toolbar buttons, set an empty array with `toolbarButtons([])` or use `disableAllToolbarButtons()`.
 
 ## Uploading images to the editor
 
