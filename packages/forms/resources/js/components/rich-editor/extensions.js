@@ -18,23 +18,12 @@ import Text from '@tiptap/extension-text'
 import Underline from '@tiptap/extension-underline'
 
 export default async ({
-    extensionUrls,
+    customExtensionUrls,
     key,
     statePath,
     uploadingFileMessage,
     $wire,
 }) => [
-    ...(await Promise.all(
-        extensionUrls.map(async (url) => {
-            const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
-
-            if (!absoluteUrlRegExp.test(url)) {
-                url = new URL(url, document.baseURI).href
-            }
-
-            return (await import(url)).default
-        }),
-    )),
     Blockquote,
     Bold,
     BulletList,
@@ -63,4 +52,17 @@ export default async ({
     Text,
     Underline,
     UndoRedo,
+    ...(
+        await Promise.all(
+            customExtensionUrls.map(async (url) => {
+                const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
+
+                if (!absoluteUrlRegExp.test(url)) {
+                    url = new URL(url, document.baseURI).href
+                }
+
+                return (await import(url)).default
+            }),
+        )
+    ).flat(),
 ]

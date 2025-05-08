@@ -71,6 +71,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected bool | Closure $isJson = false;
 
     /**
+     * @var array<Extension | Closure>
+     */
+    protected array $tipTapPhpExtensions = [];
+
+    /**
      * @var array<string | Closure>
      */
     protected array $tipTapJsExtensions = [];
@@ -92,6 +97,19 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     {
         $this->tipTapJsExtensions = [
             ...$this->tipTapJsExtensions,
+            ...is_array($extensions) ? $extensions : [$extensions],
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Extension> | Closure  $extensions
+     */
+    public function tipTapPhpExtensions(array | Closure $extensions): static
+    {
+        $this->tipTapPhpExtensions = [
+            ...$this->tipTapPhpExtensions,
             ...is_array($extensions) ? $extensions : [$extensions],
         ];
 
@@ -186,9 +204,26 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             app(Superscript::class),
             app(Text::class),
             app(Underline::class),
+            ...array_reduce(
+                $this->tipTapPhpExtensions,
+                function (array $carry, Extension | Closure $extension): array {
+                    if ($extension instanceof Closure) {
+                        $extension = $this->evaluate($extension);
+                    }
+
+                    return [
+                        ...$carry,
+                        ...Arr::wrap($extension),
+                    ];
+                },
+                initial: [],
+            ),
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     public function getTipTapJsExtensions(): array
     {
         return array_reduce(

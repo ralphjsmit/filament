@@ -16,7 +16,7 @@
         @endif
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
         x-data="richEditorFormComponent({
-                    extensionUrls: @js($getTipTapJsExtensions()),
+                    extensions: @js($getTipTapJsExtensions()),
                     key: @js($key),
                     isLiveDebounced: @js($isLiveDebounced()),
                     isLiveOnBlur: @js($isLiveOnBlur()),
