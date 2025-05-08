@@ -17,6 +17,9 @@
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
         x-data="richEditorFormComponent({
                     key: @js($key),
+                    isLiveDebounced: @js($isLiveDebounced()),
+                    isLiveOnBlur: @js($isLiveOnBlur()),
+                    liveDebounce: @js($getNormalizedLiveDebounce()),
                     livewireId: @js($this->getId()),
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     statePath: @js($statePath),

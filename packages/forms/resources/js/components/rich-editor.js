@@ -4,6 +4,9 @@ import { Selection } from '@tiptap/pm/state'
 
 export default function richEditorFormComponent({
     key,
+    isLiveDebounced,
+    isLiveOnBlur,
+    liveDebounce,
     livewireId,
     state,
     statePath,
@@ -34,22 +37,33 @@ export default function richEditorFormComponent({
                 content: this.state,
             })
 
-            editor.on('create', ({ editor }) => {
+            editor.on('create', () => {
                 this.editorUpdatedAt = Date.now()
             })
 
-            editor.on('update', ({ editor }) => {
-                this.editorUpdatedAt = Date.now()
+            editor.on(
+                'update',
+                Alpine.debounce(({ editor }) => {
+                    this.editorUpdatedAt = Date.now()
 
-                this.state = editor.getJSON()
+                    this.state = editor.getJSON()
 
-                this.shouldUpdateState = false
-            })
+                    this.shouldUpdateState = false
 
-            editor.on('selectionUpdate', ({ editor, transaction }) => {
+                    if (isLiveDebounced) {
+                        this.$wire.commit()
+                    }
+                }, liveDebounce ?? 300),
+            )
+
+            editor.on('selectionUpdate', ({ transaction }) => {
                 this.editorUpdatedAt = Date.now()
                 this.editorSelection = transaction.selection.toJSON()
             })
+
+            if (isLiveOnBlur) {
+                editor.on('blur', () => this.$wire.commit())
+            }
 
             this.$watch('state', () => {
                 if (!this.shouldUpdateState) {
