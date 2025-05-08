@@ -20,7 +20,7 @@
     }
 
     & .fi-fo-rich-editor-content {
-        @apply min-h-full w-full px-3 py-3;
+        @apply min-h-full w-full px-5 py-3;
     }
 
     & .tiptap:focus {
