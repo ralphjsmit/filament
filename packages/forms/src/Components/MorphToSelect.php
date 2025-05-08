@@ -7,6 +7,7 @@ use Exception;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Contracts\Support\Htmlable;
@@ -19,10 +20,10 @@ class MorphToSelect extends Component
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\HasLoadingMessage;
-    use \Filament\Schemas\Components\Concerns\HasName;
     use HasLabel {
         getLabel as getBaseLabel;
     }
+    use HasName;
 
     protected string $view = 'filament-schemas::components.fieldset';
 

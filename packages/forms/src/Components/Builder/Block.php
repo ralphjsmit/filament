@@ -8,15 +8,16 @@ use Exception;
 use Filament\Forms\Components\Concerns;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Components\Concerns\HasName;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Block extends Component
 {
     use Concerns\HasPreview;
-    use \Filament\Schemas\Components\Concerns\HasName {
+    use HasLabel {
         getLabel as getBaseLabel;
     }
-    use HasLabel {
+    use HasName {
         getLabel as getBaseLabel;
     }
 
