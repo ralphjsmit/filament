@@ -24,10 +24,10 @@ class Field extends Component implements Contracts\HasValidationRules
     use Concerns\HasExtraFieldWrapperAttributes;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
-    use HasName;
     use HasLabel {
         getLabel as getBaseLabel;
     }
+    use HasName;
 
     protected string $viewIdentifier = 'field';
 
