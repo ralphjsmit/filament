@@ -3,10 +3,12 @@
 namespace Filament\Forms\Components\RichEditor;
 
 use Closure;
-use Filament\Forms\Components\Concerns\HasName;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasIcon;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 
 use function Filament\Support\generate_icon_html;
@@ -14,6 +16,9 @@ use function Filament\Support\generate_icon_html;
 class Tool extends Component implements HasEmbeddedView
 {
     use HasIcon;
+    use HasLabel {
+        getLabel as getBaseLabel;
+    }
     use HasName;
 
     /**
@@ -93,6 +98,21 @@ class Tool extends Component implements HasEmbeddedView
     public function getActiveKey(): string
     {
         return $this->evaluate($this->activeKey) ?? $this->getName();
+    }
+
+    public function getLabel(): string | Htmlable | null
+    {
+        if (filled($label = $this->getBaseLabel())) {
+            return $label;
+        }
+
+        $label = (string) str($this->getName())
+            ->afterLast('.')
+            ->kebab()
+            ->replace(['-', '_'], ' ')
+            ->ucfirst();
+
+        return $this->shouldTranslateLabel ? __($label) : $label;
     }
 
     public function toEmbeddedHtml(): string

@@ -8,6 +8,8 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanOpenUrl;
+use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
@@ -23,9 +25,12 @@ class Entry extends Component
     use Concerns\HasExtraEntryWrapperAttributes;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
-    use Concerns\HasName;
     use Concerns\HasTooltip;
     use HasAlignment;
+    use HasLabel {
+        getLabel as getBaseLabel;
+    }
+    use HasName;
     use HasPlaceholder;
 
     protected string $viewIdentifier = 'entry';
@@ -87,15 +92,17 @@ class Entry extends Component
 
     public function getLabel(): string | Htmlable | null
     {
-        $label = parent::getLabel() ?? (string) str($this->getName())
-            ->before('.')
+        if (filled($label = $this->getBaseLabel())) {
+            return $label;
+        }
+
+        $label = (string) str($this->getName())
+            ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
 
-        return (is_string($label) && $this->shouldTranslateLabel) ?
-            __($label) :
-            $label;
+        return $this->shouldTranslateLabel ? __($label) : $label;
     }
 
     public function state(mixed $state): static
