@@ -6,7 +6,7 @@
 <button
     @if ($type)
         x-bind:class="{
-            'fi-active': editorUpdatedAt && getEditor().isActive(@js($type), @js($activeOptions)),
+            'fi-active': editorUpdatedAt && getEditor()?.isActive(@js($type), @js($activeOptions)),
         }"
     @endif
     {{

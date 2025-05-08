@@ -16,6 +16,7 @@
         @endif
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
         x-data="richEditorFormComponent({
+                    extensionUrls: @js($getTipTapJsExtensions()),
                     key: @js($key),
                     isLiveDebounced: @js($isLiveDebounced()),
                     isLiveOnBlur: @js($isLiveOnBlur()),
@@ -38,7 +39,7 @@
                             @if ($hasToolbarButton('bold'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="bold"
-                                    x-on:click="getEditor().chain().focus().toggleBold().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleBold().run()"
                                     :title="__('filament-forms::components.rich_editor.toolbar_buttons.bold')"
                                     tabindex="-1"
                                 >
@@ -49,7 +50,7 @@
                             @if ($hasToolbarButton('italic'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="italic"
-                                    x-on:click="getEditor().chain().focus().toggleItalic().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleItalic().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.italic') }}"
                                     tabindex="-1"
                                 >
@@ -60,7 +61,7 @@
                             @if ($hasToolbarButton('underline'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="underline"
-                                    x-on:click="getEditor().chain().focus().toggleUnderline().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleUnderline().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.underline') }}"
                                     tabindex="-1"
                                 >
@@ -71,7 +72,7 @@
                             @if ($hasToolbarButton('strike'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="strike"
-                                    x-on:click="getEditor().chain().focus().toggleStrike().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleStrike().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.strike') }}"
                                     tabindex="-1"
                                 >
@@ -82,7 +83,7 @@
                             @if ($hasToolbarButton('subscript'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="subscript"
-                                    x-on:click="getEditor().chain().focus().toggleSubscript().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleSubscript().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.subscript') }}"
                                     tabindex="-1"
                                 >
@@ -111,7 +112,7 @@
                             @if ($hasToolbarButton('superscript'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="superscript"
-                                    x-on:click="getEditor().chain().focus().toggleSuperscript().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleSuperscript().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.superscript') }}"
                                     tabindex="-1"
                                 >
@@ -156,7 +157,7 @@
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="heading"
                                     :active-options="['level' => 1]"
-                                    x-on:click="getEditor().chain().focus().toggleHeading({ level: 1 }).run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.h1') }}"
                                     tabindex="-1"
                                 >
@@ -168,7 +169,7 @@
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="heading"
                                     :active-options="['level' => 2]"
-                                    x-on:click="getEditor().chain().focus().toggleHeading({ level: 2 }).run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.h2') }}"
                                     tabindex="-1"
                                 >
@@ -180,7 +181,7 @@
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="heading"
                                     :active-options="['level' => 3]"
-                                    x-on:click="getEditor().chain().focus().toggleHeading({ level: 3 }).run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.h3') }}"
                                     tabindex="-1"
                                 >
@@ -195,7 +196,7 @@
                             @if ($hasToolbarButton('blockquote'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="blockquote"
-                                    x-on:click="getEditor().chain().focus().toggleBlockquote().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleBlockquote().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.blockquote') }}"
                                     tabindex="-1"
                                 >
@@ -206,7 +207,7 @@
                             @if ($hasToolbarButton('codeBlock'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="codeBlock"
-                                    x-on:click="getEditor().chain().focus().toggleCodeBlock().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleCodeBlock().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.code_block') }}"
                                     tabindex="-1"
                                 >
@@ -217,7 +218,7 @@
                             @if ($hasToolbarButton('bulletList'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="bulletList"
-                                    x-on:click="getEditor().chain().focus().toggleBulletList().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleBulletList().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.bullet_list') }}"
                                     tabindex="-1"
                                 >
@@ -228,7 +229,7 @@
                             @if ($hasToolbarButton('orderedList'))
                                 <x-filament-forms::rich-editor.toolbar.button
                                     type="orderedList"
-                                    x-on:click="getEditor().chain().focus().toggleOrderedList().run()"
+                                    x-on:click="getEditor()?.chain().focus().toggleOrderedList().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.ordered_list') }}"
                                     tabindex="-1"
                                 >
@@ -255,7 +256,7 @@
                         <div class="fi-fo-rich-editor-toolbar-group">
                             @if ($hasToolbarButton('undo'))
                                 <x-filament-forms::rich-editor.toolbar.button
-                                    x-on:click="getEditor().chain().focus().undo().run()"
+                                    x-on:click="getEditor()?.chain().focus().undo().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.undo') }}"
                                     tabindex="-1"
                                 >
@@ -265,7 +266,7 @@
 
                             @if ($hasToolbarButton('redo'))
                                 <x-filament-forms::rich-editor.toolbar.button
-                                    x-on:click="getEditor().chain().focus().redo().run()"
+                                    x-on:click="getEditor()?.chain().focus().redo().run()"
                                     title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.redo') }}"
                                     tabindex="-1"
                                 >

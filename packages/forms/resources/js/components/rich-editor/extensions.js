@@ -17,7 +17,24 @@ import Superscript from '@tiptap/extension-superscript'
 import Text from '@tiptap/extension-text'
 import Underline from '@tiptap/extension-underline'
 
-export default ({ key, statePath, uploadingFileMessage, $wire }) => [
+export default async ({
+    extensionUrls,
+    key,
+    statePath,
+    uploadingFileMessage,
+    $wire,
+}) => [
+    ...(await Promise.all(
+        extensionUrls.map(async (url) => {
+            const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
+
+            if (!absoluteUrlRegExp.test(url)) {
+                url = new URL(url, document.baseURI).href
+            }
+
+            return (await import(url)).default
+        }),
+    )),
     Blockquote,
     Bold,
     BulletList,

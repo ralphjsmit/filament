@@ -10,6 +10,7 @@ use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\Image;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Support\Arr;
 use Tiptap\Core\Extension;
 use Tiptap\Marks\Bold;
 use Tiptap\Marks\Code;
@@ -69,6 +70,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     protected bool | Closure $isJson = false;
 
+    /**
+     * @var array<string | Closure>
+     */
+    protected array $tipTapJsExtensions = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -77,6 +83,19 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             AttachFilesAction::make(),
             LinkAction::make(),
         ]);
+    }
+
+    /**
+     * @param  array<string> | Closure  $extensions
+     */
+    public function tipTapJsExtensions(array | Closure $extensions): static
+    {
+        $this->tipTapJsExtensions = [
+            ...$this->tipTapJsExtensions,
+            ...is_array($extensions) ? $extensions : [$extensions],
+        ];
+
+        return $this;
     }
 
     /**
@@ -168,5 +187,23 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             app(Text::class),
             app(Underline::class),
         ];
+    }
+
+    public function getTipTapJsExtensions(): array
+    {
+        return array_reduce(
+            $this->tipTapJsExtensions,
+            function (array $carry, string | Closure $extension): array {
+                if ($extension instanceof Closure) {
+                    $extension = $this->evaluate($extension);
+                }
+
+                return [
+                    ...$carry,
+                    ...Arr::wrap($extension),
+                ];
+            },
+            initial: [],
+        );
     }
 }

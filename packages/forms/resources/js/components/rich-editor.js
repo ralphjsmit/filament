@@ -3,6 +3,7 @@ import getExtensions from './rich-editor/extensions'
 import { Selection } from '@tiptap/pm/state'
 
 export default function richEditorFormComponent({
+    extensionUrls,
     key,
     isLiveDebounced,
     isLiveOnBlur,
@@ -25,10 +26,11 @@ export default function richEditorFormComponent({
 
         editorUpdatedAt: Date.now(),
 
-        init: function () {
+        init: async function () {
             editor = new Editor({
                 element: this.$refs.editor,
-                extensions: getExtensions({
+                extensions: await getExtensions({
+                    extensionUrls,
                     key,
                     statePath,
                     uploadingFileMessage,
