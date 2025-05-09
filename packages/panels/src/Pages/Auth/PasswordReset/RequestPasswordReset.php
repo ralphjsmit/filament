@@ -11,6 +11,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -68,6 +69,10 @@ class RequestPasswordReset extends SimplePage
                     throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
                 }
 
+                if (!($user instanceof FilamentUser) || !$user->canAccessPanel(Filament::getCurrentPanel())) {
+                    return;
+                }
+
                 $notification = app(ResetPasswordNotification::class, ['token' => $token]);
                 $notification->url = Filament::getResetPasswordUrl($token, $user);
 
@@ -81,7 +86,7 @@ class RequestPasswordReset extends SimplePage
             return;
         }
 
-        $this->getSentNotification($status)?->send();
+        $this->getSentNotification('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent')?->send();
 
         $this->form->fill();
     }

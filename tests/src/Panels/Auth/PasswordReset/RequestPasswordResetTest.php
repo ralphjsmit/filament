@@ -3,9 +3,11 @@
 use Filament\Facades\Filament;
 use Filament\Notifications\Auth\ResetPassword;
 use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
+use Filament\Panel;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
+use Filament\Notifications\Notification as FilamentNotification;
 
 use function Filament\Tests\livewire;
 
@@ -39,9 +41,39 @@ it('can request password reset', function () {
             'email' => $userToResetPassword->email,
         ])
         ->call('request')
-        ->assertNotified();
+        ->assertNotified(
+            FilamentNotification::make()
+                ->success()
+                ->title(__('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent'))
+        );
 
     Notification::assertSentTo($userToResetPassword, ResetPassword::class);
+});
+
+it('can gate password resets based on panel access', function () {
+    Notification::fake();
+
+    $this->assertGuest();
+
+    $userToResetPassword = User::factory()->create();
+
+    $testPanel = Panel::make();
+    $testPanel->id('test');
+
+    Filament::setCurrentPanel($testPanel);
+
+    livewire(RequestPasswordReset::class)
+        ->fillForm([
+            'email' => $userToResetPassword->email,
+        ])
+        ->call('request')
+        ->assertNotified(
+            FilamentNotification::make()
+                ->success()
+                ->title(__('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent'))
+        );
+
+    Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
 });
 
 it('can throttle requests', function () {

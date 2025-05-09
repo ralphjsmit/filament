@@ -8,6 +8,8 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Filament\Panel;
+use Filament\Notifications\Notification;
 
 use function Filament\Tests\livewire;
 
@@ -58,7 +60,11 @@ it('can reset password', function () {
         ->set('password', 'new-password')
         ->set('passwordConfirmation', 'new-password')
         ->call('resetPassword')
-        ->assertNotified()
+        ->assertNotified(
+            Notification::make()
+                ->success()
+                ->title(__('passwords.reset'))
+        )
         ->assertRedirect(Filament::getLoginUrl());
 
     Event::assertDispatched(PasswordReset::class);
@@ -66,6 +72,40 @@ it('can reset password', function () {
     $this->assertCredentials([
         'email' => $userToResetPassword->email,
         'password' => 'new-password',
+    ]);
+});
+
+it('can gate reset password based on panel access', function () {
+    Event::fake();
+
+    $this->assertGuest();
+
+    $userToResetPassword = User::factory()->create();
+    $token = Password::createToken($userToResetPassword);
+
+    $testPanel = Panel::make();
+    $testPanel->id('test');
+
+    Filament::setCurrentPanel($testPanel);
+
+    livewire(ResetPassword::class, [
+        'email' => $userToResetPassword->email,
+        'token' => $token,
+    ])
+        ->set('password', 'new-password')
+        ->set('passwordConfirmation', 'new-password')
+        ->call('resetPassword')
+        ->assertNotified(
+            Notification::make()
+                ->danger()
+                ->title(__('passwords.user'))
+        );
+
+    Event::assertNotDispatched(PasswordReset::class);
+
+    $this->assertCredentials([
+        'email' => $userToResetPassword->email,
+        'password' => 'password',
     ]);
 });
 
