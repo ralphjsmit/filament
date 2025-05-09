@@ -17,9 +17,7 @@ class Block extends Component
     use HasLabel {
         getLabel as getBaseLabel;
     }
-    use HasName {
-        getLabel as getBaseLabel;
-    }
+    use HasName;
 
     protected string | BackedEnum | Closure | null $icon = null;
 
