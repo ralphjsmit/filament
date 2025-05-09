@@ -1280,7 +1280,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return Model|class-string<Model>|array|null
+     * @return Model|class-string<Model>|array<string, mixed>|null
      */
     public function getActionSchemaModel(): Model | string | array | null
     {

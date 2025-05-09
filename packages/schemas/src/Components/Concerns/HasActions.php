@@ -146,7 +146,7 @@ trait HasActions
     }
 
     /**
-     * @return Model|class-string<Model>|array|null
+     * @return Model|class-string<Model>|array<string, mixed>|null
      */
     public function getActionSchemaModel(): Model | string | array | null
     {
