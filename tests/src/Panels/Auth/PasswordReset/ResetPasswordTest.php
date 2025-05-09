@@ -1,15 +1,15 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Filament\Pages\Auth\PasswordReset\ResetPassword;
+use Filament\Panel;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use Filament\Panel;
-use Filament\Notifications\Notification;
 
 use function Filament\Tests\livewire;
 

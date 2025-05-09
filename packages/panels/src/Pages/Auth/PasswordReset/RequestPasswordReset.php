@@ -69,7 +69,7 @@ class RequestPasswordReset extends SimplePage
                     throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
                 }
 
-                if (!($user instanceof FilamentUser) || !$user->canAccessPanel(Filament::getCurrentPanel())) {
+                if (! ($user instanceof FilamentUser) || ! $user->canAccessPanel(Filament::getCurrentPanel())) {
                     return;
                 }
 

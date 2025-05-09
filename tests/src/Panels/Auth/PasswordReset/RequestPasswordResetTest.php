@@ -2,12 +2,12 @@
 
 use Filament\Facades\Filament;
 use Filament\Notifications\Auth\ResetPassword;
+use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
 use Filament\Panel;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
-use Filament\Notifications\Notification as FilamentNotification;
 
 use function Filament\Tests\livewire;
 
