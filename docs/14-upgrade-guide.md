@@ -199,29 +199,22 @@ When Filament was first created, Laravel did not have a way to generate temporar
 
 However, Laravel 11 introduced a new "Local Temporary URLs" feature which is enabled by default. Users who created their project before this feature was added may have to [update their `config/filesystems.php` file to enable it](https://laravel.com/docs/filesystem#enabling-local-temporary-urls).
 
-In v4, the default disk for Filament is set to `local`, and the visibility of file uploads is set to `private` by default. This means that files are not publicly accessible by default, and you need to generate a temporary signed URL to access them. The following components are affected by this change:
+In v4, the default disk for Filament is set to `local`, and the visibility of file uploads is set to `private` by default. This means that files are not publicly accessible by default, and you need to generate a temporary signed URL to access them. This change affects the following components:
 
 - `FileUpload` form field, including `SpatieMediaLibraryFileUpload`
-- `RichEditor` form field when using file attachments
 - `ImageColumn` table column, including `SpatieMediaLibraryImageColumn`
 - `ImageEntry` infolist entry, including `SpatieMediaLibraryImageEntry`
-
-Please note that the `MarkdownEditor` form field is not affected since private temporary URLs should not be stored in markdown content, and the default file visibility remains `public` for that component. However, please make sure that the disk you are using for it supports public files, using `fileAttachmentsDisk('public')` or `fileAttachmentsDisk('s3')`.
 
 <Aside variant="tip">
     You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
     use Filament\Forms\Components\FileUpload;
-    use Filament\Forms\Components\RichEditor;
     use Filament\Infolists\Components\ImageEntry;
     use Filament\Tables\Columns\ImageColumn;
     
     FileUpload::configureUsing(fn (FileUpload $fileUpload) => $fileUpload
         ->visibility('public'));
-    
-    RichEditor::configureUsing(fn (RichEditor $richEditor) => $richEditor
-        ->fileAttachmentsVisibility('public'));
     
     ImageColumn::configureUsing(fn (ImageColumn $imageColumn) => $imageColumn
         ->visibility('public'));

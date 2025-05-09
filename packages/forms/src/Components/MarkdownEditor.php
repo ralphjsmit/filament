@@ -32,11 +32,4 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
         ['table', 'attachFiles'],
         ['undo', 'redo'],
     ];
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->fileAttachmentsVisibility('public');
-    }
 }

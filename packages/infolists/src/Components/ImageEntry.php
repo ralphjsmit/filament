@@ -21,7 +21,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
 {
     use CanWrap;
 
-    protected string | Closure | null $disk = null;
+    protected string | Closure | null $diskName = null;
 
     protected int | string | Closure | null $imageHeight = null;
 
@@ -60,7 +60,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     public function disk(string | Closure | null $disk): static
     {
-        $this->disk = $disk;
+        $this->diskName = $disk;
 
         return $this;
     }
@@ -145,7 +145,28 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->disk) ?? config('filament.default_filesystem_disk');
+        $name = $this->getCustomDiskName();
+
+        if (filled($name)) {
+            return $name;
+        }
+
+        $name = config('filament.default_filesystem_disk');
+
+        if ($name !== 'public') {
+            return $name;
+        }
+
+        if ($this->getVisibility() !== 'private') {
+            return $name;
+        }
+
+        return 'local';
+    }
+
+    public function getCustomDiskName(): ?string
+    {
+        return $this->evaluate($this->diskName);
     }
 
     public function getImageHeight(): ?string
@@ -218,7 +239,17 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     public function getVisibility(): string
     {
-        return $this->evaluate($this->visibility);
+        $visibility = $this->evaluate($this->visibility);
+
+        if ($visibility !== 'private') {
+            return $visibility;
+        }
+
+        if ($this->getCustomDiskName() !== 'public') {
+            return $visibility;
+        }
+
+        return 'public';
     }
 
     public function getImageWidth(): ?string
