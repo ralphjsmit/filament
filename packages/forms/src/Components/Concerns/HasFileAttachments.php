@@ -21,7 +21,7 @@ trait HasFileAttachments
 
     protected ?Closure $saveUploadedFileAttachmentsUsing = null;
 
-    protected string | Closure $fileAttachmentsVisibility = 'public';
+    protected string | Closure $fileAttachmentsVisibility = 'private';
 
     public function fileAttachmentsDirectory(string | Closure | null $directory): static
     {
@@ -38,7 +38,12 @@ trait HasFileAttachments
     }
 
     #[ExposedLivewireMethod]
-    public function saveUploadedFileAttachment(TemporaryUploadedFile | string | null $attachment = null): ?string
+    public function getUploadedFileAttachmentTemporaryUrl(TemporaryUploadedFile | string | null $attachment = null): ?string
+    {
+        return $this->getUploadedFileAttachment($attachment)?->temporaryUrl();
+    }
+
+    public function getUploadedFileAttachment(TemporaryUploadedFile | string | null $attachment = null): ?TemporaryUploadedFile
     {
         if (is_string($attachment)) {
             $attachment = data_get($this->getLivewire(), "componentFileAttachments.{$this->getStatePath()}.{$attachment}");
@@ -46,25 +51,34 @@ trait HasFileAttachments
             $attachment = data_get($this->getLivewire(), "componentFileAttachments.{$this->getStatePath()}");
         }
 
-        if (! $attachment) {
-            return null;
-        }
+        return $attachment;
+    }
 
+    public function storeUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+    {
         if ($callback = $this->saveUploadedFileAttachmentsUsing) {
-            $file = $this->evaluate($callback, [
-                'file' => $attachment,
-            ]);
-        } else {
-            $file = $this->handleFileAttachmentUpload($attachment);
-        }
-
-        if ($callback = $this->getUploadedAttachmentUrlUsing) {
             return $this->evaluate($callback, [
                 'file' => $file,
             ]);
         }
 
-        return $this->handleUploadedAttachmentUrlRetrieval($file);
+        $storeMethod = $this->getFileAttachmentsVisibility() === 'public' ? 'storePublicly' : 'store';
+
+        return $file->{$storeMethod}($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
+    }
+
+    #[ExposedLivewireMethod]
+    public function saveUploadedFileAttachment(TemporaryUploadedFile | string | null $attachment = null): ?string
+    {
+        $attachment = $this->getUploadedFileAttachment($attachment);
+
+        if (! $attachment) {
+            return null;
+        }
+
+        $file = $this->storeUploadedFileAttachment($attachment);
+
+        return $this->getFileAttachmentUrl($file);
     }
 
     public function fileAttachmentsVisibility(string | Closure $visibility): static
@@ -108,15 +122,14 @@ trait HasFileAttachments
         return $this->evaluate($this->fileAttachmentsVisibility);
     }
 
-    protected function handleFileAttachmentUpload(TemporaryUploadedFile $file): mixed
+    public function getFileAttachmentUrl(mixed $file): ?string
     {
-        $storeMethod = $this->getFileAttachmentsVisibility() === 'public' ? 'storePublicly' : 'store';
+        if ($callback = $this->getUploadedAttachmentUrlUsing) {
+            return $this->evaluate($callback, [
+                'file' => $file,
+            ]);
+        }
 
-        return $file->{$storeMethod}($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
-    }
-
-    protected function handleUploadedAttachmentUrlRetrieval(mixed $file): ?string
-    {
         /** @var FilesystemAdapter $storage */
         $storage = $this->getFileAttachmentsDisk();
 
@@ -128,15 +141,15 @@ trait HasFileAttachments
             return null;
         }
 
-        try {
-            if ($storage->getVisibility($file) === 'private') {
+        if ($this->getFileAttachmentsVisibility() === 'private') {
+            try {
                 return $storage->temporaryUrl(
                     $file,
-                    now()->addMinutes(5),
+                    now()->addMinutes(30)->endOfHour(),
                 );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
             }
-        } catch (Throwable $exception) {
-            // This driver does not support creating temporary URLs.
         }
 
         return $storage->url($file);

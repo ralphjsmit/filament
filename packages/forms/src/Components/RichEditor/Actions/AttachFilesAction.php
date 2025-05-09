@@ -17,7 +17,7 @@ class AttachFilesAction
     public static function make(): Action
     {
         return Action::make('attachFiles')
-            ->alpineClickHandler(fn (RichEditor $component): string => '$wire.mountAction(\'attachFiles\', { alt: getEditor().getAttributes(\'image\')?.alt, id: getEditor().getAttributes(\'image\')?.id, src: getEditor().getAttributes(\'image\')?.src, editorSelection }, ' . Js::from(['schemaComponent' => $component->getKey()]) . ')')
+            ->alpineClickHandler(fn (RichEditor $component): string => '$wire.mountAction(\'attachFiles\', { alt: getEditor().getAttributes(\'image\')?.alt, id: getEditor().getAttributes(\'image\')[\'data-id\'] ?? null, src: getEditor().getAttributes(\'image\')?.src, editorSelection }, ' . Js::from(['schemaComponent' => $component->getKey()]) . ')')
             ->modalHeading('Upload file')
             ->modalWidth(Width::Large)
             ->fillForm(fn (array $arguments): array => [
@@ -38,7 +38,7 @@ class AttachFilesAction
                     $id = (string) Str::orderedUuid();
 
                     data_set($livewire, "componentFileAttachments.{$component->getStatePath()}.{$id}", $data['file']);
-                    $src = $component->saveUploadedFileAttachment($id);
+                    $src = $component->getUploadedFileAttachmentTemporaryUrl($data['file']);
                 }
 
                 if (filled($arguments['src'] ?? null)) {
@@ -51,7 +51,7 @@ class AttachFilesAction
                                 'image',
                                 [
                                     'alt' => $data['alt'] ?? null,
-                                    'id' => $id,
+                                    'data-id' => $id,
                                     'src' => $src,
                                 ],
                             ]),
@@ -76,7 +76,7 @@ class AttachFilesAction
                             'type' => 'image',
                             'attrs' => [
                                 'alt' => $data['alt'] ?? null,
-                                'id' => $id,
+                                'data-id' => $id,
                                 'src' => $src,
                             ],
                         ]]),

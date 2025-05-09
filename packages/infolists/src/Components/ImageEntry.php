@@ -31,7 +31,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     protected bool | Closure $isSquare = false;
 
-    protected string | Closure $visibility = 'public';
+    protected string | Closure $visibility = 'private';
 
     protected int | string | Closure | null $width = null;
 
@@ -201,7 +201,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
             try {
                 return $storage->temporaryUrl(
                     $state,
-                    now()->addMinutes(5),
+                    now()->addMinutes(30)->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.

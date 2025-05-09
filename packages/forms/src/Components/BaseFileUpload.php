@@ -63,7 +63,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected string | Closure | null $fileNamesStatePath = null;
 
-    protected string | Closure $visibility = 'public';
+    protected string | Closure $visibility = 'private';
 
     protected ?Closure $deleteUploadedFileUsing = null;
 
@@ -127,7 +127,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 try {
                     $url = $storage->temporaryUrl(
                         $file,
-                        now()->addMinutes(5),
+                        now()->addMinutes(30)->endOfHour(),
                     );
                 } catch (Throwable $exception) {
                     // This driver does not support creating temporary URLs.

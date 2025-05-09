@@ -57,7 +57,6 @@ use Filament\Forms\Components\MarkdownEditor;
 MarkdownEditor::make('content')
     ->fileAttachmentsDisk('s3')
     ->fileAttachmentsDirectory('attachments')
-    ->fileAttachmentsVisibility('private')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()` and `fileAttachmentsDirectory()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>

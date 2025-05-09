@@ -190,6 +190,48 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 
 ### High-impact changes
 
+<Disclosure open x-show="packages.includes('forms') || packages.includes('infolists') || packages.includes('tables')">
+<span slot="summary">File visibility is now private by default</span>
+
+In addition to the [default disk being changed to `local`](#publishing-the-configuration-file), the file visibility settings across various components have been changed to `private` instead of `public` by default.
+
+When Filament was first created, Laravel did not have a way to generate temporary signed URLs for local files. As such, the default disk for Filament was set to `public`, and the visibility of file uploads was set to `public` as well to ease the development experience without additional configuration.
+
+However, Laravel 11 introduced a new "Local Temporary URLs" feature which is enabled by default. Users who created their project before this feature was added may have to [update their `config/filesystems.php` file to enable it](https://laravel.com/docs/filesystem#enabling-local-temporary-urls).
+
+In v4, the default disk for Filament is set to `local`, and the visibility of file uploads is set to `private` by default. This means that files are not publicly accessible by default, and you need to generate a temporary signed URL to access them. The following components are affected by this change:
+
+- `FileUpload` form field, including `SpatieMediaLibraryFileUpload`
+- `RichEditor` form field when using file attachments
+- `ImageColumn` table column, including `SpatieMediaLibraryImageColumn`
+- `ImageEntry` infolist entry, including `SpatieMediaLibraryImageEntry`
+
+Please note that the `MarkdownEditor` form field is not affected since private temporary URLs should not be stored in markdown content, and the default file visibility remains `public` for that component. However, please make sure that the disk you are using for it supports public files, using `fileAttachmentsDisk('public')` or `fileAttachmentsDisk('s3')`.
+
+<Aside variant="tip">
+    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Forms\Components\FileUpload;
+    use Filament\Forms\Components\RichEditor;
+    use Filament\Infolists\Components\ImageEntry;
+    use Filament\Tables\Columns\ImageColumn;
+    
+    FileUpload::configureUsing(fn (FileUpload $fileUpload) => $fileUpload
+        ->visibility('public'));
+    
+    RichEditor::configureUsing(fn (RichEditor $richEditor) => $richEditor
+        ->fileAttachmentsVisibility('public'));
+    
+    ImageColumn::configureUsing(fn (ImageColumn $imageColumn) => $imageColumn
+        ->visibility('public'));
+    
+    ImageEntry::configureUsing(fn (ImageEntry $imageEntry) => $imageEntry
+        ->visibility('public'));
+    ```
+</Aside>
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('panels')">
 <span slot="summary">Custom themes need to be upgraded to Tailwind CSS v4</span>
 

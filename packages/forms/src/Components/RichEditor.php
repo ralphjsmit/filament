@@ -14,6 +14,7 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Arr;
 use Tiptap\Core\Extension;
+use Tiptap\Editor;
 use Tiptap\Marks\Bold;
 use Tiptap\Marks\Code;
 use Tiptap\Marks\Italic;
@@ -176,6 +177,57 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
                 ->icon(Heroicon::ArrowUturnRight)
                 ->iconAlias('forms:components.rich-editor.toolbar.redo'),
         ]);
+
+        $this->afterStateHydrated(function (RichEditor $component, ?array $rawState): void {
+            $component->rawState(
+                $component->getTipTapEditor()
+                    ->setContent($rawState ?? [
+                        'type' => 'doc',
+                        'content' => [],
+                    ])
+                    ->descendants(function (object &$node) use ($component): void {
+                        if ($node->type !== 'image') {
+                            return;
+                        }
+
+                        if (blank($node->attrs->{'data-id'} ?? null)) {
+                            return;
+                        }
+
+                        $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+                    })
+                    ->getDocument(),
+            );
+        });
+
+        $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState): void {
+            $component->rawState(
+                $component->getTipTapEditor()
+                    ->setContent($rawState ?? [
+                        'type' => 'doc',
+                        'content' => [],
+                    ])
+                    ->descendants(function (object &$node) use ($component): void {
+                        if ($node->type !== 'image') {
+                            return;
+                        }
+
+                        if (blank($node->attrs->{'data-id'} ?? null)) {
+                            return;
+                        }
+
+                        $attachment = $component->getUploadedFileAttachment($node->attrs->{'data-id'});
+
+                        if (! $attachment) {
+                            return;
+                        }
+
+                        $node->attrs->{'data-id'} = $component->storeUploadedFileAttachment($attachment);
+                        $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+                    })
+                    ->getDocument(),
+            );
+        });
     }
 
     /**
@@ -279,6 +331,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return [
             'extensions' => $this->getTipTapPhpExtensions(),
         ];
+    }
+
+    public function getTipTapEditor(): Editor
+    {
+        return app(Editor::class, ['configuration' => $this->getTipTapPhpConfiguration()]);
     }
 
     /**

@@ -29,7 +29,7 @@ class ImageColumn extends Column implements HasEmbeddedView
 
     protected bool | Closure $isSquare = false;
 
-    protected string | Closure $visibility = 'public';
+    protected string | Closure $visibility = 'private';
 
     protected int | string | Closure | null $imageWidth = null;
 
@@ -195,7 +195,7 @@ class ImageColumn extends Column implements HasEmbeddedView
             try {
                 return $storage->temporaryUrl(
                     $state,
-                    now()->addMinutes(5),
+                    now()->addMinutes(30)->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.
