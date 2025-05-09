@@ -146,9 +146,9 @@ trait HasActions
     }
 
     /**
-     * @return Model|class-string<Model>|null
+     * @return Model|class-string<Model>|array|null
      */
-    public function getActionSchemaModel(): Model | string | null
+    public function getActionSchemaModel(): Model | string | array | null
     {
         return $this->actionSchemaModel ?? $this->getRecord() ?? $this->getModel();
     }
