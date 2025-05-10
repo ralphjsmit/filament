@@ -1093,3 +1093,64 @@ use Filament\Actions\Action;
 Action::make('view')
     ->url(fn (array $record): string => route('products.view', ['product' => $record['id']]))
 ```
+
+### Delete action
+
+The Delete action in this example allows users to delete a product fetched from an external API.
+
+```php
+use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    $baseUrl = 'https://dummyjson.com';
+
+    return $table
+        ->records(fn (): array => Http::baseUrl($baseUrl)
+            ->get('products')
+            ->collect()
+            ->get('products', [])
+        )
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('category'),
+            TextColumn::make('price')
+                ->money(),
+        ])
+        ->actions([
+            Action::make('delete')
+                ->modalHeading('Delete Product')
+                ->defaultColor('danger')
+                ->tableIcon(Heroicon::Trash)
+                ->modalIcon(Heroicon::OutlinedTrash)
+                ->requiresConfirmation()
+                ->action(function (array $record) use ($baseUrl) {
+                    $response = Http::baseUrl($baseUrl)
+                        ->delete("products/{$record['id']}");
+
+                    if ($response->successful()) {
+                        // Logic to handle successful deletion
+                    }
+                }),
+        ]);
+}
+```
+
+- [`modalHeading()`](../actions/modals#customizing-the-modals-heading-description-and-submit-action-label) sets the title of the modal that appears when the action is triggered.
+- [`requiresConfirmation()`](../actions/modals#confirmation-modals) ensures that the user must confirm the deletion before it is executed.
+- [`modalIcon()`](../actions/modals#adding-an-icon-inside-the-modal) sets the icon that will appear in the confirmation modal.
+- `defaultColor()` sets the color of the action button.
+- `tableIcon()` defines the icon shown for this action in the table.
+- `action()` defines the logic that will be executed when the user confirms the submission.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="warning">
+    [`DummyJSON`](https://dummyjson.com/docs/products#products-update) API will not delete it into the server. It will simulate a `DELETE` request and will return deleted product with `isDeleted` & `deletedOn` keys.
+</Aside>
