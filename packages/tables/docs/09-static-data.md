@@ -845,3 +845,11 @@ public function table(Table $table): Table
 <Aside variant="info">
     The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.
 </Aside>
+
+## External API actions
+
+When using [actions](../actions/overview) in a table with an external API, the process is almost identical to working with [Eloquent models](https://laravel.com/docs/eloquent). The main difference is that the `$record` parameter in the action's callback function will be an `array` instead of a `Model` instance.
+
+Filament provides a variety of [built-in actions](../actions/overview#available-actions) that you can use in your application. However, you are not limited to these. You can create [custom actions](../actions/overview#introduction) tailored to your application's needs.
+
+The examples below demonstrate how to create and use actions with an external API using [DummyJSON](https://dummyjson.com) as a simulated API source.
