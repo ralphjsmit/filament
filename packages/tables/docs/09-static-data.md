@@ -853,3 +853,80 @@ When using [actions](../actions/overview) in a table with an external API, the p
 Filament provides a variety of [built-in actions](../actions/overview#available-actions) that you can use in your application. However, you are not limited to these. You can create [custom actions](../actions/overview#introduction) tailored to your application's needs.
 
 The examples below demonstrate how to create and use actions with an external API using [DummyJSON](https://dummyjson.com) as a simulated API source.
+
+### Create action
+
+The Create action in this example provides a [modal form](../actions/modals#rendering-a-form-in-a-modal) that allows users to create a new product using an external API. When the form is submitted, a `POST` request is sent to the API to create the new product.
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    $baseUrl = 'https://dummyjson.com';
+
+    return $table
+        ->records(fn (): array => Http::baseUrl($baseUrl)
+            ->get('products')
+            ->collect()
+            ->get('products', [])
+        )
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('category'),
+            TextColumn::make('price')
+                ->money(),
+        ])
+        ->headerActions([
+            Action::make('create')
+                ->modalHeading('Create Product')
+                ->schema([
+                    TextInput::make('title')
+                        ->required(),
+                    Select::make('category')
+                        ->options(fn () => Http::get("{$baseUrl}/products/categories")
+                            ->collect()
+                            ->pluck('name', 'slug')
+                        )
+                        ->required(),
+                ])
+                ->action(function (array $data) use ($baseUrl) {
+
+                    $response = Http::post("{$baseUrl}/products/add", [
+                        'title' => $data['title'],
+                        'category' => $data['category'],
+                    ]);
+
+                    if ($response->successful()) {
+                        // Logic to handle successful creation
+                    }
+                }),
+        ]);
+}
+```
+
+- [`modalHeading()`](../actions/modals#customizing-the-modals-heading-description-and-submit-action-label) sets the title of the modal that appears when the action is triggered.
+- [`schema()`](../actions/modals#rendering-a-schema-in-a-modal) defines the form fields displayed in the modal.
+- `action()` defines the logic that will be executed when the user submits the form.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="warning">
+    [`DummyJSON`](https://dummyjson.com/docs/products#products-update) API will not add it into the server. It will simulate a `POST` request and will return the new created product with a new id.
+</Aside>
+
+If you don't need a modal, you can directly redirect users to a specified URL when they click the create action button. In this case, you can define a static URL pointing to the product creation page:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('create')
+    ->url(route('products.create'))
+```
