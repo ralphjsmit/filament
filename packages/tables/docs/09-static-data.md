@@ -834,6 +834,9 @@ public function table(Table $table): Table
         ->searchable();
 }
 ```
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
 
 <Aside variant="warning">
     The [DummyJSON](https://dummyjson.com) API does not support combining sorting, search, and category filtering in a single request.
