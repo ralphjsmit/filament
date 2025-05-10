@@ -82,8 +82,10 @@ class ResetPassword extends SimplePage
         $status = Password::broker(Filament::getAuthPasswordBroker())->reset(
             $this->getCredentialsFromFormData($data),
             function (CanResetPassword | Model | Authenticatable $user) use ($data, &$hasPanelAccess) {
-
-                if (! ($user instanceof FilamentUser) || ! $user->canAccessPanel(Filament::getCurrentPanel())) {
+                if (
+                    ($user instanceof FilamentUser) &&
+                    (! $user->canAccessPanel(Filament::getCurrentPanel()))
+                ) {
                     $hasPanelAccess = false;
 
                     return;

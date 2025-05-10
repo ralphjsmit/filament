@@ -3,7 +3,6 @@
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\PasswordReset\ResetPassword;
-use Filament\Panel;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordReset;
@@ -75,7 +74,7 @@ it('can reset password', function () {
     ]);
 });
 
-it('can gate reset password based on panel access', function () {
+it('cannot reset password without panel access', function () {
     Event::fake();
 
     $this->assertGuest();
@@ -83,10 +82,7 @@ it('can gate reset password based on panel access', function () {
     $userToResetPassword = User::factory()->create();
     $token = Password::createToken($userToResetPassword);
 
-    $testPanel = Panel::make();
-    $testPanel->id('test');
-
-    Filament::setCurrentPanel($testPanel);
+    Filament::setCurrentPanel(Filament::getPanel('custom'));
 
     livewire(ResetPassword::class, [
         'email' => $userToResetPassword->email,

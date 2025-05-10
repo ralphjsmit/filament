@@ -4,7 +4,6 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Auth\ResetPassword;
 use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
-use Filament\Panel;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
@@ -44,23 +43,21 @@ it('can request password reset', function () {
         ->assertNotified(
             FilamentNotification::make()
                 ->success()
-                ->title(__('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent'))
+                ->title(__('passwords.sent'))
+                ->body(__('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent.body'))
         );
 
     Notification::assertSentTo($userToResetPassword, ResetPassword::class);
 });
 
-it('can gate password resets based on panel access', function () {
+it('cannot request password reset without panel access', function () {
     Notification::fake();
 
     $this->assertGuest();
 
     $userToResetPassword = User::factory()->create();
 
-    $testPanel = Panel::make();
-    $testPanel->id('test');
-
-    Filament::setCurrentPanel($testPanel);
+    Filament::setCurrentPanel(Filament::getPanel('custom'));
 
     livewire(RequestPasswordReset::class)
         ->fillForm([
@@ -70,7 +67,8 @@ it('can gate password resets based on panel access', function () {
         ->assertNotified(
             FilamentNotification::make()
                 ->success()
-                ->title(__('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent'))
+                ->title(__('passwords.sent'))
+                ->body(__('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent.body'))
         );
 
     Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);

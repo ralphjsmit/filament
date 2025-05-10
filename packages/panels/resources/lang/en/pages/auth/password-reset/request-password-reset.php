@@ -32,12 +32,14 @@ return [
 
     'notifications' => [
 
+        'sent' => [
+            'body' => 'If your account doesn\'t exist, you will not receive the email.',
+        ],
+
         'throttled' => [
             'title' => 'Too many requests',
             'body' => 'Please try again in :seconds seconds.',
         ],
-
-        'sent' => 'If that email address is valid in our records, we will send you an email to reset your password.',
 
     ],
 

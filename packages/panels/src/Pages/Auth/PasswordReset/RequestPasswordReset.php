@@ -63,14 +63,17 @@ class RequestPasswordReset extends SimplePage
         $status = Password::broker(Filament::getAuthPasswordBroker())->sendResetLink(
             $this->getCredentialsFromFormData($data),
             function (CanResetPassword $user, string $token): void {
+                if (
+                    ($user instanceof FilamentUser) &&
+                    (! $user->canAccessPanel(Filament::getCurrentPanel()))
+                ) {
+                    return;
+                }
+
                 if (! method_exists($user, 'notify')) {
                     $userClass = $user::class;
 
                     throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
-                }
-
-                if (! ($user instanceof FilamentUser) || ! $user->canAccessPanel(Filament::getCurrentPanel())) {
-                    return;
                 }
 
                 $notification = app(ResetPasswordNotification::class, ['token' => $token]);
@@ -86,7 +89,7 @@ class RequestPasswordReset extends SimplePage
             return;
         }
 
-        $this->getSentNotification('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent')?->send();
+        $this->getSentNotification($status)?->send();
 
         $this->form->fill();
     }
@@ -116,6 +119,7 @@ class RequestPasswordReset extends SimplePage
     {
         return Notification::make()
             ->title(__($status))
+            ->body(($status === Password::RESET_LINK_SENT) ? __('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent.body') : null)
             ->success();
     }
 
