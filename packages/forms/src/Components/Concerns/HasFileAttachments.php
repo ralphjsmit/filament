@@ -17,9 +17,9 @@ trait HasFileAttachments
 
     protected string | Closure | null $fileAttachmentsDiskName = null;
 
-    protected ?Closure $getUploadedAttachmentUrlUsing = null;
+    protected ?Closure $getFileAttachmentUrlUsing = null;
 
-    protected ?Closure $saveUploadedFileAttachmentsUsing = null;
+    protected ?Closure $saveUploadedFileAttachmentUsing = null;
 
     protected string | Closure $fileAttachmentsVisibility = 'public';
 
@@ -54,9 +54,9 @@ trait HasFileAttachments
         return $attachment;
     }
 
-    public function storeUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+    public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
     {
-        if ($callback = $this->saveUploadedFileAttachmentsUsing) {
+        if ($callback = $this->saveUploadedFileAttachmentUsing) {
             return $this->evaluate($callback, [
                 'file' => $file,
             ]);
@@ -68,15 +68,15 @@ trait HasFileAttachments
     }
 
     #[ExposedLivewireMethod]
-    public function saveUploadedFileAttachment(TemporaryUploadedFile | string | null $attachment = null): ?string
+    public function saveUploadedFileAttachmentAndGetUrl(): ?string
     {
-        $attachment = $this->getUploadedFileAttachment($attachment);
+        $attachment = $this->getUploadedFileAttachment();
 
         if (! $attachment) {
             return null;
         }
 
-        $file = $this->storeUploadedFileAttachment($attachment);
+        $file = $this->saveUploadedFileAttachment($attachment);
 
         return $this->getFileAttachmentUrl($file);
     }
@@ -88,16 +88,36 @@ trait HasFileAttachments
         return $this;
     }
 
-    public function getUploadedAttachmentUrlUsing(?Closure $callback): static
+    public function getFileAttachmentUrlUsing(?Closure $callback): static
     {
-        $this->getUploadedAttachmentUrlUsing = $callback;
+        $this->getFileAttachmentUrlUsing = $callback;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `getFileAttachmentUrlUsing()` instead.
+     */
+    public function getUploadedAttachmentUrlUsing(?Closure $callback): static
+    {
+        $this->getFileAttachmentUrlUsing($callback);
+
+        return $this;
+    }
+
+    public function saveUploadedFileAttachmentUsing(?Closure $callback): static
+    {
+        $this->saveUploadedFileAttachmentUsing = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `saveUploadedFileAttachmentUsing()` instead.
+     */
     public function saveUploadedFileAttachmentsUsing(?Closure $callback): static
     {
-        $this->saveUploadedFileAttachmentsUsing = $callback;
+        $this->saveUploadedFileAttachmentUsing($callback);
 
         return $this;
     }
@@ -140,8 +160,8 @@ trait HasFileAttachments
 
     public function getFileAttachmentUrl(mixed $file): ?string
     {
-        if ($callback = $this->getUploadedAttachmentUrlUsing) {
-            return $this->evaluate($callback, [
+        if ($this->getFileAttachmentUrlUsing) {
+            return $this->evaluate($this->getFileAttachmentUrlUsing, [
                 'file' => $file,
             ]);
         }

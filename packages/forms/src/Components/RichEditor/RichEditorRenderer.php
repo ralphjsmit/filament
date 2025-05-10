@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\RichEditor;
 
+use Closure;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\UnableToCheckFileExistence;
@@ -17,6 +18,8 @@ class RichEditorRenderer implements Htmlable
     protected ?string $imagesDisk = null;
 
     protected ?string $imagesVisibility = null;
+
+    protected ?Closure $getUploadedAttachmentUrlUsing = null;
 
     public function getEditor(): Editor
     {
@@ -42,14 +45,49 @@ class RichEditorRenderer implements Htmlable
         return $this;
     }
 
-    protected function processImages(): void
+    public function getUploadedAttachmentUrlUsing(?Closure $callback): static
     {
+        $this->getUploadedAttachmentUrlUsing = $callback;
+
+        return $this;
+    }
+
+    public function getFileAttachmentUrl(mixed $file): ?string
+    {
+        if ($this->getUploadedAttachmentUrlUsing) {
+            return ($this->getUploadedAttachmentUrlUsing)($file);
+        }
+
         $disk = $this->imagesDisk ?? config('filament.default_filesystem_disk');
         $visibility = $this->imagesVisibility ?? ($disk === 'public' ? 'public' : 'private');
 
         $storage = Storage::disk($disk);
 
-        $this->getEditor()->descendants(function (object &$node) use ($visibility, $storage): void {
+        try {
+            if (! $storage->exists($file)) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence $exception) {
+            return null;
+        }
+
+        if ($visibility === 'private') {
+            try {
+                return $storage->temporaryUrl(
+                    $file,
+                    now()->addMinutes(30)->endOfHour(),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
+            }
+        }
+
+        return $storage->url($file);
+    }
+
+    protected function processImages(): void
+    {
+        $this->getEditor()->descendants(function (object &$node): void {
             if ($node->type !== 'image') {
                 return;
             }
@@ -58,28 +96,7 @@ class RichEditorRenderer implements Htmlable
                 return;
             }
 
-            try {
-                if (! $storage->exists($node->attrs->{'data-id'})) {
-                    return;
-                }
-            } catch (UnableToCheckFileExistence $exception) {
-                return;
-            }
-
-            if ($visibility === 'private') {
-                try {
-                    $node->attrs->src = $storage->temporaryUrl(
-                        $node->attrs->{'data-id'},
-                        now()->addMinutes(30)->endOfHour(),
-                    );
-
-                    return;
-                } catch (Throwable $exception) {
-                    // This driver does not support creating temporary URLs.
-                }
-            }
-
-            $node->attrs->src = $storage->url($node->attrs->{'data-id'});
+            $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->{'data-id'});
         });
 
         $this->hasProcessedImages = true;

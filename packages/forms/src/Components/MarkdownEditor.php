@@ -6,7 +6,7 @@ use Closure;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
-class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
+class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
 {
     use CanConfigureCommonMark;
     use Concerns\CanBeLengthConstrained;

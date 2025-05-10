@@ -33,7 +33,7 @@ use Tiptap\Nodes\OrderedList;
 use Tiptap\Nodes\Paragraph;
 use Tiptap\Nodes\Text;
 
-class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
+class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 {
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
@@ -222,7 +222,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
                             return;
                         }
 
-                        $node->attrs->{'data-id'} = $component->storeUploadedFileAttachment($attachment);
+                        $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
                         $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
                     })
                     ->getDocument(),
