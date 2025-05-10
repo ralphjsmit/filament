@@ -879,8 +879,6 @@ public function table(Table $table): Table
         ->columns([
             TextColumn::make('title'),
             TextColumn::make('category'),
-            TextColumn::make('price')
-                ->money(),
         ])
         ->headerActions([
             Action::make('create')
@@ -929,4 +927,83 @@ use Filament\Actions\Action;
 
 Action::make('create')
     ->url(route('products.create'))
+```
+
+### Edit action
+
+The Edit action in this example provides a [modal form](../actions/modals#rendering-a-form-in-a-modal) for editing product details fetched from an external API. Users can update fields such as the product title and category, and the changes will be sent to the external API using a `PUT` request.
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    $baseUrl = 'https://dummyjson.com';
+
+    return $table
+        ->records(fn (): array => Http::baseUrl($baseUrl)
+            ->get('products')
+            ->collect()
+            ->get('products', [])
+        )
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('category'),
+        ])
+        ->actions([
+            Action::make('edit')
+                ->tableIcon(Heroicon::PencilSquare)
+                ->fillForm(fn (array $record) => $record)
+                ->schema([
+                    TextInput::make('title')
+                        ->required(),
+                    Select::make('category')
+                        ->options(fn () => Http::get("{$baseUrl}/products/categories")
+                            ->collect()
+                            ->pluck('name', 'slug')
+                        )
+                        ->required(),
+                ])
+                ->action(function (array $data, array $record) use ($baseUrl) {
+
+                    $response = Http::put("{$baseUrl}/products/{$record['id']}", [
+                        'title' => $data['title'],
+                        'category' => $data['category'],
+                    ]);
+
+                    if ($response->successful()) {
+                        // Logic to handle successful update
+                    }
+                }),
+        ]);
+}
+```
+
+- [`modalHeading()`](../actions/modals#customizing-the-modals-heading-description-and-submit-action-label) sets the title of the modal that appears when the action is triggered.
+- [`schema()`](../actions/modals#rendering-a-schema-in-a-modal) defines the form fields displayed in the modal.
+- [`fillForm()`](../actions/modals#filling-the-form-with-existing-data) automatically fills the form fields with the existing values of the selected record.
+- `tableIcon()` defines the icon shown for this action in the table.
+- `action()` defines the logic that will be executed when the user submits the form.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="warning">
+    [`DummyJSON`](https://dummyjson.com/docs/products#products-update) API will not update it into the server. It will simulate a `PUT`/`PATCH` request and will return updated product with modified data.
+</Aside>
+
+If you don't need a modal, you can directly redirect users to a specified URL when they click the action button. You can achieve this by defining a URL with a dynamic route that includes the `record` parameter:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (array $record): string => route('products.edit', ['product' => $record['id']]))
 ```
