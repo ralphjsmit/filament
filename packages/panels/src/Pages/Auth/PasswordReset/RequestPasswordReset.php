@@ -11,6 +11,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -62,6 +63,13 @@ class RequestPasswordReset extends SimplePage
         $status = Password::broker(Filament::getAuthPasswordBroker())->sendResetLink(
             $this->getCredentialsFromFormData($data),
             function (CanResetPassword $user, string $token): void {
+                if (
+                    ($user instanceof FilamentUser) &&
+                    (! $user->canAccessPanel(Filament::getCurrentPanel()))
+                ) {
+                    return;
+                }
+
                 if (! method_exists($user, 'notify')) {
                     $userClass = $user::class;
 
@@ -111,6 +119,7 @@ class RequestPasswordReset extends SimplePage
     {
         return Notification::make()
             ->title(__($status))
+            ->body(($status === Password::RESET_LINK_SENT) ? __('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent.body') : null)
             ->success();
     }
 
