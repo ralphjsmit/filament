@@ -82,7 +82,7 @@ class ResetPassword extends SimplePage
             function (CanResetPassword | Model | Authenticatable $user) use ($data, &$hasPanelAccess): void {
                 if (
                     ($user instanceof FilamentUser) &&
-                    (! $user->canAccessPanel(Filament::getCurrentPanel()))
+                    (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel()))
                 ) {
                     $hasPanelAccess = false;
 

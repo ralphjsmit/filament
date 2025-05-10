@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\RichEditor;
 
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
@@ -25,7 +24,7 @@ class RichEditorRenderer implements Htmlable
     }
 
     /**
-     * @param string | array<string, mixed> $content
+     * @param  string | array<string, mixed>  $content
      */
     public function content(string | array $content): static
     {
@@ -50,7 +49,7 @@ class RichEditorRenderer implements Htmlable
 
         $storage = Storage::disk($disk);
 
-        $this->getEditor()->descendants(function (object &$node) use ($visibility, $storage) {
+        $this->getEditor()->descendants(function (object &$node) use ($visibility, $storage): void {
             if ($node->type !== 'image') {
                 return;
             }

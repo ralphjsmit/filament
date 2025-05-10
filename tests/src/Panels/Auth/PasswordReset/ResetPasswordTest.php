@@ -2,8 +2,8 @@
 
 use Filament\Auth\Pages\PasswordReset\ResetPassword;
 use Filament\Facades\Filament;
-use Filament\Tests\Fixtures\Models\User;
 use Filament\Notifications\Notification;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
@@ -74,7 +74,7 @@ it('can reset password', function (): void {
     ]);
 });
 
-it('cannot reset password without panel access', function () {
+it('cannot reset password without panel access', function (): void {
     Event::fake();
 
     $this->assertGuest();
@@ -105,7 +105,7 @@ it('cannot reset password without panel access', function () {
     ]);
 });
 
-it('requires request signature', function () {
+it('requires request signature', function (): void {
     $userToResetPassword = User::factory()->make();
     $token = Password::createToken($userToResetPassword);
 

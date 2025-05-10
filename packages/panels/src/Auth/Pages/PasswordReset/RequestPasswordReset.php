@@ -65,7 +65,7 @@ class RequestPasswordReset extends SimplePage
             function (CanResetPassword $user, string $token): void {
                 if (
                     ($user instanceof FilamentUser) &&
-                    (! $user->canAccessPanel(Filament::getCurrentPanel()))
+                    (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel()))
                 ) {
                     return;
                 }

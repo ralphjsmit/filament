@@ -3,8 +3,8 @@
 use Filament\Auth\Notifications\ResetPassword;
 use Filament\Auth\Pages\PasswordReset\RequestPasswordReset;
 use Filament\Facades\Filament;
-use Filament\Tests\Fixtures\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
 
@@ -80,7 +80,7 @@ it('can throttle requests', function (): void {
     Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
 });
 
-it('cannot request password reset without panel access', function () {
+it('cannot request password reset without panel access', function (): void {
     Notification::fake();
 
     $this->assertGuest();
