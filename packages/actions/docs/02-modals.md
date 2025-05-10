@@ -446,7 +446,7 @@ Action::make('help')
 The [methods available to customize trigger buttons](overview) will work to modify the `$action` instance inside the closure.
 
 <Aside variant="tip">
-    To customize the button labels in your modal, use the `modalSubmitActionLabel()` and `modalCancelActionLabel()` methods.
+    To customize the button labels in your modal, the `modalSubmitActionLabel()` and `modalCancelActionLabel()` methods can be used instead of passing a function to `modalSubmitAction()` and `modalCancelAction()`, if you don't require any further customizations.
 </Aside>
 
 ### Removing a default modal footer action button
