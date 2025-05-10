@@ -1070,3 +1070,26 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+- [`modalHeading()`](../actions/modals#customizing-the-modals-heading-description-and-submit-action-label) sets the title of the modal that appears when the action is triggered.
+- [`modalSubmitAction(false)`](../actions/modals#modifying-the-default-modal-footer-action-button) disables the submit button, making this a read-only view action.
+- [`modalCancelActionLabel()`](../actions/modals#modifying-the-default-modal-footer-action-button) customizes the label for the close button.
+- `defaultColor()` sets the color of the action button.
+- `tableIcon()` defines the icon shown for this action in the table.
+
+<Aside variant="warning">
+    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
+</Aside>
+
+<Aside variant="info">
+    The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.
+</Aside>
+
+If you don't need a modal, you can directly redirect users to a specified URL when they click the action button. You can achieve this by defining a URL with a dynamic route that includes the `record` parameter:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('view')
+    ->url(fn (array $record): string => route('products.view', ['product' => $record['id']]))
+```
