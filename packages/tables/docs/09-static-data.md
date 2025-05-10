@@ -1007,3 +1007,66 @@ use Filament\Actions\Action;
 Action::make('edit')
     ->url(fn (array $record): string => route('products.edit', ['product' => $record['id']]))
 ```
+
+### View action
+
+The View action in this example opens a [modal](../actions/modals) displaying detailed product information fetched from an external API. This allows you to build a user interface with various components such as [text entries](../infolists/text-entry) and [images](../infolists/image-entry).
+
+```php
+use Filament\Actions\Action;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Http;
+
+public function table(Table $table): Table
+{
+    $baseUrl = 'https://dummyjson.com';
+
+    return $table
+        ->records(fn (): array => Http::baseUrl($baseUrl)
+            ->get('products', [
+                'select' => 'id,title,description,brand,category,thumbnail,price',
+            ])
+            ->collect()
+            ->get('products', [])
+        )
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('category'),
+        ])
+        ->actions([
+            Action::make('view')
+                ->modalHeading('View product')
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Close')
+                ->defaultColor('gray')
+                ->tableIcon(Heroicon::Eye)
+                ->schema([
+                    Section::make()
+                        ->schema([
+                            Flex::make([
+                                Grid::make(2)
+                                    ->schema([
+                                        TextEntry::make('title'),
+                                        TextEntry::make('category'),
+                                        TextEntry::make('brand'),
+                                        TextEntry::make('price')
+                                            ->money(),
+                                    ]),
+                                ImageEntry::make('thumbnail')
+                                    ->hiddenLabel()
+                                    ->grow(false),
+                            ])->from('md'),
+                            TextEntry::make('description')
+                                ->prose(),
+                        ]),
+                ]),
+        ]);
+}
+```
