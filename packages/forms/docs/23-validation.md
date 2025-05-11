@@ -612,8 +612,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('password')
     ->required()
     ->rules([
-        // Custom rule that returns HTML
-        new CustomRule()
+        new CustomRule() // Custom rule that returns a HTML validation message
     ])
     ->htmlValidationMessages()
 ```
