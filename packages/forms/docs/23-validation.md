@@ -604,7 +604,7 @@ TextInput::make('email')
 
 ## HTML validation messages
 
-By default, validation messages are rendered as plain text for security reasons. However, you may need to render HTML in your validation messages, such as when displaying lists or links. To enable HTML rendering for validation messages, use the `htmlValidationMessages()` method:
+By default, validation messages are rendered as plain text for security reasons. However, you may need to render HTML in your validation messages, such as when displaying lists or links. To enable HTML rendering for validation messages, use the `allowHtmlValidationMessages()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -614,7 +614,7 @@ TextInput::make('password')
     ->rules([
         new CustomRule() // Custom rule that returns a HTML validation message
     ])
-    ->htmlValidationMessages()
+    ->allowHtmlValidationMessages()
 ```
 
 Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
