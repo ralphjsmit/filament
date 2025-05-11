@@ -127,7 +127,7 @@
 
                 {{ $aboveErrorMessageContainer }}
 
-                @if ($field?->hasHtmlValidationMessages())
+                @if ($field?->areHtmlValidationMessagesAllowed())
                     <div data-validation-error class="fi-fo-field-wrp-error-message">
                         {!! $errorMessage !!}
                     </div>
