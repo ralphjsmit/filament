@@ -653,6 +653,7 @@ trait CanBeValidated
     public function allowHtmlValidationMessages(bool $condition = true): static
     {
         $this->allowHtmlValidationMessages = $condition;
+
         return $this;
     }
 
