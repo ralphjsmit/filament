@@ -513,7 +513,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getDefaultToolbarButtons(): array
     {
-        return $this->getContentAttribute()?->getToolbarButtons() ?? [
+        return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
