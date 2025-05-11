@@ -155,40 +155,22 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.redo'),
         ]);
 
-        $this->afterStateHydrated(function (RichEditor $component, ?array $rawState): void {
-            $component->rawState(
-                $component->getTipTapEditor()
-                    ->setContent($rawState ?? [
-                        'type' => 'doc',
-                        'content' => [],
-                    ])
-                    ->descendants(function (object &$node) use ($component): void {
-                        if ($node->type !== 'image') {
-                            return;
-                        }
-
-                        if (blank($node->attrs->{'data-id'} ?? null)) {
-                            return;
-                        }
-
-                        $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
-                    })
-                    ->getDocument(),
-            );
-        });
-
         $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
-            if ($component->getFileAttachmentProvider()?->requiresExistingRecordToSave() && (! $record)) {
+            $fileAttachmentProvider = $component->getFileAttachmentProvider();
+
+            if ($fileAttachmentProvider?->isExistingRecordRequiredToSaveNewFileAttachments() && (! $record)) {
                 return;
             }
 
+            $fileAttachmentIds = [];
+
             $component->rawState(
                 $component->getTipTapEditor()
                     ->setContent($rawState ?? [
                         'type' => 'doc',
                         'content' => [],
                     ])
-                    ->descendants(function (object &$node) use ($component): void {
+                    ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
                         if ($node->type !== 'image') {
                             return;
                         }
@@ -200,20 +182,38 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         $attachment = $component->getUploadedFileAttachment($node->attrs->{'data-id'});
 
                         if (! $attachment) {
+                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
+
                             return;
                         }
 
                         $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
                         $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+
+                        $fileAttachmentIds[] = $node->attrs->{'data-id'};
                     })
                     ->getDocument(),
             );
+
+            $fileAttachmentProvider?->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
         });
 
         $this->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, Model $record): void {
-            if ((! $component->getFileAttachmentProvider()?->requiresExistingRecordToSave()) || (! $record->wasRecentlyCreated)) {
+            $fileAttachmentProvider = $component->getFileAttachmentProvider();
+
+            if (! $fileAttachmentProvider) {
                 return;
             }
+
+            if (! $fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
+                return;
+            }
+
+            if (! $record->wasRecentlyCreated) {
+                return;
+            }
+
+            $fileAttachmentIds = [];
 
             $component->rawState(
                 $component->getTipTapEditor()
@@ -221,7 +221,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         'type' => 'doc',
                         'content' => [],
                     ])
-                    ->descendants(function (object &$node) use ($component): void {
+                    ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
                         if ($node->type !== 'image') {
                             return;
                         }
@@ -233,23 +233,54 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         $attachment = $component->getUploadedFileAttachment($node->attrs->{'data-id'});
 
                         if (! $attachment) {
+                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
+
                             return;
                         }
 
                         $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
                         $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+
+                        $fileAttachmentIds[] = $node->attrs->{'data-id'};
                     })
                     ->getDocument(),
             );
 
             $record->setAttribute($component->getContentAttribute()->getName(), $component->getState());
             $record->save();
+
+            $fileAttachmentProvider->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
         });
+    }
+
+    public function callAfterStateHydrated(): static
+    {
+        $this->rawState(
+            $this->getTipTapEditor()
+                ->setContent($this->getRawState() ?? [
+                    'type' => 'doc',
+                    'content' => [],
+                ])
+                ->descendants(function (object &$node): void {
+                    if ($node->type !== 'image') {
+                        return;
+                    }
+
+                    if (blank($node->attrs->{'data-id'} ?? null)) {
+                        return;
+                    }
+
+                    $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->{'data-id'});
+                })
+                ->getDocument(),
+        );
+
+        return parent::callAfterStateHydrated();
     }
 
     public function isDehydrated(): bool
     {
-        if ($this->getFileAttachmentProvider()?->requiresExistingRecordToSave() && (! $this->getRecord())) {
+        if ($this->getFileAttachmentProvider()?->isExistingRecordRequiredToSaveNewFileAttachments() && (! $this->getRecord())) {
             return false;
         }
 

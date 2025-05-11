@@ -15,5 +15,10 @@ interface FileAttachmentProvider
 
     public function getDefaultFileAttachmentVisibility(): ?string;
 
-    public function requiresExistingRecordToSave(): bool;
+    public function isExistingRecordRequiredToSaveNewFileAttachments(): bool;
+
+    /**
+     * @param  array<mixed>  $exceptIds
+     */
+    public function cleanUpFileAttachments(array $exceptIds): void;
 }

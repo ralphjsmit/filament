@@ -29,7 +29,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         return $this;
     }
 
-    public function getMedia(): ?MediaCollection
+    public function getExistingModel(): ?HasMedia
     {
         $model = $this->attribute->getModel();
 
@@ -41,7 +41,19 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
             throw new Exception('The [' . static::class . '] requires the model to implement the [' . HasMedia::class . '] interface from the Spatie Media Library package.');
         }
 
-        return $this->media ??= $model->getMedia(collectionName: $this->attribute->getName())->keyBy('uuid');
+        return $model;
+    }
+
+    public function getMedia(): ?MediaCollection
+    {
+        if (isset($this->media)) {
+            return $this->media;
+        }
+
+        /** @var MediaCollection $media */
+        $media = $this->getExistingModel()?->getMedia(collectionName: $this->attribute->getName())->keyBy('uuid');
+
+        return $this->media = $media;
     }
 
     public function getFileAttachmentUrl(mixed $file): ?string
@@ -73,21 +85,25 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
     {
-        $model = $this->attribute->getModel();
-
-        if (! $model->exists) {
-            return null;
-        }
-
-        if (! ($model instanceof HasMedia)) {
-            throw new Exception('The [' . static::class . '] requires the model to implement the [' . HasMedia::class . '] interface from the Spatie Media Library package.');
-        }
-
-        return $model
+        return $this->getExistingModel() /** @phpstan-ignore method.notFound */
             ->addMediaFromString($file->get())
             ->usingFileName(((string) Str::ulid()) . '.' . $file->getClientOriginalExtension())
             ->toMediaCollection($this->attribute->getName(), diskName: $this->attribute->getFileAttachmentsDisk() ?? '')
             ->uuid;
+    }
+
+    /**
+     * @param  array<mixed>  $exceptIds
+     */
+    public function cleanUpFileAttachments(array $exceptIds): void
+    {
+        $model = $this->getExistingModel();
+        $collectionName = $this->attribute->getName();
+
+        $model->clearMediaCollectionExcept(
+            $collectionName,
+            $model->getMedia($collectionName)->whereIn('uuid', $exceptIds),
+        );
     }
 
     public function getDefaultFileAttachmentVisibility(): ?string
@@ -95,7 +111,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         return 'private';
     }
 
-    public function requiresExistingRecordToSave(): bool
+    public function isExistingRecordRequiredToSaveNewFileAttachments(): bool
     {
         return true;
     }
