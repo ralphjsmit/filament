@@ -1,0 +1,178 @@
+<?php
+
+namespace Filament\Forms\Components\RichEditor;
+
+use Filament\Forms\Components\RichEditor\TipTapExtensions\Image;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\UnableToCheckFileExistence;
+use Throwable;
+use Tiptap\Core\Extension;
+use Tiptap\Editor;
+use Tiptap\Marks\Bold;
+use Tiptap\Marks\Code;
+use Tiptap\Marks\Italic;
+use Tiptap\Marks\Link;
+use Tiptap\Marks\Strike;
+use Tiptap\Marks\Subscript;
+use Tiptap\Marks\Superscript;
+use Tiptap\Marks\Underline;
+use Tiptap\Nodes\Blockquote;
+use Tiptap\Nodes\BulletList;
+use Tiptap\Nodes\CodeBlock;
+use Tiptap\Nodes\Document;
+use Tiptap\Nodes\Heading;
+use Tiptap\Nodes\ListItem;
+use Tiptap\Nodes\OrderedList;
+use Tiptap\Nodes\Paragraph;
+use Tiptap\Nodes\Text;
+
+class RichContentRenderer implements Htmlable
+{
+    /**
+     * @var string | array<string, mixed>
+     */
+    protected string | array | null $content = null;
+
+    protected ?string $fileAttachmentsDisk = null;
+
+    protected ?string $fileAttachmentsVisibility = null;
+
+    /**
+     * @var array<Extension>
+     */
+    protected array $tipTapPhpExtensions = [];
+
+    /**
+     * @param  string | array<string, mixed> | null  $content
+     */
+    public function content(string | array | null $content): static
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    public function fileAttachments(?string $disk = null, ?string $visibility = null): static
+    {
+        $this->fileAttachmentsDisk = $disk;
+        $this->fileAttachmentsVisibility = $visibility;
+
+        return $this;
+    }
+
+    public function getFileAttachmentUrl(mixed $file): ?string
+    {
+        $disk = $this->fileAttachmentsDisk ?? config('filament.default_filesystem_disk');
+        $visibility = $this->fileAttachmentsVisibility ?? ($disk === 'public' ? 'public' : 'private');
+
+        $storage = Storage::disk($disk);
+
+        try {
+            if (! $storage->exists($file)) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence $exception) {
+            return null;
+        }
+
+        if ($visibility === 'private') {
+            try {
+                return $storage->temporaryUrl(
+                    $file,
+                    now()->addMinutes(30)->endOfHour(),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
+            }
+        }
+
+        return $storage->url($file);
+    }
+
+    /**
+     * @param  array<Extension>  $extensions
+     */
+    public function tipTapPhpExtensions(array $extensions): static
+    {
+        $this->tipTapPhpExtensions = [
+            ...$this->tipTapPhpExtensions,
+            ...$extensions,
+        ];
+
+        return $this;
+    }
+
+    protected function processFileAttachments(Editor $editor): void
+    {
+        $editor->descendants(function (object &$node): void {
+            if ($node->type !== 'image') {
+                return;
+            }
+
+            if (blank($node->attrs->{'data-id'} ?? null)) {
+                return;
+            }
+
+            $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->{'data-id'});
+        });
+    }
+
+    /**
+     * @return array<Extension>
+     */
+    public function getTipTapPhpExtensions(): array
+    {
+        return [
+            app(Blockquote::class),
+            app(Bold::class),
+            app(BulletList::class),
+            app(Code::class),
+            app(CodeBlock::class),
+            app(Document::class),
+            app(Heading::class),
+            app(Italic::class),
+            app(Image::class),
+            app(Link::class),
+            app(ListItem::class),
+            app(OrderedList::class),
+            app(Paragraph::class),
+            app(Strike::class),
+            app(Subscript::class),
+            app(Superscript::class),
+            app(Text::class),
+            app(Underline::class),
+            ...$this->tipTapPhpExtensions,
+        ];
+    }
+
+    /**
+     * @return array{extensions: array<Extension>}
+     */
+    public function getTipTapPhpConfiguration(): array
+    {
+        return [
+            'extensions' => $this->getTipTapPhpExtensions(),
+        ];
+    }
+
+    public function getEditor(): Editor
+    {
+        $editor = app(Editor::class, ['configuration' => $this->getTipTapPhpConfiguration()]);
+
+        if (filled($this->content)) {
+            $editor->setContent($this->content);
+        }
+
+        return $editor;
+    }
+
+    public function toHtml(): string
+    {
+        $editor = $this->getEditor();
+
+        $this->processFileAttachments($editor);
+
+        return $editor->getHTML();
+    }
+}

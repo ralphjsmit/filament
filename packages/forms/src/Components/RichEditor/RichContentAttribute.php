@@ -1,0 +1,128 @@
+<?php
+
+namespace Filament\Forms\Components\RichEditor;
+
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
+use Tiptap\Core\Extension;
+
+class RichContentAttribute implements Htmlable
+{
+    protected ?string $fileAttachmentsDisk = null;
+
+    protected ?string $fileAttachmentsVisibility = null;
+
+    /**
+     * @var array<Extension>
+     */
+    protected array $tipTapPhpExtensions = [];
+
+    /**
+     * @var array<string>
+     */
+    protected array $tipTapJsExtensions = [];
+
+    /**
+     * @var ?array<string | array<string>>
+     */
+    protected ?array $toolbarButtons = null;
+
+    public function __construct(protected Model $model, protected string $name) {}
+
+    public static function make(Model $model, string $name): static
+    {
+        return app(static::class, ['model' => $model, 'name' => $name]);
+    }
+
+    public function fileAttachments(?string $disk = null, ?string $visibility = null): static
+    {
+        if (class_exists($disk) && is_a($disk, FileAttachmentProvider::class, allow_string: true)) {
+
+        }
+
+        $this->fileAttachmentsDisk = $disk;
+        $this->fileAttachmentsVisibility = $visibility;
+
+        return $this;
+    }
+
+    public function getFileAttachmentsDisk(): ?string
+    {
+        return $this->fileAttachmentsDisk;
+    }
+
+    public function getFileAttachmentsVisibility(): ?string
+    {
+        return $this->fileAttachmentsVisibility;
+    }
+
+    /**
+     * @param  array<string>  $extensions
+     */
+    public function tipTapJsExtensions(array $extensions): static
+    {
+        $this->tipTapJsExtensions = [
+            ...$this->tipTapJsExtensions,
+            ...$extensions,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Extension>  $extensions
+     */
+    public function tipTapPhpExtensions(array $extensions): static
+    {
+        $this->tipTapPhpExtensions = [
+            ...$this->tipTapPhpExtensions,
+            ...$extensions,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return array<Extension>
+     */
+    public function getTipTapPhpExtensions(): array
+    {
+        return $this->tipTapPhpExtensions;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getTipTapJsExtensions(): array
+    {
+        return $this->tipTapJsExtensions;
+    }
+
+    /**
+     * @param  ?array<string | array<string>>  $buttons
+     */
+    public function toolbarButtons(?array $buttons): static
+    {
+        $this->toolbarButtons = $buttons;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<string | array<string>>
+     */
+    public function getToolbarButtons(): ?array
+    {
+        return $this->toolbarButtons;
+    }
+
+    public function toHtml(): string
+    {
+        return app(RichContentRenderer::class)
+            ->tipTapPhpExtensions($this->getTipTapPhpExtensions())
+            ->content($this->model->getAttribute($this->name))
+            ->fileAttachments($this->getFileAttachmentsDisk(), $this->getFileAttachmentsVisibility())
+            ->toHtml();
+    }
+}

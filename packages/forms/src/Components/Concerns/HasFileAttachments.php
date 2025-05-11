@@ -21,7 +21,7 @@ trait HasFileAttachments
 
     protected ?Closure $saveUploadedFileAttachmentUsing = null;
 
-    protected string | Closure $fileAttachmentsVisibility = 'public';
+    protected string | Closure | null $fileAttachmentsVisibility = null;
 
     public function fileAttachmentsDirectory(string | Closure | null $directory): static
     {
@@ -81,7 +81,7 @@ trait HasFileAttachments
         return $this->getFileAttachmentUrl($file);
     }
 
-    public function fileAttachmentsVisibility(string | Closure $visibility): static
+    public function fileAttachmentsVisibility(string | Closure | null $visibility): static
     {
         $this->fileAttachmentsVisibility = $visibility;
 
@@ -140,7 +140,7 @@ trait HasFileAttachments
             return $name;
         }
 
-        $name = config('filament.default_filesystem_disk');
+        $name = $this->getDefaultFileAttachmentsDiskName() ?? config('filament.default_filesystem_disk');
 
         if ($name !== 'local') {
             return $name;
@@ -153,9 +153,19 @@ trait HasFileAttachments
         return 'public';
     }
 
+    public function getDefaultFileAttachmentsDiskName(): ?string
+    {
+        return null;
+    }
+
     public function getFileAttachmentsVisibility(): string
     {
-        return $this->evaluate($this->fileAttachmentsVisibility);
+        return $this->evaluate($this->fileAttachmentsVisibility) ?? $this->getDefaultFileAttachmentsVisibility() ?? 'public';
+    }
+
+    public function getDefaultFileAttachmentsVisibility(): ?string
+    {
+        return null;
     }
 
     public function getFileAttachmentUrl(mixed $file): ?string

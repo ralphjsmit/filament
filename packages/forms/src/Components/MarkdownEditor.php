@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Closure;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
@@ -23,13 +22,16 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
     protected string $view = 'filament-forms::components.markdown-editor';
 
     /**
-     * @var array<string | array<string>>
+     * @return array<string | array<string>>
      */
-    protected array | Closure $toolbarButtons = [
-        ['bold', 'italic', 'strike', 'link'],
-        ['heading'],
-        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
-        ['table', 'attachFiles'],
-        ['undo', 'redo'],
-    ];
+    public function getDefaultToolbarButtons(): array
+    {
+        return [
+            ['bold', 'italic', 'strike', 'link'],
+            ['heading'],
+            ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+            ['table', 'attachFiles'],
+            ['undo', 'redo'],
+        ];
+    }
 }
