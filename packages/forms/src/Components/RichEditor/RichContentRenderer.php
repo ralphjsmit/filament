@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\RichEditor;
 
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\Image;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
@@ -42,6 +43,8 @@ class RichContentRenderer implements Htmlable
      * @var array<Extension>
      */
     protected array $tipTapPhpExtensions = [];
+
+    protected ?FileAttachmentProvider $fileAttachmentProvider = null;
 
     /**
      * @param  string | array<string, mixed> | null  $content
@@ -154,6 +157,18 @@ class RichContentRenderer implements Htmlable
         return [
             'extensions' => $this->getTipTapPhpExtensions(),
         ];
+    }
+
+    public function fileAttachmentProvider(?FileAttachmentProvider $provider): static
+    {
+        $this->fileAttachmentProvider = $provider;
+
+        return $this;
+    }
+
+    public function getFileAttachmentProvider(): ?FileAttachmentProvider
+    {
+        return $this->fileAttachmentProvider;
     }
 
     public function getEditor(): Editor

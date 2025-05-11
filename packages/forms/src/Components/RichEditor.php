@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
@@ -14,7 +15,9 @@ use Filament\Forms\Components\RichEditor\Tool;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Tiptap\Core\Extension;
 use Tiptap\Editor;
 
@@ -174,7 +177,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             );
         });
 
-        $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState): void {
+        $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
+            if ($component->getFileAttachmentProvider()?->requiresExistingRecordToSave() && (! $record)) {
+                return;
+            }
+
             $component->rawState(
                 $component->getTipTapEditor()
                     ->setContent($rawState ?? [
@@ -202,6 +209,51 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                     ->getDocument(),
             );
         });
+
+        $this->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, Model $record): void {
+            if ((! $component->getFileAttachmentProvider()?->requiresExistingRecordToSave()) || (! $record->wasRecentlyCreated)) {
+                return;
+            }
+
+            $component->rawState(
+                $component->getTipTapEditor()
+                    ->setContent($rawState ?? [
+                        'type' => 'doc',
+                        'content' => [],
+                    ])
+                    ->descendants(function (object &$node) use ($component): void {
+                        if ($node->type !== 'image') {
+                            return;
+                        }
+
+                        if (blank($node->attrs->{'data-id'} ?? null)) {
+                            return;
+                        }
+
+                        $attachment = $component->getUploadedFileAttachment($node->attrs->{'data-id'});
+
+                        if (! $attachment) {
+                            return;
+                        }
+
+                        $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
+                        $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+                    })
+                    ->getDocument(),
+            );
+
+            $record->setAttribute($component->getContentAttribute()->getName(), $component->getState());
+            $record->save();
+        });
+    }
+
+    public function isDehydrated(): bool
+    {
+        if ($this->getFileAttachmentProvider()?->requiresExistingRecordToSave() && (! $this->getRecord())) {
+            return false;
+        }
+
+        return parent::isDehydrated();
     }
 
     /**
@@ -393,12 +445,27 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getDefaultFileAttachmentsDiskName(): ?string
     {
-        return $this->getContentAttribute()->getFileAttachmentsDisk();
+        return $this->getContentAttribute()?->getFileAttachmentsDisk();
     }
 
     public function getDefaultFileAttachmentsVisibility(): ?string
     {
-        return $this->getContentAttribute()->getFileAttachmentsVisibility();
+        return $this->getContentAttribute()?->getFileAttachmentsVisibility();
+    }
+
+    public function getFileAttachmentProvider(): ?FileAttachmentProvider
+    {
+        return $this->getContentAttribute()?->getFileAttachmentProvider();
+    }
+
+    public function getDefaultFileAttachmentUrl(mixed $file): ?string
+    {
+        return $this->getFileAttachmentProvider()?->getFileAttachmentUrl($file);
+    }
+
+    public function defaultSaveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+    {
+        return $this->getFileAttachmentProvider()?->saveUploadedFileAttachment($file);
     }
 
     /**
@@ -406,7 +473,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getDefaultToolbarButtons(): array
     {
-        return $this->getContentAttribute()->getToolbarButtons() ?? [
+        return $this->getContentAttribute()?->getToolbarButtons() ?? [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],

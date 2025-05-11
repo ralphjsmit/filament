@@ -62,9 +62,18 @@ trait HasFileAttachments
             ]);
         }
 
+        if (filled($savedFile = $this->defaultSaveUploadedFileAttachment($file))) {
+            return $savedFile;
+        }
+
         $storeMethod = $this->getFileAttachmentsVisibility() === 'public' ? 'storePublicly' : 'store';
 
         return $file->{$storeMethod}($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
+    }
+
+    public function defaultSaveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+    {
+        return null;
     }
 
     #[ExposedLivewireMethod]
@@ -176,6 +185,10 @@ trait HasFileAttachments
             ]);
         }
 
+        if (filled($url = $this->getDefaultFileAttachmentUrl($file))) {
+            return $url;
+        }
+
         /** @var FilesystemAdapter $storage */
         $storage = $this->getFileAttachmentsDisk();
 
@@ -199,5 +212,10 @@ trait HasFileAttachments
         }
 
         return $storage->url($file);
+    }
+
+    public function getDefaultFileAttachmentUrl(mixed $file): ?string
+    {
+        return null;
     }
 }

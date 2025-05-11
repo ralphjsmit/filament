@@ -28,6 +28,8 @@ class RichContentAttribute implements Htmlable
      */
     protected ?array $toolbarButtons = null;
 
+    protected ?FileAttachmentProvider $fileAttachmentProvider = null;
+
     public function __construct(protected Model $model, protected string $name) {}
 
     public static function make(Model $model, string $name): static
@@ -54,7 +56,7 @@ class RichContentAttribute implements Htmlable
 
     public function getFileAttachmentsVisibility(): ?string
     {
-        return $this->fileAttachmentsVisibility;
+        return $this->fileAttachmentsVisibility ?? $this->getFileAttachmentProvider()?->getDefaultFileAttachmentVisibility();
     }
 
     /**
@@ -117,12 +119,35 @@ class RichContentAttribute implements Htmlable
         return $this->toolbarButtons;
     }
 
+    public function fileAttachmentProvider(?FileAttachmentProvider $provider): static
+    {
+        $this->fileAttachmentProvider = $provider?->attribute($this);
+
+        return $this;
+    }
+
+    public function getFileAttachmentProvider(): ?FileAttachmentProvider
+    {
+        return $this->fileAttachmentProvider;
+    }
+
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function toHtml(): string
     {
         return app(RichContentRenderer::class)
             ->tipTapPhpExtensions($this->getTipTapPhpExtensions())
             ->content($this->model->getAttribute($this->name))
             ->fileAttachments($this->getFileAttachmentsDisk(), $this->getFileAttachmentsVisibility())
+            ->fileAttachmentProvider($this->getFileAttachmentProvider())
             ->toHtml();
     }
 }
