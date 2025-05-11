@@ -617,6 +617,8 @@ TextInput::make('password')
     ->htmlValidationMessages()
 ```
 
+Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
+
 ## Disabling validation when fields are not dehydrated
 
 When a field is [not dehydrated](overview#preventing-a-field-from-being-dehydrated), it is still validated. To disable validation for fields that are not dehydrated, use the `validatedWhenNotDehydrated()` method:
