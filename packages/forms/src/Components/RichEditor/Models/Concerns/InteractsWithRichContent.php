@@ -31,7 +31,7 @@ trait InteractsWithRichContent /** @phpstan-ignore trait.unused */
         return $this->richContentAttributes[$name] = RichContentAttribute::make($this, $name);
     }
 
-    public function getRichContent(string $attribute): string
+    public function renderRichContent(string $attribute): string
     {
         $attribute = $this->getRichContentAttribute($attribute) ?? RichContentAttribute::make($this, $attribute);
 

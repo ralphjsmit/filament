@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\RichEditor\FileAttachmentProviders;
 
+use Closure;
 use Exception;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
@@ -65,7 +66,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         return $this->media = $media;
     }
 
-    public function getFileAttachmentUrl(mixed $file): ?string
+    public function getFileAttachmentUrl(mixed $file, ?Closure $allowedFileAttachmentsFromOtherRecords = null): ?string
     {
         $media = $this->getMedia();
 
@@ -77,11 +78,11 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
             return null;
         }
 
-        $image = $media->get($file);
+        $fileAttachment = $media->get($file);
 
         if ($this->attribute->getFileAttachmentsVisibility() === 'private') {
             try {
-                return $image->getTemporaryUrl(
+                return $fileAttachment->getTemporaryUrl(
                     now()->addMinutes(30)->endOfHour(),
                 );
             } catch (Throwable $exception) {
@@ -89,7 +90,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
             }
         }
 
-        return $image->getUrl();
+        return $fileAttachment->getUrl();
     }
 
     public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed

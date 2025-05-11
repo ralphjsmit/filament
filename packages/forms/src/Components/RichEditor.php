@@ -54,6 +54,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected array $tools = [];
 
+    protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
+
+    protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -181,16 +185,31 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
                         $attachment = $component->getUploadedFileAttachment($node->attrs->{'data-id'});
 
-                        if (! $attachment) {
+                        if ($attachment) {
+                            $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
+                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+
                             $fileAttachmentIds[] = $node->attrs->{'data-id'};
 
                             return;
                         }
 
-                        $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
-                        $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+                        if (filled($component->getFileAttachmentUrl($node->attrs->{'data-id'}))) {
+                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
 
-                        $fileAttachmentIds[] = $node->attrs->{'data-id'};
+                            return;
+                        }
+
+                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->{'data-id'});
+
+                        if (blank($fileAttachmentIdFromAnotherRecord)) {
+                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
+
+                            return;
+                        }
+
+                        $node->attrs->{'data-id'} = $fileAttachmentIdFromAnotherRecord;
+                        $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
                     })
                     ->getDocument(),
             );
@@ -232,16 +251,31 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
                         $attachment = $component->getUploadedFileAttachment($node->attrs->{'data-id'});
 
-                        if (! $attachment) {
+                        if ($attachment) {
+                            $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
+                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+
                             $fileAttachmentIds[] = $node->attrs->{'data-id'};
 
                             return;
                         }
 
-                        $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
-                        $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+                        if (filled($component->getFileAttachmentUrl($node->attrs->{'data-id'}))) {
+                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
 
-                        $fileAttachmentIds[] = $node->attrs->{'data-id'};
+                            return;
+                        }
+
+                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->{'data-id'});
+
+                        if (blank($fileAttachmentIdFromAnotherRecord)) {
+                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
+
+                            return;
+                        }
+
+                        $node->attrs->{'data-id'} = $fileAttachmentIdFromAnotherRecord;
+                        $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
                     })
                     ->getDocument(),
             );
@@ -251,31 +285,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
             $fileAttachmentProvider->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
         });
-    }
-
-    public function callAfterStateHydrated(): static
-    {
-        $this->rawState(
-            $this->getTipTapEditor()
-                ->setContent($this->getRawState() ?? [
-                    'type' => 'doc',
-                    'content' => [],
-                ])
-                ->descendants(function (object &$node): void {
-                    if ($node->type !== 'image') {
-                        return;
-                    }
-
-                    if (blank($node->attrs->{'data-id'} ?? null)) {
-                        return;
-                    }
-
-                    $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->{'data-id'});
-                })
-                ->getDocument(),
-        );
-
-        return parent::callAfterStateHydrated();
     }
 
     public function isDehydrated(): bool
@@ -511,5 +520,33 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['attachFiles'],
             ['undo', 'redo'],
         ];
+    }
+
+    public function getFileAttachmentUrlFromAnotherRecordUsing(?Closure $callback): static
+    {
+        $this->getFileAttachmentUrlFromAnotherRecordUsing = $callback;
+
+        return $this;
+    }
+
+    public function saveFileAttachmentFromAnotherRecordUsing(?Closure $callback): static
+    {
+        $this->saveFileAttachmentFromAnotherRecordUsing = $callback;
+
+        return $this;
+    }
+
+    public function getFileAttachmentUrlFromAnotherRecord(mixed $file): ?string
+    {
+        return $this->evaluate($this->getFileAttachmentUrlFromAnotherRecordUsing, [
+            'file' => $file,
+        ]);
+    }
+
+    public function saveFileAttachmentFromAnotherRecord(mixed $file): mixed
+    {
+        return $this->evaluate($this->saveFileAttachmentFromAnotherRecordUsing, [
+            'file' => $file,
+        ]);
     }
 }

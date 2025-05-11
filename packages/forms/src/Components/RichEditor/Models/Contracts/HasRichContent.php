@@ -7,4 +7,6 @@ use Filament\Forms\Components\RichEditor\RichContentAttribute;
 interface HasRichContent
 {
     public function getRichContentAttribute(string $attribute): ?RichContentAttribute;
+
+    public function renderRichContent(string $attribute): string;
 }
