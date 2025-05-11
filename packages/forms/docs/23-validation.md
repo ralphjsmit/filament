@@ -602,6 +602,22 @@ TextInput::make('email')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing an array of static value, the `validationMessages()` method also accepts a function for each message. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
+## HTML validation messages
+
+By default, validation messages are rendered as plain text for security reasons. However, you may need to render HTML in your validation messages, such as when displaying lists or links. To enable HTML rendering for validation messages, use the `htmlValidationMessages()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('password')
+    ->required()
+    ->rules([
+        // Custom rule that returns HTML
+        new CustomRule()
+    ])
+    ->htmlValidationMessages()
+```
+
 ## Disabling validation when fields are not dehydrated
 
 When a field is [not dehydrated](overview#preventing-a-field-from-being-dehydrated), it is still validated. To disable validation for fields that are not dehydrated, use the `validatedWhenNotDehydrated()` method:
