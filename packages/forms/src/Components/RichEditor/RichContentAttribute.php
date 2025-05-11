@@ -18,11 +18,6 @@ class RichContentAttribute implements Htmlable
      */
     protected array $tipTapPhpExtensions = [];
 
-    /**
-     * @var array<string>
-     */
-    protected array $tipTapJsExtensions = [];
-
     protected ?FileAttachmentProvider $fileAttachmentProvider = null;
 
     public function __construct(protected Model $model, protected string $name) {}
@@ -55,19 +50,6 @@ class RichContentAttribute implements Htmlable
     }
 
     /**
-     * @param  array<string>  $extensions
-     */
-    public function tipTapJsExtensions(array $extensions): static
-    {
-        $this->tipTapJsExtensions = [
-            ...$this->tipTapJsExtensions,
-            ...$extensions,
-        ];
-
-        return $this;
-    }
-
-    /**
      * @param  array<Extension>  $extensions
      */
     public function tipTapPhpExtensions(array $extensions): static
@@ -86,14 +68,6 @@ class RichContentAttribute implements Htmlable
     public function getTipTapPhpExtensions(): array
     {
         return $this->tipTapPhpExtensions;
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getTipTapJsExtensions(): array
-    {
-        return $this->tipTapJsExtensions;
     }
 
     public function fileAttachmentProvider(?FileAttachmentProvider $provider): static

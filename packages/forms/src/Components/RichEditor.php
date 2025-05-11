@@ -425,23 +425,20 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getTipTapJsExtensions(): array
     {
-        return [
-            ...$this->getContentAttribute()?->getTipTapJsExtensions() ?? [],
-            ...array_reduce(
-                $this->tipTapJsExtensions,
-                function (array $carry, string | Closure $extension): array {
-                    if ($extension instanceof Closure) {
-                        $extension = $this->evaluate($extension);
-                    }
+        return array_reduce(
+            $this->tipTapJsExtensions,
+            function (array $carry, string | Closure $extension): array {
+                if ($extension instanceof Closure) {
+                    $extension = $this->evaluate($extension);
+                }
 
-                    return [
-                        ...$carry,
-                        ...Arr::wrap($extension),
-                    ];
-                },
-                initial: [],
-            ),
-        ];
+                return [
+                    ...$carry,
+                    ...Arr::wrap($extension),
+                ];
+            },
+            initial: [],
+        );
     }
 
     /**
