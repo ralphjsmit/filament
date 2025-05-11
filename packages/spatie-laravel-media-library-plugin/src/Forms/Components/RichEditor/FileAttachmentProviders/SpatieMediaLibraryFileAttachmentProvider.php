@@ -17,9 +17,18 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     protected RichContentAttribute $attribute;
 
+    protected ?string $collection = null;
+
     public static function make(): static
     {
         return app(static::class);
+    }
+
+    public function collection(?string $collection): static
+    {
+        $this->collection = $collection;
+
+        return $this;
     }
 
     public function attribute(RichContentAttribute $attribute): static
@@ -51,7 +60,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         }
 
         /** @var MediaCollection $media */
-        $media = $this->getExistingModel()?->getMedia(collectionName: $this->attribute->getName())->keyBy('uuid');
+        $media = $this->getExistingModel()?->getMedia($this->getCollection())->keyBy('uuid');
 
         return $this->media = $media;
     }
@@ -88,7 +97,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         return $this->getExistingModel() /** @phpstan-ignore method.notFound */
             ->addMediaFromString($file->get())
             ->usingFileName(((string) Str::ulid()) . '.' . $file->getClientOriginalExtension())
-            ->toMediaCollection($this->attribute->getName(), diskName: $this->attribute->getFileAttachmentsDisk() ?? '')
+            ->toMediaCollection($this->getCollection(), diskName: $this->attribute->getFileAttachmentsDisk() ?? '')
             ->uuid;
     }
 
@@ -98,7 +107,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
     public function cleanUpFileAttachments(array $exceptIds): void
     {
         $model = $this->getExistingModel();
-        $collectionName = $this->attribute->getName();
+        $collectionName = $this->getCollection();
 
         $model->clearMediaCollectionExcept(
             $collectionName,
@@ -114,5 +123,10 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
     public function isExistingRecordRequiredToSaveNewFileAttachments(): bool
     {
         return true;
+    }
+
+    public function getCollection(): string
+    {
+        return $this->collection ?? $this->attribute->getName();
     }
 }
