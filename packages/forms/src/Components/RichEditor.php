@@ -3,15 +3,17 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Contracts\Plugin;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
-use Filament\Forms\Components\RichEditor\Tool;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
@@ -40,17 +42,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected bool | Closure $isJson = false;
 
     /**
-     * @var array<Extension | Closure>
+     * @var array<RichPlugin | Closure>
      */
-    protected array $tipTapPhpExtensions = [];
+    protected array $plugins = [];
 
     /**
-     * @var array<string | Closure>
-     */
-    protected array $tipTapJsExtensions = [];
-
-    /**
-     * @var array<Tool | Closure>
+     * @var array<RichEditorTool | Closure>
      */
     protected array $tools = [];
 
@@ -68,91 +65,91 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         ]);
 
         $this->tools([
-            Tool::make('bold')
+            RichEditorTool::make('bold')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.bold'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleBold().run()')
                 ->icon(Heroicon::Bold)
                 ->iconAlias('forms:components.rich-editor.toolbar.bold'),
-            Tool::make('italic')
+            RichEditorTool::make('italic')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.italic'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleItalic().run()')
                 ->icon(Heroicon::Italic)
                 ->iconAlias('forms:components.rich-editor.toolbar.italic'),
-            Tool::make('underline')
+            RichEditorTool::make('underline')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.underline'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleUnderline().run()')
                 ->icon(Heroicon::Underline)
                 ->iconAlias('forms:components.rich-editor.toolbar.underline'),
-            Tool::make('strike')
+            RichEditorTool::make('strike')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.strike'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleStrike().run()')
                 ->icon(Heroicon::Strikethrough)
                 ->iconAlias('forms:components.rich-editor.toolbar.strike'),
-            Tool::make('subscript')
+            RichEditorTool::make('subscript')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.subscript'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleSubscript().run()')
                 ->icon('fi-s-subscript')
                 ->iconAlias('forms:components.rich-editor.toolbar.subscript'),
-            Tool::make('superscript')
+            RichEditorTool::make('superscript')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.superscript'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleSuperscript().run()')
                 ->icon('fi-s-superscript')
                 ->iconAlias('forms:components.rich-editor.toolbar.superscript'),
-            Tool::make('link')
+            RichEditorTool::make('link')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.link'))
                 ->javaScriptHandler(fn (): string => $this->getAction('link')->getAlpineClickHandler())
                 ->icon(Heroicon::Link)
                 ->iconAlias('forms:components.rich-editor.toolbar.link'),
-            Tool::make('h1')
+            RichEditorTool::make('h1')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.h1'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
                 ->activeOptions(['level' => 1])
                 ->icon(Heroicon::H1)
                 ->iconAlias('forms:components.rich-editor.toolbar.h1'),
-            Tool::make('h2')
+            RichEditorTool::make('h2')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.h2'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
                 ->activeOptions(['level' => 2])
                 ->icon(Heroicon::H2)
                 ->iconAlias('forms:components.rich-editor.toolbar.h2'),
-            Tool::make('h3')
+            RichEditorTool::make('h3')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.h3'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
                 ->activeOptions(['level' => 3])
                 ->icon(Heroicon::H3)
                 ->iconAlias('forms:components.rich-editor.toolbar.h3'),
-            Tool::make('blockquote')
+            RichEditorTool::make('blockquote')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.blockquote'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleBlockquote().run()')
                 ->icon(Heroicon::ChatBubbleBottomCenterText)
                 ->iconAlias('forms:components.rich-editor.toolbar.blockquote'),
-            Tool::make('codeBlock')
+            RichEditorTool::make('codeBlock')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.code_block'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleCodeBlock().run()')
                 ->icon(Heroicon::CodeBracket)
                 ->iconAlias('forms:components.rich-editor.toolbar.code_block'),
-            Tool::make('bulletList')
+            RichEditorTool::make('bulletList')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.bullet_list'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleBulletList().run()')
                 ->icon(Heroicon::ListBullet)
                 ->iconAlias('forms:components.rich-editor.toolbar.bullet_list'),
-            Tool::make('orderedList')
+            RichEditorTool::make('orderedList')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.ordered_list'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleOrderedList().run()')
                 ->icon(Heroicon::NumberedList)
                 ->iconAlias('forms:components.rich-editor.toolbar.ordered_list'),
-            Tool::make('attachFiles')
+            RichEditorTool::make('attachFiles')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.attach_files'))
                 ->javaScriptHandler(fn (): string => $this->getAction('attachFiles')->getAlpineClickHandler())
                 ->activeKey('image')
                 ->icon(Heroicon::PaperClip)
                 ->iconAlias('forms:components.rich-editor.toolbar.attach_files'),
-            Tool::make('undo')
+            RichEditorTool::make('undo')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.undo'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().undo().run()')
                 ->icon(Heroicon::ArrowUturnLeft)
                 ->iconAlias('forms:components.rich-editor.toolbar.undo'),
-            Tool::make('redo')
+            RichEditorTool::make('redo')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.redo'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().redo().run()')
                 ->icon(Heroicon::ArrowUturnRight)
@@ -297,12 +294,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<string> | Closure  $extensions
+     * @param  array<RichPlugin> | Closure  $extensions
      */
-    public function tipTapJsExtensions(array | Closure $extensions): static
+    public function plugins(array | Closure $extensions): static
     {
-        $this->tipTapJsExtensions = [
-            ...$this->tipTapJsExtensions,
+        $this->plugins = [
+            ...$this->plugins,
             ...is_array($extensions) ? $extensions : [$extensions],
         ];
 
@@ -310,20 +307,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<Extension> | Closure  $extensions
-     */
-    public function tipTapPhpExtensions(array | Closure $extensions): static
-    {
-        $this->tipTapPhpExtensions = [
-            ...$this->tipTapPhpExtensions,
-            ...is_array($extensions) ? $extensions : [$extensions],
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  array<Tool> | Closure  $tools
+     * @param  array<RichEditorTool> | Closure  $tools
      */
     public function tools(array | Closure $tools): static
     {
@@ -392,27 +376,27 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getTipTapEditor(): Editor
     {
         return app(RichContentRenderer::class)
-            ->tipTapPhpExtensions($this->getTipTapPhpExtensions())
+            ->plugins($this->getPlugins())
             ->getEditor();
     }
 
     /**
-     * @return array<Extension>
+     * @return array<RichPlugin>
      */
-    public function getTipTapPhpExtensions(): array
+    public function getPlugins(): array
     {
         return [
-            ...$this->getContentAttribute()?->getTipTapPhpExtensions() ?? [],
+            ...$this->getContentAttribute()?->getPlugins() ?? [],
             ...array_reduce(
-                $this->tipTapPhpExtensions,
-                function (array $carry, Extension | Closure $extension): array {
-                    if ($extension instanceof Closure) {
-                        $extension = $this->evaluate($extension);
+                $this->plugins,
+                function (array $carry, Plugin | Closure $plugin): array {
+                    if ($plugin instanceof Closure) {
+                        $plugin = $this->evaluate($plugin);
                     }
 
                     return [
                         ...$carry,
-                        ...Arr::wrap($extension),
+                        ...Arr::wrap($plugin),
                     ];
                 },
                 initial: [],
@@ -426,47 +410,51 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getTipTapJsExtensions(): array
     {
         return array_reduce(
-            $this->tipTapJsExtensions,
-            function (array $carry, string | Closure $extension): array {
-                if ($extension instanceof Closure) {
-                    $extension = $this->evaluate($extension);
-                }
-
-                return [
-                    ...$carry,
-                    ...Arr::wrap($extension),
-                ];
-            },
+            $this->getPlugins(),
+            fn (array $carry, RichPlugin $plugin): array => [
+                ...$carry,
+                ...$plugin->getTipTapJsExtensions(),
+            ],
             initial: [],
         );
     }
 
     /**
-     * @return array<string, Tool>
+     * @return array<string, RichEditorTool>
      */
     public function getTools(): array
     {
-        return array_reduce(
-            $this->tools,
-            function (array $carry, Tool | Closure $tool): array {
-                if ($tool instanceof Closure) {
-                    $tool = $this->evaluate($tool);
-                }
-
-                return [
+        return [
+            ...array_reduce(
+                $this->getPlugins(),
+                fn (array $carry, RichPlugin $plugin): array => [
                     ...$carry,
-                    ...array_reduce(
-                        Arr::wrap($tool),
-                        fn (array $carry, Tool $tool): array => [
-                            ...$carry,
-                            $tool->getName() => $tool,
-                        ],
-                        initial: [],
-                    ),
-                ];
-            },
-            initial: [],
-        );
+                    ...$plugin->getEditorTools(),
+                ],
+                initial: [],
+            ),
+            ...array_reduce(
+                $this->tools,
+                function (array $carry, RichEditorTool | Closure $tool): array {
+                    if ($tool instanceof Closure) {
+                        $tool = $this->evaluate($tool);
+                    }
+
+                    return [
+                        ...$carry,
+                        ...array_reduce(
+                            Arr::wrap($tool),
+                            fn (array $carry, RichEditorTool $tool): array => [
+                                ...$carry,
+                                $tool->getName() => $tool,
+                            ],
+                            initial: [],
+                        ),
+                    ];
+                },
+                initial: [],
+            ),
+        ];
     }
 
     public function getContentAttribute(): ?RichContentAttribute

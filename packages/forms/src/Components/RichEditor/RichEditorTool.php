@@ -13,7 +13,7 @@ use Illuminate\Support\Js;
 
 use function Filament\Support\generate_icon_html;
 
-class Tool extends Component implements HasEmbeddedView
+class RichEditorTool extends Component implements HasEmbeddedView
 {
     use HasIcon;
     use HasLabel {

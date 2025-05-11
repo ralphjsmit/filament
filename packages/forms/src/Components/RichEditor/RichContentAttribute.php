@@ -3,9 +3,9 @@
 namespace Filament\Forms\Components\RichEditor;
 
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichPlugin;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Tiptap\Core\Extension;
 
 class RichContentAttribute implements Htmlable
 {
@@ -14,9 +14,9 @@ class RichContentAttribute implements Htmlable
     protected ?string $fileAttachmentsVisibility = null;
 
     /**
-     * @var array<Extension>
+     * @var array<RichPlugin>
      */
-    protected array $tipTapPhpExtensions = [];
+    protected array $plugins = [];
 
     protected ?FileAttachmentProvider $fileAttachmentProvider = null;
 
@@ -50,24 +50,24 @@ class RichContentAttribute implements Htmlable
     }
 
     /**
-     * @param  array<Extension>  $extensions
+     * @param  array<RichPlugin>  $plugins
      */
-    public function tipTapPhpExtensions(array $extensions): static
+    public function plugins(array $plugins): static
     {
-        $this->tipTapPhpExtensions = [
-            ...$this->tipTapPhpExtensions,
-            ...$extensions,
+        $this->plugins = [
+            ...$this->plugins,
+            ...$plugins,
         ];
 
         return $this;
     }
 
     /**
-     * @return array<Extension>
+     * @return array<RichPlugin>
      */
-    public function getTipTapPhpExtensions(): array
+    public function getPlugins(): array
     {
-        return $this->tipTapPhpExtensions;
+        return $this->plugins;
     }
 
     public function fileAttachmentProvider(?FileAttachmentProvider $provider): static
@@ -95,7 +95,7 @@ class RichContentAttribute implements Htmlable
     public function toHtml(): string
     {
         return app(RichContentRenderer::class)
-            ->tipTapPhpExtensions($this->getTipTapPhpExtensions())
+            ->plugins($this->getPlugins())
             ->content($this->model->getAttribute($this->name))
             ->fileAttachments($this->getFileAttachmentsDisk(), $this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())

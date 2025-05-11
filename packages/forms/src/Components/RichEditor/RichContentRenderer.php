@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\RichEditor;
 
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichPlugin;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\Image;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
@@ -40,9 +41,9 @@ class RichContentRenderer implements Htmlable
     protected ?string $fileAttachmentsVisibility = null;
 
     /**
-     * @var array<Extension>
+     * @var array<RichPlugin>
      */
-    protected array $tipTapPhpExtensions = [];
+    protected array $plugins = [];
 
     protected ?FileAttachmentProvider $fileAttachmentProvider = null;
 
@@ -94,13 +95,13 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @param  array<Extension>  $extensions
+     * @param  array<RichPlugin>  $plugins
      */
-    public function tipTapPhpExtensions(array $extensions): static
+    public function plugins(array $plugins): static
     {
-        $this->tipTapPhpExtensions = [
-            ...$this->tipTapPhpExtensions,
-            ...$extensions,
+        $this->plugins = [
+            ...$this->plugins,
+            ...$plugins,
         ];
 
         return $this;
@@ -119,6 +120,14 @@ class RichContentRenderer implements Htmlable
 
             $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->{'data-id'});
         });
+    }
+
+    /**
+     * @return array<RichPlugin>
+     */
+    public function getPlugins(): array
+    {
+        return $this->plugins;
     }
 
     /**
@@ -145,7 +154,14 @@ class RichContentRenderer implements Htmlable
             app(Superscript::class),
             app(Text::class),
             app(Underline::class),
-            ...$this->tipTapPhpExtensions,
+            ...array_reduce(
+                $this->getPlugins(),
+                fn (array $carry, RichPlugin $plugin): array => [
+                    ...$carry,
+                    ...$plugin->getTipTapPhpExtensions(),
+                ],
+                initial: [],
+            ),
         ];
     }
 
