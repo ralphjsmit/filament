@@ -24,11 +24,6 @@ trait HasCellState
 
     protected ?string $inverseRelationshipName = null;
 
-    /**
-     * @var array<string, mixed>
-     */
-    protected array $cachedState = [];
-
     public function inverseRelationship(?string $name): static
     {
         $this->inverseRelationshipName = $name;
@@ -76,24 +71,22 @@ trait HasCellState
 
     public function getState(): mixed
     {
-        return $this->cacheState(function (): mixed {
-            $state = ($this->getStateUsing !== null) ?
-                $this->evaluate($this->getStateUsing) :
-                $this->getStateFromRecord();
+        $state = ($this->getStateUsing !== null) ?
+            $this->evaluate($this->getStateUsing) :
+            $this->getStateFromRecord();
 
-            if (is_string($state) && ($separator = $this->getSeparator())) {
-                $state = explode($separator, $state);
-                $state = (count($state) === 1 && blank($state[0])) ?
-                    [] :
-                    $state;
-            }
+        if (is_string($state) && ($separator = $this->getSeparator())) {
+            $state = explode($separator, $state);
+            $state = (count($state) === 1 && blank($state[0])) ?
+                [] :
+                $state;
+        }
 
-            if (blank($state)) {
-                $state = $this->getDefaultState();
-            }
+        if (blank($state)) {
+            $state = $this->getDefaultState();
+        }
 
-            return $state;
-        });
+        return $state;
     }
 
     public function getStateFromRecord(): mixed
@@ -130,11 +123,6 @@ trait HasCellState
         }
 
         return $state->all();
-    }
-
-    public function clearCachedState(): void
-    {
-        $this->cachedState = [];
     }
 
     public function separator(string | Closure | null $separator = ','): static
@@ -298,26 +286,5 @@ trait HasCellState
         }
 
         return (string) str($name)->beforeLast('.');
-    }
-
-    protected function cacheState(Closure $state): mixed
-    {
-        $record = $this->getRecord();
-
-        if (! $record) {
-            return null;
-        }
-
-        $recordKey = (string) $record->getKey();
-
-        if (blank($recordKey)) {
-            return $state();
-        }
-
-        if (array_key_exists($recordKey, $this->cachedState)) {
-            return $this->cachedState[$recordKey];
-        }
-
-        return $this->cachedState[$recordKey] = $state();
     }
 }
