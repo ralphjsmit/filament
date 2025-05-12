@@ -101,6 +101,20 @@ abstract class ViewComponent extends Component implements Htmlable
         return $this->evaluate($this->defaultView);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getViewData(): array
+    {
+        return collect($this->viewData)
+            ->flatMap(function (mixed $value, string | int $key) {
+                return is_numeric($key)
+                    ? $this->evaluate($value)
+                    : [$key => $this->evaluate($value)];
+            })
+            ->all();
+    }
+
     public function toHtml(): string
     {
         return $this->render()->render();
@@ -114,7 +128,7 @@ abstract class ViewComponent extends Component implements Htmlable
                 'attributes' => new ComponentAttributeBag,
                 ...$this->extractPublicMethods(),
                 ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
-                ...$this->viewData,
+                ...$this->getViewData(),
             ],
         );
     }
