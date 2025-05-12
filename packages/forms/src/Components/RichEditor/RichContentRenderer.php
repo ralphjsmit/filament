@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components\RichEditor;
 
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
-use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichPlugin;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\Image;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
@@ -41,7 +41,7 @@ class RichContentRenderer implements Htmlable
     protected ?string $fileAttachmentsVisibility = null;
 
     /**
-     * @var array<RichPlugin>
+     * @var array<RichContentPlugin>
      */
     protected array $plugins = [];
 
@@ -95,7 +95,7 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @param  array<RichPlugin>  $plugins
+     * @param  array<RichContentPlugin>  $plugins
      */
     public function plugins(array $plugins): static
     {
@@ -123,7 +123,7 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @return array<RichPlugin>
+     * @return array<RichContentPlugin>
      */
     public function getPlugins(): array
     {
@@ -156,7 +156,7 @@ class RichContentRenderer implements Htmlable
             app(Underline::class),
             ...array_reduce(
                 $this->getPlugins(),
-                fn (array $carry, RichPlugin $plugin): array => [
+                fn (array $carry, RichContentPlugin $plugin): array => [
                     ...$carry,
                     ...$plugin->getTipTapPhpExtensions(),
                 ],

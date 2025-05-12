@@ -106,6 +106,12 @@ trait HasActions
     {
         $this->cachedActions = [];
 
+        foreach ($this->getDefaultActions() as $defaultAction) {
+            foreach (Arr::wrap($this->evaluate($defaultAction)) as $action) {
+                $this->cachedActions[$action->getName()] = $this->prepareAction($action);
+            }
+        }
+
         if ($this instanceof HasAffixActions) {
             $this->cachedActions = [
                 ...$this->cachedActions,
@@ -128,6 +134,14 @@ trait HasActions
         }
 
         return $this->cachedActions;
+    }
+
+    /**
+     * @return array<Action>
+     */
+    public function getDefaultActions(): array
+    {
+        return [];
     }
 
     public function prepareAction(Action $action): Action

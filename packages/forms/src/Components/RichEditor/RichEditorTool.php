@@ -3,18 +3,21 @@
 namespace Filament\Forms\Components\RichEditor;
 
 use Closure;
-use Filament\Schemas\Components\Component;
+use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 
 use function Filament\Support\generate_icon_html;
 
-class RichEditorTool extends Component implements HasEmbeddedView
+class RichEditorTool extends ViewComponent implements HasEmbeddedView
 {
+    use HasExtraAttributes;
     use HasIcon;
     use HasLabel {
         getLabel as getBaseLabel;
@@ -32,6 +35,12 @@ class RichEditorTool extends Component implements HasEmbeddedView
 
     protected string | Closure | null $javaScriptHandler = null;
 
+    protected RichEditor $editor;
+
+    protected string $evaluationIdentifier = 'tool';
+
+    protected string $viewIdentifier = 'tool';
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -44,6 +53,18 @@ class RichEditorTool extends Component implements HasEmbeddedView
         $static->configure();
 
         return $static;
+    }
+
+    public function editor(RichEditor $editor): static
+    {
+        $this->editor = $editor;
+
+        return $this;
+    }
+
+    public function getEditor(): RichEditor
+    {
+        return $this->editor;
     }
 
     /**
@@ -74,6 +95,13 @@ class RichEditorTool extends Component implements HasEmbeddedView
     public function getIconAlias(): ?string
     {
         return $this->evaluate($this->iconAlias);
+    }
+
+    public function action(string | Closure | null $action = null): static
+    {
+        $this->javaScriptHandler(fn (RichEditorTool $tool): ?string => $tool->getEditor()->getAction($tool->evaluate($action) ?? $tool->getName())->getAlpineClickHandler());
+
+        return $this;
     }
 
     public function javaScriptHandler(string | Closure | null $handler): static

@@ -3,13 +3,14 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Contracts\Plugin;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
-use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichPlugin;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
@@ -20,7 +21,6 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use Tiptap\Core\Extension;
 use Tiptap\Editor;
 
 class RichEditor extends Field implements Contracts\CanBeLengthConstrained
@@ -42,7 +42,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected bool | Closure $isJson = false;
 
     /**
-     * @var array<RichPlugin | Closure>
+     * @var array<RichContentPlugin | Closure>
      */
     protected array $plugins = [];
 
@@ -58,11 +58,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->registerActions([
-            AttachFilesAction::make(),
-            LinkAction::make(),
-        ]);
 
         $this->tools([
             RichEditorTool::make('bold')
@@ -97,7 +92,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.superscript'),
             RichEditorTool::make('link')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.link'))
-                ->javaScriptHandler(fn (): string => $this->getAction('link')->getAlpineClickHandler())
+                ->action()
                 ->icon(Heroicon::Link)
                 ->iconAlias('forms:components.rich-editor.toolbar.link'),
             RichEditorTool::make('h1')
@@ -140,7 +135,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.ordered_list'),
             RichEditorTool::make('attachFiles')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.attach_files'))
-                ->javaScriptHandler(fn (): string => $this->getAction('attachFiles')->getAlpineClickHandler())
+                ->action()
                 ->activeKey('image')
                 ->icon(Heroicon::PaperClip)
                 ->iconAlias('forms:components.rich-editor.toolbar.attach_files'),
@@ -294,7 +289,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<RichPlugin> | Closure  $extensions
+     * @param  array<RichContentPlugin> | Closure  $extensions
      */
     public function plugins(array | Closure $extensions): static
     {
@@ -381,7 +376,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<RichPlugin>
+     * @return array<RichContentPlugin>
      */
     public function getPlugins(): array
     {
@@ -411,7 +406,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return array_reduce(
             $this->getPlugins(),
-            fn (array $carry, RichPlugin $plugin): array => [
+            fn (array $carry, RichContentPlugin $plugin): array => [
                 ...$carry,
                 ...$plugin->getTipTapJsExtensions(),
             ],
@@ -424,37 +419,40 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getTools(): array
     {
-        return [
-            ...array_reduce(
-                $this->getPlugins(),
-                fn (array $carry, RichPlugin $plugin): array => [
-                    ...$carry,
-                    ...$plugin->getEditorTools(),
-                ],
-                initial: [],
-            ),
-            ...array_reduce(
-                $this->tools,
-                function (array $carry, RichEditorTool | Closure $tool): array {
-                    if ($tool instanceof Closure) {
-                        $tool = $this->evaluate($tool);
-                    }
-
-                    return [
+        return array_map(
+            fn (RichEditorTool $tool) => $tool->editor($this),
+            [
+                ...array_reduce(
+                    $this->getPlugins(),
+                    fn (array $carry, RichContentPlugin $plugin): array => [
                         ...$carry,
-                        ...array_reduce(
-                            Arr::wrap($tool),
-                            fn (array $carry, RichEditorTool $tool): array => [
-                                ...$carry,
-                                $tool->getName() => $tool,
-                            ],
-                            initial: [],
-                        ),
-                    ];
-                },
-                initial: [],
-            ),
-        ];
+                        ...$plugin->getEditorTools(),
+                    ],
+                    initial: [],
+                ),
+                ...array_reduce(
+                    $this->tools,
+                    function (array $carry, RichEditorTool | Closure $tool): array {
+                        if ($tool instanceof Closure) {
+                            $tool = $this->evaluate($tool);
+                        }
+
+                        return [
+                            ...$carry,
+                            ...array_reduce(
+                                Arr::wrap($tool),
+                                fn (array $carry, RichEditorTool $tool): array => [
+                                    ...$carry,
+                                    $tool->getName() => $tool,
+                                ],
+                                initial: [],
+                            ),
+                        ];
+                    },
+                    initial: [],
+                ),
+            ],
+        );
     }
 
     public function getContentAttribute(): ?RichContentAttribute
@@ -533,5 +531,24 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $this->evaluate($this->saveFileAttachmentFromAnotherRecordUsing, [
             'file' => $file,
         ]);
+    }
+
+    /**
+     * @return array<Action>
+     */
+    public function getDefaultActions(): array
+    {
+        return [
+            AttachFilesAction::make(),
+            LinkAction::make(),
+            ...array_reduce(
+                $this->getPlugins(),
+                fn (array $carry, RichContentPlugin $plugin): array => [
+                    ...$carry,
+                    ...$plugin->getEditorActions(),
+                ],
+                initial: [],
+            ),
+        ];
     }
 }

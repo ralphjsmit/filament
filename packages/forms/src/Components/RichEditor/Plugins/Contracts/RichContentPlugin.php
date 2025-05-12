@@ -2,10 +2,11 @@
 
 namespace Filament\Forms\Components\RichEditor\Plugins\Contracts;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Tiptap\Core\Extension;
 
-interface RichPlugin
+interface RichContentPlugin
 {
     /**
      * @return array<Extension>
@@ -21,4 +22,9 @@ interface RichPlugin
      * @return array<RichEditorTool>
      */
     public function getEditorTools(): array;
+
+    /**
+     * @return array<Action>
+     */
+    public function getEditorActions(): array;
 }
