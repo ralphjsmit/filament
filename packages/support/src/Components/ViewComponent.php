@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
 use Illuminate\View\ComponentAttributeBag;
 
 abstract class ViewComponent extends Component implements Htmlable
@@ -21,7 +22,7 @@ abstract class ViewComponent extends Component implements Htmlable
     protected string | Closure | null $defaultView = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string|int, mixed>
      */
     protected array $viewData = [];
 
@@ -65,7 +66,7 @@ abstract class ViewComponent extends Component implements Htmlable
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param  array<string|int, mixed>  $data
      */
     public function viewData(array $data): static
     {
@@ -102,17 +103,15 @@ abstract class ViewComponent extends Component implements Htmlable
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string|int, mixed>
      */
     public function getViewData(): array
     {
-        return collect($this->viewData)
-            ->flatMap(function (mixed $value, string | int $key) {
-                return is_numeric($key)
-                    ? $this->evaluate($value)
-                    : [$key => $this->evaluate($value)];
-            })
-            ->all();
+        return Arr::mapWithKeys($this->viewData, function (mixed $value, string | int $key) {
+            return is_numeric($key)
+                ? $this->evaluate($value)
+                : [$key => $this->evaluate($value)];
+        });
     }
 
     public function toHtml(): string
