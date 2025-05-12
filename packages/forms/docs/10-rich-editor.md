@@ -120,7 +120,7 @@ RichEditor::make('content')
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
-    Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary) for storing rich editor file attachments. See our [plugin documentation](/plugins/filament-spatie-media-library) for more information.
+    Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary) for storing rich editor file attachments. See our [plugin documentation](/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) for more information.
 </Aside>
 
 ### Using private images in the editor
@@ -136,6 +136,64 @@ RichContentRenderer::make($record->content)
     ->fileAttachmentsDisk('s3')
     ->fileAttachmentsVisibility('private')
     ->toHtml()
+```
+
+## Registering rich content attributes
+
+There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor) or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer.
+
+To register rich content attributes on an Eloquent model, you should use the `InteractsWithRichContent` trait and implement the `HasRichContent` interface. This allows you to register the attributes in the `setUpRichContent()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model implements HasRichContent
+{
+    use InteractsWithRichContent;
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->fileAttachmentsDisk('s3')
+            ->fileAttachmentsVisibility('private')
+            ->plugins([
+                HighlightRichContentPlugin::make(),
+            ]);
+    }
+}
+```
+
+Whenever you use the `RichEditor` component, the configuration registered for the corresponding attribute will be used:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+```
+
+To easily render the rich content HTML from a model with the given configuration, you can call the `renderRichContent()` method on the model, passing the name of the attribute:
+
+```blade
+{!! $record->renderRichContent('content') !!}
+```
+
+Alternatively, you can get an `Htmlable` object to render without escaping the HTML:
+
+```blade
+{{ $record->getRichContentAttribute('content') }}
+```
+
+When using a [text column](../tables/columns/text) in a table or a [text entry](../infolists/text-entry) in an infolist, you don't need to manually render the rich content. Filament will do this for you automatically:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('content')
+
+TextEntry::make('content')
 ```
 
 ## Extending the rich editor

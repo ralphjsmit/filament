@@ -42,4 +42,9 @@ trait InteractsWithRichContent /** @phpstan-ignore trait.unused */
     {
         return $this->getRichContentAttributes()[$attribute];
     }
+
+    public function hasRichContentAttribute(string $attribute): bool
+    {
+        return array_key_exists($attribute, $this->richContentAttributes);
+    }
 }

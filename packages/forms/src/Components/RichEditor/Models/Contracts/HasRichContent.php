@@ -9,4 +9,6 @@ interface HasRichContent
     public function getRichContentAttribute(string $attribute): ?RichContentAttribute;
 
     public function renderRichContent(string $attribute): string;
+
+    public function hasRichContentAttribute(string $attribute): bool;
 }
