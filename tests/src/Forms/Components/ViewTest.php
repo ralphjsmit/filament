@@ -21,20 +21,20 @@ it('can have view data', function () {
 it('can have view data with closure on numeric keys', function () {
     $view = View::make('test')->viewData([
         'key_a' => 'Value A',
-        fn() => ['string_keyed_closure' => 'string_keyed_closure'],
+        fn () => ['string_keyed_closure' => 'string_keyed_closure'],
     ]);
 
     expect($view)
         ->getViewData()->toBe([
             'key_a' => 'Value A',
-                'string_keyed_closure' => 'string_keyed_closure',
+            'string_keyed_closure' => 'string_keyed_closure',
         ]);
 });
 
 it('can have view data with closure on string keys', function () {
     $view = View::make('test')->viewData([
         'key_a' => 'Value A',
-        'key_b' => fn() => ['string_keyed_closure' => 'string_keyed_closure'],
+        'key_b' => fn () => ['string_keyed_closure' => 'string_keyed_closure'],
     ]);
 
     expect($view)
@@ -42,6 +42,6 @@ it('can have view data with closure on string keys', function () {
             'key_a' => 'Value A',
             'key_b' => [
                 'string_keyed_closure' => 'string_keyed_closure',
-            ]
+            ],
         ]);
 });
