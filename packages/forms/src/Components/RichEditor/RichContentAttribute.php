@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RichContentAttribute implements Htmlable
 {
-    protected ?string $fileAttachmentsDisk = null;
+    protected ?string $fileAttachmentsDiskName = null;
 
     protected ?string $fileAttachmentsVisibility = null;
 
@@ -27,21 +27,23 @@ class RichContentAttribute implements Htmlable
         return app(static::class, ['model' => $model, 'name' => $name]);
     }
 
-    public function fileAttachments(?string $disk = null, ?string $visibility = null): static
+    public function fileAttachmentsDisk(?string $name): static
     {
-        if (class_exists($disk) && is_a($disk, FileAttachmentProvider::class, allow_string: true)) {
+        $this->fileAttachmentsDiskName = $name;
 
-        }
+        return $this;
+    }
 
-        $this->fileAttachmentsDisk = $disk;
+    public function fileAttachmentsVisibility(?string $visibility): static
+    {
         $this->fileAttachmentsVisibility = $visibility;
 
         return $this;
     }
 
-    public function getFileAttachmentsDisk(): ?string
+    public function getFileAttachmentsDiskName(): ?string
     {
-        return $this->fileAttachmentsDisk;
+        return $this->fileAttachmentsDiskName;
     }
 
     public function getFileAttachmentsVisibility(): ?string
@@ -94,10 +96,10 @@ class RichContentAttribute implements Htmlable
 
     public function toHtml(): string
     {
-        return app(RichContentRenderer::class)
+        return RichContentRenderer::make($this->model->getAttribute($this->name))
             ->plugins($this->getPlugins())
-            ->content($this->model->getAttribute($this->name))
-            ->fileAttachments($this->getFileAttachmentsDisk(), $this->getFileAttachmentsVisibility())
+            ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
+            ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())
             ->toHtml();
     }

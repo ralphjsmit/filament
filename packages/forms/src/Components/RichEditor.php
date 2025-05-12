@@ -4,7 +4,6 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Contracts\Plugin;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
@@ -92,7 +91,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.superscript'),
             RichEditorTool::make('link')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.link'))
-                ->action()
+                ->action(arguments: '{ url: $getEditor().getAttributes(\'link\')?.href, shouldOpenInNewTab: $getEditor().getAttributes(\'link\')?.target === \'_blank\' }')
                 ->icon(Heroicon::Link)
                 ->iconAlias('forms:components.rich-editor.toolbar.link'),
             RichEditorTool::make('h1')
@@ -135,7 +134,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.ordered_list'),
             RichEditorTool::make('attachFiles')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.attach_files'))
-                ->action()
+                ->action(arguments: '{ alt: $getEditor().getAttributes(\'image\')?.alt, id: $getEditor().getAttributes(\'image\')[\'data-id\'] ?? null, src: $getEditor().getAttributes(\'image\')?.src }')
                 ->activeKey('image')
                 ->icon(Heroicon::PaperClip)
                 ->iconAlias('forms:components.rich-editor.toolbar.attach_files'),
@@ -370,7 +369,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getTipTapEditor(): Editor
     {
-        return app(RichContentRenderer::class)
+        return RichContentRenderer::make()
             ->plugins($this->getPlugins())
             ->getEditor();
     }
@@ -384,7 +383,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ...$this->getContentAttribute()?->getPlugins() ?? [],
             ...array_reduce(
                 $this->plugins,
-                function (array $carry, Plugin | Closure $plugin): array {
+                function (array $carry, RichContentPlugin | Closure $plugin): array {
                     if ($plugin instanceof Closure) {
                         $plugin = $this->evaluate($plugin);
                     }
@@ -419,8 +418,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getTools(): array
     {
-        return array_map(
-            fn (RichEditorTool $tool) => $tool->editor($this),
+        return array_reduce(
             [
                 ...array_reduce(
                     $this->getPlugins(),
@@ -439,19 +437,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
                         return [
                             ...$carry,
-                            ...array_reduce(
-                                Arr::wrap($tool),
-                                fn (array $carry, RichEditorTool $tool): array => [
-                                    ...$carry,
-                                    $tool->getName() => $tool,
-                                ],
-                                initial: [],
-                            ),
+                            ...Arr::wrap($tool),
                         ];
                     },
                     initial: [],
                 ),
             ],
+            fn (array $carry, RichEditorTool $tool): array => [
+                ...$carry,
+                $tool->getName() => $tool->editor($this),
+            ],
+            initial: [],
         );
     }
 
@@ -468,7 +464,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getDefaultFileAttachmentsDiskName(): ?string
     {
-        return $this->getContentAttribute()?->getFileAttachmentsDisk();
+        return $this->getContentAttribute()?->getFileAttachmentsDiskName();
     }
 
     public function getDefaultFileAttachmentsVisibility(): ?string

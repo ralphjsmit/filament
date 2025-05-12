@@ -97,9 +97,9 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         return $this->evaluate($this->iconAlias);
     }
 
-    public function action(string | Closure | null $action = null): static
+    public function action(string | Closure | null $action = null, string | Closure | null $arguments = null): static
     {
-        $this->javaScriptHandler(fn (RichEditorTool $tool): ?string => $tool->getEditor()->getAction($tool->evaluate($action) ?? $tool->getName())->getAlpineClickHandler());
+        $this->javaScriptHandler(fn (RichEditorTool $tool): string => '$wire.mountAction(\'' . ($tool->evaluate($action) ?? $tool->getName()) . '\', { editorSelection, ...' . ($tool->evaluate($arguments) ?? '{}') . ' }, ' . Js::from(['schemaComponent' => $tool->getEditor()->getKey()]) . ')');
 
         return $this;
     }

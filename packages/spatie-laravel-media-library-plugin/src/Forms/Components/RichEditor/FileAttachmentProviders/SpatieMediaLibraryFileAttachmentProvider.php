@@ -98,7 +98,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         return $this->getExistingModel() /** @phpstan-ignore method.notFound */
             ->addMediaFromString($file->get())
             ->usingFileName(((string) Str::ulid()) . '.' . $file->getClientOriginalExtension())
-            ->toMediaCollection($this->getCollection(), diskName: $this->attribute->getFileAttachmentsDisk() ?? '')
+            ->toMediaCollection($this->getCollection(), diskName: $this->attribute->getFileAttachmentsDiskName() ?? '')
             ->uuid;
     }
 

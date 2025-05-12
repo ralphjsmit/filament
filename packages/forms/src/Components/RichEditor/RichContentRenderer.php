@@ -7,6 +7,7 @@ use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\Image;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 use Tiptap\Core\Extension;
@@ -36,7 +37,7 @@ class RichContentRenderer implements Htmlable
      */
     protected string | array | null $content = null;
 
-    protected ?string $fileAttachmentsDisk = null;
+    protected ?string $fileAttachmentsDiskName = null;
 
     protected ?string $fileAttachmentsVisibility = null;
 
@@ -50,6 +51,24 @@ class RichContentRenderer implements Htmlable
     /**
      * @param  string | array<string, mixed> | null  $content
      */
+    public function __construct(string | array | null $content = null)
+    {
+        $this->content($content);
+    }
+
+    /**
+     * @param  string | array<string, mixed> | null  $content
+     */
+    public static function make(string | array | null $content = null): static
+    {
+        return app(static::class, [
+            'content' => $content,
+        ]);
+    }
+
+    /**
+     * @param  string | array<string, mixed> | null  $content
+     */
     public function content(string | array | null $content): static
     {
         $this->content = $content;
@@ -57,9 +76,15 @@ class RichContentRenderer implements Htmlable
         return $this;
     }
 
-    public function fileAttachments(?string $disk = null, ?string $visibility = null): static
+    public function fileAttachmentsDisk(?string $name): static
     {
-        $this->fileAttachmentsDisk = $disk;
+        $this->fileAttachmentsDiskName = $name;
+
+        return $this;
+    }
+
+    public function fileAttachmentsVisibility(?string $visibility): static
+    {
         $this->fileAttachmentsVisibility = $visibility;
 
         return $this;
@@ -67,7 +92,7 @@ class RichContentRenderer implements Htmlable
 
     public function getFileAttachmentUrl(mixed $file): ?string
     {
-        $disk = $this->fileAttachmentsDisk ?? config('filament.default_filesystem_disk');
+        $disk = $this->fileAttachmentsDiskName ?? config('filament.default_filesystem_disk');
         $visibility = $this->fileAttachmentsVisibility ?? ($disk === 'public' ? 'public' : 'private');
 
         $storage = Storage::disk($disk);
@@ -198,12 +223,17 @@ class RichContentRenderer implements Htmlable
         return $editor;
     }
 
-    public function toHtml(): string
+    public function toUnsafeHtml(): string
     {
         $editor = $this->getEditor();
 
         $this->processFileAttachments($editor);
 
         return $editor->getHTML();
+    }
+
+    public function toHtml(): string
+    {
+        return Str::sanitizeHtml($this->toUnsafeHtml());
     }
 }
