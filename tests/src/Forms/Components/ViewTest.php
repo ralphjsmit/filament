@@ -6,10 +6,12 @@ use Filament\Tests\TestCase;
 uses(TestCase::class);
 
 it('can have view data', function () {
-    $view = View::make('test')->viewData([
-        'key_a' => 'Value A',
-        'key_b' => 'Value B',
-    ]);
+    $view = View::make('test')
+        ->viewData([
+            'key_a' => 'Value A',
+            'key_b' => 'Value B',
+        ])
+        ->viewData([]);
 
     expect($view)
         ->getViewData()->toBe([

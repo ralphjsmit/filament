@@ -70,7 +70,12 @@ abstract class ViewComponent extends Component implements Htmlable
      */
     public function viewData(array | Closure $data): static
     {
-        $this->viewData[] = $data;
+        if (
+            (is_array($data) && count($data))
+            || $data instanceof Closure
+        ) {
+            $this->viewData[] = $data;
+        }
 
         return $this;
     }
