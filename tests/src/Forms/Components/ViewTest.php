@@ -19,31 +19,23 @@ it('can have view data', function () {
 });
 
 it('can have view data with closure on numeric keys', function () {
-    $view = View::make('test')->viewData([
-        'key_a' => 'Value A',
-        // Closure result will be merged with the top-level array...
-        fn () => ['string_keyed_closure' => 'string_keyed_closure'],
-    ]);
+    $view = View::make('test')
+        ->viewData([
+            'key_a' => 'Value A',
+        ])
+        ->viewData(function () {
+            // Closure result will be merged with the top-level array...
+            return ['string_keyed_closure' => 'string_keyed_closure'];
+        })
+        ->viewData(function () {
+            // Closure result will be merged with the top-level array...
+            return ['string_keyed_closure_b' => 'string_keyed_closure_b'];
+        });
 
     expect($view)
         ->getViewData()->toBe([
             'key_a' => 'Value A',
             'string_keyed_closure' => 'string_keyed_closure',
-        ]);
-});
-
-it('can have view data with closure on string keys', function () {
-    $view = View::make('test')->viewData([
-        'key_a' => 'Value A',
-        // Closure result will stay under the `key_b` key...
-        'key_b' => fn () => ['string_keyed_closure' => 'string_keyed_closure'],
-    ]);
-
-    expect($view)
-        ->getViewData()->toBe([
-            'key_a' => 'Value A',
-            'key_b' => [
-                'string_keyed_closure' => 'string_keyed_closure',
-            ],
+            'string_keyed_closure_b' => 'string_keyed_closure_b',
         ]);
 });
