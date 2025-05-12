@@ -21,6 +21,7 @@ it('can have view data', function () {
 it('can have view data with closure on numeric keys', function () {
     $view = View::make('test')->viewData([
         'key_a' => 'Value A',
+        // Closure result will be merged with the top-level array...
         fn () => ['string_keyed_closure' => 'string_keyed_closure'],
     ]);
 
@@ -34,6 +35,7 @@ it('can have view data with closure on numeric keys', function () {
 it('can have view data with closure on string keys', function () {
     $view = View::make('test')->viewData([
         'key_a' => 'Value A',
+        // Closure result will stay under the `key_b` key...
         'key_b' => fn () => ['string_keyed_closure' => 'string_keyed_closure'],
     ]);
 
