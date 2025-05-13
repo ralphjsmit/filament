@@ -293,7 +293,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
         '--panel' => 'admin',
         '--no-interaction' => true,
     ])
-        ->expectsQuestion('Would you like to generate the form schema and table columns based on the attributes of the model?', false)
+        ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
         ->expectsQuestion('Does the model use soft deletes?', false);
 
     $testCase->artisan('make:filament-resource', [
@@ -301,8 +301,8 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
         '--panel' => 'admin',
         '--no-interaction' => true,
     ])
-        ->expectsQuestion('Would you like to generate an infolist and view page for the resource?', false)
-        ->expectsQuestion('Would you like to generate the form schema and table columns based on the attributes of the model?', false)
+        ->expectsQuestion('Would you like to generate a read-only view page for the resource?', false)
+        ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
         ->expectsQuestion('Does the model use soft deletes?', false);
 
     require_once __DIR__ . '/../../Fixtures/Models/Team.php';
@@ -333,19 +333,19 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
 $generateManageRelatedRecordsPageCommandQuestions = [
     'relationship' => 'What is the relationship?',
-    'hasRelatedResource' => 'Do you want each table row to link to a resource instead of opening a modal? Filament will also inherit the resource\'s configuration.',
+    'hasRelatedResource' => 'Do you want to do this?',
     'relatedResource' => 'Which resource do you want to use?',
-    'hasFormSchemaClass' => 'Would you like to use an existing form schema class instead of defining the form on this page?',
-    'isGenerated' => 'Would you like to generate the page based on the attributes of the model?',
-    'relatedModel' => 'Filament couldn\'t automatically find the related model for the [teams] relationship. What is the fully qualified class name of the related model?',
-    'titleAttribute' => 'What is the title attribute? This is the attribute that will be used to uniquely identify each record in the table.',
-    'formSchemaClass' => 'Which form schema class would you like to use? Please provide the fully qualified class name.',
-    'isGeneratedTable' => 'Would you like to generate the table columns based on the attributes of the model?',
-    'hasViewOperation' => 'Would you like to generate an infolist and view modal for the table?',
-    'hasInfolistSchemaClass' => 'Would you like to use an existing infolist schema class instead of defining the infolist on this page?',
-    'infolistSchemaClass' => 'Which infolist schema class would you like to use? Please provide the fully qualified class name.',
-    'hasTableClass' => 'Would you like to use an existing table class instead of defining the table on this page?',
-    'tableClass' => 'Which table class would you like to use? Please provide the fully qualified class name.',
+    'hasFormSchemaClass' => 'Should an existing form schema class be used?',
+    'isGenerated' => 'Should the page be generated from the current database columns?',
+    'relatedModel' => 'What is the related model?',
+    'titleAttribute' => 'What is the title attribute for this model?',
+    'formSchemaClass' => 'Which form schema class would you like to use?',
+    'isGeneratedTable' => 'Should the table columns be generated from the current database columns?',
+    'hasViewOperation' => 'Would you like to generate a read-only view modal for the table?',
+    'hasInfolistSchemaClass' => 'Would you like to use an existing infolist schema class?',
+    'infolistSchemaClass' => 'Which infolist schema class would you like to use?',
+    'hasTableClass' => 'Would you like to use an existing table class?',
+    'tableClass' => 'Which table class would you like to use?',
     'isSoftDeletable' => 'Does the related model use soft deletes?',
     'relationshipType' => 'What type of relationship is this?',
 ];
