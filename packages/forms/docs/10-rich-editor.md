@@ -102,7 +102,7 @@ When Filament outputs raw HTML from the database in components such as `TextColu
 {!! str($record->content)->sanitizeHtml() !!}
 ```
 
-If you're [storing content as JSON](#storing-content-as-json) instead of HTML, or your content requires processing to inject [private image URLs](#using-private-images-in-the-editor) or similar, you can use the
+If you're [storing content as JSON](#storing-content-as-json) instead of HTML, or your content requires processing to inject [private image URLs](#using-private-images-in-the-editor) or similar, you can use the [content renderer](#rendering-rich-content) to output HTML. This will automatically sanitize the HTML for you, so you don't need to worry about it.
 
 ## Uploading images to the editor
 
