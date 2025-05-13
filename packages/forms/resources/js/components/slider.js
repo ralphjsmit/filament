@@ -73,10 +73,8 @@ export default function sliderFormComponent({
         },
 
         destroy: function() {
-            if (this.slider) {
-                this.slider.destroy();
-                this.slider = null;
-            }
+            this.slider.destroy();
+            this.slider = null;
         }
     }
 }
