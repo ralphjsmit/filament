@@ -1,5 +1,4 @@
 import noUiSlider from 'nouislider'
-
 export default function sliderFormComponent({
     arePipsStepped,
     behavior,
@@ -24,9 +23,7 @@ export default function sliderFormComponent({
 }) {
     return {
         state,
-
         slider: null,
-
         init: function () {
             this.slider = noUiSlider.create(this.$el, {
                 behaviour: behavior,
@@ -71,5 +68,12 @@ export default function sliderFormComponent({
                 this.slider.set(Alpine.raw(this.state))
             })
         },
+
+        destroy: function() {
+            if (this.slider) {
+                this.slider.destroy();
+                this.slider = null;
+            }
+        }
     }
 }
