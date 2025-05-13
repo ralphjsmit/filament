@@ -1,4 +1,5 @@
 import noUiSlider from 'nouislider'
+
 export default function sliderFormComponent({
     arePipsStepped,
     behavior,
