@@ -243,6 +243,7 @@ class Entry extends Component
         $alignment = $this->getAlignment();
         $label = $this->getLabel();
         $labelSrOnly = $this->isLabelHidden();
+        $hasInlineLabel = $this->hasInlineLabel();
 
         if (! $alignment instanceof Alignment) {
             $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
@@ -256,7 +257,7 @@ class Entry extends Component
         $attributes = $this->getExtraEntryWrapperAttributesBag()
             ->class([
                 'fi-in-entry',
-                'fi-in-entry-has-inline-label' => $this->hasInlineLabel(),
+                'fi-in-entry-has-inline-label' => $hasInlineLabel,
             ]);
 
         ob_start(); ?>
@@ -268,21 +269,23 @@ class Entry extends Component
                 </dt>
             <?php } ?>
 
-            <?php if (($label && (! $labelSrOnly)) || $beforeLabelContainer || $afterLabelContainer) { ?>
+            <?php if (! $labelSrOnly || $hasInlineLabel || $beforeLabelContainer || $afterLabelContainer) { ?>
                 <div class="fi-in-entry-label-col">
                     <?= $this->getChildSchema($this::ABOVE_LABEL_SCHEMA_KEY)?->toHtml() ?>
 
-                    <div class="fi-in-entry-label-ctn">
-                        <?= $beforeLabelContainer?->toHtml() ?>
+                    <?php if (($label && ! $labelSrOnly) || $beforeLabelContainer || $afterLabelContainer) { ?>
+                        <div class="fi-in-entry-label-ctn">
+                            <?= $beforeLabelContainer?->toHtml() ?>
 
-                        <?php if ($label && (! $labelSrOnly)) { ?>
-                            <dt class="fi-in-entry-label">
-                                <?= e($label) ?>
-                            </dt>
-                        <?php } ?>
+                            <?php if ($label && (! $labelSrOnly)) { ?>
+                                <dt class="fi-in-entry-label">
+                                    <?= e($label) ?>
+                                </dt>
+                            <?php } ?>
 
-                        <?= $afterLabelContainer?->toHtml() ?>
-                    </div>
+                            <?= $afterLabelContainer?->toHtml() ?>
+                        </div>
+                    <?php } ?>
 
                     <?= $this->getChildSchema($this::BELOW_LABEL_SCHEMA_KEY)?->toHtml() ?>
                 </div>

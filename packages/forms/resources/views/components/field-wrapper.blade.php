@@ -58,15 +58,15 @@
         </label>
     @endif
 
-    <div
-        @class([
-            'fi-fo-field-label-col',
-            "fi-vertical-align-{$inlineLabelVerticalAlignment->value}" => $hasInlineLabel,
-        ])
-    >
-        {{ $field?->getChildSchema($field::ABOVE_LABEL_SCHEMA_KEY) }}
+    @if (! $labelSrOnly || $hasInlineLabel || $beforeLabelContainer || $afterLabelContainer || $labelPrefix || $labelSuffix)
+        <div
+            @class([
+                'fi-fo-field-label-col',
+                "fi-vertical-align-{$inlineLabelVerticalAlignment->value}" => $hasInlineLabel,
+            ])
+        >
+            {{ $field?->getChildSchema($field::ABOVE_LABEL_SCHEMA_KEY) }}
 
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $beforeLabelContainer || $afterLabelContainer)
             <div
                 @class([
                     'fi-fo-field-label-ctn',
@@ -75,30 +75,32 @@
             >
                 {{ $beforeLabelContainer }}
 
-                <label class="fi-fo-field-label">
-                    {{ $labelPrefix }}
+                @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix)
+                    <label class="fi-fo-field-label">
+                        {{ $labelPrefix }}
 
-                    @if ($label && (! $labelSrOnly))
-                        <span class="fi-fo-field-label-content">
-                            {{ $label }}
+                        @if ($label && (! $labelSrOnly))
+                            <span class="fi-fo-field-label-content">
+                                {{ $label }}
 
-                            @if ($required && (! $isDisabled))
-                                <sup class="fi-fo-field-label-required-mark">
-                                    *
-                                </sup>
-                            @endif
-                        </span>
-                    @endif
+                                @if ($required && (! $isDisabled))
+                                    <sup class="fi-fo-field-label-required-mark">
+                                        *
+                                    </sup>
+                                @endif
+                            </span>
+                        @endif
 
-                    {{ $labelSuffix }}
-                </label>
+                        {{ $labelSuffix }}
+                    </label>
+                @endif
 
                 {{ $afterLabelContainer }}
             </div>
-        @endif
 
-        {{ $field?->getChildSchema($field::BELOW_LABEL_SCHEMA_KEY) }}
-    </div>
+            {{ $field?->getChildSchema($field::BELOW_LABEL_SCHEMA_KEY) }}
+        </div>
+    @endif
 
     @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $aboveContentContainer || $belowContentContainer || $beforeContentContainer || $afterContentContainer || $aboveErrorMessageContainer || $belowErrorMessageContainer)
         <div class="fi-fo-field-content-col">
