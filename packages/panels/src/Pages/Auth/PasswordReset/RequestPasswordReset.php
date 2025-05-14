@@ -17,6 +17,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
@@ -80,6 +81,10 @@ class RequestPasswordReset extends SimplePage
                 $notification->url = Filament::getResetPasswordUrl($token, $user);
 
                 $user->notify($notification);
+
+                if (class_exists(PasswordResetLinkSent::class)) {
+                    event(new PasswordResetLinkSent($user));
+                }
             },
         );
 
