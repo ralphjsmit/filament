@@ -51,7 +51,11 @@ it('can request password reset', function () {
         );
 
     Notification::assertSentTo($userToResetPassword, ResetPassword::class);
-    Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event) => $event->user->is($userToResetPassword));
+    if (class_exists(PasswordResetLinkSent::class)) {
+        Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event) => $event->user->is($userToResetPassword));
+    } else {
+        Event::assertNotDispatched(PasswordResetLinkSent::class);
+    }
 });
 
 it('cannot request password reset without panel access', function () {
