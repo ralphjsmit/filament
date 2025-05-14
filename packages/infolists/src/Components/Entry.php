@@ -268,10 +268,10 @@ class Entry extends Component
                 </dt>
             <?php } ?>
 
-            <div class="fi-in-entry-label-col">
-                <?= $this->getChildSchema($this::ABOVE_LABEL_SCHEMA_KEY)?->toHtml() ?>
+            <?php if (($label && (! $labelSrOnly)) || $beforeLabelContainer || $afterLabelContainer) { ?>
+                <div class="fi-in-entry-label-col">
+                    <?= $this->getChildSchema($this::ABOVE_LABEL_SCHEMA_KEY)?->toHtml() ?>
 
-                <?php if (($label && (! $labelSrOnly)) || $beforeLabelContainer || $afterLabelContainer) { ?>
                     <div class="fi-in-entry-label-ctn">
                         <?= $beforeLabelContainer?->toHtml() ?>
 
@@ -283,10 +283,10 @@ class Entry extends Component
 
                         <?= $afterLabelContainer?->toHtml() ?>
                     </div>
-                <?php } ?>
 
-                <?= $this->getChildSchema($this::BELOW_LABEL_SCHEMA_KEY)?->toHtml() ?>
-            </div>
+                    <?= $this->getChildSchema($this::BELOW_LABEL_SCHEMA_KEY)?->toHtml() ?>
+                </div>
+            <?php } ?>
 
             <div class="fi-in-entry-content-col">
                 <?= $this->getChildSchema($this::ABOVE_CONTENT_SCHEMA_KEY)?->toHtml() ?>
