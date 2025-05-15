@@ -108,6 +108,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected ?Field $cachedSimpleField = null;
 
+    protected bool | Closure $isTable = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -1178,6 +1180,18 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this->simpleField !== null;
     }
 
+    public function table(bool | Closure $condition = true): static
+    {
+        $this->isTable = $condition;
+
+        return $this;
+    }
+
+    public function isTable(): bool
+    {
+        return (bool) $this->evaluate($this->isTable);
+    }
+
     public function getSimpleField(): ?Field
     {
         return ($this->cachedSimpleField ??= $this->evaluate($this->simpleField))?->hiddenLabel();
@@ -1285,6 +1299,10 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
      */
     public function getDefaultView(): string
     {
+        if ($this->isTable()) {
+            return 'filament-forms::components.repeater.table';
+        }
+
         if ($this->isSimple()) {
             return 'filament-forms::components.repeater.simple';
         }
