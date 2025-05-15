@@ -51,10 +51,9 @@ it('can request password reset', function () {
         );
 
     Notification::assertSentTo($userToResetPassword, ResetPassword::class);
+
     if (class_exists(PasswordResetLinkSent::class)) {
-        Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event) => $event->user->is($userToResetPassword));
-    } else {
-        Event::assertNotDispatched(PasswordResetLinkSent::class);
+        Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event): bool => $event->user->is($userToResetPassword));
     }
 });
 
