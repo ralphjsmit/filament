@@ -20,9 +20,7 @@ class TableColumn extends Component
 
     protected bool | Closure $isMarkedAsRequired = false;
 
-    public function __construct(protected string | Closure $label)
-    {
-    }
+    public function __construct(protected string | Closure $label) {}
 
     public static function make(string | Closure $label): static
     {

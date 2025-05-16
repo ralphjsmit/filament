@@ -155,7 +155,7 @@
                 @apply bg-gray-50 dark:bg-white/5;
 
                 & > th {
-                    @apply px-3 py-2 text-sm font-semibold text-gray-950 dark:text-white border-gray-200 dark:border-white/5 [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e first-of-type:rounded-tl-xl last-of-type:rounded-tr-xl;
+                    @apply border-gray-200 px-3 py-2 text-sm font-semibold text-gray-950 first-of-type:rounded-tl-xl last-of-type:rounded-tr-xl dark:border-white/5 dark:text-white [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
 
                     &.fi-align-start,
                     &.fi-align-left {
@@ -217,7 +217,7 @@
                 @apply @xl:table-row-group;
 
                 & > tr {
-                    @apply @xl:p-0 @xl:table-row;
+                    @apply @xl:table-row @xl:p-0;
 
                     & > td {
                         @apply @xl:table-cell @xl:px-3 @xl:py-2;
@@ -255,7 +255,7 @@
                 @apply lg:table-row-group;
 
                 & > tr {
-                    @apply lg:p-0 lg:table-row;
+                    @apply lg:table-row lg:p-0;
 
                     & > td {
                         @apply lg:table-cell lg:px-3 lg:py-2;

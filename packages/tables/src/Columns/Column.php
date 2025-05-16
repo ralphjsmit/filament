@@ -21,6 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\ComponentAttributeBag;
+
 use function Filament\Support\generate_href_html;
 
 class Column extends ViewComponent
@@ -28,6 +29,7 @@ class Column extends ViewComponent
     use CanAggregateRelatedModels;
     use CanGrow;
     use CanSpanColumns;
+    use CanWrapHeader;
     use Concerns\BelongsToGroup;
     use Concerns\BelongsToLayout;
     use Concerns\BelongsToTable;
@@ -47,7 +49,6 @@ class Column extends ViewComponent
     use Concerns\HasRecord;
     use Concerns\HasRowLoopObject;
     use Concerns\InteractsWithTableQuery;
-    use CanWrapHeader;
     use HasAlignment;
     use HasCellState;
     use HasExtraAttributes;

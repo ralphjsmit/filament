@@ -109,6 +109,9 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected ?Field $cachedSimpleField = null;
 
+    /**
+     * @var array<TableColumn> | Closure | null
+     */
     protected array | Closure | null $tableColumns = null;
 
     protected function setUp(): void
@@ -1182,7 +1185,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     }
 
     /**
-     * @param array<TableColumn> | Closure | null $columns
+     * @param  array<TableColumn> | Closure | null  $columns
      */
     public function table(array | Closure | null $columns): static
     {
