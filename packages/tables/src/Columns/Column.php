@@ -8,18 +8,19 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanAggregateRelatedModels;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\CanSpanColumns;
+use Filament\Support\Concerns\CanWrapHeader;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasCellState;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Concerns\HasVerticalAlignment;
+use Filament\Support\Concerns\HasWidth;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\Concerns\HasTooltip;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\ComponentAttributeBag;
-
 use function Filament\Support\generate_href_html;
 
 class Column extends ViewComponent
@@ -39,21 +40,21 @@ class Column extends ViewComponent
     use Concerns\CanBeToggled;
     use Concerns\CanCallAction;
     use Concerns\CanOpenUrl;
-    use Concerns\CanWrapHeader;
     use Concerns\HasExtraCellAttributes;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasRecord;
     use Concerns\HasRowLoopObject;
-    use Concerns\HasWidth;
     use Concerns\InteractsWithTableQuery;
+    use CanWrapHeader;
     use HasAlignment;
     use HasCellState;
     use HasExtraAttributes;
     use HasPlaceholder;
     use HasTooltip;
     use HasVerticalAlignment;
+    use HasWidth;
 
     protected string $evaluationIdentifier = 'column';
 

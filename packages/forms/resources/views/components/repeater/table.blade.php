@@ -26,7 +26,7 @@
     $key = $getKey();
     $statePath = $getStatePath();
 
-    $visibleComponentNames = [];
+    $tableColumns = $getTableColumns();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -44,20 +44,25 @@
                         <th></th>
                     @endif
 
-                    @foreach ($getChildComponentContainer()->getComponents() as $component)
-                        @php
-                            throw_unless(
-                                $component instanceof \Filament\Forms\Components\Field || $component instanceof \Filament\Infolists\Components\Entry,
-                                new \Exception('Table repeaters must only contain form fields and infolist entries, but [' . $component::class . '] was used.'),
-                            );
+                    @foreach ($tableColumns as $column)
+                        <th
+                            @class([
+                                'fi-wrapped' => $column->isHeaderWrapped(),
+                                (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
+                            ])
+                            @style([
+                                ('width: ' . ($columnWidth = $column->getWidth())) => filled($columnWidth),
+                            ])
+                        >
+                            @if (! $column->isHeaderLabelHidden())
+                                {{ $column->getLabel() }}
+                            @else
+                                <span class="fi-sr-only">
+                                    {{ $column->getLabel() }}
+                                </span>
+                            @endif
 
-                            $visibleComponentNames[] = $component->getName();
-                        @endphp
-
-                        <th>
-                            {{ $component->getLabel() }}
-
-                            @if ($component->isRequired() && (! $component->isDisabled()))
+                            @if ($column->isMarkedAsRequired())
                                 <sup class="fi-fo-table-repeater-header-required-mark">*</sup>
                             @endif
                         </th>
@@ -129,12 +134,21 @@
                             @endif
 
                             @foreach ($item->getComponents(withHidden: true) as $component)
-                                @if (in_array($component->getName(), $visibleComponentNames))
-                                    <td>
-                                        @if ($component->isVisible())
-                                            {{ $component->hiddenLabel() }}
-                                        @endif
-                                    </td>
+                                @php
+                                    throw_unless(
+                                        $component instanceof \Filament\Forms\Components\Field || $component instanceof \Filament\Infolists\Components\Entry,
+                                        new \Exception('Table repeaters must only contain form fields and infolist entries, but [' . $component::class . '] was used.'),
+                                    );
+                                @endphp
+
+                                @if (count($tableColumns) > $loop->index)
+                                    @if ($component->isVisible())
+                                        <td>
+                                            {{ $component }}
+                                        </td>
+                                    @else
+                                        <td class="fi-hidden"></td>
+                                    @endif
                                 @endif
                             @endforeach
 

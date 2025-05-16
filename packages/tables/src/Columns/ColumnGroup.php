@@ -11,7 +11,7 @@ class ColumnGroup extends Component
 {
     use Concerns\BelongsToTable;
     use Concerns\CanBeHiddenResponsively;
-    use Concerns\CanWrapHeader;
+    use \Filament\Support\Concerns\CanWrapHeader;
     use Concerns\HasExtraHeaderAttributes;
     use HasAlignment;
 
