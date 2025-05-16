@@ -42,7 +42,9 @@
                 <thead>
                     <tr>
                         @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))
-                            <th></th>
+                            <th
+                                class="fi-fo-table-repeater-empty-header-cell"
+                            ></th>
                         @endif
 
                         @foreach ($tableColumns as $column)
@@ -74,7 +76,9 @@
                         @endforeach
 
                         @if (count($extraItemActions) || $isCloneable || $isDeletable)
-                            <th></th>
+                            <th
+                                class="fi-fo-table-repeater-empty-header-cell"
+                            ></th>
                         @endif
                     </tr>
                 </thead>

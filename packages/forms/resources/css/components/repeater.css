@@ -176,6 +176,10 @@
                     &:not(.fi-wrapped) {
                         @apply whitespace-nowrap;
                     }
+
+                    &.fi-fo-table-repeater-empty-header-cell {
+                        @apply w-1;
+                    }
                 }
             }
         }
