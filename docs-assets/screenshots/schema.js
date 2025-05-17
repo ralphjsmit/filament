@@ -938,6 +938,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/repeater/table': {
+        url: 'forms/fields',
+        selector: '#repeaterTable',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/repeater/reorderable-with-buttons': {
         url: 'forms/fields',
         selector: '#repeaterReorderableWithButtons',
