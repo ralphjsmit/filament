@@ -100,7 +100,7 @@ abstract class ViewComponent extends Component implements Htmlable
     }
 
     /**
-     * @return array<string|int, mixed>
+     * @return array<string, mixed>
      */
     public function getViewData(): array
     {
