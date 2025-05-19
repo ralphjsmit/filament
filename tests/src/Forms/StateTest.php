@@ -3,13 +3,13 @@
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\TextInput;
 
 uses(TestCase::class);
 
@@ -715,7 +715,7 @@ test(
     function () {
         $container = ComponentContainer::make(Livewire::make())
             ->components([
-                Section::make("User Information")
+                Section::make('User Information')
                     ->statePath('data')
                     ->schema([
                         Radio::make('show_input')
@@ -736,7 +736,7 @@ test(
                 'data' => [
                     'show_input' => 'hide',
                     'name' => 'lorem ipsum',
-                ]
+                ],
             ]);
 
         $dehydratedState = $container->dehydrateState();
