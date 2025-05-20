@@ -457,6 +457,47 @@ class Color
     /**
      * @return array<int, string>
      */
+    public static function generateV3Palette(string $color): array
+    {
+        $color = str_replace(' ', '', static::convertToRgb($color));
+        [$baseRed, $baseGreen, $baseBlue] = sscanf($color, 'rgb(%d,%d,%d)');
+
+        $colors = [];
+
+        $intensityMap = [
+            50 => 0.95,
+            100 => 0.9,
+            200 => 0.75,
+            300 => 0.6,
+            400 => 0.3,
+            500 => 1.0,
+            600 => 0.9,
+            700 => 0.75,
+            800 => 0.6,
+            900 => 0.49,
+            950 => 0.3,
+        ];
+
+        foreach ($intensityMap as $shade => $intensity) {
+            if ($shade < 500) {
+                $red = ((255 - $baseRed) * $intensity) + $baseRed;
+                $green = ((255 - $baseGreen) * $intensity) + $baseGreen;
+                $blue = ((255 - $baseBlue) * $intensity) + $baseBlue;
+            } else {
+                $red = $baseRed * $intensity;
+                $green = $baseGreen * $intensity;
+                $blue = $baseBlue * $intensity;
+            }
+
+            $colors[$shade] = static::convertToOklch(sprintf('%s, %s, %s', round($red), round($green), round($blue)));
+        }
+
+        return $colors;
+    }
+
+    /**
+     * @return array<int, string>
+     */
     public static function hex(string $color): array
     {
         return static::generatePalette($color);

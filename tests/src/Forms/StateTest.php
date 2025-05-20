@@ -606,7 +606,7 @@ test('hidden components are excluded from state dehydration except if they are m
         ->dehydrateState()->not()->toBe([]);
 });
 
-test('hidden components are excluded from state dehydration even if their parent component has a state path', function () {
+test('hidden components are excluded from state dehydration even if their parent component has a state path', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
