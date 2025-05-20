@@ -670,6 +670,10 @@ trait HasState
 
     public function isNeitherDehydratedNorValidated(): bool
     {
+        if ($this->isHiddenAndNotDehydratedWhenHidden()) {
+            return true;
+        }
+
         if ($this->isDehydrated()) {
             return false;
         }
