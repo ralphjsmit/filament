@@ -428,12 +428,6 @@ This behavior can be customized in the [importer](import#customizing-the-import-
 
 ### Low-impact changes
 
-<Disclosure>
-<span slot="summary">The color shade customization API has been removed</span>
-
-The API to customize color shades, `FilamentColor::addShades()`, `FilamentColor::overrideShades()`, and `FilamentColor::removeShades()` has been removed. This API was replaced with a more advanced color system in v4 which uses different shades for components based on their contrast, to ensure that components are accessible.
-</Disclosure>
-
 <Disclosure x-show="packages.includes('tables') || packages.includes('infolists')">
 <span slot="summary">The `isSeparate` parameter of `ImageColumn::limitedRemainingText()` and `ImageEntry::limitedRemainingText()` has been removed</span>
 
