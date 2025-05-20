@@ -295,14 +295,10 @@ trait HasState
             return;
         }
 
-        if (filled($this->getStatePath(isAbsolute: false))) {
+        if ($this->hasStatePath()) {
             foreach ($this->getStateToDehydrate() as $key => $value) {
                 Arr::set($state, $key, $value); /** @phpstan-ignore parameterByRef.type */
             }
-        }
-
-        if ($this->isHiddenAndNotDehydratedWhenHidden()) {
-            return;
         }
 
         foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
@@ -655,7 +651,11 @@ trait HasState
 
     public function isDehydrated(): bool
     {
-        return (bool) $this->evaluate($this->isDehydrated);
+        if (! $this->evaluate($this->isDehydrated)) {
+            return false;
+        }
+
+        return ! $this->isHiddenAndNotDehydratedWhenHidden();
     }
 
     public function isDehydratedWhenHidden(): bool
@@ -670,10 +670,6 @@ trait HasState
 
     public function isNeitherDehydratedNorValidated(): bool
     {
-        if ($this->isHiddenAndNotDehydratedWhenHidden()) {
-            return true;
-        }
-
         if ($this->isDehydrated()) {
             return false;
         }
