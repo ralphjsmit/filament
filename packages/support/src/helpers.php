@@ -301,7 +301,7 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
 
         return collect($classLoader->getClassMap())
             ->filter(function (string $file, string $class) use ($parentClass): bool {
-                if (! str($file)->startsWith(base_path('vendor/composer/../../'))) {
+                if (! str($file)->startsWith(base_path('vendor' . DIRECTORY_SEPARATOR . 'composer/../../'))) {
                     return false;
                 }
 
