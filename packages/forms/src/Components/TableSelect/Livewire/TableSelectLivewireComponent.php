@@ -58,19 +58,22 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
         }
 
         if (filled($this->relationshipName)) {
-            $record = $this->record ??= app($this->model);
-
-            $table->query(function () use ($record): Builder {
-                $relationship = Relation::noConstraints(fn () => $record->{$this->relationshipName}());
+            $table->query(function (): Builder {
+                $relationship = Relation::noConstraints(fn (): Relation => ($this->record ??= app($this->model))->{$this->relationshipName}());
 
                 $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-                if (
-                    $relationship instanceof BelongsToMany &&
-                    (filled($relationshipQuery->getQuery()->joins ?? []))
-                ) {
-                    array_shift($relationshipQuery->getQuery()->joins);
+                if (! ($relationship instanceof BelongsToMany)) {
+                    return $relationshipQuery;
                 }
+
+                $relationshipBaseQuery = $relationshipQuery->getQuery();
+
+                if (blank($relationshipBaseQuery->joins ?? [])) {
+                    return $relationshipQuery;
+                }
+
+                array_shift($relationshipBaseQuery->joins);
 
                 return $relationshipQuery;
             });
