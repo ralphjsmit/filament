@@ -22,7 +22,7 @@ abstract class ViewComponent extends Component implements Htmlable
     protected string | Closure | null $defaultView = null;
 
     /**
-     * @var array<array-key, array<string|int, mixed>|Closure>
+     * @var array<array<string, mixed> | Closure>
      */
     protected array $viewData = [];
 
@@ -66,7 +66,7 @@ abstract class ViewComponent extends Component implements Htmlable
     }
 
     /**
-     * @param  array<string, mixed>|Closure  $data
+     * @param  array<string, mixed> | Closure  $data
      */
     public function viewData(array | Closure $data): static
     {
@@ -104,9 +104,10 @@ abstract class ViewComponent extends Component implements Htmlable
      */
     public function getViewData(): array
     {
-        return Arr::mapWithKeys($this->viewData, function (mixed $value) {
-            return $this->evaluate($value);
-        });
+        return Arr::mapWithKeys(
+            $this->viewData,
+            fn (mixed $data): array => $this->evaluate($data) ?? [],
+        );
     }
 
     public function toHtml(): string

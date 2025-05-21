@@ -6,38 +6,30 @@ use Filament\Tests\TestCase;
 uses(TestCase::class);
 
 it('can have view data', function () {
-    $view = View::make('test')
+    $component = View::make('test')
         ->viewData([
             'key_a' => 'Value A',
             'key_b' => 'Value B',
         ])
         ->viewData([]);
 
-    expect($view)
+    expect($component)
         ->getViewData()->toBe([
             'key_a' => 'Value A',
             'key_b' => 'Value B',
         ]);
 });
 
-it('can have view data with closure on numeric keys', function () {
-    $view = View::make('test')
-        ->viewData([
-            'key_a' => 'Value A',
-        ])
-        ->viewData(function () {
-            // Closure result will be merged with the top-level array...
-            return ['string_keyed_closure' => 'string_keyed_closure'];
-        })
-        ->viewData(function () {
-            // Closure result will be merged with the top-level array...
-            return ['string_keyed_closure_b' => 'string_keyed_closure_b'];
-        });
+it('can have view data inside closures', function () {
+    $component = View::make('test')
+        ->viewData(['key_a' => 'Value A'])
+        ->viewData(fn (): array => ['closure_key_a' => 'Closure Value A'])
+        ->viewData(fn (): array => ['closure_key_b' => 'Closure Value B']);
 
-    expect($view)
+    expect($component)
         ->getViewData()->toBe([
             'key_a' => 'Value A',
-            'string_keyed_closure' => 'string_keyed_closure',
-            'string_keyed_closure_b' => 'string_keyed_closure_b',
+            'closure_key_a' => 'Closure Value A',
+            'closure_key_b' => 'Closure Value B',
         ]);
 });
