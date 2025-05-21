@@ -7,8 +7,8 @@ use Exception;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Arr;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\ComponentAttributeBag;
 
 abstract class ViewComponent extends Component implements Htmlable

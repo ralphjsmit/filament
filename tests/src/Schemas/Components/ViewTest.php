@@ -1,11 +1,11 @@
 <?php
 
-use Filament\Forms\Components\View;
+use Filament\Schemas\Components\View;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-it('can have view data', function () {
+it('can have view data', function (): void {
     $component = View::make('test')
         ->viewData([
             'key_a' => 'Value A',
@@ -20,7 +20,7 @@ it('can have view data', function () {
         ]);
 });
 
-it('can have view data inside closures', function () {
+it('can have view data inside closures', function (): void {
     $component = View::make('test')
         ->viewData(['key_a' => 'Value A'])
         ->viewData(fn (): array => ['closure_key_a' => 'Closure Value A'])
