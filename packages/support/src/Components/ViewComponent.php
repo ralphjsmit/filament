@@ -30,9 +30,9 @@ abstract class ViewComponent extends Component implements Htmlable
 
     /**
      * @param  view-string | null  $view
-     * @param  array<string, mixed>  $viewData
+     * @param  array<string, mixed> | Closure  $viewData
      */
-    public function view(?string $view, array $viewData = []): static
+    public function view(?string $view, array | Closure $viewData = []): static
     {
         if ($view === null) {
             return $this;
@@ -40,7 +40,7 @@ abstract class ViewComponent extends Component implements Htmlable
 
         $this->view = $view;
 
-        if ($viewData !== []) {
+        if (filled($viewData)) {
             $this->viewData($viewData);
         }
 
