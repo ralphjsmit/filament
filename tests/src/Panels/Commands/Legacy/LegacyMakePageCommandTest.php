@@ -302,7 +302,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
         '--panel' => 'admin',
         '--no-interaction' => true,
     ])
-        ->expectsQuestion('Would you like to generate the form schema and table columns based on the attributes of the model?', false)
+        ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
         ->expectsQuestion('Does the model use soft deletes?', false);
 
     $testCase->artisan('make:filament-resource', [
@@ -310,8 +310,8 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
         '--panel' => 'admin',
         '--no-interaction' => true,
     ])
-        ->expectsQuestion('Would you like to generate an infolist and view page for the resource?', false)
-        ->expectsQuestion('Would you like to generate the form schema and table columns based on the attributes of the model?', false)
+        ->expectsQuestion('Would you like to generate a read-only view page for the resource?', false)
+        ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
         ->expectsQuestion('Does the model use soft deletes?', false);
 
     require_once __DIR__ . '/../../../Fixtures/Models/Team.php';
@@ -342,13 +342,13 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
 $generateManageRelatedRecordsPageCommandQuestions = [
     'relationship' => 'What is the relationship?',
-    'hasRelatedResource' => 'Do you want each table row to link to a resource instead of opening a modal? Filament will also inherit the resource\'s configuration.',
+    'hasRelatedResource' => 'Do you want to do this?',
     'relatedResource' => 'Which resource do you want to use?',
-    'isGenerated' => 'Would you like to generate the page based on the attributes of the model?',
-    'relatedModel' => 'Filament couldn\'t automatically find the related model for the [teams] relationship. What is the fully qualified class name of the related model?',
-    'titleAttribute' => 'What is the title attribute? This is the attribute that will be used to uniquely identify each record in the table.',
-    'isGeneratedTable' => 'Would you like to generate the table columns based on the attributes of the model?',
-    'hasViewOperation' => 'Would you like to generate an infolist and view modal for the table?',
+    'isGenerated' => 'Should the page be generated from the current database columns?',
+    'relatedModel' => 'What is the related model?',
+    'titleAttribute' => 'What is the title attribute for this model?',
+    'isGeneratedTable' => 'Should the table columns be generated from the current database columns?',
+    'hasViewOperation' => 'Would you like to generate a read-only view modal for the table?',
     'isSoftDeletable' => 'Does the related model use soft deletes?',
     'relationshipType' => 'What type of relationship is this?',
 ];

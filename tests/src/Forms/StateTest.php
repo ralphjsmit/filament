@@ -606,6 +606,29 @@ test('hidden components are excluded from state dehydration except if they are m
         ->dehydrateState()->not()->toBe([]);
 });
 
+test('hidden components are excluded from state dehydration even if their parent component has a state path', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->statePath('nested')
+                ->schema([
+                    (new Component)
+                        ->statePath(Str::random())
+                        ->default(Str::random())
+                        ->hidden(),
+                ]),
+        ])
+        ->fill();
+
+    expect($schema)
+        ->dehydrateState()->toBe([
+            'data' => [
+                'nested' => [],
+            ],
+        ]);
+});
+
 test('disabled components are excluded from state dehydration', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')

@@ -22,6 +22,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
@@ -80,6 +81,10 @@ class RequestPasswordReset extends SimplePage
                 $notification->url = Filament::getResetPasswordUrl($token, $user);
 
                 $user->notify($notification);
+
+                if (class_exists(PasswordResetLinkSent::class)) {
+                    event(new PasswordResetLinkSent($user));
+                }
             },
         );
 

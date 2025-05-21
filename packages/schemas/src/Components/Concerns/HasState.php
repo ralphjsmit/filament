@@ -4,6 +4,7 @@ namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
@@ -294,14 +295,10 @@ trait HasState
             return;
         }
 
-        if (filled($this->getStatePath(isAbsolute: false))) {
+        if ($this->hasStatePath()) {
             foreach ($this->getStateToDehydrate() as $key => $value) {
                 Arr::set($state, $key, $value); /** @phpstan-ignore parameterByRef.type */
             }
-        }
-
-        if ($this->isHiddenAndNotDehydratedWhenHidden()) {
-            return;
         }
 
         foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
@@ -654,7 +651,11 @@ trait HasState
 
     public function isDehydrated(): bool
     {
-        return (bool) $this->evaluate($this->isDehydrated);
+        if (! $this->evaluate($this->isDehydrated)) {
+            return false;
+        }
+
+        return ! $this->isHiddenAndNotDehydratedWhenHidden();
     }
 
     public function isDehydratedWhenHidden(): bool
@@ -933,7 +934,16 @@ trait HasState
      */
     public function getConstantStateFromRecord(Model $record): mixed
     {
-        $state = data_get($record, $this->getConstantStatePath());
+        $name = $this->getConstantStatePath();
+
+        if (
+            ($record instanceof HasRichContent) &&
+            $record->hasRichContentAttribute($name)
+        ) {
+            $state = $record->getRichContentAttribute($name);
+        } else {
+            $state = data_get($record, $name);
+        }
 
         if ($state !== null) {
             return $state;

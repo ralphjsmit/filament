@@ -21,7 +21,7 @@ trait HasFileAttachments
 
     protected ?Closure $saveUploadedFileAttachmentUsing = null;
 
-    protected string | Closure $fileAttachmentsVisibility = 'public';
+    protected string | Closure | null $fileAttachmentsVisibility = null;
 
     public function fileAttachmentsDirectory(string | Closure | null $directory): static
     {
@@ -62,9 +62,18 @@ trait HasFileAttachments
             ]);
         }
 
+        if (filled($savedFile = $this->defaultSaveUploadedFileAttachment($file))) {
+            return $savedFile;
+        }
+
         $storeMethod = $this->getFileAttachmentsVisibility() === 'public' ? 'storePublicly' : 'store';
 
         return $file->{$storeMethod}($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
+    }
+
+    public function defaultSaveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+    {
+        return null;
     }
 
     #[ExposedLivewireMethod]
@@ -81,7 +90,7 @@ trait HasFileAttachments
         return $this->getFileAttachmentUrl($file);
     }
 
-    public function fileAttachmentsVisibility(string | Closure $visibility): static
+    public function fileAttachmentsVisibility(string | Closure | null $visibility): static
     {
         $this->fileAttachmentsVisibility = $visibility;
 
@@ -140,7 +149,7 @@ trait HasFileAttachments
             return $name;
         }
 
-        $name = config('filament.default_filesystem_disk');
+        $name = $this->getDefaultFileAttachmentsDiskName() ?? config('filament.default_filesystem_disk');
 
         if ($name !== 'local') {
             return $name;
@@ -153,9 +162,19 @@ trait HasFileAttachments
         return 'public';
     }
 
+    public function getDefaultFileAttachmentsDiskName(): ?string
+    {
+        return null;
+    }
+
     public function getFileAttachmentsVisibility(): string
     {
-        return $this->evaluate($this->fileAttachmentsVisibility);
+        return $this->evaluate($this->fileAttachmentsVisibility) ?? $this->getDefaultFileAttachmentsVisibility() ?? 'public';
+    }
+
+    public function getDefaultFileAttachmentsVisibility(): ?string
+    {
+        return null;
     }
 
     public function getFileAttachmentUrl(mixed $file): ?string
@@ -164,6 +183,10 @@ trait HasFileAttachments
             return $this->evaluate($this->getFileAttachmentUrlUsing, [
                 'file' => $file,
             ]);
+        }
+
+        if (filled($url = $this->getDefaultFileAttachmentUrl($file))) {
+            return $url;
         }
 
         /** @var FilesystemAdapter $storage */
@@ -189,5 +212,10 @@ trait HasFileAttachments
         }
 
         return $storage->url($file);
+    }
+
+    public function getDefaultFileAttachmentUrl(mixed $file): ?string
+    {
+        return null;
     }
 }

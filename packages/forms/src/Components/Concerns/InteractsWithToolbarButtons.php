@@ -7,6 +7,11 @@ use Exception;
 
 trait InteractsWithToolbarButtons
 {
+    /**
+     * @var array<string | array<string>> | Closure | null
+     */
+    protected array | Closure | null $toolbarButtons = null;
+
     public function disableAllToolbarButtons(bool $condition = true): static
     {
         if ($condition) {
@@ -63,9 +68,9 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string | array<string>> | Closure  $buttons
+     * @param  array<string | array<string>> | Closure | null  $buttons
      */
-    public function toolbarButtons(array | Closure $buttons = []): static
+    public function toolbarButtons(array | Closure | null $buttons): static
     {
         $this->toolbarButtons = $buttons;
 
@@ -80,7 +85,7 @@ trait InteractsWithToolbarButtons
         $toolbar = [];
         $newButtonGroup = [];
 
-        foreach ($this->evaluate($this->toolbarButtons) as $buttonGroup) {
+        foreach ($this->evaluate($this->toolbarButtons) ?? $this->getDefaultToolbarButtons() as $buttonGroup) {
             if (blank($buttonGroup)) {
                 continue;
             }
@@ -103,6 +108,14 @@ trait InteractsWithToolbarButtons
         }
 
         return $toolbar;
+    }
+
+    /**
+     * @return array<string | array<string>>
+     */
+    public function getDefaultToolbarButtons(): array
+    {
+        return [];
     }
 
     /**
