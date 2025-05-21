@@ -39,6 +39,8 @@ trait CanBeValidated
      */
     protected array $validationMessages = [];
 
+    protected bool | Closure $areHtmlValidationMessagesAllowed = false;
+
     protected string | Closure | null $validationAttribute = null;
 
     public function activeUrl(bool | Closure $condition = true): static
@@ -648,6 +650,13 @@ trait CanBeValidated
         return $this;
     }
 
+    public function allowHtmlValidationMessages(bool | Closure $condition = true): static
+    {
+        $this->areHtmlValidationMessagesAllowed = $condition;
+
+        return $this;
+    }
+
     public function getRegexPattern(): ?string
     {
         return $this->evaluate($this->regexPattern);
@@ -675,6 +684,11 @@ trait CanBeValidated
         }
 
         return array_filter($messages);
+    }
+
+    public function areHtmlValidationMessagesAllowed(): bool
+    {
+        return (bool) $this->evaluate($this->areHtmlValidationMessagesAllowed);
     }
 
     public function getInValidationRule(): In | Enum | null

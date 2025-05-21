@@ -127,11 +127,27 @@
             {{ $belowContentSchema }}
 
             @if ($hasError)
+                @php
+                    $errorMessage = $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
+                @endphp
+
                 {{ $aboveErrorMessageSchema }}
 
-                <p data-validation-error class="fi-fo-field-wrp-error-message">
-                    {{ $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
-                </p>
+                @if ($field?->areHtmlValidationMessagesAllowed())
+                    <div
+                        data-validation-error
+                        class="fi-fo-field-wrp-error-message"
+                    >
+                        {!! $errorMessage !!}
+                    </div>
+                @else
+                    <p
+                        data-validation-error
+                        class="fi-fo-field-wrp-error-message"
+                    >
+                        {{ $errorMessage }}
+                    </p>
+                @endif
 
                 {{ $belowErrorMessageSchema }}
             @endif
