@@ -13,6 +13,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
@@ -62,7 +63,16 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
             $table->query(function () use ($record): Builder {
                 $relationship = Relation::noConstraints(fn () => $record->{$this->relationshipName}());
 
-                return app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+                $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+                if (
+                    $relationship instanceof BelongsToMany &&
+                    (filled($relationshipQuery->getQuery()->joins ?? []))
+                ) {
+                    array_shift($relationshipQuery->getQuery()->joins);
+                }
+
+                return $relationshipQuery;
             });
         }
 
@@ -76,6 +86,6 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
 
     public function render(): string
     {
-        return '{{ $this->table }}';
+        return '<div>{{ $this->table }}</div>';
     }
 }

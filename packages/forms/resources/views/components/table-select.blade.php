@@ -26,7 +26,7 @@
         'relationshipName' => $getRelationshipName(),
         'tableConfiguration' => base64_encode($getTableConfiguration()),
         'wire:model' => $getStatePath(),
-    ], key($getLivewireKey()))
+    ], key($getLivewireKey() . '.livewire-component'))
 
     @if (filled($id) || filled($extraAttributes))
         {!! '</div>' !!}

@@ -105,16 +105,11 @@
     @if (! $isLoaded)
         wire:init="loadTable"
     @endif
-    @if (FilamentView::hasSpaMode())
-        x-load="visible"
-    @else
-        x-load
-    @endif
-    x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
-    x-data="table({
+    x-data="filamentTable({
                 canSelectMultipleRecords: @js($canSelectMultipleRecords),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
+                $wire,
             })"
     @class([
         'fi-ta',
