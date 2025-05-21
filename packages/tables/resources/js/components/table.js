@@ -1,4 +1,8 @@
-export default function table() {
+export default function table({
+    canSelectMultipleRecords = true,
+    canTrackDeselectedRecords = true,
+    currentSelectionLivewireProperty = null,
+}) {
     return {
         checkboxClickController: null,
 
@@ -18,6 +22,10 @@ export default function table() {
 
         livewireId: null,
 
+        entangledSelectedRecords: currentSelectionLivewireProperty
+            ? this.$wire.$entangle(currentSelectionLivewireProperty)
+            : null,
+
         init: function () {
             this.livewireId =
                 this.$root.closest('[wire\\:id]').attributes['wire:id'].value
@@ -26,15 +34,19 @@ export default function table() {
                 this.deselectAllRecords(),
             )
 
-            this.$watch('selectedRecords', () => {
-                if (!this.shouldCheckUniqueSelection) {
-                    this.shouldCheckUniqueSelection = true
-
-                    return
+            if (currentSelectionLivewireProperty) {
+                if (canSelectMultipleRecords) {
+                    this.selectedRecords = new Set(
+                        this.entangledSelectedRecords,
+                    )
+                } else {
+                    this.selectedRecords = new Set(
+                        this.entangledSelectedRecords
+                            ? [this.entangledSelectedRecords]
+                            : [],
+                    )
                 }
-
-                this.shouldCheckUniqueSelection = false
-            })
+            }
 
             this.$nextTick(() => this.watchForCheckboxClicks())
 
@@ -136,6 +148,12 @@ export default function table() {
         },
 
         selectRecords: function (keys) {
+            if (!canSelectMultipleRecords) {
+                this.deselectAllRecords()
+
+                keys = keys.slice(0, 1)
+            }
+
             for (let key of keys) {
                 if (this.isRecordSelected(key)) {
                     continue
@@ -149,6 +167,8 @@ export default function table() {
 
                 this.selectedRecords.add(key)
             }
+
+            this.updatedSelectedRecords()
         },
 
         deselectRecords: function (keys) {
@@ -161,6 +181,18 @@ export default function table() {
 
                 this.selectedRecords.delete(key)
             }
+
+            this.updatedSelectedRecords()
+        },
+
+        updatedSelectedRecords: function () {
+            if (canSelectMultipleRecords) {
+                this.entangledSelectedRecords = [...this.selectedRecords]
+
+                return
+            }
+
+            this.entangledSelectedRecords = [...this.selectedRecords][0] ?? null
         },
 
         toggleSelectedRecord: function (key) {
@@ -174,15 +206,33 @@ export default function table() {
         },
 
         selectAllRecords: async function () {
+            if (!canTrackDeselectedRecords) {
+                this.isLoading = true
+
+                this.selectedRecords = new Set(
+                    await this.$wire.getAllSelectableTableRecordKeys(),
+                )
+
+                this.updatedSelectedRecords()
+
+                this.isLoading = false
+
+                return
+            }
+
             this.isTrackingDeselectedRecords = true
             this.selectedRecords = new Set()
             this.deselectedRecords = new Set()
+
+            this.updatedSelectedRecords()
         },
 
         deselectAllRecords: function () {
             this.isTrackingDeselectedRecords = false
             this.selectedRecords = new Set()
             this.deselectedRecords = new Set()
+
+            this.updatedSelectedRecords()
         },
 
         isRecordSelected: function (key) {
