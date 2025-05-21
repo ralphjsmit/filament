@@ -39,7 +39,7 @@ trait CanBeValidated
      */
     protected array $validationMessages = [];
 
-    protected bool $allowHtmlValidationMessages = false;
+    protected bool | Closure $areHtmlValidationMessagesAllowed = false;
 
     protected string | Closure | null $validationAttribute = null;
 
@@ -650,9 +650,9 @@ trait CanBeValidated
         return $this;
     }
 
-    public function allowHtmlValidationMessages(bool $condition = true): static
+    public function allowHtmlValidationMessages(bool | Closure $condition = true): static
     {
-        $this->allowHtmlValidationMessages = $condition;
+        $this->areHtmlValidationMessagesAllowed = $condition;
 
         return $this;
     }
@@ -688,7 +688,7 @@ trait CanBeValidated
 
     public function areHtmlValidationMessagesAllowed(): bool
     {
-        return $this->allowHtmlValidationMessages;
+        return (bool) $this->evaluate($this->areHtmlValidationMessagesAllowed);
     }
 
     public function getInValidationRule(): In | Enum | null
