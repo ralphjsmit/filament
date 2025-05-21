@@ -30,15 +30,11 @@ export default ({
         this.livewireId =
             this.$root.closest('[wire\\:id]').attributes['wire:id'].value
 
-        $wire.$on('deselectAllTableRecords', () =>
-            this.deselectAllRecords(),
-        )
+        $wire.$on('deselectAllTableRecords', () => this.deselectAllRecords())
 
         if (currentSelectionLivewireProperty) {
             if (canSelectMultipleRecords) {
-                this.selectedRecords = new Set(
-                    this.entangledSelectedRecords,
-                )
+                this.selectedRecords = new Set(this.entangledSelectedRecords)
             } else {
                 this.selectedRecords = new Set(
                     this.entangledSelectedRecords
@@ -63,16 +59,8 @@ export default ({
             this.isTrackingDeselectedRecords,
             false,
         )
-        $wire.set(
-            'selectedTableRecords',
-            [...this.selectedRecords],
-            false,
-        )
-        $wire.set(
-            'deselectedTableRecords',
-            [...this.deselectedRecords],
-            false,
-        )
+        $wire.set('selectedTableRecords', [...this.selectedRecords], false)
+        $wire.set('deselectedTableRecords', [...this.deselectedRecords], false)
 
         $wire.mountAction(...args)
     },
@@ -127,8 +115,7 @@ export default ({
         if (this.isTrackingDeselectedRecords) {
             return (
                 (this.$refs.allSelectableRecordsCount?.value ??
-                    this.deselectedRecords.size) -
-                this.deselectedRecords.size
+                    this.deselectedRecords.size) - this.deselectedRecords.size
             )
         }
 
@@ -249,10 +236,7 @@ export default ({
 
     toggleCollapseGroup: function (group) {
         if (this.isGroupCollapsed(group)) {
-            this.collapsedGroups.splice(
-                this.collapsedGroups.indexOf(group),
-                1,
-            )
+            this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
 
             return
         }
@@ -295,9 +279,8 @@ export default ({
 
         if (event.shiftKey) {
             let checkboxes = Array.from(
-                this.$root?.getElementsByClassName(
-                    'fi-ta-record-checkbox',
-                ) ?? [],
+                this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
+                    [],
             )
 
             if (!checkboxes.includes(this.lastChecked)) {
