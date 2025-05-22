@@ -49,7 +49,7 @@ class ModalTableSelect extends Field
 
     protected string | Closure | null $relationship = null;
 
-    protected string | Closure $tableConfiguration;
+    protected string | Closure | null $tableConfiguration = null;
 
     protected ?Closure $modifyTableSelectUsing = null;
 
@@ -640,6 +640,6 @@ class ModalTableSelect extends Field
 
     public function getTableConfiguration(): string
     {
-        return $this->evaluate($this->tableConfiguration);
+        return $this->evaluate($this->tableConfiguration) ?? throw new Exception('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
     }
 }

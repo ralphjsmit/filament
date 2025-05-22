@@ -60,6 +60,14 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
             throw new Exception("Table configuration class [{$tableConfiguration}] does not have a [configure(Table \$table): Table] method.");
         }
 
+        $table = $tableConfiguration::configure($table)
+            ->selectable()
+            ->trackDeselectedRecords(false)
+            ->currentSelectionLivewireProperty('state')
+            ->multipleRecordsSelectable(is_array($this->state))
+            ->deselectAllRecordsWhenFiltered(false)
+            ->disabledSelection($this->isDisabled);
+
         if (filled($this->relationshipName)) {
             $table->query(function (): Builder {
                 $relationship = Relation::noConstraints(fn (): Relation => ($this->record ??= app($this->model))->{$this->relationshipName}());
@@ -82,13 +90,7 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
             });
         }
 
-        return $tableConfiguration::configure($table)
-            ->selectable()
-            ->trackDeselectedRecords(false)
-            ->currentSelectionLivewireProperty('state')
-            ->multipleRecordsSelectable(is_array($this->state))
-            ->deselectAllRecordsWhenFiltered(false)
-            ->disabledSelection($this->isDisabled);
+        return $table;
     }
 
     public function render(): string
