@@ -89,6 +89,6 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
 
     public function render(): string
     {
-        return '<div>{{ $this->table }}</div>';
+        return '{{ $this->table }}';
     }
 }
