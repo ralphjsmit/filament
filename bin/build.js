@@ -131,12 +131,6 @@ formComponents.forEach((component) => {
     })
 })
 
-compile({
-    ...defaultOptions,
-    entryPoints: [`./packages/tables/resources/js/components/table.js`],
-    outfile: `./packages/tables/dist/components/table.js`,
-})
-
 const schemaComponents = ['actions', 'tabs', 'wizard']
 
 schemaComponents.forEach((component) => {
