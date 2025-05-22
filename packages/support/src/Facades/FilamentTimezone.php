@@ -3,8 +3,6 @@
 namespace Filament\Support\Facades;
 
 use Filament\Support\TimezoneManager;
-use Filament\Support\View\ViewManager;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Facade;
 
 /**
