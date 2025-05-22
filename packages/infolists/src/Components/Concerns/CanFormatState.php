@@ -435,7 +435,7 @@ trait CanFormatState
 
     public function getTimezone(): string
     {
-        return $this->evaluate($this->timezone) ?? ($this->isDateTime() ? FilamentTimezone::get() : app('app.timezone');
+        return $this->evaluate($this->timezone) ?? ($this->isDateTime() ? FilamentTimezone::get() : app('app.timezone'));
     }
 
     public function isHtml(): bool
