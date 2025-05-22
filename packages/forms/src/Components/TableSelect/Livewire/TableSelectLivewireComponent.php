@@ -60,7 +60,13 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
             throw new Exception("Table configuration class [{$tableConfiguration}] does not have a [configure(Table \$table): Table] method.");
         }
 
-        $table = $tableConfiguration::configure($table)
+        $tableConfiguration::configure($table);
+
+        $table
+            ->headerActions([])
+            ->actions([])
+            ->bulkActions([])
+            ->emptyStateActions([])
             ->selectable()
             ->trackDeselectedRecords(false)
             ->currentSelectionLivewireProperty('state')
