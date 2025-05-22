@@ -8,7 +8,8 @@
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
-    <div {{
+    <div
+        {{
             $attributes
                 ->merge([
                     'id' => $id,
@@ -18,7 +19,8 @@
                     'fi-fo-modal-table-select',
                     'fi-fo-modal-table-select-multiple' => $isMultiple,
                 ])
-        }}>
+        }}
+    >
         @if ($isMultiple)
             @if (filled($optionLabels = $getOptionLabels()))
                 <div class="fi-fo-modal-table-select-badges-ctn">

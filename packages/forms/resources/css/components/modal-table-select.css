@@ -1,6 +1,6 @@
 .fi-fo-modal-table-select {
     &:not(.fi-fo-modal-table-select-multiple) {
-        @apply leading-5 flex items-start gap-x-3;
+        @apply flex items-start gap-x-3 leading-5;
     }
 
     &.fi-fo-modal-table-select-multiple {

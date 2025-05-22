@@ -7,13 +7,15 @@
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
-    <div {{
+    <div
+        {{
             $attributes
                 ->merge([
                     'id' => $id,
                 ], escape: false)
                 ->merge($extraAttributes, escape: false)
-        }}>
+        }}
+    >
         @livewire(TableSelectLivewireComponent::class, [
             'model' => $getModel(),
             'record' => $getRecord(),

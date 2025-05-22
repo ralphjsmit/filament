@@ -2,30 +2,14 @@
 
 namespace Filament\Forms\Components;
 
-use App\Filament\Tables\ShopCategoriesTable;
-use BackedEnum;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Schemas\Components\Contracts\HasAffixActions;
-use Filament\Schemas\Components\StateCasts\BooleanStateCast;
-use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
-use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
-use Filament\Schemas\Components\StateCasts\EnumStateCast;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Schema;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
-use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\IconPosition;
-use Filament\Support\Enums\Size;
-use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -37,10 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Livewire\Attributes\Renderless;
 use Znck\Eloquent\Relations\BelongsToThrough;
-use function Filament\Support\generate_search_column_expression;
-use function Filament\Support\generate_search_term_expression;
 
 class ModalTableSelect extends Field
 {
@@ -114,6 +95,7 @@ class ModalTableSelect extends Field
     {
         $action = Action::make('select')
             ->label(__('filament-forms::components.modal_table_select.actions.select.label'))
+            ->slideOver()
             ->modalHeading($this->getLabel())
             ->modalSubmitActionLabel(__('filament-forms::components.modal_table_select.actions.select.actions.select.label'))
             ->when(
@@ -188,6 +170,7 @@ class ModalTableSelect extends Field
 
         return $this;
     }
+
     public function getOptionLabel(bool $withDefault = true): ?string
     {
         $state = null;
