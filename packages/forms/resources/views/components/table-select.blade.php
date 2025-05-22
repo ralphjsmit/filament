@@ -7,29 +7,19 @@
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
-    @if (filled($id) || filled($extraAttributes))
-        {!! '<div' !!}
-        {{-- Avoid formatting issues with unclosed elements --}}
-        {{
+    <div {{
             $attributes
                 ->merge([
                     'id' => $id,
                 ], escape: false)
                 ->merge($extraAttributes, escape: false)
-        }}
-        >
-    @endif
-
-    @livewire(TableSelectLivewireComponent::class, [
-        'model' => $getModel(),
-        'record' => $getRecord(),
-        'relationshipName' => $getRelationshipName(),
-        'tableConfiguration' => base64_encode($getTableConfiguration()),
-        'wire:model' => $getStatePath(),
-    ], key($getLivewireKey() . '.livewire-component'))
-
-    @if (filled($id) || filled($extraAttributes))
-        {!! '</div>' !!}
-        {{-- Avoid formatting issues with unclosed elements --}}
-    @endif
+        }}>
+        @livewire(TableSelectLivewireComponent::class, [
+            'model' => $getModel(),
+            'record' => $getRecord(),
+            'relationshipName' => $getRelationshipName(),
+            'tableConfiguration' => base64_encode($getTableConfiguration()),
+            'wire:model' => $getStatePath(),
+        ], key($getLivewireKey()))
+    </div>
 </x-dynamic-component>

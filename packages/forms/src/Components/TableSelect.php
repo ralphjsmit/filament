@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Exception;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,7 +45,7 @@ class TableSelect extends Field
 
     public function relationship(string | Closure | null $name): static
     {
-        $this->relationship = $name;
+        $this->relationshipName($name);
 
         $this->loadStateFromRelationshipsUsing(static function (TableSelect $component, $state): void {
             if (filled($state)) {
@@ -205,6 +206,13 @@ class TableSelect extends Field
         return $this;
     }
 
+    public function relationshipName(string | Closure | null $name): static
+    {
+        $this->relationship = $name;
+
+        return $this;
+    }
+
     public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasOneOrManyThrough | BelongsToThrough | null
     {
         if (! $this->hasRelationship()) {
@@ -243,6 +251,21 @@ class TableSelect extends Field
     public function hasRelationship(): bool
     {
         return filled($this->getRelationshipName());
+    }
+
+    public function getLabel(): string | Htmlable | null
+    {
+        if ($this->label === null && $this->hasRelationship()) {
+            $label = (string) str($this->getRelationshipName())
+                ->before('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
+        }
+
+        return parent::getLabel();
     }
 
     public function multiple(bool | Closure $condition = true): static

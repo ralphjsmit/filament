@@ -1,0 +1,13 @@
+.fi-fo-modal-table-select {
+    &:not(.fi-fo-modal-table-select-multiple) {
+        @apply leading-5 flex items-start gap-x-3;
+    }
+
+    &.fi-fo-modal-table-select-multiple {
+        @apply grid gap-2;
+
+        & .fi-fo-modal-table-select-badges-ctn {
+            @apply flex flex-wrap gap-1.5;
+        }
+    }
+}
