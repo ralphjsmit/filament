@@ -28,6 +28,9 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
     use WithoutUrlPagination;
 
     #[Locked]
+    public bool $isDisabled = false;
+
+    #[Locked]
     public ?string $model = null;
 
     #[Locked]
@@ -84,7 +87,8 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
             ->trackDeselectedRecords(false)
             ->currentSelectionLivewireProperty('state')
             ->multipleRecordsSelectable(is_array($this->state))
-            ->deselectAllRecordsWhenFiltered(false);
+            ->deselectAllRecordsWhenFiltered(false)
+            ->disabledSelection($this->isDisabled);
     }
 
     public function render(): string

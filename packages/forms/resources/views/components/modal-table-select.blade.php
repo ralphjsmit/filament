@@ -4,6 +4,7 @@
     $fieldWrapperView = $getFieldWrapperView();
     $extraAttributes = $getExtraAttributes();
     $id = $getId();
+    $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
 @endphp
 
@@ -17,6 +18,7 @@
                 ->merge($extraAttributes, escape: false)
                 ->class([
                     'fi-fo-modal-table-select',
+                    'fi-fo-modal-table-select-disabled' => $isDisabled,
                     'fi-fo-modal-table-select-multiple' => $isMultiple,
                 ])
         }}
@@ -30,15 +32,29 @@
                         </x-filament::badge>
                     @endforeach
                 </div>
+            @elseif (filled($placeholder = $getPlaceholder()))
+                <div class="fi-fo-modal-table-select-placeholder">
+                    {{ $placeholder }}
+                </div>
             @endif
 
-            <div>
-                {{ $getAction('select') }}
-            </div>
+            @if (! $isDisabled)
+                <div>
+                    {{ $getAction('select') }}
+                </div>
+            @endif
         @else
-            {{ $getOptionLabel() }}
+            @if (filled($optionLabel = $getOptionLabel()))
+                {{ $optionLabel }}
+            @elseif (filled($placeholder = $getPlaceholder()))
+                <div class="fi-fo-modal-table-select-placeholder">
+                    {{ $placeholder }}
+                </div>
+            @endif
 
-            {{ $getAction('select') }}
+            @if (! $isDisabled)
+                {{ $getAction('select') }}
+            @endif
         @endif
     </div>
 </x-dynamic-component>

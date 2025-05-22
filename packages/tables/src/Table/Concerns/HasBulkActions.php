@@ -37,6 +37,8 @@ trait HasBulkActions
 
     protected bool | Closure $canSelectMultipleRecords = true;
 
+    protected bool | Closure $isSelectionDisabled = false;
+
     /**
      * @param  array<BulkAction | ActionGroup> | ActionGroup  $actions
      */
@@ -263,5 +265,17 @@ trait HasBulkActions
     public function canSelectMultipleRecords(): bool
     {
         return (bool) $this->evaluate($this->canSelectMultipleRecords);
+    }
+
+    public function disabledSelection(bool | Closure $condition = true): static
+    {
+        $this->isSelectionDisabled = $condition;
+
+        return $this;
+    }
+
+    public function isSelectionDisabled(): bool
+    {
+        return (bool) $this->evaluate($this->isSelectionDisabled);
     }
 }

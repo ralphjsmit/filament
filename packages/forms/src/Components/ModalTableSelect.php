@@ -26,6 +26,7 @@ use Znck\Eloquent\Relations\BelongsToThrough;
 class ModalTableSelect extends Field
 {
     use Concerns\HasPivotData;
+    use Concerns\HasPlaceholder;
 
     /**
      * @var view-string
@@ -98,16 +99,17 @@ class ModalTableSelect extends Field
             ->slideOver()
             ->modalHeading($this->getLabel())
             ->modalSubmitActionLabel(__('filament-forms::components.modal_table_select.actions.select.actions.select.label'))
-            ->when(
-                $this->isMultiple(),
-                fn (Action $action) => $action->link(),
-                fn (Action $action) => $action->iconButton(),
-            )
             ->icon(Heroicon::PencilSquare)
             ->iconPosition(IconPosition::After)
             ->fillForm(['selection' => $this->getState()])
             ->schema([$this->getTableSelect()])
             ->action(fn (array $data) => $this->state($data['selection']));
+
+        if ($this->isMultiple() || blank($this->getState())) {
+            $action->link();
+        } else {
+            $action->iconButton();
+        }
 
         if ($this->modifySelectActionUsing) {
             $action = $this->evaluate($this->modifySelectActionUsing, [

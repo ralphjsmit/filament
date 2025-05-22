@@ -17,6 +17,7 @@
         }}
     >
         @livewire(TableSelectLivewireComponent::class, [
+            'isDisabled' => $isDisabled(),
             'model' => $getModel(),
             'record' => $getRecord(),
             'relationshipName' => $getRelationshipName(),

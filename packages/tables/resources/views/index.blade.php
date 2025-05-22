@@ -23,6 +23,7 @@
     }
 
     $activeFiltersCount = $getActiveFiltersCount();
+    $isSelectionDisabled = $isSelectionDisabled();
     $canSelectMultipleRecords = $canSelectMultipleRecords();
     $columns = $getVisibleColumns();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
@@ -554,32 +555,34 @@
                     ></span>
                 </div>
 
-                <div>
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE, scopes: static::class) }}
+                @if (! $isSelectionDisabled)
+                    <div>
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE, scopes: static::class) }}
 
-                    <div class="fi-ta-selection-indicator-actions-ctn">
-                        <x-filament::link
-                            color="primary"
-                            tag="button"
-                            x-on:click="selectAllRecords"
-                            :x-show="$selectsCurrentPageOnly ? '! areRecordsSelected(getRecordsOnPage())' : $allSelectableRecordsCount . ' !== getSelectedRecordsCount()'"
-                            {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
-                            :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
-                        >
-                            {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount, ['count' => \Illuminate\Support\Number::format($allSelectableRecordsCount, locale: app()->getLocale())]) }}
-                        </x-filament::link>
+                        <div class="fi-ta-selection-indicator-actions-ctn">
+                            <x-filament::link
+                                color="primary"
+                                tag="button"
+                                x-on:click="selectAllRecords"
+                                :x-show="$selectsCurrentPageOnly ? '! areRecordsSelected(getRecordsOnPage())' : $allSelectableRecordsCount . ' !== getSelectedRecordsCount()'"
+                                {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
+                                :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
+                            >
+                                {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount, ['count' => \Illuminate\Support\Number::format($allSelectableRecordsCount, locale: app()->getLocale())]) }}
+                            </x-filament::link>
 
-                        <x-filament::link
-                            color="danger"
-                            tag="button"
-                            x-on:click="deselectAllRecords"
-                        >
-                            {{ __('filament-tables::table.selection_indicator.actions.deselect_all.label') }}
-                        </x-filament::link>
+                            <x-filament::link
+                                color="danger"
+                                tag="button"
+                                x-on:click="deselectAllRecords"
+                            >
+                                {{ __('filament-tables::table.selection_indicator.actions.deselect_all.label') }}
+                            </x-filament::link>
+                        </div>
+
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER, scopes: static::class) }}
                     </div>
-
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER, scopes: static::class) }}
-                </div>
+                @endif
             </div>
         @endif
 
@@ -657,6 +660,7 @@
                                     <input
                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                         type="checkbox"
+                                        @disabled($isSelectionDisabled)
                                         x-bind:checked="
                                             const recordsOnPage = getRecordsOnPage()
 
@@ -861,6 +865,7 @@
                                             <input
                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                 type="checkbox"
+                                                @disabled($isSelectionDisabled)
                                                 x-bind:checked="
                                                     const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
 
@@ -956,6 +961,7 @@
                                         <input
                                             aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                             type="checkbox"
+                                            @disabled($isSelectionDisabled)
                                             value="{{ $recordKey }}"
                                             x-on:click="toggleSelectedRecord(@js($recordKey))"
                                             x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
@@ -1209,6 +1215,7 @@
                                                     <input
                                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                         type="checkbox"
+                                                        @disabled($isSelectionDisabled)
                                                         x-bind:checked="
                                                             const recordsOnPage = getRecordsOnPage()
 
@@ -1328,6 +1335,7 @@
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                     type="checkbox"
+                                                    @disabled($isSelectionDisabled)
                                                     x-bind:checked="
                                                         const recordsOnPage = getRecordsOnPage()
 
@@ -1518,6 +1526,7 @@
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"
+                                                                    @disabled($isSelectionDisabled)
                                                                     x-bind:checked="
                                                                         const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
 
@@ -1596,6 +1605,7 @@
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"
+                                                                    @disabled($isSelectionDisabled)
                                                                     x-bind:checked="
                                                                         const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
 
@@ -1682,6 +1692,7 @@
                                                             <input
                                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                 type="checkbox"
+                                                                @disabled($isSelectionDisabled)
                                                                 value="{{ $recordKey }}"
                                                                 x-on:click="toggleSelectedRecord(@js($recordKey))"
                                                                 x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
@@ -1808,6 +1819,7 @@
                                                             <input
                                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                 type="checkbox"
+                                                                @disabled($isSelectionDisabled)
                                                                 value="{{ $recordKey }}"
                                                                 x-on:click="toggleSelectedRecord(@js($recordKey))"
                                                                 x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
