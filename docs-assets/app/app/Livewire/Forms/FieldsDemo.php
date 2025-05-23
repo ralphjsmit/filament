@@ -28,6 +28,7 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Icon;
 use Filament\Schemas\Components\Section;
@@ -62,6 +63,35 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
         return $form
             ->statePath('data')
             ->components([
+                Group::make()
+                    ->id('fused')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('one')
+                                ->placeholder('One')
+                                ->suffix('hey'),
+                            Select::make('two')
+                                ->placeholder('Two'),
+                        ])->label('Test'),
+                    ]),
+                Group::make()
+                    ->id('fused2')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('one')
+                                ->placeholder('One'),
+                            Select::make('two')
+                                ->placeholder('Two'),
+                            Select::make('three')
+                                ->placeholder('Three'),
+                        ])->columns(3),
+                    ]),
                 Group::make()
                     ->id('simple')
                     ->extraAttributes([
