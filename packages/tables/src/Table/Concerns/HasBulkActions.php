@@ -3,14 +3,12 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Enums\RecordCheckboxPosition;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
 trait HasBulkActions
@@ -32,6 +30,14 @@ trait HasBulkActions
     protected RecordCheckboxPosition | Closure | null $recordCheckboxPosition = null;
 
     protected bool | Closure | null $isSelectable = null;
+
+    protected bool | Closure $canTrackDeselectedRecords = true;
+
+    protected string | Closure | null $currentSelectionLivewireProperty = null;
+
+    protected bool | Closure $canSelectMultipleRecords = true;
+
+    protected bool | Closure $isSelectionDisabled = false;
 
     /**
      * @param  array<BulkAction | ActionGroup> | ActionGroup  $actions
@@ -78,7 +84,7 @@ trait HasBulkActions
             } elseif ($action instanceof BulkAction) {
                 $this->cacheBulkAction($action);
             } else {
-                throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . ' or ' . ActionGroup::class . '.');
+                throw new InvalidArgumentException('Table bulk actions must be an instance of [' . BulkAction::class . '] or [' . ActionGroup::class . '].');
             }
 
             $this->bulkActions[] = $action;
@@ -156,23 +162,23 @@ trait HasBulkActions
 
     public function getBulkAction(string $name): ?BulkAction
     {
-        $action = $this->getFlatBulkActions()[$name] ?? null;
-        $action?->records(fn (): EloquentCollection | Collection => $this->getLivewire()->getSelectedTableRecords($action->shouldFetchSelectedRecords()));
-
-        return $action;
+        return $this->getFlatBulkActions()[$name] ?? null;
     }
 
-    public function isRecordSelectable(Model $record): bool
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function isRecordSelectable(Model | array $record): bool
     {
         return (bool) ($this->evaluate(
             $this->checkIfRecordIsSelectableUsing,
             namedInjections: [
                 'record' => $record,
             ],
-            typedInjections: [
+            typedInjections: ($record instanceof Model) ? [
                 Model::class => $record,
                 $record::class => $record,
-            ],
+            ] : [],
         ) ?? true);
     }
 
@@ -205,7 +211,7 @@ trait HasBulkActions
 
     public function selectsCurrentPageOnly(): bool
     {
-        return (bool) $this->evaluate($this->selectsCurrentPageOnly);
+        return $this->evaluate($this->selectsCurrentPageOnly) || (! $this->hasQuery());
     }
 
     public function checksIfRecordIsSelectable(): bool
@@ -223,5 +229,53 @@ trait HasBulkActions
     public function getRecordCheckboxPosition(): RecordCheckboxPosition
     {
         return $this->evaluate($this->recordCheckboxPosition) ?? RecordCheckboxPosition::BeforeCells;
+    }
+
+    public function trackDeselectedRecords(bool | Closure $condition = true): static
+    {
+        $this->canTrackDeselectedRecords = $condition;
+
+        return $this;
+    }
+
+    public function canTrackDeselectedRecords(): bool
+    {
+        return (bool) $this->evaluate($this->canTrackDeselectedRecords);
+    }
+
+    public function currentSelectionLivewireProperty(string | Closure | null $property): static
+    {
+        $this->currentSelectionLivewireProperty = $property;
+
+        return $this;
+    }
+
+    public function getCurrentSelectionLivewireProperty(): ?string
+    {
+        return $this->evaluate($this->currentSelectionLivewireProperty);
+    }
+
+    public function multipleRecordsSelectable(bool | Closure $condition = true): static
+    {
+        $this->canSelectMultipleRecords = $condition;
+
+        return $this;
+    }
+
+    public function canSelectMultipleRecords(): bool
+    {
+        return (bool) $this->evaluate($this->canSelectMultipleRecords);
+    }
+
+    public function disabledSelection(bool | Closure $condition = true): static
+    {
+        $this->isSelectionDisabled = $condition;
+
+        return $this;
+    }
+
+    public function isSelectionDisabled(): bool
+    {
+        return (bool) $this->evaluate($this->isSelectionDisabled);
     }
 }

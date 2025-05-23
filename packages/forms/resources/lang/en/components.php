@@ -302,6 +302,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Select',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Select',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -365,18 +387,63 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Upload file',
+
+                'modal' => [
+
+                    'heading' => 'Upload file',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'File',
+                                'existing' => 'Replace file',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Alt text',
+                                'existing' => 'Change alt text',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                'label' => 'Edit',
+
+                'modal' => [
+
+                    'heading' => 'Link',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Open in new tab',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Enter a URL',
 
             ],
 
@@ -396,6 +463,8 @@ return [
             'ordered_list' => 'Numbered list',
             'redo' => 'Redo',
             'strike' => 'Strikethrough',
+            'subscript' => 'Subscript',
+            'superscript' => 'Superscript',
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],
@@ -496,22 +565,6 @@ return [
         'boolean' => [
             'true' => 'Yes',
             'false' => 'No',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Back',
-            ],
-
-            'next_step' => [
-                'label' => 'Next',
-            ],
-
         ],
 
     ],
