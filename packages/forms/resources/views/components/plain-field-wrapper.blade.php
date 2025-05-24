@@ -16,7 +16,7 @@
 <div
     data-field-wrapper
     {{
-        (new ComponentAttributeBag())
+        (new ComponentAttributeBag)
             ->merge($field?->getExtraFieldWrapperAttributes() ?? [], escape: false)
             ->class([
                 'fi-fo-field',

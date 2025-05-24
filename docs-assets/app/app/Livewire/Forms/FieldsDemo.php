@@ -64,35 +64,6 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
             ->statePath('data')
             ->components([
                 Group::make()
-                    ->id('fused')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        FusedGroup::make([
-                            TextInput::make('one')
-                                ->placeholder('One')
-                                ->suffix('hey'),
-                            Select::make('two')
-                                ->placeholder('Two'),
-                        ])->label('Test'),
-                    ]),
-                Group::make()
-                    ->id('fused2')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        FusedGroup::make([
-                            TextInput::make('one')
-                                ->placeholder('One'),
-                            Select::make('two')
-                                ->placeholder('Two'),
-                            Select::make('three')
-                                ->placeholder('Three'),
-                        ])->columns(3),
-                    ]),
-                Group::make()
                     ->id('simple')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -149,6 +120,64 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         TextInput::make('placeholder')
                             ->label('Name')
                             ->placeholder('Dan Harrin'),
+                    ]),
+                Group::make()
+                    ->id('fused')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City'),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ]),
+                    ]),
+                Group::make()
+                    ->id('fusedLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City'),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ])
+                            ->label('Location'),
+                    ]),
+                Group::make()
+                    ->id('fusedColumns')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City'),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ])
+                            ->label('Location')
+                            ->columns(2),
+                    ]),
+                Group::make()
+                    ->id('fusedColumnsSpan')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City')
+                                ->columnSpan(2),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ])
+                            ->label('Location')
+                            ->columns(3),
                     ]),
                 Group::make()
                     ->id('textBelowContent')

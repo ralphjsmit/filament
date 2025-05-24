@@ -50,8 +50,7 @@
             {{ $getChildSchema($schemaComponent::BEFORE_LABEL_SCHEMA_KEY) }}
 
             <div class="fi-sc-fused-group-label">
-                {{ $label }}@if ($isMarkedAsRequired())
-                    <sup class="fi-sc-fused-group-label-required-mark">*</sup>
+                {{ $label }}@if ($isMarkedAsRequired())<sup class="fi-sc-fused-group-label-required-mark">*</sup>
                 @endif
             </div>
 
@@ -75,17 +74,11 @@
         @endif
 
         @if ($areHtmlValidationMessagesAllowed)
-            <div
-                data-validation-error
-                class="fi-sc-fused-group-error-message"
-            >
+            <div data-validation-error class="fi-sc-fused-group-error-message">
                 {!! $errorMessage !!}
             </div>
         @else
-            <p
-                data-validation-error
-                class="fi-sc-fused-group-error-message"
-            >
+            <p data-validation-error class="fi-sc-fused-group-error-message">
                 {{ $errorMessage }}
             </p>
         @endif
