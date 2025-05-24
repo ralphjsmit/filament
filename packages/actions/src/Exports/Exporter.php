@@ -215,6 +215,12 @@ abstract class Exporter
         return $writer;
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel>  $query
+     * @return Builder<TModel>
+     */
     public static function modifyQuery(Builder $query): Builder
     {
         return $query;
