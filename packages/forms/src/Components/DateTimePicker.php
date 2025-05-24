@@ -494,7 +494,7 @@ class DateTimePicker extends Field implements HasAffixActions
 
     public function getTimezone(): string
     {
-        return $this->evaluate($this->timezone) ?? ($this->hasTime() ? FilamentTimezone::get() : app('app.timezone'));
+        return $this->evaluate($this->timezone) ?? ($this->hasTime() ? FilamentTimezone::get() : config('app.timezone'));
     }
 
     public function getLocale(): string

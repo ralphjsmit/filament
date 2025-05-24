@@ -323,6 +323,42 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/fused': {
+        url: 'forms/fields',
+        selector: '#fused',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/fused-label': {
+        url: 'forms/fields',
+        selector: '#fusedLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/fused-columns': {
+        url: 'forms/fields',
+        selector: '#fusedColumns',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/fused-columns-span': {
+        url: 'forms/fields',
+        selector: '#fusedColumnsSpan',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/below-content/text': {
         url: 'forms/fields',
         selector: '#textBelowContent',

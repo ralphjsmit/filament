@@ -28,6 +28,7 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Icon;
 use Filament\Schemas\Components\Section;
@@ -119,6 +120,64 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         TextInput::make('placeholder')
                             ->label('Name')
                             ->placeholder('Dan Harrin'),
+                    ]),
+                Group::make()
+                    ->id('fused')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City'),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ]),
+                    ]),
+                Group::make()
+                    ->id('fusedLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City'),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ])
+                            ->label('Location'),
+                    ]),
+                Group::make()
+                    ->id('fusedColumns')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City'),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ])
+                            ->label('Location')
+                            ->columns(2),
+                    ]),
+                Group::make()
+                    ->id('fusedColumnsSpan')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City')
+                                ->columnSpan(2),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ])
+                            ->label('Location')
+                            ->columns(3),
                     ]),
                 Group::make()
                     ->id('textBelowContent')
