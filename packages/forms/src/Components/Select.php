@@ -1130,7 +1130,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
-    protected function applySearchConstraint(Builder $query, string $search): Builder
+    public function applySearchConstraint(Builder $query, string $search): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -1332,7 +1332,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
     }
 
-    protected function getQualifiedRelatedKeyNameForRelationship(Relation $relationship): string
+    public function getQualifiedRelatedKeyNameForRelationship(Relation $relationship): string
     {
         if ($relationship instanceof BelongsToMany) {
             return $relationship->getQualifiedRelatedKeyName();
