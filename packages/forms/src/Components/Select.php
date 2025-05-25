@@ -951,7 +951,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (str_contains($relationshipTitleAttribute, '->')) {
-                return Arr::get($record->toArray(), str_replace('->', '.', $relationshipTitleAttribute));
+                return data_get($record->toArray(), str_replace('->', '.', $relationshipTitleAttribute));
             }
 
             return $record->getAttributeValue($relationshipTitleAttribute);
