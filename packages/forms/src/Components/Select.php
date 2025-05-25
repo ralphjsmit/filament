@@ -1130,6 +1130,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
     public function applySearchConstraint(Builder $query, string $search): Builder
     {
         /** @var Connection $databaseConnection */
