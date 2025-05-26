@@ -409,3 +409,132 @@ public function panel(Panel $panel): Panel
         ->strictAuthorization();
 }
 ```
+
+## Configuring error notifications
+
+When Laravel's debug mode is disabled, Filament will replace Livewire's full-screen error modals with neater flash notifications. You can disable this behaviour using the `errorNotifications(false)` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->errorNotifications(false);
+}
+```
+
+You may customize the error notification text by passing strings to the `title` and `body` parameters of the `registerErrorNotification()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        );
+}
+```
+
+You may also register error notification text for a specific HTTP status code, such as `404`, by passing that status code in the `status` parameter:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        )
+        ->registerErrorNotification(
+            title: 'Record not found',
+            body: 'A record you are looking for does not exist.',
+            status: 404,
+        );
+}
+```
+
+You can also enable or disable error notifications for specific pages in a panel by setting the `$hasErrorNotifications` property on the page class:
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+    protected ?bool $hasErrorNotifications = true;
+    
+    // or
+    
+    protected ?bool $hasErrorNotifications = false;
+
+    // ...
+}
+```
+
+If you would like to run custom code to check if error notifications should be shown, you can use the `hasErrorNotifications()` method on the page class:
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+    public function hasErrorNotifications(): bool
+    {
+        return FeatureFlag::active();
+    }
+
+    // ...
+}
+```
+
+You may also register error notification text by calling the `registerErrorNotification()` method on the page class from inside the `setUpErrorNotifications()` method:
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+    protected function setUpErrorNotifications(): void
+    {
+        $this->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        );
+    }
+
+    // ...
+}
+```
+
+You can also register error notification text for a specific HTTP status code, such as `404`, by passing that status code in the `status` parameter:
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+    protected function setUpErrorNotifications(): void
+    {
+        $this->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        );
+    
+        $this->registerErrorNotification(
+            title: 'Record not found',
+            body: 'A record you are looking for does not exist.',
+            status: 404,
+        );
+    }
+
+    // ...
+}
+```
