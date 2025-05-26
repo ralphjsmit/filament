@@ -1013,4 +1013,14 @@ class FilamentManager
     {
         return $this->getCurrentOrDefaultPanel()->isAuthorizationStrict();
     }
+
+    public function getResourceCreatePageRedirect(): ?string
+    {
+        return $this->getCurrentOrDefaultPanel()->getResourceCreatePageRedirect();
+    }
+
+    public function getResourceEditPageRedirect(): ?string
+    {
+        return $this->getCurrentOrDefaultPanel()->getResourceEditPageRedirect();
+    }
 }
