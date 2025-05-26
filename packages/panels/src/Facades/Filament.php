@@ -86,6 +86,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array<string, mixed> $parameters = [])
  * @method static array<class-string> getResources()
  * @method static string getResourceUrl(string | Model $model, string $name = 'index', array<string, mixed> $parameters = [], bool $isAbsolute = false, ?Model $tenant = null)
+ * @method static ?string getResourceCreatePageRedirect()
+ * @method static ?string getResourceEditPageRedirect()
  * @method static string getSidebarWidth()
  * @method static SubNavigationPosition getSubNavigationPosition()
  * @method static string getTenancyScopeName()
