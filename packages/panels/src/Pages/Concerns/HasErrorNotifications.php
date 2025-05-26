@@ -15,9 +15,9 @@ trait HasErrorNotifications
 
     protected function setUpErrorNotifications(): void {}
 
-    public function registerErrorNotification(string $title, ?string $body = null, ?int $status = null): static
+    public function registerErrorNotification(string $title, ?string $body = null, ?int $statusCode = null): static
     {
-        $this->errorNotifications[$status] = [
+        $this->errorNotifications[$statusCode] = [
             'title' => $title,
             'body' => $body,
         ];

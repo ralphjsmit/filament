@@ -25,9 +25,9 @@ trait HasErrorNotifications
         return $this->evaluate($this->hasErrorNotifications);
     }
 
-    public function registerErrorNotification(string | Closure $title, string | Closure | null $body = null, ?int $status = null): static
+    public function registerErrorNotification(string | Closure $title, string | Closure | null $body = null, ?int $statusCode = null): static
     {
-        $this->errorNotifications[$status] = [
+        $this->errorNotifications[$statusCode] = [
             'title' => $title,
             'body' => $body,
         ];

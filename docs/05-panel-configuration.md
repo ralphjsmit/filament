@@ -457,7 +457,7 @@ public function panel(Panel $panel): Panel
         ->registerErrorNotification(
             title: 'Record not found',
             body: 'A record you are looking for does not exist.',
-            status: 404,
+            statusCode: 404,
         );
 }
 ```
@@ -531,7 +531,7 @@ class Dashboard extends BaseDashboard
         $this->registerErrorNotification(
             title: 'Record not found',
             body: 'A record you are looking for does not exist.',
-            status: 404,
+            statusCode: 404,
         );
     }
 
