@@ -182,14 +182,6 @@ You may place a maximum height on the chart to ensure that it doesn't get too bi
 protected ?string $maxHeight = '300px';
 ```
 
-## Making the chart collapsible
-
-You may enable the chart to be collapsible by setting the `$isCollapsible` property:
-
-```php
-protected ?bool $isCollapsible = true;
-```
-
 ## Setting chart configuration options
 
 You may specify an `$options` variable on the chart class to control the many configuration options that the Chart.js library provides. For instance, you could turn off the [legend](https://www.chartjs.org/docs/latest/configuration/legend.html) for a line chart:
@@ -259,6 +251,14 @@ To disable this behavior, you may override the `$isLazy` property on the widget 
 
 ```php
 protected static bool $isLazy = true;
+```
+
+## Making the chart collapsible
+
+You may allow the chart to be collapsible by setting the `$isCollapsible` property on the widget class to be `true`:
+
+```php
+protected bool $isCollapsible = true;
 ```
 
 ## Using custom Chart.js plugins
