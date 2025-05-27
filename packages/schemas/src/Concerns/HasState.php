@@ -130,23 +130,47 @@ trait HasState
         }
     }
 
-    public function callBeforeStateDehydrated(): void
+    /**
+     * @param  array<string, mixed>  $state
+     */
+    public function callBeforeStateDehydrated(array &$state = []): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component->isHidden()) {
                 continue;
             }
 
-            $component->callBeforeStateDehydrated();
+            $component->callBeforeStateDehydrated($state);
 
             foreach ($component->getChildSchemas() as $childSchema) {
                 if ($childSchema->isHidden()) {
                     continue;
                 }
 
-                $childSchema->callBeforeStateDehydrated();
+                $childSchema->callBeforeStateDehydrated($state);
             }
         }
+    }
+
+    public function hasDehydratedComponent(string $statePath): bool
+    {
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
+            if (! $component->isDehydrated()) {
+                continue;
+            }
+
+            if ($component->hasStatePath() && ($component->getStatePath() === $statePath)) {
+                return true;
+            }
+
+            foreach ($component->getChildSchemas(withHidden: true) as $container) {
+                if ($container->hasDehydratedComponent($statePath)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -369,7 +393,7 @@ trait HasState
         $state = $this->validate();
 
         if ($shouldCallHooksBefore) {
-            $this->callBeforeStateDehydrated();
+            $this->callBeforeStateDehydrated($state);
 
             $afterValidate || $this->saveRelationships();
             $afterValidate || $this->loadStateFromRelationships(andHydrate: true);

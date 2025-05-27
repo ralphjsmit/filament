@@ -315,4 +315,9 @@ class Entry extends Component
 
         <?php return ob_get_clean();
     }
+
+    public function isDehydrated(): bool
+    {
+        return false;
+    }
 }

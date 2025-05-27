@@ -206,7 +206,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             );
 
             $fileAttachmentProvider?->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
-        });
+        }, shouldUpdateValidatedStateAfter: true);
 
         $this->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, Model $record): void {
             $fileAttachmentProvider = $component->getFileAttachmentProvider();

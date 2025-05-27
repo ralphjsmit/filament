@@ -103,7 +103,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         $this->beforeStateDehydrated(static function (BaseFileUpload $component): void {
             $component->saveUploadedFiles();
-        });
+        }, shouldUpdateValidatedStateAfter: true);
 
         $this->getUploadedFileUsing(static function (BaseFileUpload $component, string $file, string | array | null $storedFileNames): ?array {
             /** @var FilesystemAdapter $storage */
@@ -852,9 +852,9 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     /**
      * @return array<string, string>
      */
-    public function getStateToDehydrate(): array
+    public function getStateToDehydrate(mixed $state): array
     {
-        $state = parent::getStateToDehydrate();
+        $state = parent::getStateToDehydrate($state);
 
         if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
             $state = [
