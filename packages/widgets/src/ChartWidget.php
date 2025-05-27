@@ -36,7 +36,7 @@ abstract class ChartWidget extends Widget implements HasSchemas
      */
     protected ?array $options = null;
 
-    protected ?bool $collapsible = true;
+    protected bool $isCollapsible = false;
 
     /**
      * @var view-string
@@ -127,8 +127,8 @@ abstract class ChartWidget extends Widget implements HasSchemas
         return $this->color;
     }
 
-    public function getCollapsible(): ?bool
+    public function isCollapsible(): bool
     {
-        return $this->collapsible ?? false;
+        return $this->isCollapsible;
     }
 }

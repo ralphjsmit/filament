@@ -184,10 +184,10 @@ protected ?string $maxHeight = '300px';
 
 ## Making the chart collapsible
 
-You may enable the chart to be collapsible by setting the `$collapsible` property:
+You may enable the chart to be collapsible by setting the `$isCollapsible` property:
 
 ```php
-protected ?bool $collapsible = true;
+protected ?bool $isCollapsible = true;
 ```
 
 ## Setting chart configuration options

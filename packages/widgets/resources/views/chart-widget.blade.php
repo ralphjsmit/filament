@@ -7,7 +7,7 @@
     $heading = $this->getHeading();
     $description = $this->getDescription();
     $filters = $this->getFilters();
-    $isCollapsible = $this->getCollapsible();
+    $isCollapsible = $this->isCollapsible();
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
