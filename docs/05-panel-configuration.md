@@ -441,7 +441,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-You may also register error notification text for a specific HTTP status code, such as `404`, by passing that status code in the `status` parameter:
+You may also register error notification text for a specific HTTP status code, such as `404`, by passing that status code in the `statusCode` parameter:
 
 ```php
 use Filament\Panel;
@@ -514,7 +514,7 @@ class Dashboard extends BaseDashboard
 }
 ```
 
-You can also register error notification text for a specific HTTP status code, such as `404`, by passing that status code in the `status` parameter:
+You can also register error notification text for a specific HTTP status code, such as `404`, by passing that status code in the `statusCode` parameter:
 
 ```php
 use Filament\Pages\Dashboard as BaseDashboard;
