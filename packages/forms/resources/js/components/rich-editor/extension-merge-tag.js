@@ -122,17 +122,6 @@ export default Node.create({
                     }
                 },
             },
-
-            // When there are multiple types of merge tags, this attribute helps distinguish them
-            mergeTagSuggestionChar: {
-                default: '{{',
-                parseHTML: element => element.getAttribute('data-merge-tag-suggestion-char'),
-                renderHTML: attributes => {
-                    return {
-                        'data-merge-tag-suggestion-char': attributes.mergeTagSuggestionChar,
-                    }
-                },
-            },
         }
     },
 
@@ -149,7 +138,7 @@ export default Node.create({
         // it returns the initial value of the extension storage
         const suggestion = (this.editor?.extensionStorage)?.[
             this.name
-        ]?.getSuggestionFromChar(node.attrs.mergeTagSuggestionChar)
+        ]?.getSuggestionFromChar('{{')
 
         const mergedOptions = { ...this.options }
 
@@ -177,7 +166,7 @@ export default Node.create({
             node,
             suggestion: (this.editor?.extensionStorage)?.[
             this.name
-        ]?.getSuggestionFromChar(node.attrs.mergeTagSuggestionChar)}
+        ]?.getSuggestionFromChar('{{')}
 
         return this.options.renderText(args)
     },
@@ -209,7 +198,7 @@ export default Node.create({
 
                     if (isMergeTag) {
                         tr.insertText(
-                            this.options.deleteTriggerWithBackspace ? '' : mergeTagNode.attrs.mergeTagSuggestionChar,
+                            this.options.deleteTriggerWithBackspace ? '' : '{{',
                             mergeTagPos,
                             mergeTagPos + mergeTagNode.nodeSize,
                         )
