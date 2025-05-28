@@ -244,7 +244,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
-    public function pasteable(bool | Closure $condition = false): static
+    public function pasteable(bool | Closure $condition = true): static
     {
         $this->isPasteable = $condition;
 
