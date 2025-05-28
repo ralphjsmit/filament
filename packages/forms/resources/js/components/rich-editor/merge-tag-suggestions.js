@@ -62,7 +62,9 @@ export default {
                 items.forEach((item, index) => {
                     const button = document.createElement('button')
                     button.className =
-                        index === selectedIndex ? 'fi-dropdown-list-item fi-selected' : 'fi-dropdown-list-item'
+                        index === selectedIndex
+                            ? 'fi-dropdown-list-item fi-selected'
+                            : 'fi-dropdown-list-item'
                     button.textContent = item
                     button.type = 'button'
                     button.addEventListener('click', () => selectItem(index))

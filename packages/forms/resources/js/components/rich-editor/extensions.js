@@ -48,6 +48,7 @@ export default async ({
         $wire: () => $wire,
     }),
     MergeTag.configure({
+        deleteTriggerWithBackspace: true,
         suggestion: mergeTagSuggestions,
     }),
     OrderedList,
