@@ -11,7 +11,11 @@
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
-    <x-filament::section :description="$description" :heading="$heading" :collapsible="$isCollapsible">
+    <x-filament::section
+        :description="$description"
+        :heading="$heading"
+        :collapsible="$isCollapsible"
+    >
         @if ($filters || method_exists($this, 'getFiltersSchema'))
             <x-slot name="headerEnd">
                 @if ($filters)
