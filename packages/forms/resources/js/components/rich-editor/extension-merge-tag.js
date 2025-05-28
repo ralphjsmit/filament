@@ -7,13 +7,12 @@ const getSuggestionOptions = function ({
   editor: tiptapEditor,
   overrideSuggestionOptions,
   extensionName,
-  char = '{{',
 }) {
     const pluginKey = new PluginKey()
 
     return {
         editor: tiptapEditor,
-        char,
+        char: '{{',
         pluginKey,
         command: ({ editor, range, props }) => {
             // increase range.to by one when the next node is of type "text"
@@ -31,7 +30,7 @@ const getSuggestionOptions = function ({
                 .insertContentAt(range, [
                     {
                         type: extensionName,
-                        attrs: { ...props, mentionSuggestionChar: char },
+                        attrs: { ...props },
                     },
                     {
                         type: 'text',
@@ -222,7 +221,6 @@ export default Node.create({
                 editor: this.editor,
                 overrideSuggestionOptions: suggestion,
                 extensionName: this.name,
-                char: suggestion.char,
             }),
         )
 
