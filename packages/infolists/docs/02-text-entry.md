@@ -541,6 +541,29 @@ TextEntry::make('tags')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `separator()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Aggregating relationships
+
+Filament provides several methods for aggregating a relationship field, including `avg()`, `max()`, `min()` and `sum()`. For instance, if you wish to show the average of a field on all related records in a column, you may use the `avg()` method:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('users_avg_age')->avg('users', 'age')
+```
+
+In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
+
+If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Database\Eloquent\Builder;
+
+TextEntry::make('users_avg_age')->avg([
+    'users' => fn (Builder $query) => $query->where('is_active', true),
+], 'age')
+```
+
 ## Customizing the text size
 
 Text entries have small font size by default, but you may change this to `TextSize::ExtraSmall`, `TextSize::Medium`, or `TextSize::Large`.
