@@ -7,7 +7,7 @@ const getSuggestionOptions = function ({
   editor: tiptapEditor,
   overrideSuggestionOptions,
   extensionName,
-  char = '@',
+  char = '{{',
 }) {
     const pluginKey = new PluginKey()
 
@@ -70,14 +70,14 @@ export default Node.create({
         return {
             HTMLAttributes: {},
             renderText({ node, suggestion }) {
-                return `${suggestion?.char}${node.attrs.label ?? node.attrs.id}`
+                return `{{ ${node.attrs.label ?? node.attrs.id} }}`
             },
             deleteTriggerWithBackspace: false,
             renderHTML({ options, node, suggestion }) {
                 return [
                     'span',
                     mergeAttributes(this.HTMLAttributes, options.HTMLAttributes),
-                    `${suggestion?.char}${node.attrs.label ?? node.attrs.id}`,
+                    `{{ ${node.attrs.label ?? node.attrs.id} }}`,
                 ]
             },
             suggestions: [],
@@ -125,7 +125,7 @@ export default Node.create({
 
             // When there are multiple types of merge tags, this attribute helps distinguish them
             mergeTagSuggestionChar: {
-                default: '@',
+                default: '{{',
                 parseHTML: element => element.getAttribute('data-merge-tag-suggestion-char'),
                 renderHTML: attributes => {
                     return {
