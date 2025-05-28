@@ -46,7 +46,7 @@ export default {
 
         const createDropdown = () => {
             const dropdown = document.createElement('div')
-            dropdown.className = 'dropdown-menu'
+            dropdown.className = 'fi-dropdown-panel fi-dropdown-list'
             return dropdown
         }
 
@@ -62,14 +62,15 @@ export default {
                 items.forEach((item, index) => {
                     const button = document.createElement('button')
                     button.className =
-                        index === selectedIndex ? 'is-selected' : ''
+                        index === selectedIndex ? 'fi-dropdown-list-item fi-selected' : 'fi-dropdown-list-item'
                     button.textContent = item
+                    button.type = 'button'
                     button.addEventListener('click', () => selectItem(index))
                     element.appendChild(button)
                 })
             } else {
                 const noResult = document.createElement('div')
-                noResult.className = 'item'
+                noResult.className = 'fi-dropdown-header'
                 noResult.textContent = 'No result'
                 element.appendChild(noResult)
             }
@@ -115,6 +116,9 @@ export default {
                 // Store current props
                 currentProps = props
 
+                // Reset selected index when items change
+                selectedIndex = 0
+
                 // Create dropdown element
                 element = createDropdown()
                 element.style.position = 'absolute'
@@ -124,9 +128,6 @@ export default {
 
                 // Append to DOM
                 document.body.appendChild(element)
-
-                // Reset selected index when items change
-                selectedIndex = 0
 
                 if (!props.clientRect) {
                     return
