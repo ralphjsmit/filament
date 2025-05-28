@@ -68,11 +68,11 @@ export default Node.create({
     addOptions: function () {
         return {
             HTMLAttributes: {},
-            renderText({ node, suggestion }) {
+            renderText({ node }) {
                 return `{{ ${node.attrs.label ?? node.attrs.id} }}`
             },
             deleteTriggerWithBackspace: false,
-            renderHTML({ options, node, suggestion }) {
+            renderHTML({ options, node }) {
                 return [
                     'span',
                     mergeAttributes(this.HTMLAttributes, options.HTMLAttributes),
