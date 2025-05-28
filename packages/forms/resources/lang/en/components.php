@@ -449,6 +449,8 @@ return [
 
         ],
 
+        'no_merge_tag_search_results_message' => 'No merge tag results.',
+
         'toolbar_buttons' => [
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',

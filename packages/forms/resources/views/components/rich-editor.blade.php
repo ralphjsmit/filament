@@ -25,6 +25,7 @@
                     liveDebounce: @js($getNormalizedLiveDebounce()),
                     livewireId: @js($this->getId()),
                     mergeTags: @js($getMergeTags()),
+                    noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     statePath: @js($statePath),
                     uploadingFileMessage: @js($getUploadingFileMessage()),

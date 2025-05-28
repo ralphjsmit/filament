@@ -17,6 +17,7 @@ use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -54,6 +55,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      * @var array<string> | Closure | null
      */
     protected array | Closure | null $mergeTags = null;
+
+    protected string | Closure | null $noMergeTagSearchResultsMessage = null;
 
     protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
 
@@ -569,5 +572,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getMergeTags(): array
     {
         return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+    }
+
+    public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
+    {
+        $this->noMergeTagSearchResultsMessage = $message;
+
+        return $this;
+    }
+
+    public function getNoMergeTagSearchResultsMessage(): string | Htmlable
+    {
+        return $this->evaluate($this->noMergeTagSearchResultsMessage) ?? __('filament-forms::components.rich_editor.no_merge_tag_search_results_message');
     }
 }

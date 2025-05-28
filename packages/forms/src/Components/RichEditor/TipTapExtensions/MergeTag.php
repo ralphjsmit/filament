@@ -49,7 +49,7 @@ class MergeTag extends Node
     }
 
     /**
-     * @param object $node
+     * @param  object  $node
      */
     public function renderText($node): ?string
     {

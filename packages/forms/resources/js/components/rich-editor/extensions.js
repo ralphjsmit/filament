@@ -18,12 +18,13 @@ import Superscript from '@tiptap/extension-superscript'
 import Text from '@tiptap/extension-text'
 import Underline from '@tiptap/extension-underline'
 
-import mergeTagSuggestions from './merge-tag-suggestions.js'
+import getMergeTagSuggestion from './merge-tag-suggestion.js'
 
 export default async ({
     customExtensionUrls,
     key,
     mergeTags,
+    noMergeTagSearchResultsMessage,
     statePath,
     uploadingFileMessage,
     $wire,
@@ -52,7 +53,10 @@ export default async ({
         ? [
               MergeTag.configure({
                   deleteTriggerWithBackspace: true,
-                  suggestion: mergeTagSuggestions(mergeTags),
+                  suggestion: getMergeTagSuggestion({
+                      mergeTags,
+                      noMergeTagSearchResultsMessage,
+                  }),
               }),
           ]
         : []),

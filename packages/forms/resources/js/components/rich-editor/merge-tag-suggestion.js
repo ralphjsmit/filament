@@ -32,7 +32,7 @@ const updatePosition = (editor, element) => {
     })
 }
 
-export default (mergeTags) => ({
+export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
     items: ({ query }) => {
         return mergeTags.filter((item) =>
             item.toLowerCase().replace(/\s/g, '').includes(query.toLowerCase()),
@@ -73,7 +73,7 @@ export default (mergeTags) => ({
             } else {
                 const noResult = document.createElement('div')
                 noResult.className = 'fi-dropdown-header'
-                noResult.textContent = 'No result'
+                noResult.textContent = noMergeTagSearchResultsMessage
                 element.appendChild(noResult)
             }
         }
