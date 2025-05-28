@@ -4,9 +4,9 @@ import { PluginKey } from '@tiptap/pm/state'
 import Suggestion from '@tiptap/suggestion'
 
 const getSuggestionOptions = function ({
-  editor: tiptapEditor,
-  overrideSuggestionOptions,
-  extensionName,
+    editor: tiptapEditor,
+    overrideSuggestionOptions,
+    extensionName,
 }) {
     const pluginKey = new PluginKey()
 
@@ -40,7 +40,9 @@ const getSuggestionOptions = function ({
                 .run()
 
             // get reference to `window` object from editor element, to support cross-frame JS usage
-            editor.view.dom.ownerDocument.defaultView?.getSelection()?.collapseToEnd()
+            editor.view.dom.ownerDocument.defaultView
+                ?.getSelection()
+                ?.collapseToEnd()
         },
         allow: ({ state, range }) => {
             const $from = state.doc.resolve(range.from)
@@ -75,7 +77,10 @@ export default Node.create({
             renderHTML({ options, node }) {
                 return [
                     'span',
-                    mergeAttributes(this.HTMLAttributes, options.HTMLAttributes),
+                    mergeAttributes(
+                        this.HTMLAttributes,
+                        options.HTMLAttributes,
+                    ),
                     `{{ ${node.attrs.label ?? node.attrs.id} }}`,
                 ]
             },
@@ -96,8 +101,8 @@ export default Node.create({
         return {
             id: {
                 default: null,
-                parseHTML: element => element.getAttribute('data-id'),
-                renderHTML: attributes => {
+                parseHTML: (element) => element.getAttribute('data-id'),
+                renderHTML: (attributes) => {
                     if (!attributes.id) {
                         return {}
                     }
@@ -110,8 +115,8 @@ export default Node.create({
 
             label: {
                 default: null,
-                parseHTML: element => element.getAttribute('data-label'),
-                renderHTML: attributes => {
+                parseHTML: (element) => element.getAttribute('data-label'),
+                renderHTML: (attributes) => {
                     if (!attributes.label) {
                         return {}
                     }
@@ -135,9 +140,10 @@ export default Node.create({
     renderHTML: function ({ node, HTMLAttributes }) {
         // We cannot use the `this.storage` property here because, when accessed this method,
         // it returns the initial value of the extension storage
-        const suggestion = (this.editor?.extensionStorage)?.[
-            this.name
-        ]?.getSuggestionFromChar('{{')
+        const suggestion =
+            this.editor?.extensionStorage?.[this.name]?.getSuggestionFromChar(
+                '{{',
+            )
 
         const mergedOptions = { ...this.options }
 
@@ -154,7 +160,15 @@ export default Node.create({
         })
 
         if (typeof html === 'string') {
-            return ['span', mergeAttributes({ 'data-type': this.name }, this.options.HTMLAttributes, HTMLAttributes), html]
+            return [
+                'span',
+                mergeAttributes(
+                    { 'data-type': this.name },
+                    this.options.HTMLAttributes,
+                    HTMLAttributes,
+                ),
+                html,
+            ]
         }
         return html
     },
@@ -163,9 +177,11 @@ export default Node.create({
         const args = {
             options: this.options,
             node,
-            suggestion: (this.editor?.extensionStorage)?.[
-            this.name
-        ]?.getSuggestionFromChar('{{')}
+            suggestion:
+                this.editor?.extensionStorage?.[
+                    this.name
+                ]?.getSuggestionFromChar('{{'),
+        }
 
         return this.options.renderText(args)
     },
@@ -215,8 +231,10 @@ export default Node.create({
 
     onBeforeCreate: function () {
         this.storage.suggestions = (
-            this.options.suggestions.length ? this.options.suggestions : [this.options.suggestion]
-        ).map(suggestion =>
+            this.options.suggestions.length
+                ? this.options.suggestions
+                : [this.options.suggestion]
+        ).map((suggestion) =>
             getSuggestionOptions({
                 editor: this.editor,
                 overrideSuggestionOptions: suggestion,
@@ -224,8 +242,10 @@ export default Node.create({
             }),
         )
 
-        this.storage.getSuggestionFromChar = char => {
-            const suggestion = this.storage.suggestions.find(s => s.char === char)
+        this.storage.getSuggestionFromChar = (char) => {
+            const suggestion = this.storage.suggestions.find(
+                (s) => s.char === char,
+            )
             if (suggestion) {
                 return suggestion
             }

@@ -34,13 +34,9 @@ const updatePosition = (editor, element) => {
 
 export default {
     items: ({ query }) => {
-        return [
-            'name',
-            'email',
-            'job title',
-            'username',
-        ]
-            .filter(item => item.toLowerCase().replace(/\s/g,'').includes(query.toLowerCase()))
+        return ['name', 'email', 'job title', 'username'].filter((item) =>
+            item.toLowerCase().replace(/\s/g, '').includes(query.toLowerCase()),
+        )
     },
 
     render: () => {
@@ -65,7 +61,8 @@ export default {
             if (items.length) {
                 items.forEach((item, index) => {
                     const button = document.createElement('button')
-                    button.className = index === selectedIndex ? 'is-selected' : ''
+                    button.className =
+                        index === selectedIndex ? 'is-selected' : ''
                     button.textContent = item
                     button.addEventListener('click', () => selectItem(index))
                     element.appendChild(button)
@@ -114,7 +111,7 @@ export default {
         }
 
         return {
-            onStart: props => {
+            onStart: (props) => {
                 // Store current props
                 currentProps = props
 
@@ -138,7 +135,7 @@ export default {
                 updatePosition(props.editor, element)
             },
 
-            onUpdate(props) {
+            onUpdate: (props) => {
                 // Store current props
                 currentProps = props
 
@@ -155,7 +152,7 @@ export default {
                 updatePosition(props.editor, element)
             },
 
-            onKeyDown(props) {
+            onKeyDown: (props) => {
                 if (props.event.key === 'Escape') {
                     if (element && element.parentNode) {
                         element.parentNode.removeChild(element)
@@ -182,7 +179,7 @@ export default {
                 return false
             },
 
-            onExit() {
+            onExit: () => {
                 if (element && element.parentNode) {
                     element.parentNode.removeChild(element)
                 }
