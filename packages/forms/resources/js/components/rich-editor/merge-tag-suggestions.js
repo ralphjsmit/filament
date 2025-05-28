@@ -32,9 +32,9 @@ const updatePosition = (editor, element) => {
     })
 }
 
-export default {
+export default (mergeTags) => ({
     items: ({ query }) => {
-        return ['name', 'email', 'job title', 'username'].filter((item) =>
+        return mergeTags.filter((item) =>
             item.toLowerCase().replace(/\s/g, '').includes(query.toLowerCase()),
         )
     },
@@ -189,4 +189,4 @@ export default {
             },
         }
     },
-}
+})

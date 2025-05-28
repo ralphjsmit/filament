@@ -24,6 +24,7 @@
                     isLiveOnBlur: @js($isLiveOnBlur()),
                     liveDebounce: @js($getNormalizedLiveDebounce()),
                     livewireId: @js($this->getId()),
+                    mergeTags: @js($getMergeTags()),
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     statePath: @js($statePath),
                     uploadingFileMessage: @js($getUploadingFileMessage()),

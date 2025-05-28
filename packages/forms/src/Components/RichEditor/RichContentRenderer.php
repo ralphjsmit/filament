@@ -50,6 +50,16 @@ class RichContentRenderer implements Htmlable
     protected ?FileAttachmentProvider $fileAttachmentProvider = null;
 
     /**
+     * @var ?array<string, mixed>
+     */
+    protected ?array $mergeTags = null;
+
+    /**
+     * @var array<string, mixed>
+     */
+    protected array $cachedMergeTagValues = [];
+
+    /**
      * @param  string | array<string, mixed> | null  $content
      */
     public function __construct(string | array | null $content = null)
@@ -148,6 +158,30 @@ class RichContentRenderer implements Htmlable
         });
     }
 
+    protected function processMergeTags(Editor $editor): void
+    {
+        if (blank($this->mergeTags)) {
+            return;
+        }
+
+        $editor->descendants(function (object &$node): void {
+            if ($node->type !== 'mergeTag') {
+                return;
+            }
+
+            if (blank($node->attrs->id ?? null)) {
+                return;
+            }
+
+            $node->content = [
+                (object) [
+                    'type' => 'text',
+                    'text' => $this->getMergeTagValue($node->attrs->id),
+                ],
+            ];
+        });
+    }
+
     /**
      * @return array<RichContentPlugin>
      */
@@ -230,6 +264,7 @@ class RichContentRenderer implements Htmlable
         $editor = $this->getEditor();
 
         $this->processFileAttachments($editor);
+        $this->processMergeTags($editor);
 
         return $editor->getHTML();
     }
@@ -237,5 +272,21 @@ class RichContentRenderer implements Htmlable
     public function toHtml(): string
     {
         return Str::sanitizeHtml($this->toUnsafeHtml());
+    }
+
+    /**
+     * @param  ?array<string, mixed>  $mergeTags
+     */
+    public function mergeTags(?array $mergeTags): static
+    {
+        $this->mergeTags = $mergeTags;
+        $this->cachedMergeTagValues = [];
+
+        return $this;
+    }
+
+    public function getMergeTagValue(string $mergeTag): mixed
+    {
+        return $this->cachedMergeTagValues[$mergeTag] ??= value($this->mergeTags[$mergeTag] ?? null);
     }
 }

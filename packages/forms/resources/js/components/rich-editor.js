@@ -9,6 +9,7 @@ export default function richEditorFormComponent({
     isLiveOnBlur,
     liveDebounce,
     livewireId,
+    mergeTags,
     state,
     statePath,
     uploadingFileMessage,
@@ -32,6 +33,7 @@ export default function richEditorFormComponent({
                 extensions: await getExtensions({
                     customExtensionUrls: extensions,
                     key,
+                    mergeTags,
                     statePath,
                     uploadingFileMessage,
                     $wire: this.$wire,

@@ -50,6 +50,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected array $tools = [];
 
+    /**
+     * @var array<string> | Closure | null
+     */
+    protected array | Closure | null $mergeTags = null;
+
     protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
@@ -546,5 +551,23 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 initial: [],
             ),
         ];
+    }
+
+    /**
+     * @param  array<string> | Closure | null  $mergeTags
+     */
+    public function mergeTags(array | Closure | null $mergeTags): static
+    {
+        $this->mergeTags = $mergeTags;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getMergeTags(): array
+    {
+        return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
     }
 }

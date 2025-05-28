@@ -23,6 +23,7 @@ import mergeTagSuggestions from './merge-tag-suggestions.js'
 export default async ({
     customExtensionUrls,
     key,
+    mergeTags,
     statePath,
     uploadingFileMessage,
     $wire,
@@ -47,10 +48,14 @@ export default async ({
         uploadingMessage: uploadingFileMessage,
         $wire: () => $wire,
     }),
-    MergeTag.configure({
-        deleteTriggerWithBackspace: true,
-        suggestion: mergeTagSuggestions,
-    }),
+    ...(mergeTags.length
+        ? [
+              MergeTag.configure({
+                  deleteTriggerWithBackspace: true,
+                  suggestion: mergeTagSuggestions(mergeTags),
+              }),
+          ]
+        : []),
     OrderedList,
     Paragraph,
     Strike,
