@@ -412,6 +412,17 @@ FileUpload::make('attachment')
     ->deletable(false)
 ```
 
+## Allow submission of file from Clipboard paste
+
+You can accept submission via the clipboard paste by using `pasteable(true)`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->pasteable(true)
+```
+
 ## Prevent file information fetching
 
 While the form is loaded, it will automatically detect whether the files exist, what size they are, and what type of files they are. This is all done on the backend. When using remote storage with many files, this can be time-consuming. You can use the `fetchFileInformation(false)` method to disable this feature:
