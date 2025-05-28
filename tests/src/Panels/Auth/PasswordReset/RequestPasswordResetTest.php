@@ -6,6 +6,8 @@ use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Auth\Events\PasswordResetLinkSent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 
 use function Filament\Tests\livewire;
@@ -30,6 +32,7 @@ it('can render page with a custom slug', function () {
 
 it('can request password reset', function () {
     Notification::fake();
+    Event::fake();
 
     $this->assertGuest();
 
@@ -48,6 +51,10 @@ it('can request password reset', function () {
         );
 
     Notification::assertSentTo($userToResetPassword, ResetPassword::class);
+
+    if (class_exists(PasswordResetLinkSent::class)) {
+        Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event): bool => $event->user->is($userToResetPassword));
+    }
 });
 
 it('cannot request password reset without panel access', function () {
