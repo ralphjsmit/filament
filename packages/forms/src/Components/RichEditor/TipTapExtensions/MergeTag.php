@@ -48,13 +48,16 @@ class MergeTag extends Node
         ];
     }
 
+    /**
+     * @param object $node
+     */
     public function renderText($node): ?string
     {
         return $this->options['renderLabel']($node);
     }
 
     /**
-     * @param  Node  $node
+     * @param  object  $node
      * @param  array<string, mixed>  $HTMLAttributes
      * @return array<mixed>
      */
