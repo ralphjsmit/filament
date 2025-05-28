@@ -323,7 +323,13 @@ class ModalTableSelect extends Field
                 return $component->getOptionLabelFromRecord($record);
             }
 
-            return $record->getAttributeValue($component->getRelationshipTitleAttribute());
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
+            }
+
+            return data_get($record, $relationshipTitleAttribute);
         });
 
         $this->getSelectedRecordUsing(static function (ModalTableSelect $component, $state) use ($modifyQueryUsing): ?Model {

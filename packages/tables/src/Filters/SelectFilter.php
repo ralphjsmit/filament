@@ -450,7 +450,13 @@ class SelectFilter extends BaseFilter
                         return $component->getOptionLabelFromRecord($record);
                     }
 
-                    return $record->getAttributeValue($component->getRelationshipTitleAttribute());
+                    $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+                    if (str_contains($relationshipTitleAttribute, '->')) {
+                        $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
+                    }
+
+                    return data_get($record, $relationshipTitleAttribute);
                 })
                 ->getOptionLabelsUsing(function (Select $component, array $values): array {
                     $relationship = Relation::noConstraints(fn () => $component->getRelationship());

@@ -951,10 +951,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (str_contains($relationshipTitleAttribute, '->')) {
-                return data_get($record, str_replace('->', '.', $relationshipTitleAttribute));
+                $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
             }
 
-            return $record->getAttributeValue($relationshipTitleAttribute);
+            return data_get($record, $relationshipTitleAttribute);
         });
 
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
