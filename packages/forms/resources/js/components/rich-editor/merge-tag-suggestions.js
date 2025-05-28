@@ -40,8 +40,7 @@ export default {
             'job title',
             'username',
         ]
-            .filter(item => item.toLowerCase().startsWith(query.toLowerCase()))
-            .slice(0, 5)
+            .filter(item => item.toLowerCase().replace(/\s/g,'').includes(query.toLowerCase()))
     },
 
     render: () => {
