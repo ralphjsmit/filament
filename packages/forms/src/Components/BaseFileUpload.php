@@ -26,6 +26,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
      */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
+    protected bool | Closure $isPasteable = false;
+
     protected bool | Closure $isDeletable = true;
 
     protected bool | Closure $isDownloadable = false;
@@ -238,6 +240,13 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
             return "mimetypes:{$types}";
         });
+
+        return $this;
+    }
+
+    public function pasteable(bool | Closure $condition = false): static
+    {
+        $this->isPasteable = $condition;
 
         return $this;
     }
@@ -473,6 +482,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         $this->saveUploadedFileUsing = $callback;
 
         return $this;
+    }
+
+    public function isPasteable(): bool
+    {
+        return (bool) $this->evaluate($this->isPasteable);
     }
 
     public function isDeletable(): bool

@@ -55,6 +55,7 @@
                     imageResizeTargetWidth: @js($imageResizeTargetWidth),
                     imageResizeUpscale: @js($getImageResizeUpscale()),
                     isAvatar: @js($isAvatar),
+                    isPasteable: @js($isPasteable()),
                     isDeletable: @js($isDeletable()),
                     isDisabled: @js($isDisabled),
                     isDownloadable: @js($isDownloadable()),
