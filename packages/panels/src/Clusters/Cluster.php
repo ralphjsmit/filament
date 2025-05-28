@@ -87,19 +87,19 @@ class Cluster extends Page
             ->title();
     }
 
-    public static function prependClusterSlug(string $slug): string
+    public static function prependClusterSlug(Panel $panel, string $slug): string
     {
-        return static::getSlug() . "/{$slug}";
+        return static::getSlug($panel) . "/{$slug}";
     }
 
-    public static function prependClusterRouteBaseName(string $name): string
+    public static function prependClusterRouteBaseName(Panel $panel, string $name): string
     {
-        return (string) str(static::getSlug())
+        return (string) str(static::getSlug($panel))
             ->replace('/', '.')
             ->append(".{$name}");
     }
 
-    public static function getSlug(): string
+    public static function getSlug(Panel $panel): string
     {
         if (filled(static::$slug)) {
             return static::$slug;
@@ -115,7 +115,7 @@ class Cluster extends Page
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentOrDefaultPanel();
 
-        return $panel->generateRouteName(static::getRelativeRouteName());
+        return $panel->generateRouteName(static::getRelativeRouteName($panel));
     }
 
     public static function getNavigationItemActiveRoutePattern(): string

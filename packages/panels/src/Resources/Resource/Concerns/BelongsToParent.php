@@ -32,7 +32,7 @@ trait BelongsToParent
         if (is_string($parentResource)) {
             $parentResource = $parentResource::asParent(childResource: static::class);
         }
-
+		
         return $parentResource;
     }
 

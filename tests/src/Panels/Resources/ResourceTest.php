@@ -19,27 +19,27 @@ it('can retrieve Eloquent query for model', function (): void {
 });
 
 it('can generate a slug based on the model name', function (): void {
-    expect(PostResource::getSlug())
+    expect(PostResource::getSlug(Filament::getCurrentOrDefaultPanel()))
         ->toBe('posts');
 });
 
 it('can generate a slug based on the multi-word model name', function (): void {
-    expect(PostCategoryResource::getSlug())
+    expect(PostCategoryResource::getSlug(Filament::getCurrentOrDefaultPanel()))
         ->toBe('post-categories');
 });
 
 it('can generate a nested slug based on the model name', function (): void {
-    expect(ProductResource::getSlug())
+    expect(ProductResource::getSlug(Filament::getCurrentOrDefaultPanel()))
         ->toBe('shop/products');
 });
 
 it('can generate a nested slug based on the model name with a resource outside of its directory', function (): void {
-    expect(OrderResource::getSlug())
+    expect(OrderResource::getSlug(Filament::getCurrentOrDefaultPanel()))
         ->toBe('shop/orders');
 });
 
 it('can generate a nested slug based on the multi-word model name', function (): void {
-    expect(OrderInvoiceResource::getSlug())
+    expect(OrderInvoiceResource::getSlug(Filament::getCurrentOrDefaultPanel()))
         ->toBe('shop/order-invoices');
 });
 
@@ -97,7 +97,7 @@ it('can resolve record route binding', function (): void {
 
 it('can retrieve a page\'s URL', function (): void {
     $post = Post::factory()->create();
-    $resourceSlug = PostResource::getSlug();
+    $resourceSlug = PostResource::getSlug(Filament::getCurrentOrDefaultPanel());
 
     expect(PostResource::getUrl('create'))
         ->toContain($resourceSlug)
