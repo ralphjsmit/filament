@@ -125,7 +125,7 @@ export default Node.create({
 
             // When there are multiple types of merge tags, this attribute helps distinguish them
             mergeTagSuggestionChar: {
-                default: '{{ ',
+                default: '@',
                 parseHTML: element => element.getAttribute('data-merge-tag-suggestion-char'),
                 renderHTML: attributes => {
                     return {

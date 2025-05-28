@@ -48,10 +48,7 @@ export default async ({
         $wire: () => $wire,
     }),
     MergeTag.configure({
-        HTMLAttributes: {
-            class: 'merge-tag',
-        },
-        mergeTagSuggestions,
+        suggestion: mergeTagSuggestions,
     }),
     OrderedList,
     Paragraph,
