@@ -382,6 +382,8 @@ return [
 
         ],
 
+        'no_merge_tag_search_results_message' => 'Nenhuma tag encontrada.',
+
         'tools' => [
             'attach_files' => 'Anexar ficheiros',
             'blockquote' => 'Bloco de citação',
@@ -393,6 +395,7 @@ return [
             'h3' => 'Subtítulo',
             'italic' => 'Itálico',
             'link' => 'Hiperligação',
+            'merge_tags' => 'Tags dinâmicas',
             'ordered_list' => 'Lista numerada',
             'redo' => 'Refazer',
             'strike' => 'Rasurado',
