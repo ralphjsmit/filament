@@ -230,22 +230,29 @@ export default Node.create({
             new Plugin({
                 props: {
                     handleDrop(view, event) {
-                        if (! event) return false
+                        if (! event) {
+                            return false
+                        }
 
                         event.preventDefault()
 
-                        const coordinates = view.posAtCoords({
-                            left: event.clientX,
-                            top: event.clientY,
-                        })
-
-                        if (event.dataTransfer.getData('mergeTag')) {
-                            // event.dataTransfer.getData('mergeTag')
-
-                            return false;
+                        if (! event.dataTransfer.getData('mergeTag')) {
+                            return false
                         }
 
-                        return false;
+                        const mergeTagId = event.dataTransfer.getData('mergeTag')
+
+                        view.dispatch(
+                            view.state.tr.insert(
+                                view.posAtCoords({
+                                    left: event.clientX,
+                                    top: event.clientY,
+                                }).pos,
+                                view.state.schema.nodes.mergeTag.create({ id: mergeTagId })
+                            )
+                        )
+
+                        return false
                     },
                 },
             }),

@@ -181,7 +181,7 @@ export default function richEditorFormComponent({
                 return
             }
 
-            this.activePanel = panel
+            this.activePanel = id
         },
 
         isPanelActive: function (id = null) {
