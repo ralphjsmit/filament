@@ -5,6 +5,7 @@ import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
 import CustomBlock from './extension-custom-block.js'
 import Document from '@tiptap/extension-document'
+import Dropcursor from '@tiptap/extension-dropcursor'
 import Heading from '@tiptap/extension-heading'
 import Italic from '@tiptap/extension-italic'
 import Image from './extension-image.js'
@@ -37,6 +38,7 @@ export default async ({
     CodeBlock,
     CustomBlock,
     Document,
+    Dropcursor,
     Heading,
     Italic,
     Image,
