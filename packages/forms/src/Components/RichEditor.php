@@ -131,29 +131,29 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->label(__('filament-forms::components.rich_editor.tools.code_block'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleCodeBlock().run()')
                 ->icon(Heroicon::CodeBracket)
-                ->iconAlias('forms:components.rich-editor.toolbar.code_block'),
+                ->iconAlias('forms:components.rich-editor.toolbar.code-block'),
             RichEditorTool::make('bulletList')
                 ->label(__('filament-forms::components.rich_editor.tools.bullet_list'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleBulletList().run()')
                 ->icon(Heroicon::ListBullet)
-                ->iconAlias('forms:components.rich-editor.toolbar.bullet_list'),
+                ->iconAlias('forms:components.rich-editor.toolbar.bullet-list'),
             RichEditorTool::make('orderedList')
                 ->label(__('filament-forms::components.rich_editor.tools.ordered_list'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().toggleOrderedList().run()')
                 ->icon(Heroicon::NumberedList)
-                ->iconAlias('forms:components.rich-editor.toolbar.ordered_list'),
+                ->iconAlias('forms:components.rich-editor.toolbar.ordered-list'),
             RichEditorTool::make('attachFiles')
                 ->label(__('filament-forms::components.rich_editor.tools.attach_files'))
                 ->action(arguments: '{ alt: $getEditor().getAttributes(\'image\')?.alt, id: $getEditor().getAttributes(\'image\')[\'data-id\'] ?? null, src: $getEditor().getAttributes(\'image\')?.src }')
                 ->activeKey('image')
                 ->icon(Heroicon::PaperClip)
-                ->iconAlias('forms:components.rich-editor.toolbar.attach_files'),
+                ->iconAlias('forms:components.rich-editor.toolbar.attach-files'),
             RichEditorTool::make('mergeTags')
                 ->label(__('filament-forms::components.rich_editor.tools.merge_tags'))
                 ->javaScriptHandler('togglePanel(\'mergeTags\')')
                 ->javaScriptActive('isPanelActive(\'mergeTags\')')
                 ->icon('fi-s-merge-tag')
-                ->iconAlias('forms:components.rich-editor.toolbar.merge_tag'),
+                ->iconAlias('forms:components.rich-editor.toolbar.merge-tags'),
             RichEditorTool::make('undo')
                 ->label(__('filament-forms::components.rich_editor.tools.undo'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().undo().run()')

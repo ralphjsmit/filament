@@ -48,11 +48,19 @@
     }
 
     & .fi-fo-rich-editor-merge-tags-list {
-        @apply grid gap-3 p-3;
+        @apply flex flex-wrap gap-2 p-3;
+    }
+
+    & .fi-fo-rich-editor-merge-tags-panel-header {
+        @apply flex items-start gap-3;
     }
 
     & .fi-fo-rich-editor-merge-tags-panel-heading {
-        @apply p-3 text-sm font-semibold text-gray-950 dark:text-white;
+        @apply flex-1 p-3 text-sm font-semibold text-gray-950 dark:text-white;
+    }
+
+    & .fi-fo-rich-editor-merge-tags-panel-close-btn-ctn {
+        @apply p-3 flex-shrink-0;
     }
 
     & .fi-fo-rich-editor-merge-tag-btn {

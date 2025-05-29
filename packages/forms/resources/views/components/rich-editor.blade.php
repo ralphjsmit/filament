@@ -65,9 +65,21 @@
                         x-show="isPanelActive('mergeTags')"
                         class="fi-fo-rich-editor-merge-tags-panel"
                     >
-                        <p class="fi-fo-rich-editor-merge-tags-panel-heading">
-                            {{ __('filament-forms::components.rich_editor.tools.merge_tags') }}
-                        </p>
+                        <div class="fi-fo-rich-editor-merge-tags-panel-header">
+                            <p class="fi-fo-rich-editor-merge-tags-panel-heading">
+                                {{ __('filament-forms::components.rich_editor.tools.merge_tags') }}
+                            </p>
+
+                            <div class="fi-fo-rich-editor-merge-tags-panel-close-btn-ctn">
+                                <button
+                                    type="button"
+                                    x-on:click="togglePanel()"
+                                    class="fi-icon-btn"
+                                >
+                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.merge-tags.close-button') }}
+                                </button>
+                            </div>
+                        </div>
 
                         <div class="fi-fo-rich-editor-merge-tags-list">
                             @foreach ($mergeTags as $mergeTag)

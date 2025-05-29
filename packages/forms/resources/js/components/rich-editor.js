@@ -174,7 +174,7 @@ export default function richEditorFormComponent({
             commandChain.run()
         },
 
-        togglePanel: function (id) {
+        togglePanel: function (id = null) {
             if (this.isPanelActive(id)) {
                 this.activePanel = null
 
