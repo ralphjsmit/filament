@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Facades\FilamentView;
 
+    $customBlocks = $getCustomBlocks();
     $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
     $key = $getKey();
@@ -62,6 +63,54 @@
                     class="fi-fo-rich-editor-side-panels"
                 >
                     <div
+                        x-show="isPanelActive('customBlocks')"
+                        class="fi-fo-rich-editor-side-panel"
+                    >
+                        <div class="fi-fo-rich-editor-side-panel-header">
+                            <p class="fi-fo-rich-editor-side-panel-heading">
+                                {{ __('filament-forms::components.rich_editor.tools.custom_blocks') }}
+                            </p>
+
+                            <div
+                                class="fi-fo-rich-editor-side-panel-close-btn-ctn"
+                            >
+                                <button
+                                    type="button"
+                                    x-on:click="togglePanel()"
+                                    class="fi-icon-btn"
+                                >
+                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.custom-blocks.close-button') }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="fi-fo-rich-editor-custom-blocks-list">
+                            @foreach ($customBlocks as $block)
+                                @php
+                                    $blockId = $block::getId();
+                                @endphp
+
+                                <div>
+                                    <button
+                                        draggable="true"
+                                        type="button"
+                                        x-on:click="insertCustomBlock(@js($blockId))"
+                                        x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
+                                        class="fi-fo-rich-editor-custom-block-btn"
+                                    >
+                                        <div
+                                            data-type="customBlock"
+                                            data-id="{{ $blockId }}"
+                                        >
+                                            {{ $block::getLabel() }}
+                                        </div>
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div
                         x-show="isPanelActive('mergeTags')"
                         class="fi-fo-rich-editor-side-panel"
                     >
@@ -84,20 +133,20 @@
                         </div>
 
                         <div class="fi-fo-rich-editor-merge-tags-list">
-                            @foreach ($mergeTags as $mergeTag)
+                            @foreach ($mergeTags as $tag)
                                 <div>
                                     <button
                                         draggable="true"
                                         type="button"
-                                        x-on:click="insertMergeTag(@js($mergeTag))"
-                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($mergeTag))"
+                                        x-on:click="insertMergeTag(@js($tag))"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tag))"
                                         class="fi-fo-rich-editor-merge-tag-btn"
                                     >
                                         <span
                                             data-type="mergeTag"
-                                            data-id="{{ $mergeTag }}"
+                                            data-id="{{ $tag }}"
                                         >
-                                            {{ $mergeTag }}
+                                            {{ $tag }}
                                         </span>
                                     </button>
                                 </div>

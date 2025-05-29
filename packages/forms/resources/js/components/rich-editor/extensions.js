@@ -3,6 +3,7 @@ import Blockquote from '@tiptap/extension-blockquote'
 import Bold from '@tiptap/extension-bold'
 import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
+import CustomBlock from './extension-custom-block.js'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
 import Italic from '@tiptap/extension-italic'
@@ -34,6 +35,7 @@ export default async ({
     BulletList,
     Code,
     CodeBlock,
+    CustomBlock,
     Document,
     Heading,
     Italic,

@@ -12,6 +12,7 @@ use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
@@ -55,6 +56,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      * @var array<string> | Closure | null
      */
     protected array | Closure | null $mergeTags = null;
+
+    /**
+     * @var array<class-string<RichContentCustomBlock>> | Closure | null
+     */
+    protected array | Closure | null $customBlocks = null;
 
     protected string | Closure | null $noMergeTagSearchResultsMessage = null;
 
@@ -148,6 +154,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->activeKey('image')
                 ->icon(Heroicon::PaperClip)
                 ->iconAlias('forms:components.rich-editor.toolbar.attach-files'),
+            RichEditorTool::make('customBlocks')
+                ->label(__('filament-forms::components.rich_editor.tools.custom_blocks'))
+                ->javaScriptHandler('togglePanel(\'customBlocks\')')
+                ->javaScriptActive('isPanelActive(\'customBlocks\')')
+                ->icon(Heroicon::SquaresPlus)
+                ->iconAlias('forms:components.rich-editor.toolbar.custom-blocks'),
             RichEditorTool::make('mergeTags')
                 ->label(__('filament-forms::components.rich_editor.tools.merge_tags'))
                 ->javaScriptHandler('togglePanel(\'mergeTags\')')
@@ -514,6 +526,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'attachFiles',
+                ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
             ],
             ['undo', 'redo'],
@@ -568,11 +581,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<string> | Closure | null  $mergeTags
+     * @param  array<string> | Closure | null  $tags
      */
-    public function mergeTags(array | Closure | null $mergeTags): static
+    public function mergeTags(array | Closure | null $tags): static
     {
-        $this->mergeTags = $mergeTags;
+        $this->mergeTags = $tags;
 
         return $this;
     }
@@ -607,5 +620,23 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getActivePanel(): ?string
     {
         return $this->evaluate($this->activePanel);
+    }
+
+    /**
+     * @param array<class-string<RichContentCustomBlock>> | Closure | null  $blocks
+     */
+    public function customBlocks(array | Closure | null $blocks): static
+    {
+        $this->customBlocks = $blocks;
+
+        return $this;
+    }
+
+    /**
+     * @return array<class-string<RichContentCustomBlock>>
+     */
+    public function getCustomBlocks(): array
+    {
+        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? [];
     }
 }

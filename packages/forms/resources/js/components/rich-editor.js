@@ -192,6 +192,23 @@ export default function richEditorFormComponent({
             return this.activePanel === id
         },
 
+        insertCustomBlock: function (id) {
+            editor
+                .chain()
+                .focus()
+                .insertContent([
+                    {
+                        type: 'customBlock',
+                        attrs: { id },
+                    },
+                    {
+                        type: 'text',
+                        text: ' ',
+                    },
+                ])
+                .run()
+        },
+
         insertMergeTag: function (id) {
             editor
                 .chain()

@@ -67,6 +67,14 @@
         @apply rounded-lg bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
     }
 
+    & .fi-fo-rich-editor-custom-blocks-list {
+        @apply flex flex-wrap gap-2 p-3;
+    }
+
+    & .fi-fo-rich-editor-custom-block-btn {
+        @apply rounded-lg bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+    }
+
     & .tiptap {
         @apply h-full;
 
@@ -87,7 +95,7 @@
         }
 
         & .fi-fo-rich-editor-side-panels {
-            @apply @2xl:max-w-3xs @2xl:border-s @2xl:border-b-0;
+            @apply @2xl:max-w-3xs @2xl:border-s @2xl:border-b-0 @2xl:rounded-ee-lg;
         }
     }
 
@@ -97,7 +105,7 @@
         }
 
         & .fi-fo-rich-editor-side-panels {
-            @apply md:max-w-3xs md:border-s md:border-b-0;
+            @apply md:max-w-3xs md:border-s md:border-b-0 md:rounded-ee-lg;
         }
     }
 }

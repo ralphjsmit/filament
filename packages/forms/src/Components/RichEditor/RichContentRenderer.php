@@ -55,6 +55,11 @@ class RichContentRenderer implements Htmlable
     protected ?array $mergeTags = null;
 
     /**
+     * @var ?array<class-string<RichContentCustomBlock>>
+     */
+    protected ?array $customBlocks = null;
+
+    /**
      * @var array<string, mixed>
      */
     protected array $cachedMergeTagValues = [];
@@ -276,11 +281,11 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @param  ?array<string, mixed>  $mergeTags
+     * @param  ?array<string, mixed>  $tags
      */
-    public function mergeTags(?array $mergeTags): static
+    public function mergeTags(?array $tags): static
     {
-        $this->mergeTags = $mergeTags;
+        $this->mergeTags = $tags;
         $this->cachedMergeTagValues = [];
 
         return $this;
@@ -289,5 +294,23 @@ class RichContentRenderer implements Htmlable
     public function getMergeTagValue(string $mergeTag): mixed
     {
         return $this->cachedMergeTagValues[$mergeTag] ??= value($this->mergeTags[$mergeTag] ?? null);
+    }
+
+    /**
+     * @param  ?array<class-string<RichContentCustomBlock>>  $blocks
+     */
+    public function customBlocks(?array $blocks): static
+    {
+        $this->customBlocks = $blocks;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<class-string<RichContentCustomBlock>>
+     */
+    public function getCustomBlocks(): ?array
+    {
+        return $this->customBlocks;
     }
 }
