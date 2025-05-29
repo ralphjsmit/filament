@@ -60,7 +60,7 @@
                 <div x-show="isPanelActive()" class="fi-fo-rich-editor-panels">
                     <div x-show="isPanelActive('mergeTags')" class="fi-fo-rich-editor-merge-tags-panel">
                         <p class="fi-fo-rich-editor-merge-tags-panel-heading">
-                            Merge tags
+                            {{ __('filament-forms::components.rich_editor.toolbar_buttons.merge_tags') }}
                         </p>
 
                         <div class="fi-fo-rich-editor-merge-tags-list">
