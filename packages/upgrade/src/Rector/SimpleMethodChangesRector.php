@@ -39,7 +39,7 @@ class SimpleMethodChangesRector extends AbstractRector
             $panelParam = new Param(var: new Variable('panel'), type: new FullyQualified('Filament\\Panel'));
 
             foreach ($node->getParams() as $param) {
-                if ( $param->var->name === 'panel' ) {
+                if ($param->var->name === 'panel') {
                     return;
                 }
             }
@@ -149,20 +149,20 @@ class SimpleMethodChangesRector extends AbstractRector
     }
 
     /**
-     * @param Class_ | Enum_ $node
+     * @param  Class_ | Enum_  $node
      */
     public function refactor(Node $node): ?Node
     {
         $touched = false;
 
         foreach ($this->getChanges() as $change) {
-            if ( !$this->isClassMatchingChange($node, $change) ) {
+            if (! $this->isClassMatchingChange($node, $change)) {
                 continue;
             }
 
             foreach ($change['changes'] as $methodName => $modifier) {
                 foreach ($node->getMethods() as $method) {
-                    if ( !$this->isName($method, $methodName) ) {
+                    if (! $this->isName($method, $methodName)) {
                         continue;
                     }
 
@@ -182,20 +182,20 @@ class SimpleMethodChangesRector extends AbstractRector
      *     classIdentifier: string,
      * } $change
      */
-    public function isClassMatchingChange(Class_|Enum_ $class, array $change): bool
+    public function isClassMatchingChange(Class_ | Enum_ $class, array $change): bool
     {
-        if ( !array_key_exists('class', $change) ) {
+        if (! array_key_exists('class', $change)) {
             return true;
         }
 
         $classes = is_array($change['class']) ? $change['class'] : [$change['class']];
 
-        $classes = array_map(fn(string $class): string => ltrim($class, '\\'), $classes);
+        $classes = array_map(fn (string $class): string => ltrim($class, '\\'), $classes);
 
         foreach ($classes as $classToCheck) {
-            if ( $class instanceof Enum_ ) {
+            if ($class instanceof Enum_) {
                 foreach ($class->implements as $enumInterface) {
-                    if ( $enumInterface->toString() === $classToCheck ) {
+                    if ($enumInterface->toString() === $classToCheck) {
                         return true;
                     }
                 }
@@ -203,7 +203,7 @@ class SimpleMethodChangesRector extends AbstractRector
                 continue;
             }
 
-            if ( $this->isObjectType($class, new ObjectType($classToCheck)) ) {
+            if ($this->isObjectType($class, new ObjectType($classToCheck))) {
                 return true;
             }
         }
