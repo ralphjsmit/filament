@@ -542,15 +542,15 @@ FileUpload::make('attachment')
     ->deletable(false)
 ```
 
-## Allow submission of file from Clipboard paste
+## Disable submission of file from Clipboard paste
 
-You can accept submission via the clipboard paste by using `pasteable(true)`:
+You can disable submission via the clipboard paste by using `pasteable(false)` or by passing a closure:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachment')
-    ->pasteable(true)
+    ->pasteable(false)
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `deletable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
