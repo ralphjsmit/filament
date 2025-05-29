@@ -83,6 +83,7 @@ class RichContentRenderer implements Htmlable
     public function content(string | array | null $content): static
     {
         $this->content = $content;
+        $this->cachedMergeTagValues = [];
 
         return $this;
     }

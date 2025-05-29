@@ -139,9 +139,55 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+## Using merge tags
+
+Merge tags allow the user to insert "placeholders" into their rich content, which can be replaced with dynamic values when the content is rendered. This is useful for inserting things like the current user's name, or the current date.
+
+To register merge tags on an editor, use the `mergeTags()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mergeTags([
+        'name',
+        'today',
+    ])
+```
+
+Merge tags are surrounded by double curly braces, like `{{ name }}`. When the content is rendered, these tags will be replaced with the corresponding values.
+
+To insert a merge tag into the content, users can start typing `{{` to search for a tag to insert, or they can drag a merge tag from the editor's sidebar into the content, or click it to insert it at the current cursor position.
+
+When rendering the rich content, you can pass an array of values to replace the merge tags with:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+
+RichContentRenderer::make($record->content)
+    ->mergeTags([
+        'name' => $record->user->name,
+        'today' => now()->toFormattedDateString(),
+    ])
+    ->toHtml()
+```
+
+If you have many merge tags or you need to run some logic to determine the values, you can use a function as the value of each merge tag. This function will be called when a merge tag is first encountered in the content, and its result is cached for subsequent tags of the same name:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+
+RichContentRenderer::make($record->content)
+    ->mergeTags([
+        'name' => fn (): string => $record->user->name,
+        'today' => now()->toFormattedDateString(),
+    ])
+    ->toHtml()
+```
+
 ## Registering rich content attributes
 
-There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor) or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer.
+There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor), [merge tags](#using-merge-tags), or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer.
 
 To register rich content attributes on an Eloquent model, you should use the `InteractsWithRichContent` trait and implement the `HasRichContent` interface. This allows you to register the attributes in the `setUpRichContent()` method:
 
@@ -159,6 +205,10 @@ class Post extends Model implements HasRichContent
         $this->registerRichContent('content')
             ->fileAttachmentsDisk('s3')
             ->fileAttachmentsVisibility('private')
+            ->mergeTags([
+                'name' => fn (): string => $this->user->name,
+                'today' => now()->toFormattedDateString(),
+            ])
             ->plugins([
                 HighlightRichContentPlugin::make(),
             ]);
