@@ -48,6 +48,26 @@ class SimpleMethodChangesRector extends AbstractRector
                     'getSubNavigationPosition' => function (ClassMethod $node): void {
                         $node->flags &= Modifiers::STATIC;
                     },
+                    ...Arr::mapWithKeys([
+                        'getRelativeRouteName',
+                        'getRoutePath',
+                        'getRoutePrefix',
+                        'getRelativeRouteName',
+                        'getSlug',
+                        'prependClusterSlug',
+                        'prependClusterRouteBaseName',
+                    ], function (string $methodName) {
+                        return [
+                            $methodName => function (ClassMethod $node): void {
+                                $panelParam = new Param(
+                                    var: new Variable('panel'),
+                                    type: new FullyQualified('Filament\\Panel')
+                                );
+
+                                array_unshift($node->params, $panelParam);
+                            },
+                        ];
+                    }),
                 ],
             ],
             [
@@ -93,31 +113,6 @@ class SimpleMethodChangesRector extends AbstractRector
                         $param->type = new UnionType([new FullyQualified('Illuminate\\Database\\Eloquent\\Model'), new Identifier('array')]);
                     },
                 ],
-            ],
-            [
-                'class' => [
-                    Page::class,
-                ],
-                'changes' => Arr::mapWithKeys([
-                    'getRelativeRouteName',
-                    'getRoutePath',
-                    'getRoutePrefix',
-                    'getRelativeRouteName',
-                    'getSlug',
-                    'prependClusterSlug',
-                    'prependClusterRouteBaseName',
-                ], function (string $methodName) {
-                    return [
-                        $methodName => function (ClassMethod $node): void {
-                            $panelParam = new Param(
-                                var: new Variable('panel'),
-                                type: new FullyQualified('Filament\\Panel')
-                            );
-
-                            array_unshift($node->params, $panelParam);
-                        },
-                    ];
-                }),
             ],
         ];
     }
@@ -168,8 +163,8 @@ class SimpleMethodChangesRector extends AbstractRector
         }
 
         $classes = is_array($change['class']) ?
-	        $change['class'] :
-	        [$change['class']];
+            $change['class'] :
+            [$change['class']];
 
         $classes = array_map(fn (string $class): string => ltrim($class, '\\'), $classes);
 
