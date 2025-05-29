@@ -5,11 +5,12 @@ namespace Filament\Upgrade\Rector;
 use Closure;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
+use Filament\Pages\Tenancy\EditTenantProfile;
+use Filament\Pages\Tenancy\RegisterTenant;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Resources\Resource;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Support\Arr;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
@@ -34,39 +35,48 @@ class SimpleMethodChangesRector extends AbstractRector
      */
     public function getChanges(): array
     {
+        $prependPanelModifier = static function (ClassMethod $node): void {
+            $panelParam = new Param(var: new Variable('panel'), type: new FullyQualified('Filament\\Panel'));
+            
+            $shouldX = $node->name->name === 'getSlug';
+            
+            foreach ($node->getParams() as $param) {
+                if ( $param->var->name === 'panel' ) {
+                    return;
+                }
+            }
+            
+            array_unshift($node->params, $panelParam);
+        };
+        
         return [
             [
                 'class' => [
                     Page::class,
+                    EditTenantProfile::class,
+                    RegisterTenant::class,
                 ],
                 'changes' => [
                     'getFooterWidgetsColumns' => function (ClassMethod $node): void {
-                        $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
+                        $node->returnType = new UnionType([
+                            new Identifier('int'),
+                            new Identifier('array'),
+                        ]);
                     },
                     'getHeaderWidgetsColumns' => function (ClassMethod $node): void {
-                        $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
+                        $node->returnType = new UnionType([
+                            new Identifier('int'),
+                            new Identifier('array'),
+                        ]);
                     },
                     'getSubNavigationPosition' => function (ClassMethod $node): void {
                         $node->flags &= Modifiers::STATIC;
                     },
-                    ...Arr::mapWithKeys([
-                        'getRoutePath',
-                        'getRelativeRouteName',
-                        'getSlug',
-                        'prependClusterSlug',
-                        'prependClusterRouteBaseName',
-                    ], function (string $methodName) {
-                        return [
-                            $methodName => function (ClassMethod $node): void {
-                                $panelParam = new Param(
-                                    var: new Variable('panel'),
-                                    type: new FullyQualified('Filament\\Panel')
-                                );
-
-                                array_unshift($node->params, $panelParam);
-                            },
-                        ];
-                    }),
+                    'getRoutePath' => clone $prependPanelModifier,
+                    'getRelativeRouteName' => clone $prependPanelModifier,
+                    'getSlug' => clone $prependPanelModifier,
+                    'prependClusterSlug' => clone $prependPanelModifier,
+                    'prependClusterBaseName' => clone $prependPanelModifier,
                 ],
             ],
             [
@@ -74,22 +84,9 @@ class SimpleMethodChangesRector extends AbstractRector
                     Resource::class,
                 ],
                 'changes' => [
-                    ...Arr::mapWithKeys([
-                        'getRelativeRouteName',
-                        'getRoutePrefix',
-                        'getSlug',
-                    ], function (string $methodName) {
-                        return [
-                            $methodName => function (ClassMethod $node): void {
-                                $panelParam = new Param(
-                                    var: new Variable('panel'),
-                                    type: new FullyQualified('Filament\\Panel')
-                                );
-
-                                array_unshift($node->params, $panelParam);
-                            },
-                        ];
-                    }),
+                    'getRelativeRouteName' => clone $prependPanelModifier,
+                    'getRoutePrefix' => clone $prependPanelModifier,
+                    'getSlug' => clone $prependPanelModifier,
                 ],
             ],
             [
@@ -110,7 +107,7 @@ class SimpleMethodChangesRector extends AbstractRector
                     'infolist' => function (ClassMethod $node): void {
                         $param = new Param(new Variable('schema'));
                         $param->type = new FullyQualified('Filament\\Schemas\\Schema');
-
+                        
                         $node->params = [$param];
                     },
                 ],
@@ -121,7 +118,10 @@ class SimpleMethodChangesRector extends AbstractRector
                 ],
                 'changes' => [
                     'getColumns' => function (ClassMethod $node): void {
-                        $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
+                        $node->returnType = new UnionType([
+                            new Identifier('int'),
+                            new Identifier('array'),
+                        ]);
                     },
                 ],
             ],
@@ -132,80 +132,84 @@ class SimpleMethodChangesRector extends AbstractRector
                 'changes' => [
                     'getTableRecordKey' => function (ClassMethod $node): void {
                         $param = $node->getParams()[0];
-                        $param->type = new UnionType([new FullyQualified('Illuminate\\Database\\Eloquent\\Model'), new Identifier('array')]);
+                        $param->type = new UnionType([
+                            new FullyQualified('Illuminate\\Database\\Eloquent\\Model'),
+                            new Identifier('array'),
+                        ]);
                     },
                 ],
             ],
         ];
     }
-
+    
     public function getNodeTypes(): array
     {
-        return [Class_::class, Enum_::class];
+        return [
+            Class_::class,
+            Enum_::class,
+        ];
     }
-
+    
     /**
-     * @param  Class_ | Enum_  $node
+     * @param Class_ | Enum_ $node
      */
     public function refactor(Node $node): ?Node
     {
         $touched = false;
-
+        
         foreach ($this->getChanges() as $change) {
-            if (! $this->isClassMatchingChange($node, $change)) {
+            if ( !$this->isClassMatchingChange($node, $change) ) {
                 continue;
             }
-
+            
             foreach ($change['changes'] as $methodName => $modifier) {
                 foreach ($node->getMethods() as $method) {
-                    if (! $this->isName($method, $methodName)) {
+                    if ( !$this->isName($method, $methodName) ) {
                         continue;
                     }
-
+                    
                     $modifier($method);
-
+                    
                     $touched = true;
                 }
             }
         }
-
+        
         return $touched ? $node : null;
     }
-
+    
     /**
      * @param array{
      *     class: class-string | array<class-string>,
      *     classIdentifier: string,
      * } $change
      */
-    public function isClassMatchingChange(Class_ | Enum_ $class, array $change): bool
+    public function isClassMatchingChange(Class_|Enum_ $class, array $change): bool
     {
-        if (! array_key_exists('class', $change)) {
+        if ( !array_key_exists('class', $change) ) {
             return true;
         }
-
-        $classes = is_array($change['class']) ?
-            $change['class'] :
-            [$change['class']];
-
-        $classes = array_map(fn (string $class): string => ltrim($class, '\\'), $classes);
-
+        
+        $classes = is_array($change['class']) ? $change['class'] : [$change['class']];
+        
+        $classes = array_map(fn(string $class): string => ltrim($class, '\\'), $classes);
+        
         foreach ($classes as $classToCheck) {
-            if ($class instanceof Enum_) {
+            if ( $class instanceof Enum_ ) {
                 foreach ($class->implements as $enumInterface) {
-                    if ($enumInterface->toString() === $classToCheck) {
+                    if ( $enumInterface->toString() === $classToCheck ) {
                         return true;
                     }
                 }
-
+                
                 continue;
             }
-
-            if ($this->isObjectType($class, new ObjectType($classToCheck))) {
+            
+            if ( $this->isObjectType($class, new ObjectType($classToCheck)) ) {
                 return true;
             }
         }
-
+        
         return false;
     }
 }
