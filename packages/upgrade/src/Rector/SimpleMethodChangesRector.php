@@ -8,6 +8,7 @@ use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Arr;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
@@ -93,6 +94,31 @@ class SimpleMethodChangesRector extends AbstractRector
                     },
                 ],
             ],
+            [
+                'class' => [
+                    Page::class,
+                ],
+                'changes' => Arr::mapWithKeys([
+                    'getRelativeRouteName',
+                    'getRoutePath',
+                    'getRoutePrefix',
+                    'getRelativeRouteName',
+                    'getSlug',
+                    'prependClusterSlug',
+                    'prependClusterRouteBaseName',
+                ], function (string $methodName) {
+                    return [
+                        $methodName => function (ClassMethod $node): void {
+                            $panelParam = new Param(
+                                var: new Variable('panel'),
+                                type: new FullyQualified('Filament\\Panel')
+                            );
+
+                            array_unshift($node->params, $panelParam);
+                        },
+                    ];
+                }),
+            ],
         ];
     }
 
@@ -142,8 +168,8 @@ class SimpleMethodChangesRector extends AbstractRector
         }
 
         $classes = is_array($change['class']) ?
-            $change['class'] :
-            [$change['class']];
+	        $change['class'] :
+	        [$change['class']];
 
         $classes = array_map(fn (string $class): string => ltrim($class, '\\'), $classes);
 
