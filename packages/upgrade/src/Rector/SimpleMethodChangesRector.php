@@ -7,6 +7,7 @@ use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\Resource;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Arr;
 use PhpParser\Modifiers;
@@ -49,13 +50,34 @@ class SimpleMethodChangesRector extends AbstractRector
                         $node->flags &= Modifiers::STATIC;
                     },
                     ...Arr::mapWithKeys([
-                        'getRelativeRouteName',
                         'getRoutePath',
-                        'getRoutePrefix',
                         'getRelativeRouteName',
                         'getSlug',
                         'prependClusterSlug',
                         'prependClusterRouteBaseName',
+                    ], function (string $methodName) {
+                        return [
+                            $methodName => function (ClassMethod $node): void {
+                                $panelParam = new Param(
+                                    var: new Variable('panel'),
+                                    type: new FullyQualified('Filament\\Panel')
+                                );
+
+                                array_unshift($node->params, $panelParam);
+                            },
+                        ];
+                    }),
+                ],
+            ],
+            [
+                'class' => [
+                    Resource::class,
+                ],
+                'changes' => [
+                    ...Arr::mapWithKeys([
+                        'getRelativeRouteName',
+                        'getRoutePrefix',
+                        'getSlug',
                     ], function (string $methodName) {
                         return [
                             $methodName => function (ClassMethod $node): void {
