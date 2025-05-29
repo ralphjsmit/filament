@@ -59,18 +59,20 @@
 
                 <div
                     x-show="isPanelActive()"
-                    class="fi-fo-rich-editor-panels"
+                    class="fi-fo-rich-editor-side-panels"
                 >
                     <div
                         x-show="isPanelActive('mergeTags')"
-                        class="fi-fo-rich-editor-merge-tags-panel"
+                        class="fi-fo-rich-editor-side-panel"
                     >
-                        <div class="fi-fo-rich-editor-merge-tags-panel-header">
-                            <p class="fi-fo-rich-editor-merge-tags-panel-heading">
+                        <div class="fi-fo-rich-editor-side-panel-header">
+                            <p class="fi-fo-rich-editor-side-panel-heading">
                                 {{ __('filament-forms::components.rich_editor.tools.merge_tags') }}
                             </p>
 
-                            <div class="fi-fo-rich-editor-merge-tags-panel-close-btn-ctn">
+                            <div
+                                class="fi-fo-rich-editor-side-panel-close-btn-ctn"
+                            >
                                 <button
                                     type="button"
                                     x-on:click="togglePanel()"

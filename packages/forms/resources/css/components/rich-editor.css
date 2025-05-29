@@ -20,7 +20,7 @@
     }
 
     & .fi-fo-rich-editor-main {
-        @apply flex flex-col-reverse md:flex-row;
+        @apply flex flex-col-reverse;
     }
 
     & .fi-fo-rich-editor-content {
@@ -39,11 +39,23 @@
         }
     }
 
-    & .fi-fo-rich-editor-panels {
-        @apply w-full border-b border-gray-200 md:max-w-3xs md:border-s md:border-b-0 dark:border-white/10;
+    & .fi-fo-rich-editor-side-panels {
+        @apply w-full border-b border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-gray-900/30;
     }
 
-    & .fi-fo-rich-editor-merge-tags-panel {
+    & .fi-fo-rich-editor-side-panel-header {
+        @apply flex items-start gap-3;
+    }
+
+    & .fi-fo-rich-editor-side-panel-heading {
+        @apply flex-1 p-3 text-sm font-semibold text-gray-950 dark:text-white;
+    }
+
+    & .fi-fo-rich-editor-side-panel-close-btn-ctn {
+        @apply flex-shrink-0 p-3;
+    }
+
+    & .fi-fo-rich-editor-side-panel {
         @apply grid divide-y divide-gray-200 dark:divide-white/10;
     }
 
@@ -51,20 +63,8 @@
         @apply flex flex-wrap gap-2 p-3;
     }
 
-    & .fi-fo-rich-editor-merge-tags-panel-header {
-        @apply flex items-start gap-3;
-    }
-
-    & .fi-fo-rich-editor-merge-tags-panel-heading {
-        @apply flex-1 p-3 text-sm font-semibold text-gray-950 dark:text-white;
-    }
-
-    & .fi-fo-rich-editor-merge-tags-panel-close-btn-ctn {
-        @apply p-3 flex-shrink-0;
-    }
-
     & .fi-fo-rich-editor-merge-tag-btn {
-        @apply rounded-lg bg-gray-50 p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+        @apply rounded-lg bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
     }
 
     & .tiptap {
@@ -77,5 +77,27 @@
 
     & img.fi-loading {
         @apply animate-pulse;
+    }
+
+    @supports (container-type: inline-size) {
+        @apply @container;
+
+        & .fi-fo-rich-editor-main {
+            @apply @2xl:flex-row;
+        }
+
+        & .fi-fo-rich-editor-side-panels {
+            @apply @2xl:max-w-3xs @2xl:border-s @2xl:border-b-0;
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        & .fi-fo-rich-editor-main {
+            @apply md:flex-row;
+        }
+
+        & .fi-fo-rich-editor-side-panels {
+            @apply md:max-w-3xs md:border-s md:border-b-0;
+        }
     }
 }

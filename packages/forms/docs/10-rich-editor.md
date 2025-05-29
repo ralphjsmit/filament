@@ -57,7 +57,7 @@ RichEditor::make('content')
         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
         ['h2', 'h3'],
         ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
-        ['attachFiles'],
+        ['attachFiles'], // The `mergeTags` tool is also added here if merge tags are registered.
         ['undo', 'redo'],
     ])
 ```
@@ -157,7 +157,7 @@ RichEditor::make('content')
 
 Merge tags are surrounded by double curly braces, like `{{ name }}`. When the content is rendered, these tags will be replaced with the corresponding values.
 
-To insert a merge tag into the content, users can start typing `{{` to search for a tag to insert, or they can drag a merge tag from the editor's sidebar into the content, or click it to insert it at the current cursor position.
+To insert a merge tag into the content, users can start typing `{{` to search for a tag to insert. Alternatively, they can click on the "merge tags" tool in the editor's toolbar, which opens a panel containing all the merge tags. They can then drag a merge tag from the editor's side panel into the content or click to insert it.
 
 When rendering the rich content, you can pass an array of values to replace the merge tags with:
 
@@ -183,6 +183,21 @@ RichContentRenderer::make($record->content)
         'today' => now()->toFormattedDateString(),
     ])
     ->toHtml()
+```
+
+### Opening the merge tags panel by default
+
+If you want the merge tags panel to be open by default when the rich editor is loaded, you can use the `activePanel('mergeTags')` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mergeTags([
+        'name',
+        'today',
+    ])
+    ->activePanel('mergeTags')
 ```
 
 ## Registering rich content attributes
