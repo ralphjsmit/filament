@@ -1,6 +1,6 @@
 import { mergeAttributes, Node } from '@tiptap/core'
 import { Node as ProseMirrorNode } from '@tiptap/pm/model'
-import { PluginKey } from '@tiptap/pm/state'
+import { Plugin, PluginKey } from '@tiptap/pm/state'
 import Suggestion from '@tiptap/suggestion'
 
 const getSuggestionOptions = function ({
@@ -225,8 +225,31 @@ export default Node.create({
     },
 
     addProseMirrorPlugins: function () {
-        // Create a plugin for each suggestion configuration
-        return this.storage.suggestions.map(Suggestion)
+        return [
+            ...this.storage.suggestions.map(Suggestion), // Create a plugin for each suggestion configuration
+            new Plugin({
+                props: {
+                    handleDrop(view, event) {
+                        if (! event) return false
+
+                        event.preventDefault()
+
+                        const coordinates = view.posAtCoords({
+                            left: event.clientX,
+                            top: event.clientY,
+                        })
+
+                        if (event.dataTransfer.getData('mergeTag')) {
+                            // event.dataTransfer.getData('mergeTag')
+
+                            return false;
+                        }
+
+                        return false;
+                    },
+                },
+            }),
+        ]
     },
 
     onBeforeCreate: function () {

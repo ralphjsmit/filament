@@ -4,6 +4,7 @@
     $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
     $key = $getKey();
+    $mergeTags = $getMergeTags();
     $statePath = $getStatePath();
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
@@ -25,7 +26,7 @@
                     isLiveOnBlur: @js($isLiveOnBlur()),
                     liveDebounce: @js($getNormalizedLiveDebounce()),
                     livewireId: @js($this->getId()),
-                    mergeTags: @js($getMergeTags()),
+                    mergeTags: @js($mergeTags),
                     noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     statePath: @js($statePath),
@@ -56,8 +57,30 @@
                     wire:ignore
                 ></div>
 
-                <div x-show="isPanelActive()" class="fi-fo-rich-editor-panel">
-                    Panel here
+                <div x-show="isPanelActive()" class="fi-fo-rich-editor-panels">
+                    <div x-show="isPanelActive('mergeTags')" class="fi-fo-rich-editor-merge-tags-panel">
+                        <p class="fi-fo-rich-editor-merge-tags-panel-heading">
+                            Merge tags
+                        </p>
+
+                        <div class="fi-fo-rich-editor-merge-tags-list">
+                            @foreach ($mergeTags as $mergeTag)
+                                <div>
+                                    <button
+                                        draggable="true"
+                                        type="button"
+                                        x-on:click="insertMergeTag(@js($mergeTag))"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($mergeTag))"
+                                        class="fi-fo-rich-editor-merge-tag-btn"
+                                    >
+                                        <span data-type="mergeTag" data-id="{{ $mergeTag }}">
+                                            {{ $mergeTag }}
+                                        </span>
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
         </x-filament::input.wrapper>

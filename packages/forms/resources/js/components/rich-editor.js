@@ -174,8 +174,8 @@ export default function richEditorFormComponent({
             commandChain.run()
         },
 
-        togglePanel: function (panel) {
-            if (this.isPanelActive(panel)) {
+        togglePanel: function (id) {
+            if (this.isPanelActive(id)) {
                 this.activePanel = null
 
                 return
@@ -184,12 +184,29 @@ export default function richEditorFormComponent({
             this.activePanel = panel
         },
 
-        isPanelActive: function (panel = null) {
-            if (panel === null) {
+        isPanelActive: function (id = null) {
+            if (id === null) {
                 return this.activePanel !== null
             }
 
-            return this.activePanel === panel
+            return this.activePanel === id
+        },
+
+        insertMergeTag: function (id) {
+            editor
+                .chain()
+                .focus()
+                .insertContent([
+                    {
+                        type: 'mergeTag',
+                        attrs: { id },
+                    },
+                    {
+                        type: 'text',
+                        text: ' ',
+                    },
+                ])
+                .run()
         },
     }
 }
