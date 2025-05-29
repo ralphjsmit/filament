@@ -261,7 +261,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Joindre des fichiers',
             'blockquote' => 'Citation',
             'bold' => 'Gras',
@@ -359,7 +359,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Joindre fichiers',
             'blockquote' => 'Citation',
             'bold' => 'Gras',

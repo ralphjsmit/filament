@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
@@ -451,7 +451,7 @@ return [
 
         'no_merge_tag_search_results_message' => 'No merge tag results.',
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',

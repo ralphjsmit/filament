@@ -4,7 +4,7 @@
     }
 
     & .fi-fo-rich-editor-toolbar {
-        @apply relative flex flex-wrap gap-y-1 gap-x-3 border-b border-gray-200 px-2.5 py-2 dark:border-white/10;
+        @apply relative flex flex-wrap gap-x-3 gap-y-1 border-b border-gray-200 px-2.5 py-2 dark:border-white/10;
 
         & .fi-fo-rich-editor-toolbar-group {
             @apply flex gap-x-1;
@@ -24,23 +24,23 @@
     }
 
     & .fi-fo-rich-editor-content {
-        @apply flex-1 min-h-full w-full px-5 py-3;
+        @apply min-h-full w-full flex-1 px-5 py-3;
     }
 
-    & span[data-type="mergeTag"] {
+    & span[data-type='mergeTag'] {
         &::before {
-            @apply opacity-60 me-1 font-normal;
+            @apply me-1 font-normal opacity-60;
             content: '{{';
         }
 
         &::after {
-            @apply opacity-60 ms-1 font-normal;
+            @apply ms-1 font-normal opacity-60;
             content: '}}';
         }
     }
 
     & .fi-fo-rich-editor-panels {
-        @apply border-b border-gray-200 dark:border-white/10 w-full md:max-w-3xs md:border-b-0 md:border-s;
+        @apply w-full border-b border-gray-200 md:max-w-3xs md:border-s md:border-b-0 dark:border-white/10;
     }
 
     & .fi-fo-rich-editor-merge-tags-panel {
@@ -52,11 +52,11 @@
     }
 
     & .fi-fo-rich-editor-merge-tags-panel-heading {
-        @apply text-sm font-semibold text-gray-950 p-3 dark:text-white;
+        @apply p-3 text-sm font-semibold text-gray-950 dark:text-white;
     }
 
     & .fi-fo-rich-editor-merge-tag-btn {
-        @apply text-start text-sm text-gray-600 ring-1 ring-gray-600/10 bg-gray-50 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20 rounded-lg p-1;
+        @apply rounded-lg bg-gray-50 p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
     }
 
     & .tiptap {

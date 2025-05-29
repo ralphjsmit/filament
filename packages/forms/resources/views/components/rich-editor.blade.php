@@ -57,10 +57,16 @@
                     wire:ignore
                 ></div>
 
-                <div x-show="isPanelActive()" class="fi-fo-rich-editor-panels">
-                    <div x-show="isPanelActive('mergeTags')" class="fi-fo-rich-editor-merge-tags-panel">
+                <div
+                    x-show="isPanelActive()"
+                    class="fi-fo-rich-editor-panels"
+                >
+                    <div
+                        x-show="isPanelActive('mergeTags')"
+                        class="fi-fo-rich-editor-merge-tags-panel"
+                    >
                         <p class="fi-fo-rich-editor-merge-tags-panel-heading">
-                            {{ __('filament-forms::components.rich_editor.toolbar_buttons.merge_tags') }}
+                            {{ __('filament-forms::components.rich_editor.tools.merge_tags') }}
                         </p>
 
                         <div class="fi-fo-rich-editor-merge-tags-list">
@@ -73,7 +79,10 @@
                                         x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($mergeTag))"
                                         class="fi-fo-rich-editor-merge-tag-btn"
                                     >
-                                        <span data-type="mergeTag" data-id="{{ $mergeTag }}">
+                                        <span
+                                            data-type="mergeTag"
+                                            data-id="{{ $mergeTag }}"
+                                        >
                                             {{ $mergeTag }}
                                         </span>
                                     </button>

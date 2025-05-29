@@ -230,17 +230,18 @@ export default Node.create({
             new Plugin({
                 props: {
                     handleDrop(view, event) {
-                        if (! event) {
+                        if (!event) {
                             return false
                         }
 
                         event.preventDefault()
 
-                        if (! event.dataTransfer.getData('mergeTag')) {
+                        if (!event.dataTransfer.getData('mergeTag')) {
                             return false
                         }
 
-                        const mergeTagId = event.dataTransfer.getData('mergeTag')
+                        const mergeTagId =
+                            event.dataTransfer.getData('mergeTag')
 
                         view.dispatch(
                             view.state.tr.insert(
@@ -248,8 +249,10 @@ export default Node.create({
                                     left: event.clientX,
                                     top: event.clientY,
                                 }).pos,
-                                view.state.schema.nodes.mergeTag.create({ id: mergeTagId })
-                            )
+                                view.state.schema.nodes.mergeTag.create({
+                                    id: mergeTagId,
+                                }),
+                            ),
                         )
 
                         return false
