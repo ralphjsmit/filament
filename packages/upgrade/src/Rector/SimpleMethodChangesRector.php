@@ -56,16 +56,10 @@ class SimpleMethodChangesRector extends AbstractRector
                 ],
                 'changes' => [
                     'getFooterWidgetsColumns' => function (ClassMethod $node): void {
-                        $node->returnType = new UnionType([
-                            new Identifier('int'),
-                            new Identifier('array'),
-                        ]);
+                        $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
                     },
                     'getHeaderWidgetsColumns' => function (ClassMethod $node): void {
-                        $node->returnType = new UnionType([
-                            new Identifier('int'),
-                            new Identifier('array'),
-                        ]);
+                        $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
                     },
                     'getSubNavigationPosition' => function (ClassMethod $node): void {
                         $node->flags &= Modifiers::STATIC;
@@ -116,10 +110,7 @@ class SimpleMethodChangesRector extends AbstractRector
                 ],
                 'changes' => [
                     'getColumns' => function (ClassMethod $node): void {
-                        $node->returnType = new UnionType([
-                            new Identifier('int'),
-                            new Identifier('array'),
-                        ]);
+                        $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
                     },
                 ],
             ],
@@ -130,10 +121,7 @@ class SimpleMethodChangesRector extends AbstractRector
                 'changes' => [
                     'getTableRecordKey' => function (ClassMethod $node): void {
                         $param = $node->getParams()[0];
-                        $param->type = new UnionType([
-                            new FullyQualified('Illuminate\\Database\\Eloquent\\Model'),
-                            new Identifier('array'),
-                        ]);
+                        $param->type = new UnionType([new FullyQualified('Illuminate\\Database\\Eloquent\\Model'), new Identifier('array')]);
                     },
                 ],
             ],
@@ -142,10 +130,7 @@ class SimpleMethodChangesRector extends AbstractRector
 
     public function getNodeTypes(): array
     {
-        return [
-            Class_::class,
-            Enum_::class,
-        ];
+        return [Class_::class, Enum_::class];
     }
 
     /**
@@ -188,7 +173,9 @@ class SimpleMethodChangesRector extends AbstractRector
             return true;
         }
 
-        $classes = is_array($change['class']) ? $change['class'] : [$change['class']];
+        $classes = is_array($change['class']) ?
+            $change['class'] :
+            [$change['class']];
 
         $classes = array_map(fn (string $class): string => ltrim($class, '\\'), $classes);
 
