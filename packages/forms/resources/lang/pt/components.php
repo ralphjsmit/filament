@@ -382,7 +382,7 @@ return [
 
         ],
 
-        'no_merge_tag_search_results_message' => 'Nenhuma tag encontrada.',
+        'no_merge_tag_search_results_message' => 'Nenhuma tag dinâmica encontrada.',
 
         'tools' => [
             'attach_files' => 'Anexar ficheiros',
