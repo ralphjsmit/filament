@@ -39,23 +39,23 @@
         }
     }
 
-    & .fi-fo-rich-editor-side-panels {
+    & .fi-fo-rich-editor-panels {
         @apply w-full border-b border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-gray-900/30;
     }
 
-    & .fi-fo-rich-editor-side-panel-header {
+    & .fi-fo-rich-editor-panel-header {
         @apply flex items-start gap-3;
     }
 
-    & .fi-fo-rich-editor-side-panel-heading {
+    & .fi-fo-rich-editor-panel-heading {
         @apply flex-1 p-3 text-sm font-semibold text-gray-950 dark:text-white;
     }
 
-    & .fi-fo-rich-editor-side-panel-close-btn-ctn {
+    & .fi-fo-rich-editor-panel-close-btn-ctn {
         @apply flex-shrink-0 p-3;
     }
 
-    & .fi-fo-rich-editor-side-panel {
+    & .fi-fo-rich-editor-panel {
         @apply grid divide-y divide-gray-200 dark:divide-white/10;
     }
 
@@ -94,7 +94,7 @@
             @apply @2xl:flex-row;
         }
 
-        & .fi-fo-rich-editor-side-panels {
+        & .fi-fo-rich-editor-panels {
             @apply @2xl:max-w-3xs @2xl:border-s @2xl:border-b-0 @2xl:rounded-ee-lg;
         }
     }
@@ -104,7 +104,7 @@
             @apply md:flex-row;
         }
 
-        & .fi-fo-rich-editor-side-panels {
+        & .fi-fo-rich-editor-panels {
             @apply md:max-w-3xs md:border-s md:border-b-0 md:rounded-ee-lg;
         }
     }

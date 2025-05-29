@@ -60,19 +60,19 @@
 
                 <div
                     x-show="isPanelActive()"
-                    class="fi-fo-rich-editor-side-panels"
+                    class="fi-fo-rich-editor-panels"
                 >
                     <div
                         x-show="isPanelActive('customBlocks')"
-                        class="fi-fo-rich-editor-side-panel"
+                        class="fi-fo-rich-editor-panel"
                     >
-                        <div class="fi-fo-rich-editor-side-panel-header">
-                            <p class="fi-fo-rich-editor-side-panel-heading">
+                        <div class="fi-fo-rich-editor-panel-header">
+                            <p class="fi-fo-rich-editor-panel-heading">
                                 {{ __('filament-forms::components.rich_editor.tools.custom_blocks') }}
                             </p>
 
                             <div
-                                class="fi-fo-rich-editor-side-panel-close-btn-ctn"
+                                class="fi-fo-rich-editor-panel-close-btn-ctn"
                             >
                                 <button
                                     type="button"
@@ -112,15 +112,15 @@
 
                     <div
                         x-show="isPanelActive('mergeTags')"
-                        class="fi-fo-rich-editor-side-panel"
+                        class="fi-fo-rich-editor-panel"
                     >
-                        <div class="fi-fo-rich-editor-side-panel-header">
-                            <p class="fi-fo-rich-editor-side-panel-heading">
+                        <div class="fi-fo-rich-editor-panel-header">
+                            <p class="fi-fo-rich-editor-panel-heading">
                                 {{ __('filament-forms::components.rich_editor.tools.merge_tags') }}
                             </p>
 
                             <div
-                                class="fi-fo-rich-editor-side-panel-close-btn-ctn"
+                                class="fi-fo-rich-editor-panel-close-btn-ctn"
                             >
                                 <button
                                     type="button"
