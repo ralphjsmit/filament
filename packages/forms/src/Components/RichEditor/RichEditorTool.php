@@ -35,6 +35,8 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     protected string | Closure | null $javaScriptHandler = null;
 
+    protected string | Closure | null $javaScriptActive = null;
+
     protected RichEditor $editor;
 
     protected string $evaluationIdentifier = 'tool';
@@ -111,9 +113,21 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         return $this;
     }
 
+    public function javaScriptActive(string | Closure | null $expression): static
+    {
+        $this->javaScriptActive = $expression;
+
+        return $this;
+    }
+
     public function getJavaScriptHandler(): ?string
     {
         return $this->evaluate($this->javaScriptHandler);
+    }
+
+    public function getJavaScriptActive(): ?string
+    {
+        return $this->evaluate($this->javaScriptActive);
     }
 
     public function activeKey(string | Closure | null $key): static
@@ -154,11 +168,13 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
             ], escape: false)
             ->class(['fi-fo-rich-editor-tool']);
 
+        $javaScriptActive = $this->getJavaScriptActive();
+
         ob_start(); ?>
 
         <button
             x-bind:class="{
-                'fi-active': editorUpdatedAt && $getEditor()?.isActive(<?= Js::from($this->getActiveKey())->toHtml() ?>, <?= Js::from($this->getActiveOptions())->toHtml() ?>),
+                'fi-active': editorUpdatedAt && <?php if ($javaScriptActive) { ?> <?= $javaScriptActive ?> <?php } else { ?> $getEditor()?.isActive(<?= Js::from($this->getActiveKey())->toHtml() ?>, <?= Js::from($this->getActiveOptions())->toHtml() ?>) <?php } ?>,
             }"
             <?= $attributes->toHtml() ?>
         >

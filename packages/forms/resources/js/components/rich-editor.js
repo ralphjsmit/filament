@@ -3,12 +3,15 @@ import getExtensions from './rich-editor/extensions'
 import { Selection } from '@tiptap/pm/state'
 
 export default function richEditorFormComponent({
+    activePanel,
     extensions,
     key,
     isLiveDebounced,
     isLiveOnBlur,
     liveDebounce,
     livewireId,
+    mergeTags,
+    noMergeTagSearchResultsMessage,
     state,
     statePath,
     uploadingFileMessage,
@@ -17,6 +20,8 @@ export default function richEditorFormComponent({
 
     return {
         state,
+
+        activePanel,
 
         editorSelection: { type: 'text', anchor: 1, head: 1 },
 
@@ -32,6 +37,8 @@ export default function richEditorFormComponent({
                 extensions: await getExtensions({
                     customExtensionUrls: extensions,
                     key,
+                    mergeTags,
+                    noMergeTagSearchResultsMessage,
                     statePath,
                     uploadingFileMessage,
                     $wire: this.$wire,
@@ -165,6 +172,41 @@ export default function richEditorFormComponent({
             )
 
             commandChain.run()
+        },
+
+        togglePanel: function (id = null) {
+            if (this.isPanelActive(id)) {
+                this.activePanel = null
+
+                return
+            }
+
+            this.activePanel = id
+        },
+
+        isPanelActive: function (id = null) {
+            if (id === null) {
+                return this.activePanel !== null
+            }
+
+            return this.activePanel === id
+        },
+
+        insertMergeTag: function (id) {
+            editor
+                .chain()
+                .focus()
+                .insertContent([
+                    {
+                        type: 'mergeTag',
+                        attrs: { id },
+                    },
+                    {
+                        type: 'text',
+                        text: ' ',
+                    },
+                ])
+                .run()
         },
     }
 }

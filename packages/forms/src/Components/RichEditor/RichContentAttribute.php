@@ -20,6 +20,11 @@ class RichContentAttribute implements Htmlable
 
     protected ?FileAttachmentProvider $fileAttachmentProvider = null;
 
+    /**
+     * @var ?array<string, mixed>
+     */
+    protected ?array $mergeTags = null;
+
     public function __construct(protected Model $model, protected string $name) {}
 
     public static function make(Model $model, string $name): static
@@ -98,9 +103,32 @@ class RichContentAttribute implements Htmlable
     {
         return RichContentRenderer::make($this->model->getAttribute($this->name))
             ->plugins($this->getPlugins())
+            ->mergeTags($this->mergeTags)
             ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
             ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())
             ->toHtml();
+    }
+
+    /**
+     * @param  ?array<string, mixed>  $mergeTags
+     */
+    public function mergeTags(?array $mergeTags): static
+    {
+        $this->mergeTags = $mergeTags;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getMergeTags(): ?array
+    {
+        if (blank($this->mergeTags)) {
+            return null;
+        }
+
+        return array_keys($this->mergeTags);
     }
 }

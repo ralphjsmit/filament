@@ -4,7 +4,7 @@
     }
 
     & .fi-fo-rich-editor-toolbar {
-        @apply relative flex gap-x-3 overflow-x-auto border-b border-gray-200 px-2.5 py-2 dark:border-white/10;
+        @apply relative flex flex-wrap gap-x-3 gap-y-1 border-b border-gray-200 px-2.5 py-2 dark:border-white/10;
 
         & .fi-fo-rich-editor-toolbar-group {
             @apply flex gap-x-1;
@@ -19,15 +19,85 @@
         }
     }
 
-    & .fi-fo-rich-editor-content {
-        @apply min-h-full w-full px-5 py-3;
+    & .fi-fo-rich-editor-main {
+        @apply flex flex-col-reverse;
     }
 
-    & .tiptap:focus {
-        @apply outline-none;
+    & .fi-fo-rich-editor-content {
+        @apply min-h-full w-full flex-1 px-5 py-3;
+    }
+
+    & span[data-type='mergeTag'] {
+        &::before {
+            @apply me-1 font-normal opacity-60;
+            content: '{{';
+        }
+
+        &::after {
+            @apply ms-1 font-normal opacity-60;
+            content: '}}';
+        }
+    }
+
+    & .fi-fo-rich-editor-side-panels {
+        @apply w-full border-b border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-gray-900/30;
+    }
+
+    & .fi-fo-rich-editor-side-panel-header {
+        @apply flex items-start gap-3;
+    }
+
+    & .fi-fo-rich-editor-side-panel-heading {
+        @apply flex-1 p-3 text-sm font-semibold text-gray-950 dark:text-white;
+    }
+
+    & .fi-fo-rich-editor-side-panel-close-btn-ctn {
+        @apply flex-shrink-0 p-3;
+    }
+
+    & .fi-fo-rich-editor-side-panel {
+        @apply grid divide-y divide-gray-200 dark:divide-white/10;
+    }
+
+    & .fi-fo-rich-editor-merge-tags-list {
+        @apply flex flex-wrap gap-2 p-3;
+    }
+
+    & .fi-fo-rich-editor-merge-tag-btn {
+        @apply rounded-lg bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+    }
+
+    & .tiptap {
+        @apply h-full;
+
+        &:focus {
+            @apply outline-none;
+        }
     }
 
     & img.fi-loading {
         @apply animate-pulse;
+    }
+
+    @supports (container-type: inline-size) {
+        @apply @container;
+
+        & .fi-fo-rich-editor-main {
+            @apply @2xl:flex-row;
+        }
+
+        & .fi-fo-rich-editor-side-panels {
+            @apply @2xl:max-w-3xs @2xl:border-s @2xl:border-b-0;
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        & .fi-fo-rich-editor-main {
+            @apply md:flex-row;
+        }
+
+        & .fi-fo-rich-editor-side-panels {
+            @apply md:max-w-3xs md:border-s md:border-b-0;
+        }
     }
 }
