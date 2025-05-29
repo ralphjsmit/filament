@@ -542,6 +542,8 @@ FileUpload::make('attachment')
     ->deletable(false)
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `deletable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Preventing pasting files
 
 You can disable the ability to paste files via the clipboard using the `pasteable(false)` method:
