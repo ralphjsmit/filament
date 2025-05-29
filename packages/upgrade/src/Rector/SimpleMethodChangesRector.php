@@ -37,18 +37,16 @@ class SimpleMethodChangesRector extends AbstractRector
     {
         $prependPanelModifier = static function (ClassMethod $node): void {
             $panelParam = new Param(var: new Variable('panel'), type: new FullyQualified('Filament\\Panel'));
-            
-            $shouldX = $node->name->name === 'getSlug';
-            
+
             foreach ($node->getParams() as $param) {
                 if ( $param->var->name === 'panel' ) {
                     return;
                 }
             }
-            
+
             array_unshift($node->params, $panelParam);
         };
-        
+
         return [
             [
                 'class' => [
@@ -72,11 +70,11 @@ class SimpleMethodChangesRector extends AbstractRector
                     'getSubNavigationPosition' => function (ClassMethod $node): void {
                         $node->flags &= Modifiers::STATIC;
                     },
-                    'getRoutePath' => clone $prependPanelModifier,
-                    'getRelativeRouteName' => clone $prependPanelModifier,
-                    'getSlug' => clone $prependPanelModifier,
-                    'prependClusterSlug' => clone $prependPanelModifier,
-                    'prependClusterBaseName' => clone $prependPanelModifier,
+                    'getRoutePath' => $prependPanelModifier,
+                    'getRelativeRouteName' => $prependPanelModifier,
+                    'getSlug' => $prependPanelModifier,
+                    'prependClusterSlug' => $prependPanelModifier,
+                    'prependClusterBaseName' => $prependPanelModifier,
                 ],
             ],
             [
@@ -84,9 +82,9 @@ class SimpleMethodChangesRector extends AbstractRector
                     Resource::class,
                 ],
                 'changes' => [
-                    'getRelativeRouteName' => clone $prependPanelModifier,
-                    'getRoutePrefix' => clone $prependPanelModifier,
-                    'getSlug' => clone $prependPanelModifier,
+                    'getRelativeRouteName' => $prependPanelModifier,
+                    'getRoutePrefix' => $prependPanelModifier,
+                    'getSlug' => $prependPanelModifier,
                 ],
             ],
             [
@@ -107,7 +105,7 @@ class SimpleMethodChangesRector extends AbstractRector
                     'infolist' => function (ClassMethod $node): void {
                         $param = new Param(new Variable('schema'));
                         $param->type = new FullyQualified('Filament\\Schemas\\Schema');
-                        
+
                         $node->params = [$param];
                     },
                 ],
@@ -141,7 +139,7 @@ class SimpleMethodChangesRector extends AbstractRector
             ],
         ];
     }
-    
+
     public function getNodeTypes(): array
     {
         return [
@@ -149,35 +147,35 @@ class SimpleMethodChangesRector extends AbstractRector
             Enum_::class,
         ];
     }
-    
+
     /**
      * @param Class_ | Enum_ $node
      */
     public function refactor(Node $node): ?Node
     {
         $touched = false;
-        
+
         foreach ($this->getChanges() as $change) {
             if ( !$this->isClassMatchingChange($node, $change) ) {
                 continue;
             }
-            
+
             foreach ($change['changes'] as $methodName => $modifier) {
                 foreach ($node->getMethods() as $method) {
                     if ( !$this->isName($method, $methodName) ) {
                         continue;
                     }
-                    
+
                     $modifier($method);
-                    
+
                     $touched = true;
                 }
             }
         }
-        
+
         return $touched ? $node : null;
     }
-    
+
     /**
      * @param array{
      *     class: class-string | array<class-string>,
@@ -189,11 +187,11 @@ class SimpleMethodChangesRector extends AbstractRector
         if ( !array_key_exists('class', $change) ) {
             return true;
         }
-        
+
         $classes = is_array($change['class']) ? $change['class'] : [$change['class']];
-        
+
         $classes = array_map(fn(string $class): string => ltrim($class, '\\'), $classes);
-        
+
         foreach ($classes as $classToCheck) {
             if ( $class instanceof Enum_ ) {
                 foreach ($class->implements as $enumInterface) {
@@ -201,15 +199,15 @@ class SimpleMethodChangesRector extends AbstractRector
                         return true;
                     }
                 }
-                
+
                 continue;
             }
-            
+
             if ( $this->isObjectType($class, new ObjectType($classToCheck)) ) {
                 return true;
             }
         }
-        
+
         return false;
     }
 }
