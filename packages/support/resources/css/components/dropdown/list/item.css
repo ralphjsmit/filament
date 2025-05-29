@@ -26,10 +26,6 @@
         @apply size-5 rounded-full bg-cover bg-center;
     }
 
-    & .fi-dropdown-list-item-label {
-        @apply flex-1 truncate text-start text-gray-700 dark:text-gray-200;
-    }
-
     & > .fi-icon {
         @apply text-gray-400 dark:text-gray-500;
 
@@ -59,4 +55,8 @@
     & .fi-badge {
         @apply min-w-[theme(spacing.5)] px-1.5 py-0.5 tracking-tight;
     }
+}
+
+.fi-dropdown-list-item-label {
+    @apply flex-1 truncate text-start text-gray-700 dark:text-gray-200;
 }

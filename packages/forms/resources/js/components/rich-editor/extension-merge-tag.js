@@ -81,7 +81,7 @@ export default Node.create({
                         this.HTMLAttributes,
                         options.HTMLAttributes,
                     ),
-                    `{{ ${node.attrs.label ?? node.attrs.id} }}`,
+                    `${node.attrs.label ?? node.attrs.id}`,
                 ]
             },
             suggestions: [],

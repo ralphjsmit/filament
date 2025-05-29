@@ -3,6 +3,7 @@ import getExtensions from './rich-editor/extensions'
 import { Selection } from '@tiptap/pm/state'
 
 export default function richEditorFormComponent({
+    activePanel,
     extensions,
     key,
     isLiveDebounced,
@@ -19,6 +20,8 @@ export default function richEditorFormComponent({
 
     return {
         state,
+
+        activePanel,
 
         editorSelection: { type: 'text', anchor: 1, head: 1 },
 
@@ -169,6 +172,24 @@ export default function richEditorFormComponent({
             )
 
             commandChain.run()
+        },
+
+        togglePanel: function (panel) {
+            if (this.isPanelActive(panel)) {
+                this.activePanel = null
+
+                return
+            }
+
+            this.activePanel = panel
+        },
+
+        isPanelActive: function (panel = null) {
+            if (panel === null) {
+                return this.activePanel !== null
+            }
+
+            return this.activePanel === panel
         },
     }
 }

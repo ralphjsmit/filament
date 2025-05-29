@@ -63,8 +63,8 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
                     const button = document.createElement('button')
                     button.className =
                         index === selectedIndex
-                            ? 'fi-dropdown-list-item fi-selected'
-                            : 'fi-dropdown-list-item'
+                            ? 'fi-dropdown-list-item fi-dropdown-list-item-label fi-selected'
+                            : 'fi-dropdown-list-item fi-dropdown-list-item-label'
                     button.textContent = item
                     button.type = 'button'
                     button.addEventListener('click', () => selectItem(index))

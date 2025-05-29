@@ -62,6 +62,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
+    protected string | Closure | null $activePanel = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -146,6 +148,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->activeKey('image')
                 ->icon(Heroicon::PaperClip)
                 ->iconAlias('forms:components.rich-editor.toolbar.attach_files'),
+            RichEditorTool::make('mergeTags')
+                ->label(__('filament-forms::components.rich_editor.toolbar_buttons.merge_tags'))
+                ->javaScriptHandler('togglePanel(\'mergeTags\')')
+                ->javaScriptActive('isPanelActive(\'mergeTags\')')
+                ->icon('fi-s-merge-tag')
+                ->iconAlias('forms:components.rich-editor.toolbar.merge_tag'),
             RichEditorTool::make('undo')
                 ->label(__('filament-forms::components.rich_editor.toolbar_buttons.undo'))
                 ->javaScriptHandler('$getEditor()?.chain().focus().undo().run()')
@@ -504,7 +512,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
-            ['attachFiles'],
+            [
+                'attachFiles',
+                ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
+            ],
             ['undo', 'redo'],
         ];
     }
@@ -584,5 +595,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getNoMergeTagSearchResultsMessage(): string | Htmlable
     {
         return $this->evaluate($this->noMergeTagSearchResultsMessage) ?? __('filament-forms::components.rich_editor.no_merge_tag_search_results_message');
+    }
+
+    public function activePanel(string | Closure | null $panel): static
+    {
+        $this->activePanel = $panel;
+
+        return $this;
+    }
+
+    public function getActivePanel(): ?string
+    {
+        return $this->evaluate($this->activePanel);
     }
 }

@@ -462,6 +462,7 @@ return [
             'h3' => 'Subheading',
             'italic' => 'Italic',
             'link' => 'Link',
+            'merge_tags' => 'Merge tags',
             'ordered_list' => 'Numbered list',
             'redo' => 'Redo',
             'strike' => 'Strikethrough',

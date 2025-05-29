@@ -4,7 +4,7 @@
     }
 
     & .fi-fo-rich-editor-toolbar {
-        @apply relative flex gap-x-3 overflow-x-auto border-b border-gray-200 px-2.5 py-2 dark:border-white/10;
+        @apply relative flex flex-wrap gap-y-1 gap-x-3 border-b border-gray-200 px-2.5 py-2 dark:border-white/10;
 
         & .fi-fo-rich-editor-toolbar-group {
             @apply flex gap-x-1;
@@ -19,8 +19,28 @@
         }
     }
 
+    & .fi-fo-rich-editor-main {
+        @apply flex flex-col-reverse md:flex-row;
+    }
+
     & .fi-fo-rich-editor-content {
-        @apply min-h-full w-full px-5 py-3;
+        @apply flex-1 min-h-full w-full px-5 py-3;
+
+        & span[data-type="mergeTag"] {
+            &::before {
+                @apply opacity-60 me-1 font-normal;
+                content: '{{';
+            }
+
+            &::after {
+                @apply opacity-60 ms-1 font-normal;
+                content: '}}';
+            }
+        }
+    }
+
+    & .fi-fo-rich-editor-panel {
+        @apply border-b border-gray-200 dark:border-white/10 w-full md:max-w-3xs md:border-b-0 md:border-s;
     }
 
     & .tiptap:focus {

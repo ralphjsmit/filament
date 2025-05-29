@@ -18,6 +18,7 @@
         @endif
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
         x-data="richEditorFormComponent({
+                    activePanel: @js($getActivePanel()),
                     extensions: @js($getTipTapJsExtensions()),
                     key: @js($key),
                     isLiveDebounced: @js($isLiveDebounced()),
@@ -48,11 +49,17 @@
                 </div>
             @endif
 
-            <div
-                class="fi-fo-rich-editor-content fi-prose"
-                x-ref="editor"
-                wire:ignore
-            ></div>
+            <div class="fi-fo-rich-editor-main">
+                <div
+                    class="fi-fo-rich-editor-content fi-prose"
+                    x-ref="editor"
+                    wire:ignore
+                ></div>
+
+                <div x-show="isPanelActive()" class="fi-fo-rich-editor-panel">
+                    Panel here
+                </div>
+            </div>
         </x-filament::input.wrapper>
     </div>
 </x-dynamic-component>
