@@ -122,7 +122,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         parent::setUp();
 
-        $this->default(static fn (Select $component): ?array => $component->isMultiple() ? [] : null);
+        $this->default(static fn(Select $component): ?array => $component->isMultiple() ? [] : null);
 
         $this->afterStateHydrated(static function (Select $component, $state): void {
             if (! $component->isMultiple()) {
@@ -186,18 +186,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->transformOptionsForJsUsing(static function (Select $component, array $options): array {
             return collect($options)
-                ->map(fn ($label, $value): array => is_array($label)
+                ->map(fn($label, $value): array => is_array($label)
                     ? ['label' => $value, 'choices' => $component->transformOptionsForJs($label)]
                     : ['label' => $label, 'value' => strval($value), 'disabled' => $component->isOptionDisabled($value, $label)])
                 ->values()
                 ->all();
         });
 
-        $this->placeholder(static fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
+        $this->placeholder(static fn(Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
 
         $this->suffixActions([
-            static fn (Select $component): ?Action => $component->getCreateOptionAction(),
-            static fn (Select $component): ?Action => $component->getEditOptionAction(),
+            static fn(Select $component): ?Action => $component->getCreateOptionAction(),
+            static fn(Select $component): ?Action => $component->getEditOptionAction(),
         ]);
     }
 
@@ -317,7 +317,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
-            ->extraModalFooterActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
+            ->extraModalFooterActions(fn(Action $action, Select $component): array => $component->isMultiple() ? [
                 $action->makeModalSubmitAction('createAnother', arguments: ['another' => true])
                     ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label')),
             ] : []);
@@ -583,7 +583,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function getOptionLabel(): ?string
     {
         return $this->evaluate($this->getOptionLabelUsing, [
-            'value' => fn (): mixed => $this->getState(),
+            'value' => fn(): mixed => $this->getState(),
         ]);
     }
 
@@ -593,7 +593,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function getOptionLabels(): array
     {
         $labels = $this->evaluate($this->getOptionLabelsUsing, [
-            'values' => fn (): array => $this->getState(),
+            'values' => fn(): array => $this->getState(),
         ]);
 
         if ($labels instanceof Arrayable) {
@@ -700,7 +700,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->relationshipTitleAttribute = $titleAttribute;
 
         $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyQueryUsing, $ignoreRecord): array {
-            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
+            $relationship = Relation::noConstraints(fn() => $component->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
@@ -733,7 +733,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
+                    ->mapWithKeys(static fn(Model $record) => [
                         $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
@@ -763,7 +763,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return null;
             }
 
-            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
+            $relationship = Relation::noConstraints(fn() => $component->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
@@ -783,7 +783,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
+                    ->mapWithKeys(static fn(Model $record) => [
                         $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
@@ -801,6 +801,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 }
             } else {
                 $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
+            }
+
+            if ($component->isSearchable()) {
+                $relationshipQuery->limit($component->getOptionsLimit());
             }
 
             return $relationshipQuery
@@ -836,7 +840,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     // https://github.com/filamentphp/filament/issues/1111
                     $relatedRecords
                         ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
-                        ->map(static fn ($key): string => strval($key))
+                        ->map(static fn($key): string => strval($key))
                         ->all(),
                 );
 
@@ -906,7 +910,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
-            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
+            $relationship = Relation::noConstraints(fn() => $component->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
@@ -923,7 +927,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {
-            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
+            $relationship = Relation::noConstraints(fn() => $component->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
@@ -941,7 +945,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
+                    ->mapWithKeys(static fn(Model $record) => [
                         $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
@@ -1028,7 +1032,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $recordsToDetach = array_diff(
                 $relatedRecords
                     ->pluck($relationship->getRelatedKeyName())
-                    ->map(static fn ($key): string => strval($key))
+                    ->map(static fn($key): string => strval($key))
                     ->all(),
                 $state,
             );
@@ -1066,7 +1070,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $form->getRecord()?->update($data);
         });
 
-        $this->dehydrated(fn (Select $component): bool => ! $component->isMultiple());
+        $this->dehydrated(fn(Select $component): bool => ! $component->isMultiple());
 
         return $this;
     }
