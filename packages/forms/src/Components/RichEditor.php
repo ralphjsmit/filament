@@ -5,12 +5,14 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
+use Filament\Forms\Components\RichEditor\Actions\CustomBlockAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
@@ -56,6 +58,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected array | Closure | null $mergeTags = null;
 
+    /**
+     * @var array<class-string<RichContentCustomBlock>> | Closure | null
+     */
+    protected array | Closure | null $customBlocks = null;
+
     protected string | Closure | null $noMergeTagSearchResultsMessage = null;
 
     protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
@@ -63,6 +70,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
     protected string | Closure | null $activePanel = null;
+
+    /**
+     * @var array<string, class-string<RichContentCustomBlock>>
+     */
+    protected array $cachedCustomBlocks;
 
     protected function setUp(): void
     {
@@ -148,6 +160,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->activeKey('image')
                 ->icon(Heroicon::PaperClip)
                 ->iconAlias('forms:components.rich-editor.toolbar.attach-files'),
+            RichEditorTool::make('customBlocks')
+                ->label(__('filament-forms::components.rich_editor.tools.custom_blocks'))
+                ->javaScriptHandler('togglePanel(\'customBlocks\')')
+                ->javaScriptActive('isPanelActive(\'customBlocks\')')
+                ->icon(Heroicon::SquaresPlus)
+                ->iconAlias('forms:components.rich-editor.toolbar.custom-blocks'),
             RichEditorTool::make('mergeTags')
                 ->label(__('filament-forms::components.rich_editor.tools.merge_tags'))
                 ->javaScriptHandler('togglePanel(\'mergeTags\')')
@@ -342,9 +360,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     /**
      * @param  array<EditorCommand>  $commands
-     * @param  array<string, mixed>  $editorSelection
+     * @param  ?array<string, mixed>  $editorSelection
      */
-    public function runCommands(array $commands, array $editorSelection): void
+    public function runCommands(array $commands, ?array $editorSelection = null): void
     {
         $key = $this->getKey();
         $livewire = $this->getLivewire();
@@ -514,6 +532,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'attachFiles',
+                ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
             ],
             ['undo', 'redo'],
@@ -555,6 +574,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return [
             AttachFilesAction::make(),
+            CustomBlockAction::make(),
             LinkAction::make(),
             ...array_reduce(
                 $this->getPlugins(),
@@ -568,11 +588,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<string> | Closure | null  $mergeTags
+     * @param  array<string> | Closure | null  $tags
      */
-    public function mergeTags(array | Closure | null $mergeTags): static
+    public function mergeTags(array | Closure | null $tags): static
     {
-        $this->mergeTags = $mergeTags;
+        $this->mergeTags = $tags;
 
         return $this;
     }
@@ -607,5 +627,47 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getActivePanel(): ?string
     {
         return $this->evaluate($this->activePanel);
+    }
+
+    /**
+     * @param  array<class-string<RichContentCustomBlock>> | Closure | null  $blocks
+     */
+    public function customBlocks(array | Closure | null $blocks): static
+    {
+        $this->customBlocks = $blocks;
+
+        return $this;
+    }
+
+    /**
+     * @return array<class-string<RichContentCustomBlock>>
+     */
+    public function getCustomBlocks(): array
+    {
+        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? [];
+    }
+
+    /**
+     * @return array<string, class-string<RichContentCustomBlock>>
+     */
+    public function getCachedCustomBlocks(): array
+    {
+        if (isset($this->cachedCustomBlocks)) {
+            return $this->cachedCustomBlocks;
+        }
+
+        foreach ($this->getCustomBlocks() as $block) {
+            $this->cachedCustomBlocks[$block::getId()] = $block;
+        }
+
+        return $this->cachedCustomBlocks;
+    }
+
+    /**
+     * @return ?class-string<RichContentCustomBlock>
+     */
+    public function getCustomBlock(string $id): ?string
+    {
+        return $this->getCachedCustomBlocks()[$id] ?? null;
     }
 }

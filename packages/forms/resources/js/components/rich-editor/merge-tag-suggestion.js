@@ -47,6 +47,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
         const createDropdown = () => {
             const dropdown = document.createElement('div')
             dropdown.className = 'fi-dropdown-panel fi-dropdown-list'
+
             return dropdown
         }
 
@@ -61,20 +62,18 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
             if (items.length) {
                 items.forEach((item, index) => {
                     const button = document.createElement('button')
-                    button.className =
-                        index === selectedIndex
-                            ? 'fi-dropdown-list-item fi-dropdown-list-item-label fi-selected'
-                            : 'fi-dropdown-list-item fi-dropdown-list-item-label'
+                    button.className = `fi-dropdown-list-item fi-dropdown-list-item-label ${index === selectedIndex ? 'fi-selected' : ''}`
                     button.textContent = item
                     button.type = 'button'
                     button.addEventListener('click', () => selectItem(index))
                     element.appendChild(button)
                 })
             } else {
-                const noResult = document.createElement('div')
-                noResult.className = 'fi-dropdown-header'
-                noResult.textContent = noMergeTagSearchResultsMessage
-                element.appendChild(noResult)
+                const noSearchResultsMessage = document.createElement('div')
+                noSearchResultsMessage.className = 'fi-dropdown-header'
+                noSearchResultsMessage.textContent =
+                    noMergeTagSearchResultsMessage
+                element.appendChild(noSearchResultsMessage)
             }
         }
 

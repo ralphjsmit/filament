@@ -423,6 +423,26 @@ return [
 
             ],
 
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Insert',
+                        ],
+
+                        'save' => [
+                            'label' => 'Save',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Edit',
@@ -457,6 +477,7 @@ return [
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
             'code_block' => 'Code block',
+            'custom_blocks' => 'Blocks',
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',

@@ -3,7 +3,9 @@ import Blockquote from '@tiptap/extension-blockquote'
 import Bold from '@tiptap/extension-bold'
 import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
+import CustomBlock from './extension-custom-block.js'
 import Document from '@tiptap/extension-document'
+import Dropcursor from '@tiptap/extension-dropcursor'
 import Heading from '@tiptap/extension-heading'
 import Italic from '@tiptap/extension-italic'
 import Image from './extension-image.js'
@@ -22,6 +24,10 @@ import getMergeTagSuggestion from './merge-tag-suggestion.js'
 
 export default async ({
     customExtensionUrls,
+    deleteCustomBlockButtonIconHtml,
+    editCustomBlockButtonIconHtml,
+    editCustomBlockUsing,
+    insertCustomBlockUsing,
     key,
     mergeTags,
     noMergeTagSearchResultsMessage,
@@ -34,7 +40,14 @@ export default async ({
     BulletList,
     Code,
     CodeBlock,
+    CustomBlock.configure({
+        deleteCustomBlockButtonIconHtml,
+        editCustomBlockButtonIconHtml,
+        editCustomBlockUsing,
+        insertCustomBlockUsing,
+    }),
     Document,
+    Dropcursor,
     Heading,
     Italic,
     Image,
@@ -44,10 +57,10 @@ export default async ({
     }),
     ListItem,
     LocalFiles.configure({
+        get$WireUsing: () => $wire,
         key,
         statePath,
         uploadingMessage: uploadingFileMessage,
-        $wire: () => $wire,
     }),
     ...(mergeTags.length
         ? [

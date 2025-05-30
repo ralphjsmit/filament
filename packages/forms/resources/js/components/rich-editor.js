@@ -4,6 +4,8 @@ import { Selection } from '@tiptap/pm/state'
 
 export default function richEditorFormComponent({
     activePanel,
+    deleteCustomBlockButtonIconHtml,
+    editCustomBlockButtonIconHtml,
     extensions,
     key,
     isLiveDebounced,
@@ -36,6 +38,25 @@ export default function richEditorFormComponent({
                 element: this.$refs.editor,
                 extensions: await getExtensions({
                     customExtensionUrls: extensions,
+                    deleteCustomBlockButtonIconHtml,
+                    editCustomBlockButtonIconHtml,
+                    editCustomBlockUsing: (id, config) =>
+                        this.$wire.mountAction(
+                            'customBlock',
+                            {
+                                editorSelection: this.editorSelection,
+                                id,
+                                config,
+                                mode: 'edit',
+                            },
+                            { schemaComponent: key },
+                        ),
+                    insertCustomBlockUsing: (id, dragPosition = null) =>
+                        this.$wire.mountAction(
+                            'customBlock',
+                            { id, dragPosition, mode: 'insert' },
+                            { schemaComponent: key },
+                        ),
                     key,
                     mergeTags,
                     noMergeTagSearchResultsMessage,

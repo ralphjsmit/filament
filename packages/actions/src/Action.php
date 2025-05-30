@@ -46,6 +46,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\BelongsToSchemaComponent;
     use Concerns\BelongsToTable;
     use Concerns\CanBeAuthorized;
+    use Concerns\CanBeBooted;
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeLabeledFrom;

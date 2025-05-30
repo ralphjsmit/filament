@@ -4,7 +4,7 @@ namespace Filament\Forms\Components\RichEditor\TipTapExtensions;
 
 use Tiptap\Nodes\Image as BaseImage;
 
-class Image extends BaseImage
+class ImageExtension extends BaseImage
 {
     /**
      * @return array<array<string, mixed>>

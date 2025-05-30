@@ -2,10 +2,13 @@
 
 namespace Filament\Forms\Components\RichEditor;
 
+use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
-use Filament\Forms\Components\RichEditor\TipTapExtensions\Image;
-use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTag;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\CustomBlockExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -53,6 +56,11 @@ class RichContentRenderer implements Htmlable
      * @var ?array<string, mixed>
      */
     protected ?array $mergeTags = null;
+
+    /**
+     * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
+     */
+    protected ?array $customBlocks = null;
 
     /**
      * @var array<string, mixed>
@@ -144,6 +152,29 @@ class RichContentRenderer implements Htmlable
         return $this;
     }
 
+    protected function processCustomBlocks(Editor $editor): void
+    {
+        if (blank($this->customBlocks)) {
+            return;
+        }
+
+        $editor->descendants(function (object &$node): void {
+            if ($node->type !== 'customBlock') {
+                return;
+            }
+
+            if (blank($node->attrs->id ?? null)) {
+                return;
+            }
+
+            $nodeConfig = json_decode(json_encode($node->attrs->config ?? []), associative: true);
+
+            $node->type = 'renderedCustomBlock';
+            $node->html = $this->getCustomBlockHtml($node->attrs->id, $nodeConfig);
+            unset($node->attrs->config);
+        });
+    }
+
     protected function processFileAttachments(Editor $editor): void
     {
         $editor->descendants(function (object &$node): void {
@@ -202,15 +233,17 @@ class RichContentRenderer implements Htmlable
             app(BulletList::class),
             app(Code::class),
             app(CodeBlock::class),
+            app(CustomBlockExtension::class),
             app(Document::class),
             app(Heading::class),
             app(Italic::class),
-            app(Image::class),
+            app(ImageExtension::class),
             app(Link::class),
             app(ListItem::class),
-            app(MergeTag::class),
+            app(MergeTagExtension::class),
             app(OrderedList::class),
             app(Paragraph::class),
+            app(RenderedCustomBlockExtension::class),
             app(Strike::class),
             app(Subscript::class),
             app(Superscript::class),
@@ -264,6 +297,7 @@ class RichContentRenderer implements Htmlable
     {
         $editor = $this->getEditor();
 
+        $this->processCustomBlocks($editor);
         $this->processFileAttachments($editor);
         $this->processMergeTags($editor);
 
@@ -276,11 +310,11 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @param  ?array<string, mixed>  $mergeTags
+     * @param  ?array<string, mixed>  $tags
      */
-    public function mergeTags(?array $mergeTags): static
+    public function mergeTags(?array $tags): static
     {
-        $this->mergeTags = $mergeTags;
+        $this->mergeTags = $tags;
         $this->cachedMergeTagValues = [];
 
         return $this;
@@ -289,5 +323,31 @@ class RichContentRenderer implements Htmlable
     public function getMergeTagValue(string $mergeTag): mixed
     {
         return $this->cachedMergeTagValues[$mergeTag] ??= value($this->mergeTags[$mergeTag] ?? null);
+    }
+
+    /**
+     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
+     */
+    public function customBlocks(?array $blocks): static
+    {
+        $this->customBlocks = $blocks;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
+     */
+    public function getCustomBlockHtml(string $id, array $config): ?string
+    {
+        foreach ($this->customBlocks as $key => $block) {
+            if (is_string($key) && ($key::getId() === $id)) {
+                return $key::toHtml($config, data: value($block) ?? []);
+            } elseif (is_string($block) && ($block::getId() === $id)) {
+                return $block::toHtml($config, data: []);
+            }
+        }
+
+        return null;
     }
 }

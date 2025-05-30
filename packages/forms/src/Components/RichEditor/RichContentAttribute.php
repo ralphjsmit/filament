@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\RichEditor;
 
+use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Illuminate\Contracts\Support\Htmlable;
@@ -24,6 +25,11 @@ class RichContentAttribute implements Htmlable
      * @var ?array<string, mixed>
      */
     protected ?array $mergeTags = null;
+
+    /**
+     * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
+     */
+    protected ?array $customBlocks = null;
 
     public function __construct(protected Model $model, protected string $name) {}
 
@@ -103,6 +109,7 @@ class RichContentAttribute implements Htmlable
     {
         return RichContentRenderer::make($this->model->getAttribute($this->name))
             ->plugins($this->getPlugins())
+            ->customBlocks($this->customBlocks)
             ->mergeTags($this->mergeTags)
             ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
             ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
@@ -111,11 +118,11 @@ class RichContentAttribute implements Htmlable
     }
 
     /**
-     * @param  ?array<string, mixed>  $mergeTags
+     * @param  ?array<string, mixed>  $tags
      */
-    public function mergeTags(?array $mergeTags): static
+    public function mergeTags(?array $tags): static
     {
-        $this->mergeTags = $mergeTags;
+        $this->mergeTags = $tags;
 
         return $this;
     }
@@ -130,5 +137,33 @@ class RichContentAttribute implements Htmlable
         }
 
         return array_keys($this->mergeTags);
+    }
+
+    /**
+     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
+     */
+    public function customBlocks(?array $blocks): static
+    {
+        $this->customBlocks = $blocks;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<class-string<RichContentCustomBlock>>
+     */
+    public function getCustomBlocks(): ?array
+    {
+        if (blank($this->customBlocks)) {
+            return null;
+        }
+
+        $blocks = [];
+
+        foreach ($this->customBlocks as $key => $block) {
+            $blocks[] = is_string($key) ? $key : $block;
+        }
+
+        return $blocks;
     }
 }
