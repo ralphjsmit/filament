@@ -382,6 +382,8 @@ return [
 
         ],
 
+        'no_merge_tag_search_results_message' => 'No se encontraron etiquetas dinámicas.',
+
         'tools' => [
             'attach_files' => 'Adjuntar archivos',
             'blockquote' => 'Cita',
@@ -393,6 +395,7 @@ return [
             'h3' => 'Subencabezado',
             'italic' => 'Cursiva',
             'link' => 'Enlace',
+            'merge_tags' => 'Etiquetas dinámicas',
             'ordered_list' => 'Lista numerada',
             'redo' => 'Rehacer',
             'strike' => 'Tachar',
