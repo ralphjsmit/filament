@@ -14,6 +14,9 @@ abstract class RichContentCustomBlock
         return Str::headline(static::getId());
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     */
     public static function getPreviewLabel(array $config): string
     {
         return static::getLabel();
