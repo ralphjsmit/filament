@@ -40,7 +40,11 @@ export default Node.create({
                 'fi-fo-rich-editor-custom-block-header fi-not-prose'
             dom.appendChild(header)
 
-            if (node.attrs.config?.length) {
+            if (
+                typeof node.attrs.config === 'object' &&
+                node.attrs.config !== null &&
+                Object.keys(node.attrs.config).length > 0
+            ) {
                 const editButtonContainer = document.createElement('div')
                 editButtonContainer.className =
                     'fi-fo-rich-editor-custom-block-edit-btn-ctn'
