@@ -23,7 +23,7 @@ it('can render', function (): void {
 });
 
 it('can send notifications', function (): void {
-    $iconSets = app(Factory::class)->all();
+    $iconSets = Arr::only(app(Factory::class)->all(), 'heroicons');
     $icons = app(IconsManifest::class)->getManifest($iconSets);
 
     $getRandomColor = function (): string {
