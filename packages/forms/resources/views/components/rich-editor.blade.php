@@ -105,7 +105,7 @@
                                     "
                                     x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
                                     x-on:open-modal.window="isLoading = false"
-                                    x-on:run-rich-editor-commands="isLoading = false"
+                                    x-on:run-rich-editor-commands.window="isLoading = false"
                                     class="fi-fo-rich-editor-custom-block-btn"
                                 >
                                     {{

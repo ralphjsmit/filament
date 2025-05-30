@@ -16,6 +16,15 @@ abstract class RichContentCustomBlock
 
     /**
      * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $data
+     */
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $config
      */
     public static function getPreviewLabel(array $config): string
     {
@@ -32,6 +41,6 @@ abstract class RichContentCustomBlock
 
     public static function configureEditorAction(Action $action): Action
     {
-        return $action;
+        return $action->modalHidden();
     }
 }

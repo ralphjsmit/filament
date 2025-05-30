@@ -656,8 +656,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             return $this->cachedCustomBlocks;
         }
 
-        foreach ($this->getCustomBlocks() as $customBlock) {
-            $this->cachedCustomBlocks[$customBlock::getId()] = $customBlock;
+        foreach ($this->getCustomBlocks() as $block) {
+            $this->cachedCustomBlocks[$block::getId()] = $block;
         }
 
         return $this->cachedCustomBlocks;

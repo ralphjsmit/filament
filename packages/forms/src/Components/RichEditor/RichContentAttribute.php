@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\RichEditor;
 
+use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Illuminate\Contracts\Support\Htmlable;
@@ -26,7 +27,7 @@ class RichContentAttribute implements Htmlable
     protected ?array $mergeTags = null;
 
     /**
-     * @var ?array<class-string<RichContentCustomBlock>>
+     * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
      */
     protected ?array $customBlocks = null;
 
@@ -139,7 +140,7 @@ class RichContentAttribute implements Htmlable
     }
 
     /**
-     * @param  ?array<class-string<RichContentCustomBlock>>  $blocks
+     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
      */
     public function customBlocks(?array $blocks): static
     {
@@ -153,6 +154,16 @@ class RichContentAttribute implements Htmlable
      */
     public function getCustomBlocks(): ?array
     {
-        return $this->customBlocks;
+        if (blank($this->customBlocks)) {
+            return null;
+        }
+
+        $blocks = [];
+
+        foreach ($this->customBlocks as $key => $block) {
+            $blocks[] = is_string($key) ? $key : $block;
+        }
+
+        return $blocks;
     }
 }

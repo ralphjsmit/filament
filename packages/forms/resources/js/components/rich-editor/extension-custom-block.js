@@ -40,23 +40,25 @@ export default Node.create({
                 'fi-fo-rich-editor-custom-block-header fi-not-prose'
             dom.appendChild(header)
 
-            const editButtonContainer = document.createElement('div')
-            editButtonContainer.className =
-                'fi-fo-rich-editor-custom-block-edit-btn-ctn'
-            header.appendChild(editButtonContainer)
+            if (node.attrs.config?.length) {
+                const editButtonContainer = document.createElement('div')
+                editButtonContainer.className =
+                    'fi-fo-rich-editor-custom-block-edit-btn-ctn'
+                header.appendChild(editButtonContainer)
 
-            const editButton = document.createElement('button')
-            editButton.className = 'fi-icon-btn'
-            editButton.type = 'button'
-            editButton.innerHTML =
-                extension.options.editCustomBlockButtonIconHtml
-            editButton.addEventListener('click', () =>
-                extension.options.editCustomBlockUsing(
-                    node.attrs.id,
-                    node.attrs.config,
-                ),
-            )
-            editButtonContainer.appendChild(editButton)
+                const editButton = document.createElement('button')
+                editButton.className = 'fi-icon-btn'
+                editButton.type = 'button'
+                editButton.innerHTML =
+                    extension.options.editCustomBlockButtonIconHtml
+                editButton.addEventListener('click', () =>
+                    extension.options.editCustomBlockUsing(
+                        node.attrs.id,
+                        node.attrs.config,
+                    ),
+                )
+                editButtonContainer.appendChild(editButton)
+            }
 
             const heading = document.createElement('p')
             heading.className = 'fi-fo-rich-editor-custom-block-heading'
