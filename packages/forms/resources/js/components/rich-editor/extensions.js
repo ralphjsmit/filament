@@ -24,6 +24,7 @@ import getMergeTagSuggestion from './merge-tag-suggestion.js'
 
 export default async ({
     customExtensionUrls,
+    deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     editCustomBlockUsing,
     insertCustomBlockUsing,
@@ -40,6 +41,7 @@ export default async ({
     Code,
     CodeBlock,
     CustomBlock.configure({
+        deleteCustomBlockButtonIconHtml,
         editCustomBlockButtonIconHtml,
         editCustomBlockUsing,
         insertCustomBlockUsing,

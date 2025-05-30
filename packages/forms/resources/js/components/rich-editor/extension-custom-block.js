@@ -1,11 +1,9 @@
-import { mergeAttributes, Node } from '@tiptap/core'
+import { mergeAttributes, Node, NodePos } from '@tiptap/core'
 import { Node as ProseMirrorNode } from '@tiptap/pm/model'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 
 export default Node.create({
     name: 'customBlock',
-
-    priority: 101,
 
     group: 'block',
 
@@ -25,34 +23,48 @@ export default Node.create({
 
     addNodeView() {
         return ({ editor, node, getPos, HTMLAttributes, decorations, extension }) => {
-            const dom = document.createElement('custom-block')
+            const dom = document.createElement('div')
             dom.setAttribute('data-config', node.attrs.config)
             dom.setAttribute('data-id', node.attrs.id)
+            dom.setAttribute('data-type', 'customBlock')
 
             const header = document.createElement('div')
             header.className = 'fi-fo-rich-editor-custom-block-header fi-not-prose'
             dom.appendChild(header)
 
-            const buttonContainer = document.createElement('div')
-            buttonContainer.className = 'fi-fo-rich-editor-custom-block-edit-btn-ctn'
-            header.appendChild(buttonContainer)
+            const editButtonContainer = document.createElement('div')
+            editButtonContainer.className = 'fi-fo-rich-editor-custom-block-edit-btn-ctn'
+            header.appendChild(editButtonContainer)
 
-            const button = document.createElement('button')
-            button.className = 'fi-icon-btn'
-            button.type = 'button'
-            button.innerHTML = extension.options.editCustomBlockButtonIconHtml
-            button.addEventListener('click', () => extension.options.editCustomBlockUsing(node.attrs.id, node.attrs.config))
-            buttonContainer.appendChild(button)
+            const editButton = document.createElement('button')
+            editButton.className = 'fi-icon-btn'
+            editButton.type = 'button'
+            editButton.innerHTML = extension.options.editCustomBlockButtonIconHtml
+            editButton.addEventListener('click', () => extension.options.editCustomBlockUsing(node.attrs.id, node.attrs.config))
+            editButtonContainer.appendChild(editButton)
 
             const heading = document.createElement('p')
             heading.className = 'fi-fo-rich-editor-custom-block-heading'
             heading.textContent = node.attrs.label
             header.appendChild(heading)
 
-            const preview = document.createElement('div')
-            preview.className = 'fi-fo-rich-editor-custom-block-preview fi-not-prose'
-            preview.innerHTML = atob(node.attrs.preview)
-            dom.appendChild(preview)
+            const deleteButtonContainer = document.createElement('div')
+            deleteButtonContainer.className = 'fi-fo-rich-editor-custom-block-delete-btn-ctn'
+            header.appendChild(deleteButtonContainer)
+
+            const deleteButton = document.createElement('button')
+            deleteButton.className = 'fi-icon-btn'
+            deleteButton.type = 'button'
+            deleteButton.innerHTML = extension.options.deleteCustomBlockButtonIconHtml
+            deleteButton.addEventListener('click', () => editor.chain().setNodeSelection(getPos()).deleteSelection().run())
+            deleteButtonContainer.appendChild(deleteButton)
+
+            if (node.attrs.preview) {
+                const preview = document.createElement('div')
+                preview.className = 'fi-fo-rich-editor-custom-block-preview fi-not-prose'
+                preview.innerHTML = atob(node.attrs.preview)
+                dom.appendChild(preview)
+            }
 
             return {
                 dom,
@@ -62,6 +74,7 @@ export default Node.create({
 
     addOptions: function () {
         return {
+            deleteCustomBlockButtonIconHtml: null,
             editCustomBlockButtonIconHtml: null,
             editCustomBlockUsing: () => {},
             insertCustomBlockUsing: () => {},
@@ -78,16 +91,27 @@ export default Node.create({
             id: {
                 default: null,
                 parseHTML: (element) => element.getAttribute('data-id'),
+                renderHTML: (attributes) => {
+                    if (!attributes.id) {
+                        return {}
+                    }
+
+                    return {
+                        'data-id': attributes.id,
+                    }
+                },
             },
 
             label: {
                 default: null,
                 parseHTML: (element) => element.getAttribute('data-label'),
+                rendered: false,
             },
 
             preview: {
                 default: null,
                 parseHTML: (element) => element.getAttribute('data-preview'),
+                rendered: false,
             },
         }
     },
@@ -95,13 +119,13 @@ export default Node.create({
     parseHTML: function () {
         return [
             {
-                tag: 'custom-block',
+                tag: `div[data-type="${this.name}"]`,
             },
         ]
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['custom-block', mergeAttributes(HTMLAttributes)]
+        return ['div', mergeAttributes(HTMLAttributes)]
     },
 
     addKeyboardShortcuts: function () {

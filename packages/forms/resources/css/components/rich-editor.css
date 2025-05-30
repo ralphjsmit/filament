@@ -81,7 +81,7 @@
         &:focus {
             @apply outline-none;
 
-            & custom-block {
+            & div[data-type='customBlock'] {
                 &.ProseMirror-selectednode {
                     @apply ring-2 ring-primary-600 dark:ring-primary-500;
                 }
@@ -93,12 +93,12 @@
         @apply animate-pulse;
     }
 
-    & custom-block {
-        @apply shadow-sm bg-gray-50 dark:bg-gray-900/30 grid divide-y divide-gray-200 dark:divide-white/10 ring-1 ring-gray-950/10 dark:ring-white/20 rounded-lg;
+    & div[data-type='customBlock'] {
+        @apply shadow-sm grid divide-y divide-gray-200 dark:divide-white/10 ring-1 ring-gray-950/10 dark:ring-white/20 rounded-lg;
     }
 
     & .fi-fo-rich-editor-custom-block-header {
-        @apply flex items-start py-3 px-4 gap-3 rounded-t-lg;
+        @apply flex bg-gray-50 dark:bg-gray-900/30 items-start py-3 px-4 gap-3 rounded-t-lg;
     }
 
     & .fi-fo-rich-editor-custom-block-heading {
@@ -109,8 +109,12 @@
         @apply shrink-0;
     }
 
+    & .fi-fo-rich-editor-custom-block-delete-btn-ctn {
+        @apply shrink-0;
+    }
+
     & .fi-fo-rich-editor-custom-block-preview {
-        @apply py-3 px-4 bg-white rounded-b-lg;
+        @apply py-3 px-4;
     }
 
     @supports (container-type: inline-size) {

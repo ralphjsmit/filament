@@ -20,7 +20,7 @@ class CustomBlockAction
                     return $schema;
                 }
 
-                return $block::form($schema);
+                return $block::configurationForm($schema);
             })
             ->action(function (array $arguments, array $data, RichEditor $component): void {
                 $block = $component->getCustomBlock($arguments['id']);

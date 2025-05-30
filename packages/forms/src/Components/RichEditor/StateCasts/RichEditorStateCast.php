@@ -40,6 +40,17 @@ class RichEditorStateCast implements StateCast
             });
         }
 
+        if ($this->richEditor->getCustomBlocks()) {
+            $editor->descendants(function (object &$node): void {
+                if ($node->type !== 'customBlock') {
+                    return;
+                }
+
+                unset($node->attrs->label);
+                unset($node->attrs->preview);
+            });
+        }
+
         return $editor->{$this->richEditor->isJson() ? 'getDocument' : 'getHtml'}();
     }
 
@@ -48,7 +59,7 @@ class RichEditorStateCast implements StateCast
      */
     public function set(mixed $state): array
     {
-        return $this->richEditor->getTipTapEditor()
+        $editor = $this->richEditor->getTipTapEditor()
             ->setContent($state ?? [
                 'type' => 'doc',
                 'content' => [
@@ -68,7 +79,25 @@ class RichEditorStateCast implements StateCast
                 }
 
                 $node->attrs->src = $this->richEditor->getFileAttachmentUrl($node->attrs->{'data-id'}) ?? $this->richEditor->getFileAttachmentUrlFromAnotherRecord($node->attrs->{'data-id'}) ?? $node->attrs->src ?? null;
-            })
-            ->getDocument();
+            });
+
+        if ($this->richEditor->getCustomBlocks()) {
+            $editor->descendants(function (object &$node): void {
+                if ($node->type !== 'customBlock') {
+                    return;
+                }
+
+                $block = $this->richEditor->getCustomBlock($node->attrs->id);
+
+                if (blank($block)) {
+                    return;
+                }
+
+                $node->attrs->label = $block::getLabel();
+                $node->attrs->preview = base64_encode($block::toPreviewHtml(json_decode(json_encode($node->attrs->config), associative: true)));
+            });
+        }
+
+        return $editor->getDocument();
     }
 }

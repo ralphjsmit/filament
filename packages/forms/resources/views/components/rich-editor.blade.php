@@ -21,6 +21,7 @@
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
         x-data="richEditorFormComponent({
                     activePanel: @js($getActivePanel()),
+                    deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: 'forms:components.rich-editor.panels.custom-block.delete-button')->toHtml()),
                     editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: 'forms:components.rich-editor.panels.custom-block.edit-button')->toHtml()),
                     extensions: @js($getTipTapJsExtensions()),
                     key: @js($key),
@@ -99,12 +100,7 @@
                                         x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
                                         class="fi-fo-rich-editor-custom-block-btn"
                                     >
-                                        <div
-                                            data-type="customBlock"
-                                            data-id="{{ $blockId }}"
-                                        >
-                                            {{ $block::getLabel() }}
-                                        </div>
+                                        {{ $block::getLabel() }}
                                     </button>
                                 </div>
                             @endforeach

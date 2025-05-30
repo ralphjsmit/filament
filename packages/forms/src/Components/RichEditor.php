@@ -39,9 +39,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected string $view = 'filament-forms::components.rich-editor';
 
-    protected string|Closure|null $uploadingFileMessage = null;
+    protected string | Closure | null $uploadingFileMessage = null;
 
-    protected bool|Closure $isJson = false;
+    protected bool | Closure $isJson = false;
 
     /**
      * @var array<RichContentPlugin | Closure>
@@ -56,20 +56,25 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @var array<string> | Closure | null
      */
-    protected array|Closure|null $mergeTags = null;
+    protected array | Closure | null $mergeTags = null;
 
     /**
      * @var array<class-string<RichContentCustomBlock>> | Closure | null
      */
-    protected array|Closure|null $customBlocks = null;
+    protected array | Closure | null $customBlocks = null;
 
-    protected string|Closure|null $noMergeTagSearchResultsMessage = null;
+    protected string | Closure | null $noMergeTagSearchResultsMessage = null;
 
     protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
-    protected string|Closure|null $activePanel = null;
+    protected string | Closure | null $activePanel = null;
+
+    /**
+     * @var array<string, class-string<RichContentCustomBlock>>
+     */
+    protected array $cachedCustomBlocks;
 
     protected function setUp(): void
     {
@@ -372,7 +377,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         );
     }
 
-    public function uploadingFileMessage(string|Closure|null $message): static
+    public function uploadingFileMessage(string | Closure | null $message): static
     {
         $this->uploadingFileMessage = $message;
 
@@ -585,7 +590,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @param array<string> | Closure | null $tags
      */
-    public function mergeTags(array|Closure|null $tags): static
+    public function mergeTags(array | Closure | null $tags): static
     {
         $this->mergeTags = $tags;
 
@@ -600,7 +605,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
     }
 
-    public function noMergeTagSearchResultsMessage(string|Closure|null $message): static
+    public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
     {
         $this->noMergeTagSearchResultsMessage = $message;
 
@@ -612,7 +617,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $this->evaluate($this->noMergeTagSearchResultsMessage) ?? __('filament-forms::components.rich_editor.no_merge_tag_search_results_message');
     }
 
-    public function activePanel(string|Closure|null $panel): static
+    public function activePanel(string | Closure | null $panel): static
     {
         $this->activePanel = $panel;
 
@@ -627,7 +632,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @param array<class-string<RichContentCustomBlock>> | Closure | null $blocks
      */
-    public function customBlocks(array|Closure|null $blocks): static
+    public function customBlocks(array | Closure | null $blocks): static
     {
         $this->customBlocks = $blocks;
 
@@ -643,16 +648,26 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
+     * @return array<string, class-string<RichContentCustomBlock>>
+     */
+    public function getCachedCustomBlocks(): array
+    {
+        if (isset($this->cachedCustomBlocks)) {
+            return $this->cachedCustomBlocks;
+        }
+
+        foreach ($this->getCustomBlocks() as $customBlock) {
+            $this->cachedCustomBlocks[$customBlock::getId()] = $customBlock;
+        }
+
+        return $this->cachedCustomBlocks;
+    }
+
+    /**
      * @return ?class-string<RichContentCustomBlock>
      */
     public function getCustomBlock(string $id): ?string
     {
-        foreach ($this->getCustomBlocks() as $customBlock) {
-            if ($customBlock::getId() === $id) {
-                return $customBlock;
-            }
-        }
-
-        return null;
+        return $this->getCachedCustomBlocks()[$id] ?? null;
     }
 }

@@ -5,21 +5,19 @@ namespace Filament\Forms\Components\RichEditor\TipTapExtensions;
 use Tiptap\Core\Node;
 use Tiptap\Utils\HTML;
 
-class MergeTag extends Node
+class CustomBlock extends Node
 {
     /**
      * @var string
      */
-    public static $name = 'mergeTag';
+    public static $name = 'customBlock';
 
     /**
      * @return array<string, mixed>
      */
     public function addOptions(): array
     {
-        return [
-            'HTMLAttributes' => [],
-        ];
+        return [];
     }
 
     /**
@@ -29,7 +27,7 @@ class MergeTag extends Node
     {
         return [
             [
-                'tag' => 'span[data-type="' . self::$name . '"]',
+                'tag' => 'div[data-type="' . self::$name . '"]',
             ],
         ];
     }
@@ -40,9 +38,21 @@ class MergeTag extends Node
     public function addAttributes(): array
     {
         return [
+            'config' => [
+                'parseHTML' => fn ($DOMNode) => json_decode($DOMNode->getAttribute('data-config')) ?: null,
+                'renderHTML' => fn ($attributes) => ['data-config' => json_encode($attributes->config ?? null)],
+            ],
             'id' => [
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-id') ?: null,
                 'renderHTML' => fn ($attributes) => ['data-id' => $attributes->id ?? null],
+            ],
+            'label' => [
+                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-label') ?: null,
+                'rendered' => false,
+            ],
+            'preview' => [
+                'parseHTML' => fn ($DOMNode) => base64_decode($DOMNode->getAttribute('data-preview') ?: null),
+                'rendered' => false,
             ],
         ];
     }
@@ -55,13 +65,11 @@ class MergeTag extends Node
     public function renderHTML($node, $HTMLAttributes = []): array
     {
         return [
-            'span',
+            'div',
             HTML::mergeAttributes(
                 ['data-type' => self::$name],
-                $this->options['HTMLAttributes'],
                 $HTMLAttributes,
             ),
-            0,
         ];
     }
 }

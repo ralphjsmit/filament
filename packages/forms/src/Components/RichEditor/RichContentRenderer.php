@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\RichEditor;
 
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\CustomBlock;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\Image;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTag;
 use Illuminate\Contracts\Support\Htmlable;
@@ -207,6 +208,7 @@ class RichContentRenderer implements Htmlable
             app(BulletList::class),
             app(Code::class),
             app(CodeBlock::class),
+            app(CustomBlock::class),
             app(Document::class),
             app(Heading::class),
             app(Italic::class),
