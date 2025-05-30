@@ -90,23 +90,32 @@
                                     $blockId = $block::getId();
                                 @endphp
 
-                                <div>
-                                    <button
-                                        draggable="true"
-                                        type="button"
-                                        x-on:click="
-                                            $wire.mountAction(
-                                                'customBlock',
-                                                { editorSelection, id: @js($blockId), mode: 'insert' },
-                                                { schemaComponent: @js($key) },
-                                            )
-                                        "
-                                        x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
-                                        class="fi-fo-rich-editor-custom-block-btn"
-                                    >
-                                        {{ $block::getLabel() }}
-                                    </button>
-                                </div>
+                                <button
+                                    draggable="true"
+                                    type="button"
+                                    x-data="{ isLoading: false }"
+                                    x-on:click="
+                                        isLoading = true
+
+                                        $wire.mountAction(
+                                            'customBlock',
+                                            { editorSelection, id: @js($blockId), mode: 'insert' },
+                                            { schemaComponent: @js($key) },
+                                        )
+                                    "
+                                    x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
+                                    x-on:open-modal.window="isLoading = false"
+                                    x-on:run-rich-editor-commands="isLoading = false"
+                                    class="fi-fo-rich-editor-custom-block-btn"
+                                >
+                                    {{
+                                        \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                                            'x-show' => 'isLoading',
+                                        ])))
+                                    }}
+
+                                    {{ $block::getLabel() }}
+                                </button>
                             @endforeach
                         </div>
                     </div>
@@ -133,22 +142,20 @@
 
                         <div class="fi-fo-rich-editor-merge-tags-list">
                             @foreach ($mergeTags as $tag)
-                                <div>
-                                    <button
-                                        draggable="true"
-                                        type="button"
-                                        x-on:click="insertMergeTag(@js($tag))"
-                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tag))"
-                                        class="fi-fo-rich-editor-merge-tag-btn"
+                                <button
+                                    draggable="true"
+                                    type="button"
+                                    x-on:click="insertMergeTag(@js($tag))"
+                                    x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tag))"
+                                    class="fi-fo-rich-editor-merge-tag-btn"
+                                >
+                                    <span
+                                        data-type="mergeTag"
+                                        data-id="{{ $tag }}"
                                     >
-                                        <span
-                                            data-type="mergeTag"
-                                            data-id="{{ $tag }}"
-                                        >
-                                            {{ $tag }}
-                                        </span>
-                                    </button>
-                                </div>
+                                        {{ $tag }}
+                                    </span>
+                                </button>
                             @endforeach
                         </div>
                     </div>

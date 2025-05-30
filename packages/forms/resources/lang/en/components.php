@@ -423,6 +423,26 @@ return [
 
             ],
 
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Insert',
+                        ],
+
+                        'save' => [
+                            'label' => 'Save',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Edit',

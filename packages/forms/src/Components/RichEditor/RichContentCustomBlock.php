@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\RichEditor;
 
-use Filament\Schemas\Schema;
+use Filament\Actions\Action;
 use Illuminate\Support\Str;
 
 abstract class RichContentCustomBlock
@@ -14,6 +14,11 @@ abstract class RichContentCustomBlock
         return Str::headline(static::getId());
     }
 
+    public static function getPreviewLabel(array $config): string
+    {
+        return static::getLabel();
+    }
+
     /**
      * @param  array<string, mixed>  $config
      */
@@ -22,13 +27,8 @@ abstract class RichContentCustomBlock
         return null;
     }
 
-    public static function configurationForm(Schema $form): Schema
+    public static function configureEditorAction(Action $action): Action
     {
-        return $form;
-    }
-
-    public static function isConfigurationFormSlideOver(): bool
-    {
-        return false;
+        return $action;
     }
 }

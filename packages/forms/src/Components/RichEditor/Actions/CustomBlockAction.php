@@ -5,7 +5,7 @@ namespace Filament\Forms\Components\RichEditor\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\EditorCommand;
-use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 
 class CustomBlockAction
 {
@@ -13,14 +13,29 @@ class CustomBlockAction
     {
         return Action::make('customBlock')
             ->fillForm(fn (array $arguments): array => $arguments['config'] ?? [])
-            ->schema(function (array $arguments, RichEditor $component, Schema $schema): Schema {
+            ->modalHeading(function (array $arguments, RichEditor $component): ?string {
                 $block = $component->getCustomBlock($arguments['id']);
 
                 if (blank($block)) {
-                    return $schema;
+                    return null;
                 }
 
-                return $block::configurationForm($schema);
+                return $block::getLabel();
+            })
+            ->modalWidth(Width::Large)
+            ->modalSubmitActionLabel(fn (array $arguments): ?string => match ($arguments['mode']) {
+                'insert' => __('filament-forms::components.rich_editor.actions.custom_block.modal.actions.insert.label'),
+                'edit' => __('filament-forms::components.rich_editor.actions.custom_block.modal.actions.save.label'),
+                default => null,
+            })
+            ->bootUsing(function (Action $action, array $arguments, RichEditor $component) {
+                $block = $component->getCustomBlock($arguments['id']);
+
+                if (blank($block)) {
+                    return;
+                }
+
+                return $block::configureEditorAction($action);
             })
             ->action(function (array $arguments, array $data, RichEditor $component): void {
                 $block = $component->getCustomBlock($arguments['id']);
@@ -34,7 +49,7 @@ class CustomBlockAction
                     'attrs' => [
                         'config' => $data,
                         'id' => $arguments['id'],
-                        'label' => $block::getLabel(),
+                        'label' => $block::getPreviewLabel($data),
                         'preview' => base64_encode($block::toPreviewHtml($data)),
                     ],
                 ];
@@ -74,6 +89,16 @@ class CustomBlockAction
                     );
 
                     return;
+                }
+
+                if (
+                    (($arguments['mode'] ?? null) === 'edit') &&
+                    ($arguments['editorSelection']['type'] !== 'node')
+                ) {
+                    $arguments['editorSelection']['type'] = 'node';
+                    $arguments['editorSelection']['anchor']--;
+
+                    unset($arguments['editorSelection']['head']);
                 }
 
                 // Insert at the current selection
