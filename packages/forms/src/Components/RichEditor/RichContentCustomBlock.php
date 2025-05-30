@@ -15,7 +15,7 @@ abstract class RichContentCustomBlock
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function toPreviewHtml(array $config): ?string
     {

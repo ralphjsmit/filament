@@ -62,7 +62,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
             if (items.length) {
                 items.forEach((item, index) => {
                     const button = document.createElement('button')
-                    button.className = `fi-dropdown-list-item fi-dropdown-list-item-label ${(index === selectedIndex) ? 'fi-selected' : ''}`
+                    button.className = `fi-dropdown-list-item fi-dropdown-list-item-label ${index === selectedIndex ? 'fi-selected' : ''}`
                     button.textContent = item
                     button.type = 'button'
                     button.addEventListener('click', () => selectItem(index))
@@ -71,7 +71,8 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
             } else {
                 const noSearchResultsMessage = document.createElement('div')
                 noSearchResultsMessage.className = 'fi-dropdown-header'
-                noSearchResultsMessage.textContent = noMergeTagSearchResultsMessage
+                noSearchResultsMessage.textContent =
+                    noMergeTagSearchResultsMessage
                 element.appendChild(noSearchResultsMessage)
             }
         }

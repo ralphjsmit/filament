@@ -44,7 +44,7 @@
     }
 
     & .fi-fo-rich-editor-panel-header {
-        @apply flex items-start py-3 px-4 gap-3;
+        @apply flex items-start gap-3 px-4 py-3;
     }
 
     & .fi-fo-rich-editor-panel-heading {
@@ -60,19 +60,19 @@
     }
 
     & .fi-fo-rich-editor-merge-tags-list {
-        @apply flex flex-wrap gap-2 py-3 px-4;
+        @apply flex flex-wrap gap-2 px-4 py-3;
     }
 
     & .fi-fo-rich-editor-merge-tag-btn {
-        @apply rounded-lg cursor-move bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+        @apply cursor-move rounded-lg bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
     }
 
     & .fi-fo-rich-editor-custom-blocks-list {
-        @apply flex flex-wrap gap-2 py-3 px-4;
+        @apply flex flex-wrap gap-2 px-4 py-3;
     }
 
     & .fi-fo-rich-editor-custom-block-btn {
-        @apply rounded-lg cursor-move bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+        @apply cursor-move rounded-lg bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
     }
 
     & .tiptap {
@@ -83,7 +83,7 @@
 
             & div[data-type='customBlock'] {
                 &.ProseMirror-selectednode {
-                    @apply ring-2 ring-primary-600 dark:ring-primary-500;
+                    @apply ring-primary-600 dark:ring-primary-500 ring-2;
                 }
             }
         }
@@ -94,11 +94,11 @@
     }
 
     & div[data-type='customBlock'] {
-        @apply shadow-sm grid divide-y divide-gray-200 dark:divide-white/10 ring-1 ring-gray-950/10 dark:ring-white/20 rounded-lg;
+        @apply grid divide-y divide-gray-200 rounded-lg shadow-sm ring-1 ring-gray-950/10 dark:divide-white/10 dark:ring-white/20;
     }
 
     & .fi-fo-rich-editor-custom-block-header {
-        @apply flex bg-gray-50 dark:bg-gray-900/30 items-start py-3 px-4 gap-3 rounded-t-lg;
+        @apply flex items-start gap-3 rounded-t-lg bg-gray-50 px-4 py-3 dark:bg-gray-900/30;
     }
 
     & .fi-fo-rich-editor-custom-block-heading {
@@ -114,7 +114,7 @@
     }
 
     & .fi-fo-rich-editor-custom-block-preview {
-        @apply py-3 px-4;
+        @apply px-4 py-3;
     }
 
     @supports (container-type: inline-size) {
@@ -125,7 +125,7 @@
         }
 
         & .fi-fo-rich-editor-panels {
-            @apply @2xl:max-w-3xs @2xl:border-s @2xl:border-b-0 @2xl:rounded-ee-lg;
+            @apply @2xl:max-w-3xs @2xl:rounded-ee-lg @2xl:border-s @2xl:border-b-0;
         }
     }
 
@@ -135,7 +135,7 @@
         }
 
         & .fi-fo-rich-editor-panels {
-            @apply md:max-w-3xs md:border-s md:border-b-0 md:rounded-ee-lg;
+            @apply md:max-w-3xs md:rounded-ee-lg md:border-s md:border-b-0;
         }
     }
 }

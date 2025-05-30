@@ -40,8 +40,23 @@ export default function richEditorFormComponent({
                     customExtensionUrls: extensions,
                     deleteCustomBlockButtonIconHtml,
                     editCustomBlockButtonIconHtml,
-                    editCustomBlockUsing: (id, config) => this.$wire.mountAction('customBlock', { editorSelection: this.editorSelection, id, config, mode: 'edit' }, { schemaComponent: key }),
-                    insertCustomBlockUsing: (id, dragPosition = null) => this.$wire.mountAction('customBlock', { id, dragPosition, mode: 'insert' }, { schemaComponent: key }),
+                    editCustomBlockUsing: (id, config) =>
+                        this.$wire.mountAction(
+                            'customBlock',
+                            {
+                                editorSelection: this.editorSelection,
+                                id,
+                                config,
+                                mode: 'edit',
+                            },
+                            { schemaComponent: key },
+                        ),
+                    insertCustomBlockUsing: (id, dragPosition = null) =>
+                        this.$wire.mountAction(
+                            'customBlock',
+                            { id, dragPosition, mode: 'insert' },
+                            { schemaComponent: key },
+                        ),
                     key,
                     mergeTags,
                     noMergeTagSearchResultsMessage,

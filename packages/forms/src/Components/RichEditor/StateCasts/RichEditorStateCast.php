@@ -93,8 +93,10 @@ class RichEditorStateCast implements StateCast
                     return;
                 }
 
+                $nodeConfig = json_decode(json_encode($node->attrs->config), associative: true);
+
                 $node->attrs->label = $block::getLabel();
-                $node->attrs->preview = base64_encode($block::toPreviewHtml(json_decode(json_encode($node->attrs->config), associative: true)));
+                $node->attrs->preview = base64_encode($block::toPreviewHtml($nodeConfig));
             });
         }
 

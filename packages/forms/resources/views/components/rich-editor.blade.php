@@ -73,9 +73,7 @@
                                 {{ __('filament-forms::components.rich_editor.tools.custom_blocks') }}
                             </p>
 
-                            <div
-                                class="fi-fo-rich-editor-panel-close-btn-ctn"
-                            >
+                            <div class="fi-fo-rich-editor-panel-close-btn-ctn">
                                 <button
                                     type="button"
                                     x-on:click="togglePanel()"
@@ -96,7 +94,13 @@
                                     <button
                                         draggable="true"
                                         type="button"
-                                        x-on:click="$wire.mountAction('customBlock', { editorSelection, id: @js($blockId), mode: 'insert' }, { schemaComponent: @js($key) })"
+                                        x-on:click="
+                                            $wire.mountAction(
+                                                'customBlock',
+                                                { editorSelection, id: @js($blockId), mode: 'insert' },
+                                                { schemaComponent: @js($key) },
+                                            )
+                                        "
                                         x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
                                         class="fi-fo-rich-editor-custom-block-btn"
                                     >
@@ -116,9 +120,7 @@
                                 {{ __('filament-forms::components.rich_editor.tools.merge_tags') }}
                             </p>
 
-                            <div
-                                class="fi-fo-rich-editor-panel-close-btn-ctn"
-                            >
+                            <div class="fi-fo-rich-editor-panel-close-btn-ctn">
                                 <button
                                     type="button"
                                     x-on:click="togglePanel()"
