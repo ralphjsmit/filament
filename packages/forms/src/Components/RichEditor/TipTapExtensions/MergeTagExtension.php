@@ -5,7 +5,7 @@ namespace Filament\Forms\Components\RichEditor\TipTapExtensions;
 use Tiptap\Core\Node;
 use Tiptap\Utils\HTML;
 
-class MergeTag extends Node
+class MergeTagExtension extends Node
 {
     /**
      * @var string

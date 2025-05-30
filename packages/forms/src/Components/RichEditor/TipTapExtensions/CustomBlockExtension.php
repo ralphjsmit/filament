@@ -5,7 +5,7 @@ namespace Filament\Forms\Components\RichEditor\TipTapExtensions;
 use Tiptap\Core\Node;
 use Tiptap\Utils\HTML;
 
-class CustomBlock extends Node
+class CustomBlockExtension extends Node
 {
     /**
      * @var string
