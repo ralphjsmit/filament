@@ -35,8 +35,8 @@ class SimpleMethodChangesRector extends AbstractRector
      */
     public function getChanges(): array
     {
-        $prependPanelModifier = static function (ClassMethod $node): void {
-            $panelParam = new Param(var: new Variable('panel'), type: new FullyQualified('Filament\\Panel'));
+        $prependPanelParamModifier = static function (ClassMethod $node): void {
+            $panelParam = new Param(new Variable('panel'), type: new FullyQualified('Filament\\Panel'));
 
             foreach ($node->getParams() as $param) {
                 if ($param->var->name === 'panel') {
@@ -64,11 +64,11 @@ class SimpleMethodChangesRector extends AbstractRector
                     'getSubNavigationPosition' => function (ClassMethod $node): void {
                         $node->flags &= Modifiers::STATIC;
                     },
-                    'getRoutePath' => $prependPanelModifier,
-                    'getRelativeRouteName' => $prependPanelModifier,
-                    'getSlug' => $prependPanelModifier,
-                    'prependClusterSlug' => $prependPanelModifier,
-                    'prependClusterBaseName' => $prependPanelModifier,
+                    'getRoutePath' => $prependPanelParamModifier,
+                    'getRelativeRouteName' => $prependPanelParamModifier,
+                    'getSlug' => $prependPanelParamModifier,
+                    'prependClusterSlug' => $prependPanelParamModifier,
+                    'prependClusterBaseName' => $prependPanelParamModifier,
                 ],
             ],
             [
@@ -76,9 +76,9 @@ class SimpleMethodChangesRector extends AbstractRector
                     Resource::class,
                 ],
                 'changes' => [
-                    'getRelativeRouteName' => $prependPanelModifier,
-                    'getRoutePrefix' => $prependPanelModifier,
-                    'getSlug' => $prependPanelModifier,
+                    'getRelativeRouteName' => $prependPanelParamModifier,
+                    'getRoutePrefix' => $prependPanelParamModifier,
+                    'getSlug' => $prependPanelParamModifier,
                 ],
             ],
             [
