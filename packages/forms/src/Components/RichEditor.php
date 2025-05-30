@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
+use Filament\Forms\Components\RichEditor\Actions\CustomBlockAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
@@ -38,9 +39,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected string $view = 'filament-forms::components.rich-editor';
 
-    protected string | Closure | null $uploadingFileMessage = null;
+    protected string|Closure|null $uploadingFileMessage = null;
 
-    protected bool | Closure $isJson = false;
+    protected bool|Closure $isJson = false;
 
     /**
      * @var array<RichContentPlugin | Closure>
@@ -55,20 +56,20 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @var array<string> | Closure | null
      */
-    protected array | Closure | null $mergeTags = null;
+    protected array|Closure|null $mergeTags = null;
 
     /**
      * @var array<class-string<RichContentCustomBlock>> | Closure | null
      */
-    protected array | Closure | null $customBlocks = null;
+    protected array|Closure|null $customBlocks = null;
 
-    protected string | Closure | null $noMergeTagSearchResultsMessage = null;
+    protected string|Closure|null $noMergeTagSearchResultsMessage = null;
 
     protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
-    protected string | Closure | null $activePanel = null;
+    protected string|Closure|null $activePanel = null;
 
     protected function setUp(): void
     {
@@ -181,7 +182,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
             $fileAttachmentProvider = $component->getFileAttachmentProvider();
 
-            if ($fileAttachmentProvider?->isExistingRecordRequiredToSaveNewFileAttachments() && (! $record)) {
+            if ($fileAttachmentProvider?->isExistingRecordRequiredToSaveNewFileAttachments() && (!$record)) {
                 return;
             }
 
@@ -239,15 +240,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         $this->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, Model $record): void {
             $fileAttachmentProvider = $component->getFileAttachmentProvider();
 
-            if (! $fileAttachmentProvider) {
+            if (!$fileAttachmentProvider) {
                 return;
             }
 
-            if (! $fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
+            if (!$fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
                 return;
             }
 
-            if (! $record->wasRecentlyCreated) {
+            if (!$record->wasRecentlyCreated) {
                 return;
             }
 
@@ -308,7 +309,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function isDehydrated(): bool
     {
-        if ($this->getFileAttachmentProvider()?->isExistingRecordRequiredToSaveNewFileAttachments() && (! $this->getRecord())) {
+        if ($this->getFileAttachmentProvider()?->isExistingRecordRequiredToSaveNewFileAttachments() && (!$this->getRecord())) {
             return false;
         }
 
@@ -316,9 +317,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<RichContentPlugin> | Closure  $extensions
+     * @param array<RichContentPlugin> | Closure $extensions
      */
-    public function plugins(array | Closure $extensions): static
+    public function plugins(array|Closure $extensions): static
     {
         $this->plugins = [
             ...$this->plugins,
@@ -329,9 +330,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<RichEditorTool> | Closure  $tools
+     * @param array<RichEditorTool> | Closure $tools
      */
-    public function tools(array | Closure $tools): static
+    public function tools(array|Closure $tools): static
     {
         $this->tools = [
             ...$this->tools,
@@ -353,10 +354,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<EditorCommand>  $commands
-     * @param  array<string, mixed>  $editorSelection
+     * @param array<EditorCommand> $commands
+     * @param  ?array<string, mixed> $editorSelection
      */
-    public function runCommands(array $commands, array $editorSelection): void
+    public function runCommands(array $commands, ?array $editorSelection = null): void
     {
         $key = $this->getKey();
         $livewire = $this->getLivewire();
@@ -367,11 +368,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             livewireId: $livewire->getId(),
             key: $key,
             editorSelection: $editorSelection,
-            commands: array_map(fn (EditorCommand $command): array => $command->toArray(), $commands),
+            commands: array_map(fn(EditorCommand $command): array => $command->toArray(), $commands),
         );
     }
 
-    public function uploadingFileMessage(string | Closure | null $message): static
+    public function uploadingFileMessage(string|Closure|null $message): static
     {
         $this->uploadingFileMessage = $message;
 
@@ -383,7 +384,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $this->evaluate($this->uploadingFileMessage) ?? __('filament::components/button.messages.uploading_file');
     }
 
-    public function json(bool | Closure $condition = true): static
+    public function json(bool|Closure $condition = true): static
     {
         $this->isJson = $condition;
 
@@ -392,7 +393,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function isJson(): bool
     {
-        return (bool) $this->evaluate($this->isJson);
+        return (bool)$this->evaluate($this->isJson);
     }
 
     public function getTipTapEditor(): Editor
@@ -411,7 +412,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ...$this->getContentAttribute()?->getPlugins() ?? [],
             ...array_reduce(
                 $this->plugins,
-                function (array $carry, RichContentPlugin | Closure $plugin): array {
+                function (array $carry, RichContentPlugin|Closure $plugin): array {
                     if ($plugin instanceof Closure) {
                         $plugin = $this->evaluate($plugin);
                     }
@@ -433,7 +434,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return array_reduce(
             $this->getPlugins(),
-            fn (array $carry, RichContentPlugin $plugin): array => [
+            fn(array $carry, RichContentPlugin $plugin): array => [
                 ...$carry,
                 ...$plugin->getTipTapJsExtensions(),
             ],
@@ -450,7 +451,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             [
                 ...array_reduce(
                     $this->getPlugins(),
-                    fn (array $carry, RichContentPlugin $plugin): array => [
+                    fn(array $carry, RichContentPlugin $plugin): array => [
                         ...$carry,
                         ...$plugin->getEditorTools(),
                     ],
@@ -458,7 +459,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ),
                 ...array_reduce(
                     $this->tools,
-                    function (array $carry, RichEditorTool | Closure $tool): array {
+                    function (array $carry, RichEditorTool|Closure $tool): array {
                         if ($tool instanceof Closure) {
                             $tool = $this->evaluate($tool);
                         }
@@ -471,7 +472,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                     initial: [],
                 ),
             ],
-            fn (array $carry, RichEditorTool $tool): array => [
+            fn(array $carry, RichEditorTool $tool): array => [
                 ...$carry,
                 $tool->getName() => $tool->editor($this),
             ],
@@ -483,7 +484,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $model = $this->getModelInstance();
 
-        if (! ($model instanceof HasRichContent)) {
+        if (!($model instanceof HasRichContent)) {
             return null;
         }
 
@@ -568,10 +569,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return [
             AttachFilesAction::make(),
+            CustomBlockAction::make(),
             LinkAction::make(),
             ...array_reduce(
                 $this->getPlugins(),
-                fn (array $carry, RichContentPlugin $plugin): array => [
+                fn(array $carry, RichContentPlugin $plugin): array => [
                     ...$carry,
                     ...$plugin->getEditorActions(),
                 ],
@@ -581,9 +583,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<string> | Closure | null  $tags
+     * @param array<string> | Closure | null $tags
      */
-    public function mergeTags(array | Closure | null $tags): static
+    public function mergeTags(array|Closure|null $tags): static
     {
         $this->mergeTags = $tags;
 
@@ -598,19 +600,19 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
     }
 
-    public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
+    public function noMergeTagSearchResultsMessage(string|Closure|null $message): static
     {
         $this->noMergeTagSearchResultsMessage = $message;
 
         return $this;
     }
 
-    public function getNoMergeTagSearchResultsMessage(): string | Htmlable
+    public function getNoMergeTagSearchResultsMessage(): string|Htmlable
     {
         return $this->evaluate($this->noMergeTagSearchResultsMessage) ?? __('filament-forms::components.rich_editor.no_merge_tag_search_results_message');
     }
 
-    public function activePanel(string | Closure | null $panel): static
+    public function activePanel(string|Closure|null $panel): static
     {
         $this->activePanel = $panel;
 
@@ -623,9 +625,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param array<class-string<RichContentCustomBlock>> | Closure | null  $blocks
+     * @param array<class-string<RichContentCustomBlock>> | Closure | null $blocks
      */
-    public function customBlocks(array | Closure | null $blocks): static
+    public function customBlocks(array|Closure|null $blocks): static
     {
         $this->customBlocks = $blocks;
 
@@ -638,5 +640,19 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getCustomBlocks(): array
     {
         return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? [];
+    }
+
+    /**
+     * @return ?class-string<RichContentCustomBlock>
+     */
+    public function getCustomBlock(string $id): ?string
+    {
+        foreach ($this->getCustomBlocks() as $customBlock) {
+            if ($customBlock::getId() === $id) {
+                return $customBlock;
+            }
+        }
+
+        return null;
     }
 }

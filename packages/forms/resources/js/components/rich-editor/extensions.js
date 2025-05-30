@@ -24,6 +24,9 @@ import getMergeTagSuggestion from './merge-tag-suggestion.js'
 
 export default async ({
     customExtensionUrls,
+    editCustomBlockButtonIconHtml,
+    editCustomBlockUsing,
+    insertCustomBlockUsing,
     key,
     mergeTags,
     noMergeTagSearchResultsMessage,
@@ -36,7 +39,11 @@ export default async ({
     BulletList,
     Code,
     CodeBlock,
-    CustomBlock,
+    CustomBlock.configure({
+        editCustomBlockButtonIconHtml,
+        editCustomBlockUsing,
+        insertCustomBlockUsing,
+    }),
     Document,
     Dropcursor,
     Heading,
@@ -48,10 +55,10 @@ export default async ({
     }),
     ListItem,
     LocalFiles.configure({
+        get$WireUsing: () => $wire,
         key,
         statePath,
         uploadingMessage: uploadingFileMessage,
-        $wire: () => $wire,
     }),
     ...(mergeTags.length
         ? [

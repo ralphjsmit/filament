@@ -44,15 +44,15 @@
     }
 
     & .fi-fo-rich-editor-panel-header {
-        @apply flex items-start gap-3;
+        @apply flex items-start py-3 px-4 gap-3;
     }
 
     & .fi-fo-rich-editor-panel-heading {
-        @apply flex-1 p-3 text-sm font-semibold text-gray-950 dark:text-white;
+        @apply flex-1 text-sm font-semibold text-gray-950 dark:text-white;
     }
 
     & .fi-fo-rich-editor-panel-close-btn-ctn {
-        @apply flex-shrink-0 p-3;
+        @apply shrink-0;
     }
 
     & .fi-fo-rich-editor-panel {
@@ -60,19 +60,19 @@
     }
 
     & .fi-fo-rich-editor-merge-tags-list {
-        @apply flex flex-wrap gap-2 p-3;
+        @apply flex flex-wrap gap-2 py-3 px-4;
     }
 
     & .fi-fo-rich-editor-merge-tag-btn {
-        @apply rounded-lg bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+        @apply rounded-lg cursor-move bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
     }
 
     & .fi-fo-rich-editor-custom-blocks-list {
-        @apply flex flex-wrap gap-2 p-3;
+        @apply flex flex-wrap gap-2 py-3 px-4;
     }
 
     & .fi-fo-rich-editor-custom-block-btn {
-        @apply rounded-lg bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+        @apply rounded-lg cursor-move bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
     }
 
     & .tiptap {
@@ -80,11 +80,37 @@
 
         &:focus {
             @apply outline-none;
+
+            & custom-block {
+                &.ProseMirror-selectednode {
+                    @apply ring-2 ring-primary-600 dark:ring-primary-500;
+                }
+            }
         }
     }
 
     & img.fi-loading {
         @apply animate-pulse;
+    }
+
+    & custom-block {
+        @apply shadow-sm bg-gray-50 dark:bg-gray-900/30 grid divide-y divide-gray-200 dark:divide-white/10 ring-1 ring-gray-950/10 dark:ring-white/20 rounded-lg;
+    }
+
+    & .fi-fo-rich-editor-custom-block-header {
+        @apply flex items-start py-3 px-4 gap-3 rounded-t-lg;
+    }
+
+    & .fi-fo-rich-editor-custom-block-heading {
+        @apply flex-1 text-sm font-semibold text-gray-950 dark:text-white;
+    }
+
+    & .fi-fo-rich-editor-custom-block-edit-btn-ctn {
+        @apply shrink-0;
+    }
+
+    & .fi-fo-rich-editor-custom-block-preview {
+        @apply py-3 px-4 bg-white rounded-b-lg;
     }
 
     @supports (container-type: inline-size) {

@@ -21,6 +21,7 @@
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
         x-data="richEditorFormComponent({
                     activePanel: @js($getActivePanel()),
+                    editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: 'forms:components.rich-editor.panels.custom-block.edit-button')->toHtml()),
                     extensions: @js($getTipTapJsExtensions()),
                     key: @js($key),
                     isLiveDebounced: @js($isLiveDebounced()),
@@ -94,7 +95,7 @@
                                     <button
                                         draggable="true"
                                         type="button"
-                                        x-on:click="insertCustomBlock(@js($blockId))"
+                                        x-on:click="$wire.mountAction('customBlock', { editorSelection, id: @js($blockId), mode: 'insert' }, { schemaComponent: @js($key) })"
                                         x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
                                         class="fi-fo-rich-editor-custom-block-btn"
                                     >

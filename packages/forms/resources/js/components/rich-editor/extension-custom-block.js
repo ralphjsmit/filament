@@ -23,53 +23,71 @@ export default Node.create({
 
     inline: false,
 
+    addNodeView() {
+        return ({ editor, node, getPos, HTMLAttributes, decorations, extension }) => {
+            const dom = document.createElement('custom-block')
+            dom.setAttribute('data-config', node.attrs.config)
+            dom.setAttribute('data-id', node.attrs.id)
+
+            const header = document.createElement('div')
+            header.className = 'fi-fo-rich-editor-custom-block-header fi-not-prose'
+            dom.appendChild(header)
+
+            const buttonContainer = document.createElement('div')
+            buttonContainer.className = 'fi-fo-rich-editor-custom-block-edit-btn-ctn'
+            header.appendChild(buttonContainer)
+
+            const button = document.createElement('button')
+            button.className = 'fi-icon-btn'
+            button.type = 'button'
+            button.innerHTML = extension.options.editCustomBlockButtonIconHtml
+            button.addEventListener('click', () => extension.options.editCustomBlockUsing(node.attrs.id, node.attrs.config))
+            buttonContainer.appendChild(button)
+
+            const heading = document.createElement('p')
+            heading.className = 'fi-fo-rich-editor-custom-block-heading'
+            heading.textContent = node.attrs.label
+            header.appendChild(heading)
+
+            const preview = document.createElement('div')
+            preview.className = 'fi-fo-rich-editor-custom-block-preview fi-not-prose'
+            preview.innerHTML = atob(node.attrs.preview)
+            dom.appendChild(preview)
+
+            return {
+                dom,
+            }
+        }
+    },
+
     addOptions: function () {
         return {
-            HTMLAttributes: {},
-            renderText({ node }) {
-                return `<<${node.attrs.label ?? node.attrs.id}>>`
-            },
-            renderHTML({ options, node }) {
-                return [
-                    'div',
-                    mergeAttributes(
-                        this.HTMLAttributes,
-                        options.HTMLAttributes,
-                    ),
-                    `${node.attrs.label ?? node.attrs.id}`,
-                ]
-            },
+            editCustomBlockButtonIconHtml: null,
+            editCustomBlockUsing: () => {},
+            insertCustomBlockUsing: () => {},
         }
     },
 
     addAttributes: function () {
         return {
+            config: {
+                default: null,
+                parseHTML: (element) => JSON.parse(element.getAttribute('data-config')),
+            },
+
             id: {
                 default: null,
                 parseHTML: (element) => element.getAttribute('data-id'),
-                renderHTML: (attributes) => {
-                    if (!attributes.id) {
-                        return {}
-                    }
-
-                    return {
-                        'data-id': attributes.id,
-                    }
-                },
             },
 
             label: {
                 default: null,
                 parseHTML: (element) => element.getAttribute('data-label'),
-                renderHTML: (attributes) => {
-                    if (!attributes.label) {
-                        return {}
-                    }
+            },
 
-                    return {
-                        'data-label': attributes.label,
-                    }
-                },
+            preview: {
+                default: null,
+                parseHTML: (element) => element.getAttribute('data-preview'),
             },
         }
     },
@@ -77,46 +95,13 @@ export default Node.create({
     parseHTML: function () {
         return [
             {
-                tag: `div[data-type="${this.name}"]`,
+                tag: 'custom-block',
             },
         ]
     },
 
-    renderHTML: function ({ node, HTMLAttributes }) {
-        const mergedOptions = { ...this.options }
-
-        mergedOptions.HTMLAttributes = mergeAttributes(
-            { 'data-type': this.name },
-            this.options.HTMLAttributes,
-            HTMLAttributes,
-        )
-
-        const html = this.options.renderHTML({
-            options: mergedOptions,
-            node,
-        })
-
-        if (typeof html === 'string') {
-            return [
-                'div',
-                mergeAttributes(
-                    { 'data-type': this.name },
-                    this.options.HTMLAttributes,
-                    HTMLAttributes,
-                ),
-                html,
-            ]
-        }
-        return html
-    },
-
-    renderText: function ({ node }) {
-        const args = {
-            options: this.options,
-            node,
-        }
-
-        return this.options.renderText(args)
+    renderHTML({ HTMLAttributes }) {
+        return ['custom-block', mergeAttributes(HTMLAttributes)]
     },
 
     addKeyboardShortcuts: function () {
@@ -150,6 +135,8 @@ export default Node.create({
     },
 
     addProseMirrorPlugins: function () {
+        const { insertCustomBlockUsing } = this.options
+
         return [
             new Plugin({
                 props: {
@@ -167,17 +154,10 @@ export default Node.create({
                         const customBlockId =
                             event.dataTransfer.getData('customBlock')
 
-                        view.dispatch(
-                            view.state.tr.insert(
-                                view.posAtCoords({
-                                    left: event.clientX,
-                                    top: event.clientY,
-                                }).pos,
-                                view.state.schema.nodes.customBlock.create({
-                                    id: customBlockId,
-                                }),
-                            ),
-                        )
+                        insertCustomBlockUsing(customBlockId, view.posAtCoords({
+                            left: event.clientX,
+                            top: event.clientY,
+                        }).pos)
 
                         return false
                     },
