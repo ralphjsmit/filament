@@ -83,32 +83,32 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         $this->tools([
             RichEditorTool::make('bold')
                 ->label(__('filament-forms::components.rich_editor.tools.bold'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleBold().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleBold().run()')
                 ->icon(Heroicon::Bold)
                 ->iconAlias('forms:components.rich-editor.toolbar.bold'),
             RichEditorTool::make('italic')
                 ->label(__('filament-forms::components.rich_editor.tools.italic'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleItalic().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleItalic().run()')
                 ->icon(Heroicon::Italic)
                 ->iconAlias('forms:components.rich-editor.toolbar.italic'),
             RichEditorTool::make('underline')
                 ->label(__('filament-forms::components.rich_editor.tools.underline'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleUnderline().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleUnderline().run()')
                 ->icon(Heroicon::Underline)
                 ->iconAlias('forms:components.rich-editor.toolbar.underline'),
             RichEditorTool::make('strike')
                 ->label(__('filament-forms::components.rich_editor.tools.strike'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleStrike().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleStrike().run()')
                 ->icon(Heroicon::Strikethrough)
                 ->iconAlias('forms:components.rich-editor.toolbar.strike'),
             RichEditorTool::make('subscript')
                 ->label(__('filament-forms::components.rich_editor.tools.subscript'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleSubscript().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleSubscript().run()')
                 ->icon('fi-s-subscript')
                 ->iconAlias('forms:components.rich-editor.toolbar.subscript'),
             RichEditorTool::make('superscript')
                 ->label(__('filament-forms::components.rich_editor.tools.superscript'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleSuperscript().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleSuperscript().run()')
                 ->icon('fi-s-superscript')
                 ->iconAlias('forms:components.rich-editor.toolbar.superscript'),
             RichEditorTool::make('link')
@@ -118,40 +118,40 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.link'),
             RichEditorTool::make('h1')
                 ->label(__('filament-forms::components.rich_editor.tools.h1'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
                 ->activeOptions(['level' => 1])
                 ->icon(Heroicon::H1)
                 ->iconAlias('forms:components.rich-editor.toolbar.h1'),
             RichEditorTool::make('h2')
                 ->label(__('filament-forms::components.rich_editor.tools.h2'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
                 ->activeOptions(['level' => 2])
                 ->icon(Heroicon::H2)
                 ->iconAlias('forms:components.rich-editor.toolbar.h2'),
             RichEditorTool::make('h3')
                 ->label(__('filament-forms::components.rich_editor.tools.h3'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
                 ->activeOptions(['level' => 3])
                 ->icon(Heroicon::H3)
                 ->iconAlias('forms:components.rich-editor.toolbar.h3'),
             RichEditorTool::make('blockquote')
                 ->label(__('filament-forms::components.rich_editor.tools.blockquote'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleBlockquote().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleBlockquote().run()')
                 ->icon(Heroicon::ChatBubbleBottomCenterText)
                 ->iconAlias('forms:components.rich-editor.toolbar.blockquote'),
             RichEditorTool::make('codeBlock')
                 ->label(__('filament-forms::components.rich_editor.tools.code_block'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleCodeBlock().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleCodeBlock().run()')
                 ->icon(Heroicon::CodeBracket)
                 ->iconAlias('forms:components.rich-editor.toolbar.code-block'),
             RichEditorTool::make('bulletList')
                 ->label(__('filament-forms::components.rich_editor.tools.bullet_list'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleBulletList().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleBulletList().run()')
                 ->icon(Heroicon::ListBullet)
                 ->iconAlias('forms:components.rich-editor.toolbar.bullet-list'),
             RichEditorTool::make('orderedList')
                 ->label(__('filament-forms::components.rich_editor.tools.ordered_list'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleOrderedList().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleOrderedList().run()')
                 ->icon(Heroicon::NumberedList)
                 ->iconAlias('forms:components.rich-editor.toolbar.ordered-list'),
             RichEditorTool::make('attachFiles')
@@ -162,24 +162,24 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.attach-files'),
             RichEditorTool::make('customBlocks')
                 ->label(__('filament-forms::components.rich_editor.tools.custom_blocks'))
-                ->javaScriptHandler('togglePanel(\'customBlocks\')')
+                ->jsHandler('togglePanel(\'customBlocks\')')
                 ->javaScriptActive('isPanelActive(\'customBlocks\')')
                 ->icon(Heroicon::SquaresPlus)
                 ->iconAlias('forms:components.rich-editor.toolbar.custom-blocks'),
             RichEditorTool::make('mergeTags')
                 ->label(__('filament-forms::components.rich_editor.tools.merge_tags'))
-                ->javaScriptHandler('togglePanel(\'mergeTags\')')
+                ->jsHandler('togglePanel(\'mergeTags\')')
                 ->javaScriptActive('isPanelActive(\'mergeTags\')')
                 ->icon('fi-s-merge-tag')
                 ->iconAlias('forms:components.rich-editor.toolbar.merge-tags'),
             RichEditorTool::make('undo')
                 ->label(__('filament-forms::components.rich_editor.tools.undo'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().undo().run()')
+                ->jsHandler('$getEditor()?.chain().focus().undo().run()')
                 ->icon(Heroicon::ArrowUturnLeft)
                 ->iconAlias('forms:components.rich-editor.toolbar.undo'),
             RichEditorTool::make('redo')
                 ->label(__('filament-forms::components.rich_editor.tools.redo'))
-                ->javaScriptHandler('$getEditor()?.chain().focus().redo().run()')
+                ->jsHandler('$getEditor()?.chain().focus().redo().run()')
                 ->icon(Heroicon::ArrowUturnRight)
                 ->iconAlias('forms:components.rich-editor.toolbar.redo'),
         ]);

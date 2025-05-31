@@ -33,7 +33,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     protected string | Closure | null $activeKey = null;
 
-    protected string | Closure | null $javaScriptHandler = null;
+    protected string | Closure | null $jsHandler = null;
 
     protected string | Closure | null $javaScriptActive = null;
 
@@ -101,14 +101,14 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     public function action(string | Closure | null $action = null, string | Closure | null $arguments = null): static
     {
-        $this->javaScriptHandler(fn (RichEditorTool $tool): string => '$wire.mountAction(\'' . ($tool->evaluate($action) ?? $tool->getName()) . '\', { editorSelection, ...' . ($tool->evaluate($arguments) ?? '{}') . ' }, ' . Js::from(['schemaComponent' => $tool->getEditor()->getKey()]) . ')');
+        $this->jsHandler(fn (RichEditorTool $tool): string => '$wire.mountAction(\'' . ($tool->evaluate($action) ?? $tool->getName()) . '\', { editorSelection, ...' . ($tool->evaluate($arguments) ?? '{}') . ' }, ' . Js::from(['schemaComponent' => $tool->getEditor()->getKey()]) . ')');
 
         return $this;
     }
 
-    public function javaScriptHandler(string | Closure | null $handler): static
+    public function jsHandler(string | Closure | null $handler): static
     {
-        $this->javaScriptHandler = $handler;
+        $this->jsHandler = $handler;
 
         return $this;
     }
@@ -120,9 +120,9 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         return $this;
     }
 
-    public function getJavaScriptHandler(): ?string
+    public function getJsHandler(): ?string
     {
-        return $this->evaluate($this->javaScriptHandler);
+        return $this->evaluate($this->jsHandler);
     }
 
     public function getJavaScriptActive(): ?string
@@ -164,7 +164,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
                 'tabindex' => -1,
                 'title' => $this->getLabel(),
                 'type' => 'button',
-                'x-on:click' => $this->getJavaScriptHandler(),
+                'x-on:click' => $this->getJsHandler(),
             ], escape: false)
             ->class(['fi-fo-rich-editor-tool']);
 
