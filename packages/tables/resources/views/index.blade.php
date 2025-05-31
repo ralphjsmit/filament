@@ -22,6 +22,8 @@
         $actionsAlignment = filled($actionsAlignment) ? (Alignment::tryFrom($actionsAlignment) ?? $actionsAlignment) : null;
     }
 
+    $toggleableColumnsApplyAction = $getToggleableColumnsApplyAction();
+
     $activeFiltersCount = $getActiveFiltersCount();
     $isSelectionDisabled = $isSelectionDisabled();
     $canSelectMultipleRecords = $canSelectMultipleRecords();
@@ -487,21 +489,17 @@
                                     shift
                                     :width="$columnToggleFormWidth"
                                     :wire:key="$this->getId() . '.table.column-toggle'"
-                                    class="fi-ta-col-toggle"
+                                    class="fi-ta-col-toggle-dropdown"
                                 >
                                     <x-slot name="trigger">
                                         {{ $toggleColumnsTriggerAction }}
                                     </x-slot>
 
-                                    <div class="fi-ta-col-toggle-form-ctn">
-                                        <{{ $secondLevelHeadingTag }}
-                                            class="fi-ta-col-toggle-heading"
-                                        >
-                                            {{ __('filament-tables::table.column_toggle.heading') }}
-                                        </{{ $secondLevelHeadingTag }}>
-
-                                        {{ $getColumnToggleForm() }}
-                                    </div>
+                                    <x-filament-tables::toggle-columns
+                                        :apply-action="$toggleableColumnsApplyAction"
+                                        :heading-tag="$secondLevelHeadingTag"
+                                        :reorder-animation-duration="$getReorderAnimationDuration()"
+                                    />
                                 </x-filament::dropdown>
                             @endif
 

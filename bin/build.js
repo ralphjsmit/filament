@@ -155,6 +155,14 @@ tableColumns.forEach((column) => {
     })
 })
 
+compile({
+    ...defaultOptions,
+    entryPoints: [
+        `./packages/tables/resources/js/components/toggle-columns.js`,
+    ],
+    outfile: `./packages/tables/dist/components/toggle-columns.js`,
+})
+
 const widgets = ['chart', 'stats-overview/stat/chart']
 
 widgets.forEach((widget) => {

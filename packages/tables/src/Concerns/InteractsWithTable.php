@@ -45,21 +45,14 @@ trait InteractsWithTable
     {
         $this->table = $this->table($this->makeTable());
 
-        $this->cacheSchema('toggleTableColumnForm', $this->getTableColumnToggleForm());
-
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm());
 
         $this->cacheMountedActions($this->mountedActions);
 
+        $this->initializeToggledTableColumns();
+
         if (! $this->shouldMountInteractsWithTable) {
             return;
-        }
-
-        if (! count($this->toggledTableColumns ?? [])) {
-            $this->getTableColumnToggleForm()->fill(session()->get(
-                $this->getTableColumnToggleFormStateSessionKey(),
-                $this->getDefaultTableColumnToggleState()
-            ));
         }
 
         $shouldPersistFiltersInSession = $this->getTable()->persistsFiltersInSession();

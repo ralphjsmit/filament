@@ -4,7 +4,6 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
@@ -22,6 +21,29 @@ trait CanToggleColumns
     protected Width | string | Closure | null $columnToggleFormWidth = null;
 
     protected ?Closure $modifyToggleColumnsTriggerActionUsing = null;
+
+    protected bool | Closure $hasDeferredToggleColumns = true;
+
+    protected ?Closure $modifyToggleColumnsApplyActionUsing = null;
+
+    public function deferToggleColumns(bool | Closure $condition = true): static
+    {
+        $this->hasDeferredToggleColumns = $condition;
+
+        return $this;
+    }
+
+    public function hasDeferredToggleColumns(): bool
+    {
+        return (bool) $this->evaluate($this->hasDeferredToggleColumns);
+    }
+
+    public function toggleColumnsApplyAction(?Closure $callback): static
+    {
+        $this->modifyToggleColumnsApplyActionUsing = $callback;
+
+        return $this;
+    }
 
     public function toggleColumnsTriggerAction(?Closure $callback): static
     {
@@ -77,9 +99,22 @@ trait CanToggleColumns
         return $action;
     }
 
-    public function getColumnToggleForm(): Schema
+    public function getToggleableColumnsApplyAction(): Action
     {
-        return $this->getLivewire()->getTableColumnToggleForm();
+        $action = Action::make('applyTableToggleColumns')
+            ->label(__('filament-tables::table.column_toggle.actions.apply.label'))
+            ->button()
+            ->visible($this->hasDeferredToggleColumns())
+            ->alpineClickHandler('applyTableToggleColumns')
+            ->table($this);
+
+        if ($this->modifyToggleColumnsApplyActionUsing) {
+            $action = $this->evaluate($this->modifyToggleColumnsApplyActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
     }
 
     /**

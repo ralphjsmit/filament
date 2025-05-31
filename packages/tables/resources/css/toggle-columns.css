@@ -1,0 +1,39 @@
+.fi-ta-col-toggle {
+    @apply grid gap-y-4;
+
+    & .fi-ta-col-toggle-ctn {
+        @apply grid gap-4;
+    }
+
+    & .fi-ta-col-toggle-header {
+        @apply flex items-center justify-between;
+    }
+
+    & .fi-ta-col-toggle-heading {
+        @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
+    }
+
+    & .fi-ta-col-toggle-items {
+        @apply grid gap-6;
+    }
+
+    & .fi-ta-col-toggle-item {
+        @apply flex items-center gap-3;
+
+        & .fi-ta-col-toggle-label {
+            @apply flex flex-1 w-full items-center gap-x-3 text-sm font-medium text-gray-950 dark:text-white;
+        }
+
+        & .fi-ta-col-toggle-reorder-handle {
+            @apply cursor-move;
+        }
+    }
+
+    & .fi-ta-col-toggle-group {
+        @apply grid gap-6;
+
+        & .fi-ta-col-toggle-group-items {
+            @apply grid gap-6 ps-8;
+        }
+    }
+}

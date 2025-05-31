@@ -2,83 +2,114 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Arr;
+use Filament\Support\Components\Component;
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\ColumnGroup;
 
 /**
  * @property-read Schema $toggleTableColumnForm
  */
 trait CanToggleColumns
 {
+    public const GROUP = 'group';
+
+    public const COLUMN = 'column';
+
     /**
-     * @var array<string, bool | array<string, bool>>
+     * @var array<array<string, mixed>>
      */
     public array $toggledTableColumns = [];
 
-    /**
-     * @return array<string, bool | array<string, bool>>
-     */
-    protected function getDefaultTableColumnToggleState(): array
+    public function initializeToggledTableColumns(): void
     {
-        $state = [];
-
-        foreach ($this->getTable()->getColumns() as $column) {
-            if (! $column->isToggleable()) {
-                continue;
-            }
-
-            data_set($state, $column->getName(), ! $column->isToggledHiddenByDefault());
+        if ($this->getTable()->hasColumnsLayout()) {
+            return;
         }
 
-        return $state;
+        if (filled($this->toggledTableColumns)) {
+            return;
+        }
+
+        $toggledTableColumnsSessionKey = $this->getToggledTableColumnsSessionKey();
+
+        $this->toggledTableColumns = session()->get(
+            $toggledTableColumnsSessionKey,
+            $this->getDefaultTableColumnToggleState()
+        );
+
+        $this->updatedToggledTableColumns();
+    }
+
+    /**
+     * @return array<array<string, mixed>>
+     */
+    public function getDefaultTableColumnToggleState(): array
+    {
+        return collect($this->getTable()->getColumnsLayout())
+            ->map(
+                fn (Component $component) => $component instanceof ColumnGroup
+                ? $this->mapColumnGroup($component)
+                : $this->mapColumn($component)
+            )
+            ->toArray();
     }
 
     public function updatedToggledTableColumns(): void
     {
+        $reorderedColumns = collect($this->toggledTableColumns)
+            ->map(function (array $item) {
+                if ($item['type'] === self::COLUMN) {
+                    return $this->getTable()->getColumn($item['name']);
+                }
+
+                if ($item['type'] !== self::GROUP || ! isset($item['columns'])) {
+                    return null;
+                }
+
+                $columns = collect($item['columns'])
+                    ->map(fn (array $column) => $this->getTable()->getColumn($column['name']))
+                    ->filter()
+                    ->toArray();
+
+                if (empty($columns)) {
+                    return null;
+                }
+
+                return $this->getTable()
+                    ->getColumnGroup($item['name'])
+                    ->columns($columns);
+            })
+            ->filter()
+            ->toArray();
+
+        $this->getTable()->columns($reorderedColumns);
+
         session()->put([
-            $this->getTableColumnToggleFormStateSessionKey() => $this->toggledTableColumns,
+            $this->getToggledTableColumnsSessionKey() => $this->toggledTableColumns,
         ]);
-    }
-
-    public function getTableColumnToggleForm(): Schema
-    {
-        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('toggleTableColumnForm')) {
-            return $this->getSchema('toggleTableColumnForm');
-        }
-
-        return $this->makeSchema()
-            ->columns($this->getTable()->getColumnToggleFormColumns())
-            ->live()
-            ->schema($this->getTableColumnToggleFormSchema())
-            ->statePath('toggledTableColumns');
-    }
-
-    /**
-     * @return array<Checkbox>
-     */
-    protected function getTableColumnToggleFormSchema(): array
-    {
-        $schema = [];
-
-        foreach ($this->getTable()->getColumns() as $column) {
-            if (! $column->isToggleable()) {
-                continue;
-            }
-
-            $schema[] = Checkbox::make($column->getName())
-                ->label($column->getLabel());
-        }
-
-        return $schema;
     }
 
     public function isTableColumnToggledHidden(string $name): bool
     {
-        return Arr::has($this->toggledTableColumns, $name) && ! data_get($this->toggledTableColumns, $name);
+        foreach ($this->toggledTableColumns as $item) {
+            if ($item['type'] === self::COLUMN && $item['name'] === $name) {
+                return ! $item['toggled'];
+            }
+
+            if ($item['type'] === self::GROUP && isset($item['columns'])) {
+                foreach ($item['columns'] as $column) {
+                    if ($column['name'] === $name) {
+                        return ! $column['toggled'];
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
-    public function getTableColumnToggleFormStateSessionKey(): string
+    public function getToggledTableColumnsSessionKey(): string
     {
         $table = md5($this::class);
 
@@ -109,5 +140,31 @@ trait CanToggleColumns
     protected function getTableColumnToggleFormMaxHeight(): ?string
     {
         return null;
+    }
+
+    protected function mapColumnGroup(ColumnGroup $group): array
+    {
+        return [
+            'type' => self::GROUP,
+            'name' => $group->getLabel(),
+            'label' => $group->getLabel(),
+            'toggled' => true,
+            'toggleable' => true,
+            'columns' => collect($group->getColumns())
+                ->map(fn (Column $column) => $this->mapColumn($column))
+                ->values()
+                ->toArray(),
+        ];
+    }
+
+    protected function mapColumn(Column | Component $column): array
+    {
+        return [
+            'type' => self::COLUMN,
+            'name' => $column->getName(),
+            'label' => $column->getLabel(),
+            'toggled' => ! $column->isToggleable() || ! $column->isToggledHiddenByDefault(),
+            'toggleable' => $column->isToggleable(),
+        ];
     }
 }
