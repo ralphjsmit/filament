@@ -339,6 +339,7 @@ class SelectFilter extends BaseFilter
 
                     if (isset($baseRelationshipQuery->limit)) {
                         $component->optionsLimit($baseRelationshipQuery->limit);
+                        $this->optionsLimit($baseRelationshipQuery->limit);
                     } else {
                         $relationshipQuery->limit($component->getOptionsLimit());
                     }
@@ -395,6 +396,15 @@ class SelectFilter extends BaseFilter
                             'query' => $relationshipQuery,
                             'search' => null,
                         ]) ?? $relationshipQuery;
+                    }
+
+                    $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+                    if (isset($baseRelationshipQuery->limit)) {
+                        $component->optionsLimit($baseRelationshipQuery->limit);
+                        $this->optionsLimit($baseRelationshipQuery->limit);
+                    } else {
+                        $relationshipQuery->limit($component->getOptionsLimit());
                     }
 
                     $options = [];
