@@ -81,8 +81,9 @@
         &:focus {
             @apply outline-none;
 
-            & div[data-type='customBlock'] {
-                &.ProseMirror-selectednode {
+            & .ProseMirror-selectednode {
+                &div[data-type='customBlock'],
+                &img {
                     @apply ring-primary-600 dark:ring-primary-500 ring-2;
                 }
             }

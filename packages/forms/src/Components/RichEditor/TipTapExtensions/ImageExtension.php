@@ -28,7 +28,10 @@ class ImageExtension extends BaseImage
     {
         return [
             ...parent::addAttributes(),
-            'data-id' => [],
+            'id' => [
+                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-id') ?: null,
+                'renderHTML' => fn ($attributes) => ['data-id' => $attributes->id ?? null],
+            ],
         ];
     }
 }

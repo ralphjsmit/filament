@@ -41,7 +41,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     protected string | Closure | null $uploadingFileMessage = null;
 
-    protected bool | Closure $isJson = false;
+    protected bool | Closure | null $isJson = null;
 
     /**
      * @var array<RichContentPlugin | Closure>
@@ -156,7 +156,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.ordered-list'),
             RichEditorTool::make('attachFiles')
                 ->label(__('filament-forms::components.rich_editor.tools.attach_files'))
-                ->action(arguments: '{ alt: $getEditor().getAttributes(\'image\')?.alt, id: $getEditor().getAttributes(\'image\')[\'data-id\'] ?? null, src: $getEditor().getAttributes(\'image\')?.src }')
+                ->action(arguments: '{ alt: $getEditor().getAttributes(\'image\')?.alt, id: $getEditor().getAttributes(\'image\')?.id, src: $getEditor().getAttributes(\'image\')?.src }')
                 ->activeKey('image')
                 ->icon(Heroicon::PaperClip)
                 ->iconAlias('forms:components.rich-editor.toolbar.attach-files'),
@@ -204,36 +204,36 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                             return;
                         }
 
-                        if (blank($node->attrs->{'data-id'} ?? null)) {
+                        if (blank($node->attrs->id ?? null)) {
                             return;
                         }
 
-                        $attachment = $component->getUploadedFileAttachment($node->attrs->{'data-id'});
+                        $attachment = $component->getUploadedFileAttachment($node->attrs->id);
 
                         if ($attachment) {
-                            $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
-                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+                            $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
+                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
 
-                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
-
-                            return;
-                        }
-
-                        if (filled($component->getFileAttachmentUrl($node->attrs->{'data-id'}))) {
-                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
+                            $fileAttachmentIds[] = $node->attrs->id;
 
                             return;
                         }
 
-                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->{'data-id'});
+                        if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
+                            $fileAttachmentIds[] = $node->attrs->id;
+
+                            return;
+                        }
+
+                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
 
                         if (blank($fileAttachmentIdFromAnotherRecord)) {
-                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
+                            $fileAttachmentIds[] = $node->attrs->id;
 
                             return;
                         }
 
-                        $node->attrs->{'data-id'} = $fileAttachmentIdFromAnotherRecord;
+                        $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
                         $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
                     })
                     ->getDocument(),
@@ -270,36 +270,36 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                             return;
                         }
 
-                        if (blank($node->attrs->{'data-id'} ?? null)) {
+                        if (blank($node->attrs->id ?? null)) {
                             return;
                         }
 
-                        $attachment = $component->getUploadedFileAttachment($node->attrs->{'data-id'});
+                        $attachment = $component->getUploadedFileAttachment($node->attrs->id);
 
                         if ($attachment) {
-                            $node->attrs->{'data-id'} = $component->saveUploadedFileAttachment($attachment);
-                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->{'data-id'});
+                            $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
+                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
 
-                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
-
-                            return;
-                        }
-
-                        if (filled($component->getFileAttachmentUrl($node->attrs->{'data-id'}))) {
-                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
+                            $fileAttachmentIds[] = $node->attrs->id;
 
                             return;
                         }
 
-                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->{'data-id'});
+                        if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
+                            $fileAttachmentIds[] = $node->attrs->id;
+
+                            return;
+                        }
+
+                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
 
                         if (blank($fileAttachmentIdFromAnotherRecord)) {
-                            $fileAttachmentIds[] = $node->attrs->{'data-id'};
+                            $fileAttachmentIds[] = $node->attrs->id;
 
                             return;
                         }
 
-                        $node->attrs->{'data-id'} = $fileAttachmentIdFromAnotherRecord;
+                        $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
                         $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
                     })
                     ->getDocument(),
@@ -389,7 +389,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $this->evaluate($this->uploadingFileMessage) ?? __('filament::components/button.messages.uploading_file');
     }
 
-    public function json(bool | Closure $condition = true): static
+    public function json(bool | Closure | null $condition = true): static
     {
         $this->isJson = $condition;
 
@@ -398,7 +398,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function isJson(): bool
     {
-        return (bool) $this->evaluate($this->isJson);
+        return $this->evaluate($this->isJson) ?? $this->getContentAttribute()?->isJson() ?? false;
     }
 
     public function getTipTapEditor(): Editor

@@ -182,11 +182,11 @@ class RichContentRenderer implements Htmlable
                 return;
             }
 
-            if (blank($node->attrs->{'data-id'} ?? null)) {
+            if (blank($node->attrs->id ?? null)) {
                 return;
             }
 
-            $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->{'data-id'});
+            $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->id);
         });
     }
 

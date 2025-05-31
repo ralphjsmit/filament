@@ -108,7 +108,7 @@ const LocalFilesPlugin = ({
                                     .chain()
                                     .updateAttributes('image', {
                                         class: null,
-                                        'data-id': fileKey,
+                                        id: fileKey,
                                         src: url,
                                     })
                                     .run()
@@ -211,7 +211,7 @@ const LocalFilesPlugin = ({
                                     .chain()
                                     .updateAttributes('image', {
                                         class: null,
-                                        'data-id': fileKey,
+                                        id: fileKey,
                                         src: url,
                                     })
                                     .run()

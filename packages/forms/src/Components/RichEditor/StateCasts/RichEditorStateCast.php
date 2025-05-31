@@ -28,7 +28,7 @@ class RichEditorStateCast implements StateCast
                     return;
                 }
 
-                if (blank($node->attrs->{'data-id'} ?? null)) {
+                if (blank($node->attrs->id ?? null)) {
                     return;
                 }
 
@@ -74,11 +74,11 @@ class RichEditorStateCast implements StateCast
                     return;
                 }
 
-                if (blank($node->attrs->{'data-id'} ?? null)) {
+                if (blank($node->attrs->id ?? null)) {
                     return;
                 }
 
-                $node->attrs->src = $this->richEditor->getFileAttachmentUrl($node->attrs->{'data-id'}) ?? $this->richEditor->getFileAttachmentUrlFromAnotherRecord($node->attrs->{'data-id'}) ?? $node->attrs->src ?? null;
+                $node->attrs->src = $this->richEditor->getFileAttachmentUrl($node->attrs->id) ?? $this->richEditor->getFileAttachmentUrlFromAnotherRecord($node->attrs->id) ?? $node->attrs->src ?? null;
             });
 
         if ($this->richEditor->getCustomBlocks()) {

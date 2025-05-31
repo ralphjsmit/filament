@@ -31,6 +31,8 @@ class RichContentAttribute implements Htmlable
      */
     protected ?array $customBlocks = null;
 
+    protected bool $isJson = false;
+
     public function __construct(protected Model $model, protected string $name) {}
 
     public static function make(Model $model, string $name): static
@@ -165,5 +167,17 @@ class RichContentAttribute implements Htmlable
         }
 
         return $blocks;
+    }
+
+    public function json(bool $condition = true): static
+    {
+        $this->isJson = $condition;
+
+        return $this;
+    }
+
+    public function isJson(): bool
+    {
+        return $this->isJson;
     }
 }
