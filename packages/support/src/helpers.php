@@ -140,6 +140,9 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 }
 
 if (! function_exists('Filament\Support\generate_icon_html')) {
+    /**
+     * @param  string | array<string> | null  $alias
+     */
     function generate_icon_html(string | BackedEnum | Htmlable | null $icon, string | array | null $alias = null, ?ComponentAttributeBag $attributes = null, ?IconSize $size = null): ?Htmlable
     {
         if (filled($alias)) {

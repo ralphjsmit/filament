@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
+use Illuminate\Contracts\Support\Htmlable;
 
 class FusedGroup extends Component implements CanEntangleWithSingularRelationships
 {
@@ -37,7 +38,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     const BELOW_ERROR_MESSAGE_SCHEMA_KEY = 'below_error_message';
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Closure  $schema
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $schema
      */
     final public function __construct(array | Closure $schema = [])
     {
@@ -45,7 +46,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Closure  $schema
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $schema
      */
     public static function make(array | Closure $schema = []): static
     {
@@ -64,9 +65,9 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function beforeLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function beforeLabel(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::BEFORE_LABEL_SCHEMA_KEY);
 
@@ -74,9 +75,9 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function afterLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function afterLabel(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::AFTER_LABEL_SCHEMA_KEY);
 
@@ -84,9 +85,9 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function aboveContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function aboveContent(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::ABOVE_CONTENT_SCHEMA_KEY);
 
@@ -94,9 +95,9 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function belowContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function belowContent(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::BELOW_CONTENT_SCHEMA_KEY);
 
@@ -104,9 +105,9 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function aboveErrorMessage(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function aboveErrorMessage(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::ABOVE_ERROR_MESSAGE_SCHEMA_KEY);
 
@@ -114,9 +115,9 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function belowErrorMessage(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function belowErrorMessage(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::BELOW_ERROR_MESSAGE_SCHEMA_KEY);
 
