@@ -1,4 +1,8 @@
 .fi-fo-rich-editor {
+    &.fi-disabled {
+        @apply block w-full rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-xs ring-1 ring-gray-950/10 sm:text-sm dark:bg-transparent dark:text-gray-400 dark:ring-white/10;
+    }
+
     &.fi-fo-rich-editor-uploading-file {
         @apply pointer-events-none cursor-wait opacity-50;
     }
@@ -87,6 +91,11 @@
                     @apply ring-primary-600 dark:ring-primary-500 ring-2;
                 }
             }
+        }
+
+        & p.is-editor-empty:first-child::before {
+            @apply pointer-events-none float-start h-0 text-gray-400 dark:text-gray-500;
+            content: attr(data-placeholder);
         }
     }
 

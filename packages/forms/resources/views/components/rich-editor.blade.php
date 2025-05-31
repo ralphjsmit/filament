@@ -4,6 +4,8 @@
     $customBlocks = $getCustomBlocks();
     $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
+    $isDisabled = $isDisabled();
+    $livewireKey = $getLivewireKey();
     $key = $getKey();
     $mergeTags = $getMergeTags();
     $statePath = $getStatePath();
@@ -25,12 +27,14 @@
                     editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: 'forms:components.rich-editor.panels.custom-block.edit-button')->toHtml()),
                     extensions: @js($getTipTapJsExtensions()),
                     key: @js($key),
+                    isDisabled: @js($isDisabled),
                     isLiveDebounced: @js($isLiveDebounced()),
                     isLiveOnBlur: @js($isLiveOnBlur()),
                     liveDebounce: @js($getNormalizedLiveDebounce()),
                     livewireId: @js($this->getId()),
                     mergeTags: @js($mergeTags),
                     noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
+                    placeholder: @js($getPlaceholder()),
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     statePath: @js($statePath),
                     uploadingFileMessage: @js($getUploadingFileMessage()),
@@ -38,10 +42,11 @@
         x-bind:class="{
             'fi-fo-rich-editor-uploading-file': isUploadingFile,
         }"
+        wire:key="{{ $livewireKey }}{{ $isDisabled ? '.disabled' : '' }}"
         {{ $getExtraAttributeBag()->class(['fi-fo-rich-editor']) }}
     >
         <x-filament::input.wrapper :valid="! $errors->has($statePath)" x-cloak>
-            @if (filled($toolbarButtons))
+            @if ((! $isDisabled) && filled($toolbarButtons))
                 <div class="fi-fo-rich-editor-toolbar">
                     @foreach ($toolbarButtons as $buttonGroup)
                         <div class="fi-fo-rich-editor-toolbar-group">
@@ -60,106 +65,112 @@
                     wire:ignore
                 ></div>
 
-                <div
-                    x-show="isPanelActive()"
-                    class="fi-fo-rich-editor-panels"
-                >
+                @if (! $isDisabled)
                     <div
-                        x-show="isPanelActive('customBlocks')"
-                        class="fi-fo-rich-editor-panel"
+                        x-show="isPanelActive()"
+                        class="fi-fo-rich-editor-panels"
                     >
-                        <div class="fi-fo-rich-editor-panel-header">
-                            <p class="fi-fo-rich-editor-panel-heading">
-                                {{ __('filament-forms::components.rich_editor.tools.custom_blocks') }}
-                            </p>
+                        <div
+                            x-show="isPanelActive('customBlocks')"
+                            class="fi-fo-rich-editor-panel"
+                        >
+                            <div class="fi-fo-rich-editor-panel-header">
+                                <p class="fi-fo-rich-editor-panel-heading">
+                                    {{ __('filament-forms::components.rich_editor.tools.custom_blocks') }}
+                                </p>
 
-                            <div class="fi-fo-rich-editor-panel-close-btn-ctn">
-                                <button
-                                    type="button"
-                                    x-on:click="togglePanel()"
-                                    class="fi-icon-btn"
+                                <div
+                                    class="fi-fo-rich-editor-panel-close-btn-ctn"
                                 >
-                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.custom-blocks.close-button') }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="fi-fo-rich-editor-custom-blocks-list">
-                            @foreach ($customBlocks as $block)
-                                @php
-                                    $blockId = $block::getId();
-                                @endphp
-
-                                <button
-                                    draggable="true"
-                                    type="button"
-                                    x-data="{ isLoading: false }"
-                                    x-on:click="
-                                        isLoading = true
-
-                                        $wire.mountAction(
-                                            'customBlock',
-                                            { editorSelection, id: @js($blockId), mode: 'insert' },
-                                            { schemaComponent: @js($key) },
-                                        )
-                                    "
-                                    x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
-                                    x-on:open-modal.window="isLoading = false"
-                                    x-on:run-rich-editor-commands.window="isLoading = false"
-                                    class="fi-fo-rich-editor-custom-block-btn"
-                                >
-                                    {{
-                                        \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                                            'x-show' => 'isLoading',
-                                        ])))
-                                    }}
-
-                                    {{ $block::getLabel() }}
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <div
-                        x-show="isPanelActive('mergeTags')"
-                        class="fi-fo-rich-editor-panel"
-                    >
-                        <div class="fi-fo-rich-editor-panel-header">
-                            <p class="fi-fo-rich-editor-panel-heading">
-                                {{ __('filament-forms::components.rich_editor.tools.merge_tags') }}
-                            </p>
-
-                            <div class="fi-fo-rich-editor-panel-close-btn-ctn">
-                                <button
-                                    type="button"
-                                    x-on:click="togglePanel()"
-                                    class="fi-icon-btn"
-                                >
-                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.merge-tags.close-button') }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="fi-fo-rich-editor-merge-tags-list">
-                            @foreach ($mergeTags as $tag)
-                                <button
-                                    draggable="true"
-                                    type="button"
-                                    x-on:click="insertMergeTag(@js($tag))"
-                                    x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tag))"
-                                    class="fi-fo-rich-editor-merge-tag-btn"
-                                >
-                                    <span
-                                        data-type="mergeTag"
-                                        data-id="{{ $tag }}"
+                                    <button
+                                        type="button"
+                                        x-on:click="togglePanel()"
+                                        class="fi-icon-btn"
                                     >
-                                        {{ $tag }}
-                                    </span>
-                                </button>
-                            @endforeach
+                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.custom-blocks.close-button') }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="fi-fo-rich-editor-custom-blocks-list">
+                                @foreach ($customBlocks as $block)
+                                    @php
+                                        $blockId = $block::getId();
+                                    @endphp
+
+                                    <button
+                                        draggable="true"
+                                        type="button"
+                                        x-data="{ isLoading: false }"
+                                        x-on:click="
+                                            isLoading = true
+
+                                            $wire.mountAction(
+                                                'customBlock',
+                                                { editorSelection, id: @js($blockId), mode: 'insert' },
+                                                { schemaComponent: @js($key) },
+                                            )
+                                        "
+                                        x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
+                                        x-on:open-modal.window="isLoading = false"
+                                        x-on:run-rich-editor-commands.window="isLoading = false"
+                                        class="fi-fo-rich-editor-custom-block-btn"
+                                    >
+                                        {{
+                                            \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                                                'x-show' => 'isLoading',
+                                            ])))
+                                        }}
+
+                                        {{ $block::getLabel() }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div
+                            x-show="isPanelActive('mergeTags')"
+                            class="fi-fo-rich-editor-panel"
+                        >
+                            <div class="fi-fo-rich-editor-panel-header">
+                                <p class="fi-fo-rich-editor-panel-heading">
+                                    {{ __('filament-forms::components.rich_editor.tools.merge_tags') }}
+                                </p>
+
+                                <div
+                                    class="fi-fo-rich-editor-panel-close-btn-ctn"
+                                >
+                                    <button
+                                        type="button"
+                                        x-on:click="togglePanel()"
+                                        class="fi-icon-btn"
+                                    >
+                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.merge-tags.close-button') }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="fi-fo-rich-editor-merge-tags-list">
+                                @foreach ($mergeTags as $tag)
+                                    <button
+                                        draggable="true"
+                                        type="button"
+                                        x-on:click="insertMergeTag(@js($tag))"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tag))"
+                                        class="fi-fo-rich-editor-merge-tag-btn"
+                                    >
+                                        <span
+                                            data-type="mergeTag"
+                                            data-id="{{ $tag }}"
+                                        >
+                                            {{ $tag }}
+                                        </span>
+                                    </button>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
         </x-filament::input.wrapper>
     </div>

@@ -41,6 +41,7 @@ export default Node.create({
             dom.appendChild(header)
 
             if (
+                editor.isEditable &&
                 typeof node.attrs.config === 'object' &&
                 node.attrs.config !== null &&
                 Object.keys(node.attrs.config).length > 0
@@ -69,24 +70,26 @@ export default Node.create({
             heading.textContent = node.attrs.label
             header.appendChild(heading)
 
-            const deleteButtonContainer = document.createElement('div')
-            deleteButtonContainer.className =
-                'fi-fo-rich-editor-custom-block-delete-btn-ctn'
-            header.appendChild(deleteButtonContainer)
+            if (editor.isEditable) {
+                const deleteButtonContainer = document.createElement('div')
+                deleteButtonContainer.className =
+                    'fi-fo-rich-editor-custom-block-delete-btn-ctn'
+                header.appendChild(deleteButtonContainer)
 
-            const deleteButton = document.createElement('button')
-            deleteButton.className = 'fi-icon-btn'
-            deleteButton.type = 'button'
-            deleteButton.innerHTML =
-                extension.options.deleteCustomBlockButtonIconHtml
-            deleteButton.addEventListener('click', () =>
-                editor
-                    .chain()
-                    .setNodeSelection(getPos())
-                    .deleteSelection()
-                    .run(),
-            )
-            deleteButtonContainer.appendChild(deleteButton)
+                const deleteButton = document.createElement('button')
+                deleteButton.className = 'fi-icon-btn'
+                deleteButton.type = 'button'
+                deleteButton.innerHTML =
+                    extension.options.deleteCustomBlockButtonIconHtml
+                deleteButton.addEventListener('click', () =>
+                    editor
+                        .chain()
+                        .setNodeSelection(getPos())
+                        .deleteSelection()
+                        .run(),
+                )
+                deleteButtonContainer.appendChild(deleteButton)
+            }
 
             if (node.attrs.preview) {
                 const preview = document.createElement('div')

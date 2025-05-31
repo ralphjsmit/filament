@@ -8,12 +8,14 @@ export default function richEditorFormComponent({
     editCustomBlockButtonIconHtml,
     extensions,
     key,
+    isDisabled,
     isLiveDebounced,
     isLiveOnBlur,
     liveDebounce,
     livewireId,
     mergeTags,
     noMergeTagSearchResultsMessage,
+    placeholder,
     state,
     statePath,
     uploadingFileMessage,
@@ -35,6 +37,7 @@ export default function richEditorFormComponent({
 
         init: async function () {
             editor = new Editor({
+                editable: !isDisabled,
                 element: this.$refs.editor,
                 extensions: await getExtensions({
                     customExtensionUrls: extensions,
@@ -60,6 +63,7 @@ export default function richEditorFormComponent({
                     key,
                     mergeTags,
                     noMergeTagSearchResultsMessage,
+                    placeholder,
                     statePath,
                     uploadingFileMessage,
                     $wire: this.$wire,

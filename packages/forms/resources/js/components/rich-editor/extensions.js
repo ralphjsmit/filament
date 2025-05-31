@@ -14,6 +14,7 @@ import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list'
 import LocalFiles from './extension-local-files.js'
 import MergeTag from './extension-merge-tag.js'
 import Paragraph from '@tiptap/extension-paragraph'
+import Placeholder from '@tiptap/extension-placeholder'
 import Strike from '@tiptap/extension-strike'
 import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
@@ -31,6 +32,7 @@ export default async ({
     key,
     mergeTags,
     noMergeTagSearchResultsMessage,
+    placeholder,
     statePath,
     uploadingFileMessage,
     $wire,
@@ -75,6 +77,9 @@ export default async ({
         : []),
     OrderedList,
     Paragraph,
+    Placeholder.configure({
+        placeholder,
+    }),
     Strike,
     Subscript,
     Superscript,
