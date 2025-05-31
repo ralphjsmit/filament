@@ -163,13 +163,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('customBlocks')
                 ->label(__('filament-forms::components.rich_editor.tools.custom_blocks'))
                 ->jsHandler('togglePanel(\'customBlocks\')')
-                ->javaScriptActive('isPanelActive(\'customBlocks\')')
+                ->activeJsExpression('isPanelActive(\'customBlocks\')')
                 ->icon(Heroicon::SquaresPlus)
                 ->iconAlias('forms:components.rich-editor.toolbar.custom-blocks'),
             RichEditorTool::make('mergeTags')
                 ->label(__('filament-forms::components.rich_editor.tools.merge_tags'))
                 ->jsHandler('togglePanel(\'mergeTags\')')
-                ->javaScriptActive('isPanelActive(\'mergeTags\')')
+                ->activeJsExpression('isPanelActive(\'mergeTags\')')
                 ->icon('fi-s-merge-tag')
                 ->iconAlias('forms:components.rich-editor.toolbar.merge-tags'),
             RichEditorTool::make('undo')

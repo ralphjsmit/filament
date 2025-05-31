@@ -35,7 +35,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     protected string | Closure | null $jsHandler = null;
 
-    protected string | Closure | null $javaScriptActive = null;
+    protected string | Closure | null $activeJsExpression = null;
 
     protected RichEditor $editor;
 
@@ -113,9 +113,9 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         return $this;
     }
 
-    public function javaScriptActive(string | Closure | null $expression): static
+    public function activeJsExpression(string | Closure | null $expression): static
     {
-        $this->javaScriptActive = $expression;
+        $this->activeJsExpression = $expression;
 
         return $this;
     }
@@ -125,9 +125,9 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         return $this->evaluate($this->jsHandler);
     }
 
-    public function getJavaScriptActive(): ?string
+    public function getActiveJsExpression(): ?string
     {
-        return $this->evaluate($this->javaScriptActive);
+        return $this->evaluate($this->activeJsExpression);
     }
 
     public function activeKey(string | Closure | null $key): static
@@ -168,13 +168,13 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
             ], escape: false)
             ->class(['fi-fo-rich-editor-tool']);
 
-        $javaScriptActive = $this->getJavaScriptActive();
+        $activeJsExpression = $this->getActiveJsExpression();
 
         ob_start(); ?>
 
         <button
             x-bind:class="{
-                'fi-active': editorUpdatedAt && <?php if ($javaScriptActive) { ?> <?= $javaScriptActive ?> <?php } else { ?> $getEditor()?.isActive(<?= Js::from($this->getActiveKey())->toHtml() ?>, <?= Js::from($this->getActiveOptions())->toHtml() ?>) <?php } ?>,
+                'fi-active': editorUpdatedAt && <?php if ($activeJsExpression) { ?> <?= $activeJsExpression ?> <?php } else { ?> $getEditor()?.isActive(<?= Js::from($this->getActiveKey())->toHtml() ?>, <?= Js::from($this->getActiveOptions())->toHtml() ?>) <?php } ?>,
             }"
             <?= $attributes->toHtml() ?>
         >
