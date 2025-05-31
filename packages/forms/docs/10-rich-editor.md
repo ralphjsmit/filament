@@ -530,7 +530,7 @@ class HighlightRichContentPlugin implements RichContentPlugin
         // This method should return an array of `RichEditorTool` objects, which can then be
         // used in the `toolbarButtons()` of the editor.
         
-        // The `javaScriptHandler()` method allows you to access the TipTap editor instance
+        // The `jsHandler()` method allows you to access the TipTap editor instance
         // through `$getEditor()`, and `chain()` any TipTap commands to it.
         // See: https://tiptap.dev/docs/editor/api/commands
         
@@ -540,7 +540,7 @@ class HighlightRichContentPlugin implements RichContentPlugin
     
         return [
             RichEditorTool::make('highlight')
-                ->javaScriptHandler('$getEditor()?.chain().focus().toggleHighlight().run()')
+                ->jsHandler('$getEditor()?.chain().focus().toggleHighlight().run()')
                 ->icon(Heroicon::CursorArrowRays),
             RichEditorTool::make('highlightWithCustomColor')
                 ->action(arguments: '{ color: $getEditor().getAttributes(\'mark\')?.data-color }')

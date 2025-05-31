@@ -321,7 +321,7 @@ class Action extends ViewComponent implements Arrayable
             return null;
         }
 
-        return $this->getJavaScriptClickHandler();
+        return $this->getJsClickHandler();
     }
 
     public function getLivewireEventClickHandler(): ?string
@@ -375,7 +375,7 @@ class Action extends ViewComponent implements Arrayable
             return null;
         }
 
-        return $this->getJavaScriptClickHandler();
+        return $this->getJsClickHandler();
     }
 
     public function livewireTarget(?string $target): static
@@ -395,7 +395,7 @@ class Action extends ViewComponent implements Arrayable
             return null;
         }
 
-        return $this->getJavaScriptClickHandler();
+        return $this->getJsClickHandler();
     }
 
     /**
@@ -413,7 +413,15 @@ class Action extends ViewComponent implements Arrayable
         return 'callMountedAction';
     }
 
+    /**
+     * @deprecated Use `getJsClickHandler()` instead.
+     */
     protected function getJavaScriptClickHandler(): ?string
+    {
+        return $this->getJsClickHandler();
+    }
+
+    protected function getJsClickHandler(): ?string
     {
         if ($this->shouldClose()) {
             return null;
