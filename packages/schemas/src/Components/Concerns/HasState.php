@@ -315,14 +315,14 @@ trait HasState
             return;
         }
 
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            $childSchema->dehydrateState($state, $isDehydrated);
+        }
+
         if ($this->hasStatePath()) {
             foreach ($this->getStateToDehydrate(Arr::get($state, $this->getStatePath())) as $key => $value) {
                 Arr::set($state, $key, $value); /** @phpstan-ignore parameterByRef.type */
             }
-        }
-
-        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-            $childSchema->dehydrateState($state, $isDehydrated);
         }
     }
 
