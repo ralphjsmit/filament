@@ -142,6 +142,16 @@ trait CanToggleColumns
         return null;
     }
 
+    /**
+     * @return array{
+     *     type: string,
+     *     name: string,
+     *     label: string,
+     *     toggled: bool,
+     *     toggleable: bool,
+     *     columns: array<int, mixed>
+     * }
+     */
     protected function mapColumnGroup(ColumnGroup $group): array
     {
         return [
@@ -157,7 +167,16 @@ trait CanToggleColumns
         ];
     }
 
-    protected function mapColumn(Column | Component $column): array
+    /**
+     * @return array{
+     *     type: string,
+     *     name: string,
+     *     label: string,
+     *     toggled: bool,
+     *     toggleable: bool
+     * }
+     */
+    protected function mapColumn(Column $column): array
     {
         return [
             'type' => self::COLUMN,
