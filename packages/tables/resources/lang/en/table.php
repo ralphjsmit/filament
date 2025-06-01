@@ -6,6 +6,14 @@ return [
 
         'heading' => 'Columns',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Apply columns',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
