@@ -273,13 +273,17 @@ trait HasState
      */
     public function getStateToDehydrate(mixed $state): array
     {
+        foreach ($this->getStateCasts() as $stateCast) {
+            $state = $stateCast->get($state);
+        }
+
         if ($callback = $this->dehydrateStateUsing) {
             return [$this->getStatePath() => $this->evaluate($callback, [
                 'state' => $state,
             ])];
         }
 
-        return [];
+        return [$this->getStatePath() => $state];
     }
 
     /**
