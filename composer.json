@@ -4,7 +4,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "composer-runtime-api": "^2.1"
+        "composer-runtime-api": "^2.1",
+        "ext-intl": "*"
     },
     "require-dev": {
         "anourvalar/eloquent-serialize": "^1.2",

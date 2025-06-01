@@ -427,7 +427,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         $panelAttributes = (new ComponentAttributeBag)
             ->class([
                 'fi-dropdown-panel',
-                ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : 'fi-width-default'),
+                ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : ''),
                 'fi-scrollable' => $maxHeight,
             ])
             ->style([

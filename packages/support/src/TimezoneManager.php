@@ -13,6 +13,6 @@ class TimezoneManager
 
     public function get(): string
     {
-        return $this->timezone ?? app('app.timezone');
+        return $this->timezone ?? config('app.timezone');
     }
 }

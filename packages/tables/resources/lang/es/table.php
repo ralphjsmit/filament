@@ -153,7 +153,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Todos',
+
+            'relationship' => [
+                'empty_option_label' => 'Ninguno',
+            ],
+
         ],
 
         'trashed' => [

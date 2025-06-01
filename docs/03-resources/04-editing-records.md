@@ -82,6 +82,20 @@ protected function getRedirectUrl(): string
 }
 ```
 
+You can also use the [configuration](../panel-configuration) to customize the default redirect page for all resources at once:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->resourceEditPageRedirect('index') // or
+        ->resourceEditPageRedirect('view');
+}
+```
+
 ## Customizing the save notification
 
 When the record is successfully updated, a notification is dispatched to the user, which indicates the success of their action.
