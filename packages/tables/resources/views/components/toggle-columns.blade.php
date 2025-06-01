@@ -5,7 +5,7 @@
 ])
 
 <div class="fi-ta-col-toggle">
-    <div 
+    <div
         @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
             {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
         @else
@@ -13,17 +13,17 @@
         @endif
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('toggle-columns', 'filament/tables') }}"
         x-data="toggleColumnsComponent({
-            columns: $wire.entangle('toggledTableColumns'),
-            isLive: {{ $applyAction->isVisible() ? 'false' : 'true' }}
-        })"
-        class="fi-ta-col-toggle-ctn" 
-    >    
+                    columns: $wire.entangle('toggledTableColumns'),
+                    isLive: {{ $applyAction->isVisible() ? 'false' : 'true' }},
+                })"
+        class="fi-ta-col-toggle-ctn"
+    >
         <div class="fi-ta-col-toggle-header">
             <{{ $headingTag }} class="fi-ta-col-toggle-heading">
                 {{ __('filament-tables::table.column_toggle.heading') }}
             </{{ $headingTag }}>
         </div>
-    
+
         <div
             x-show="hasToggleable"
             x-sortable
@@ -31,24 +31,26 @@
             data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
             class="fi-ta-col-toggle-items"
         >
-            <template 
-                x-for="(column, index) in columns" 
+            <template
+                x-for="(column, index) in columns"
                 x-bind:key="(column.type === 'group' ? 'group::' : 'column::') + column.name + '_' + index"
             >
-                <div x-bind:x-sortable-item="column.type === 'group' ? 'group::' + column.name : 'column::' + column.name">
+                <div
+                    x-bind:x-sortable-item="column.type === 'group' ? 'group::' + column.name : 'column::' + column.name"
+                >
                     <template x-if="column.type === 'group'">
                         <div class="fi-ta-col-toggle-group">
                             <div class="fi-ta-col-toggle-item">
                                 <label class="fi-ta-col-toggle-label">
-                                    <input 
-                                        type="checkbox" 
-                                        class="fi-checkbox-input fi-valid" 
-                                        x-bind:id="'group-' + column.name" 
+                                    <input
+                                        type="checkbox"
+                                        class="fi-checkbox-input fi-valid"
+                                        x-bind:id="'group-' + column.name"
                                         x-bind:checked="(groupedColumns[column.name] || {}).checked || false"
                                         x-bind:disabled="(groupedColumns[column.name] || {}).disabled || false"
                                         x-effect="$el.indeterminate = (groupedColumns[column.name] || {}).indeterminate || false"
                                         x-on:change="toggleGroup(column.name)"
-                                    >
+                                    />
                                     <span x-text="column.label"></span>
                                 </label>
                                 <button
@@ -60,28 +62,34 @@
                                     {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
                                 </button>
                             </div>
-                            <div 
+                            <div
                                 x-sortable
                                 x-on:end.stop="reorderGroupColumns($event.target.sortable.toArray(), column.name)"
-                                data-sortable-animation-duration="{{ $reorderAnimationDuration }}" }}"
+                                data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
                                 class="fi-ta-col-toggle-group-items"
                             >
-                                <template 
-                                    x-for="(groupColumn, index) in column.columns" 
+                                <template
+                                    x-for="(groupColumn, index) in column.columns"
                                     x-bind:key="'column::' + groupColumn.name + '_' + index"
                                 >
-                                    <div x-bind:x-sortable-item="'column::' + groupColumn.name">
+                                    <div
+                                        x-bind:x-sortable-item="'column::' + groupColumn.name"
+                                    >
                                         <div class="fi-ta-col-toggle-item">
-                                            <label class="fi-ta-col-toggle-label">
-                                                <input 
-                                                    type="checkbox" 
-                                                    class="fi-checkbox-input fi-valid" 
+                                            <label
+                                                class="fi-ta-col-toggle-label"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    class="fi-checkbox-input fi-valid"
                                                     x-bind:id="'column-' + groupColumn.name.replace('.', '-')"
                                                     x-bind:checked="(getColumn(groupColumn.name, column.name) || {}).toggled || false"
                                                     x-bind:disabled="(getColumn(groupColumn.name, column.name) || {}).toggleable === false"
                                                     x-on:change="toggleColumn(groupColumn.name, column.name)"
-                                                >
-                                                <span x-text="groupColumn.label"></span>
+                                                />
+                                                <span
+                                                    x-text="groupColumn.label"
+                                                ></span>
                                             </label>
                                             <button
                                                 x-sortable-handle
@@ -100,14 +108,14 @@
                     <template x-if="column.type !== 'group'">
                         <div class="fi-ta-col-toggle-item">
                             <label class="fi-ta-col-toggle-label">
-                                <input 
-                                    type="checkbox" 
-                                    class="fi-checkbox-input fi-valid" 
+                                <input
+                                    type="checkbox"
+                                    class="fi-checkbox-input fi-valid"
                                     x-bind:id="'column-' + column.name.replace('.', '-')"
                                     x-bind:checked="(getColumn(column.name, null) || {}).toggled || false"
                                     x-bind:disabled="(getColumn(column.name, null) || {}).toggleable === false"
                                     x-on:change="toggleColumn(column.name)"
-                                >
+                                />
                                 <span x-text="column.label"></span>
                             </label>
                             <button
@@ -123,7 +131,7 @@
                 </div>
             </template>
         </div>
-    
+
         @if ($applyAction->isVisible())
             <div class="fi-ta-col-toggle-apply-action-ctn">
                 {{ $applyAction }}

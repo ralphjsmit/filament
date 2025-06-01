@@ -21,7 +21,7 @@
         @apply flex items-center gap-3;
 
         & .fi-ta-col-toggle-label {
-            @apply flex flex-1 w-full items-center gap-x-3 text-sm font-medium text-gray-950 dark:text-white;
+            @apply flex w-full flex-1 items-center gap-x-3 text-sm font-medium text-gray-950 dark:text-white;
         }
 
         & .fi-ta-col-toggle-reorder-handle {
