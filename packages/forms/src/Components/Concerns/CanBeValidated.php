@@ -554,9 +554,9 @@ trait CanBeValidated
 
     public function distinct(bool | Closure $condition = true): static
     {
-        $this->rule(static function (Field $component, mixed $state) {
-            return function (string $attribute, mixed $value, Closure $fail) use ($component, $state): void {
-                if (blank($state)) {
+        $this->rule(static function (Field $component, mixed $rawState) {
+            return function (string $attribute, mixed $value, Closure $fail) use ($component, $rawState): void {
+                if (blank($rawState)) {
                     return;
                 }
 
@@ -576,7 +576,7 @@ trait CanBeValidated
                     ->after("{$repeaterStatePath}.")
                     ->beforeLast(".{$componentItemStatePath}");
 
-                $repeaterSiblingState = Arr::except($repeater->getState(), [$repeaterItemKey]);
+                $repeaterSiblingState = Arr::except($repeater->getRawState(), [$repeaterItemKey]);
 
                 if (empty($repeaterSiblingState)) {
                     return;
@@ -584,18 +584,18 @@ trait CanBeValidated
 
                 $validationMessages = $component->getValidationMessages();
 
-                if (is_bool($state)) {
+                if (is_bool($rawState)) {
                     $isSiblingItemSelected = collect($repeaterSiblingState)
                         ->pluck($componentItemStatePath)
                         ->contains(true);
 
-                    if ($state && $isSiblingItemSelected) {
+                    if ($rawState && $isSiblingItemSelected) {
                         $fail(__($validationMessages['distinct.only_one_must_be_selected'] ?? 'filament-forms::validation.distinct.only_one_must_be_selected', ['attribute' => $component->getValidationAttribute()]));
 
                         return;
                     }
 
-                    if ($state || $isSiblingItemSelected) {
+                    if ($rawState || $isSiblingItemSelected) {
                         return;
                     }
 
@@ -604,9 +604,9 @@ trait CanBeValidated
                     return;
                 }
 
-                if (is_array($state)) {
+                if (is_array($rawState)) {
                     $hasSiblingStateIntersections = collect($repeaterSiblingState)
-                        ->filter(fn (array $item): bool => filled(array_intersect(data_get($item, $componentItemStatePath, []), $state)))
+                        ->filter(fn (array $item): bool => filled(array_intersect(data_get($item, $componentItemStatePath, []), $rawState)))
                         ->isNotEmpty();
 
                     if (! $hasSiblingStateIntersections) {
@@ -620,7 +620,7 @@ trait CanBeValidated
 
                 $hasDuplicateSiblingState = collect($repeaterSiblingState)
                     ->pluck($componentItemStatePath)
-                    ->contains($state);
+                    ->contains($rawState);
 
                 if (! $hasDuplicateSiblingState) {
                     return;
