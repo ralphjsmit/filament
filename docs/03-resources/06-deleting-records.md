@@ -2,19 +2,19 @@
 title: Deleting records
 ---
 
-## Handling soft deletes
+## Handling soft-deletes
 
-## Creating a resource with soft delete
+## Creating a resource with soft-delete
 
-By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
+By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force-delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
 
 ```bash
 php artisan make:filament-resource Customer --soft-deletes
 ```
 
-## Adding soft deletes to an existing resource
+## Adding soft-deletes to an existing resource
 
-Alternatively, you may add soft deleting functionality to an existing resource.
+Alternatively, you may add soft-deleting functionality to an existing resource.
 
 Firstly, you must update the resource:
 
@@ -108,7 +108,7 @@ They also have the ability to bulk-delete records if the `deleteAny()` method of
 
 You can use the `authorizeIndividualRecords()` method on the `BulkDeleteAction` to check the `delete()` policy for each record individually.
 
-### Authorizing soft deletes
+### Authorizing soft-deletes
 
 The `forceDelete()` policy method is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant.
 

@@ -61,15 +61,15 @@ If you'd like to save time, Filament can automatically generate the [form](#reso
 php artisan make:filament-resource Customer --generate
 ```
 
-### Handling soft deletes
+### Handling soft-deletes
 
-By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
+By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force-delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
 
 ```bash
 php artisan make:filament-resource Customer --soft-deletes
 ```
 
-You can find out more about soft deleting [here](deleting-records#handling-soft-deletes).
+You can find out more about soft-deleting [here](deleting-records#handling-soft-deletes).
 
 ### Generating a View page
 
@@ -519,7 +519,7 @@ public static function getEloquentQuery(): Builder
 
 ### Disabling global scopes
 
-By default, Filament will observe all global scopes that are registered to your model. However, this may not be ideal if you wish to access, for example, soft deleted records.
+By default, Filament will observe all global scopes that are registered to your model. However, this may not be ideal if you wish to access, for example, soft-deleted records.
 
 To overcome this, you may override the `getEloquentQuery()` method that Filament uses:
 

@@ -157,15 +157,15 @@ public function table(Table $table): Table
 }
 ```
 
-### Handling soft deletes
+### Handling soft-deletes
 
-By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
+By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force-delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
 
 ```bash
 php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
 ```
 
-You can find out more about soft deleting [here](#deleting-records).
+You can find out more about soft-deleting [here](#deleting-records).
 
 ## Listing related records
 
@@ -557,13 +557,13 @@ public function table(Table $table): Table
 
 ## Deleting related records
 
-By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
+By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force-delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
 
 ```bash
 php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
 ```
 
-Alternatively, you may add soft deleting functionality to an existing relation manager:
+Alternatively, you may add soft-deleting functionality to an existing relation manager:
 
 ```php
 use Filament\Tables;

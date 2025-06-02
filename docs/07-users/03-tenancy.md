@@ -775,6 +775,23 @@ Below is a list of features that Filament provides to help you implement multi-t
     - As per the point above, models created outside the panel with tenancy enabled do not have access to the current tenant, so are not associated. If in doubt, please check if your models are properly associated or not before deploying your application.
     - If you need to disable the automatic association for a particular model, you can [mute the events](https://laravel.com/docs/eloquent#muting-events) temporarily while you create it. If any of your code currently does this or removes event listeners permanently, you should check this is not affecting the tenancy feature.
 
+### `unique` and `exists` validation
+
+Laravel's `unique` and `exists` validation rules do not use Eloquent models to query the database by default, so it will not use any global scopes defined on the model, including for multi-tenancy. As such, even if there is a soft-deleted record with the same value in a different tenant, the validation will fail.
+
+If you would like two tenants to have complete data separation, you should use the `scopedUnique()` or `scopedExists()` methods instead, which replace Laravel's `unique` and `exists` implementations with ones that uses the model to query the database, applying any global scopes defined on the model, including for multi-tenancy:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('email')
+    ->scopedUnique()
+    // or
+    ->scopedExists()
+```
+
+For more information, see the [validation documentation](../forms/validation) for [`unique()`](../forms/validation#unique) and [`exists()`](../forms/validation#exists).
+
 ### Using tenant-aware middleware to apply additional global scopes
 
 Since only models with resources that exist in the panel are automatically scoped to the current tenant, it might be useful to apply additional tenant scoping to other Eloquent models while they are being used in your panel. This would allow you to forget about scoping your queries to the current tenant, and instead have the scoping applied automatically. To do this, you can create a new middleware class like `ApplyTenantScopes`:

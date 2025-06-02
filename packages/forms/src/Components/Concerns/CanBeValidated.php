@@ -3,12 +3,16 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Exception;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -157,6 +161,29 @@ trait CanBeValidated
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
 
+            if (
+                class_exists($table) &&
+                is_subclass_of($table, Model::class) &&
+                class_exists(Filament::class) &&
+                $table::hasGlobalScope(Filament::getTenancyScopeName())
+            ) {
+                return function (string $attribute, mixed $value, Closure $fail) use ($column, $component, $modifyRuleUsing, $table): void {
+                    $query = $table::query()
+                        ->where($column, $value)
+                        ->withoutGlobalScope(SoftDeletingScope::class);
+
+                    if ($modifyRuleUsing) {
+                        $query = $component->evaluate($modifyRuleUsing, [
+                            'query' => $query,
+                        ]) ?? $query;
+                    }
+
+                    if (! $query->exists()) {
+                        $fail(__($component->getValidationMessages()['exists'] ?? 'validation.exists', ['attribute' => $component->getValidationAttribute()]));
+                    }
+                };
+            }
+
             $rule = Rule::exists($table, $column);
 
             if ($modifyRuleUsing) {
@@ -167,6 +194,32 @@ trait CanBeValidated
 
             return $rule;
         }, static fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
+
+        return $this;
+    }
+
+    public function scopedExists(string | Closure | null $model = null, string | Closure | null $column = null, ?Closure $modifyQueryUsing = null): static
+    {
+        $this->rule(static function (Field $component) use ($column, $modifyQueryUsing, $model) {
+            $model = $component->evaluate($model) ?? $component->getModel();
+            $column = $component->evaluate($column) ?? $component->getName();
+
+            return function (string $attribute, mixed $value, Closure $fail) use ($column, $component, $modifyQueryUsing, $model): void {
+                $query = $model::query()
+                    ->where($column, $value)
+                    ->withoutGlobalScope(SoftDeletingScope::class);
+
+                if ($modifyQueryUsing) {
+                    $query = $component->evaluate($modifyQueryUsing, [
+                        'query' => $query,
+                    ]) ?? $query;
+                }
+
+                if (! $query->exists()) {
+                    $fail(__($component->getValidationMessages()['exists'] ?? 'validation.exists', ['attribute' => $component->getValidationAttribute()]));
+                }
+            };
+        }, static fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($model) ?? $model));
 
         return $this;
     }
@@ -536,6 +589,40 @@ trait CanBeValidated
 
             return $rule;
         }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
+
+        return $this;
+    }
+
+    public function scopedUnique(string | Closure | null $model = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = null, ?Closure $modifyQueryUsing = null): static
+    {
+        $this->rule(static function (Field $component) use ($column, $ignorable, $ignoreRecord, $modifyQueryUsing, $model) {
+            $ignoreRecord ??= $component->shouldUniqueValidationIgnoreRecordByDefault();
+
+            $model = $component->evaluate($model) ?? $component->getModel();
+            $column = $component->evaluate($column) ?? $component->getName();
+            $ignorable = ($ignoreRecord && (! $ignorable)) ?
+                $component->getRecord() :
+                $component->evaluate($ignorable);
+
+            return function (string $attribute, mixed $value, Closure $fail) use ($column, $component, $ignorable, $modifyQueryUsing, $model): void {
+                $query = $model::query()
+                    ->where($column, $value);
+
+                if (filled($ignorable)) {
+                    $query->whereKeyNot($ignorable);
+                }
+
+                if ($modifyQueryUsing) {
+                    $query = $component->evaluate($modifyQueryUsing, [
+                        'query' => $query,
+                    ]) ?? $query;
+                }
+
+                if ($query->exists()) {
+                    $fail(__($component->getValidationMessages()['unique'] ?? 'validation.unique', ['attribute' => $component->getValidationAttribute()]));
+                }
+            };
+        }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($model) ?? $model));
 
         return $this;
     }
