@@ -193,7 +193,7 @@ trait HasState
         return $this;
     }
 
-    public function callAfterStateUpdatedHooks(): static
+    protected function callAfterStateUpdatedHooks(): static
     {
         foreach ($this->afterStateUpdated as $callback) {
             $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
