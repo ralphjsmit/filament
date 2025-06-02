@@ -23,7 +23,7 @@ return [
         'actions' => [
 
             'request' => [
-                'label' => 'Skicka mejlmeddelande',
+                'label' => 'Skicka meddelande',
             ],
 
         ],
