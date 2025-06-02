@@ -32,6 +32,10 @@ return [
 
     'notifications' => [
 
+        'sent' => [
+            'body' => 'Om ditt konto inte finns, kommer du inte att få något meddelande.',
+        ],
+
         'throttled' => [
             'title' => 'För många förfrågningar',
             'body' => 'Vänligen försök igen om :seconds sekunder.',
