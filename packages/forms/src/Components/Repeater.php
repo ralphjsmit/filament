@@ -119,10 +119,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $this->defaultItems(1);
 
         $this->afterStateHydrated(function (Repeater $component): void {
-            if ($component->isSimple()) {
-                return;
-            }
-
             if (! is_array($component->hydratedDefaultState)) {
                 return;
             }
@@ -953,10 +949,14 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $state = $this->getRawState();
         $items = $this->hydratedDefaultState;
 
+        $simpleFieldName = $this->getSimpleField()?->getName();
+
         foreach ($items as $itemKey => $itemData) {
-            $items[$itemKey] = [
+            $items[$itemKey] = blank($simpleFieldName) ? [
                 ...$state[$itemKey] ?? [],
                 ...$itemData,
+            ] : [
+                $simpleFieldName => $itemData,
             ];
         }
 

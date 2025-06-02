@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Repeater\StateCasts;
 
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Illuminate\Support\Arr;
 
 class RepeaterStateCast implements StateCast
 {
@@ -24,11 +25,10 @@ class RepeaterStateCast implements StateCast
             return [];
         }
 
-        if ($simpleField = $this->repeater->getSimpleField()) {
-            return collect($state)
-                ->values()
-                ->pluck($simpleField->getName())
-                ->all();
+        $simpleField = $this->repeater->getSimpleField();
+
+        if ($simpleField && is_array(Arr::first($state))) {
+            return Arr::pluck($state, $simpleField->getName());
         }
 
         return array_values($state);
@@ -49,7 +49,15 @@ class RepeaterStateCast implements StateCast
 
         $items = [];
 
+        $simpleFieldName = $this->repeater->getSimpleField()?->getName();
+
         foreach ($state as $itemData) {
+            if (filled($simpleFieldName) && (! is_array($itemData))) {
+                $itemData = [
+                    $simpleFieldName => $itemData,
+                ];
+            }
+
             if ($key = $this->repeater->generateUuid()) {
                 $items[$key] = $itemData;
             } else {
