@@ -168,7 +168,7 @@ trait HasState
         return $this;
     }
 
-    public function callAfterStateUpdated(): static
+    public function callAfterStateUpdated(bool $shouldBubbleToParents = true): static
     {
         $this->callAfterStateUpdatedHooks();
 
@@ -184,6 +184,10 @@ trait HasState
 
         if ($this->isRenderlessAfterStateUpdated()) {
             $this->skipRender();
+        }
+
+        if ($shouldBubbleToParents) {
+            $this->getContainer()->getParentComponent()->callAfterStateUpdated();
         }
 
         return $this;

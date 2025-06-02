@@ -106,13 +106,13 @@ trait HasState
                 $componentStatePath = $component->getStatePath();
 
                 if ($componentStatePath === $path) {
-                    $component->callAfterStateUpdated();
+                    $component->callAfterStateUpdated(shouldBubbleToParents: false);
 
                     return true;
                 }
 
                 if (str($path)->startsWith("{$componentStatePath}.")) {
-                    $component->callAfterStateUpdated();
+                    $component->callAfterStateUpdated(shouldBubbleToParents: false);
                 }
 
                 foreach ($component->getChildSchemas() as $childSchema) {
