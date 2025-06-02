@@ -269,7 +269,7 @@ trait HasState
     /**
      * @param  array<string, mixed> | null  $state
      */
-    public function fill(?array $state = null, bool $andCallHydrationHooks = true, bool $andFillStateWithNull = true): static
+    public function fill(?array $state = null, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true): static
     {
         $hydratedDefaultState = null;
 
@@ -279,9 +279,9 @@ trait HasState
             $this->rawState($state);
         }
 
-        $this->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
+        $this->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
 
-        if ($andFillStateWithNull) {
+        if ($shouldFillStateWithNull) {
             $this->fillStateWithNull();
         }
 
@@ -292,7 +292,7 @@ trait HasState
      * @param  array<string, mixed>  $state
      * @param  array<string>  $statePaths
      */
-    public function fillPartially(array $state, array $statePaths, bool $andCallHydrationHooks = true, bool $andFillStateWithNull = true): static
+    public function fillPartially(array $state, array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true): static
     {
         $this->partialRawState(collect($state)->dot()->only($statePaths)->all());
 
@@ -305,10 +305,10 @@ trait HasState
 
         $this->hydrateStatePartially(
             $statePaths,
-            $andCallHydrationHooks,
+            $shouldCallHydrationHooks,
         );
 
-        if ($andFillStateWithNull) {
+        if ($shouldFillStateWithNull) {
             $this->fillStateWithNull();
         }
 
@@ -318,28 +318,28 @@ trait HasState
     /**
      * @param  array<string, mixed> | null  $hydratedDefaultState
      */
-    public function hydrateState(?array &$hydratedDefaultState, bool $andCallHydrationHooks = true): void
+    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component instanceof Entry) {
                 continue;
             }
 
-            $component->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
+            $component->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
         }
     }
 
     /**
      * @param  array<string>  $statePaths
      */
-    public function hydrateStatePartially(array $statePaths, bool $andCallHydrationHooks = true): void
+    public function hydrateStatePartially(array $statePaths, bool $shouldCallHydrationHooks = true): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component instanceof Entry) {
                 continue;
             }
 
-            $component->hydrateStatePartially($statePaths, $andCallHydrationHooks);
+            $component->hydrateStatePartially($statePaths, $shouldCallHydrationHooks);
         }
     }
 
@@ -398,7 +398,7 @@ trait HasState
             $this->callBeforeStateDehydrated($state);
 
             $afterValidate || $this->saveRelationships();
-            $afterValidate || $this->loadStateFromRelationships(andHydrate: true);
+            $afterValidate || $this->loadStateFromRelationships(shouldHydrate: true);
         }
 
         $this->dehydrateState($state);
@@ -412,7 +412,7 @@ trait HasState
             value($afterValidate, $state);
 
             $shouldCallHooksBefore && $this->saveRelationships();
-            $shouldCallHooksBefore && $this->loadStateFromRelationships(andHydrate: true);
+            $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
         }
 
         return $state;

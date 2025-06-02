@@ -336,7 +336,7 @@ trait HasState
     /**
      * @param  array<string, mixed> | null  $hydratedDefaultState
      */
-    public function hydrateState(?array &$hydratedDefaultState, bool $andCallHydrationHooks = true): void
+    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true): void
     {
         $this->hydrateDefaultState($hydratedDefaultState);
 
@@ -355,7 +355,7 @@ trait HasState
         }
 
         foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-            $childSchema->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
+            $childSchema->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
         }
 
         $rawState = $this->getRawState();
@@ -369,7 +369,7 @@ trait HasState
             $this->rawState($rawState);
         }
 
-        if ($andCallHydrationHooks) {
+        if ($shouldCallHydrationHooks) {
             $this->callAfterStateHydrated();
         }
     }
@@ -377,7 +377,7 @@ trait HasState
     /**
      * @param  array<string>  $statePaths
      */
-    public function hydrateStatePartially(array $statePaths, bool $andCallHydrationHooks = true): void
+    public function hydrateStatePartially(array $statePaths, bool $shouldCallHydrationHooks = true): void
     {
         if ($this->hasStatePath()) {
             $statePathToCheck = $this->getStatePath();
@@ -396,7 +396,7 @@ trait HasState
 
         if (! ($isStatePathMatching ?? false)) {
             foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-                $childSchema->hydrateStatePartially($statePaths, $andCallHydrationHooks);
+                $childSchema->hydrateStatePartially($statePaths, $shouldCallHydrationHooks);
             }
 
             return;
@@ -415,7 +415,7 @@ trait HasState
         }
 
         foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-            $childSchema->hydrateStatePartially($statePaths, $andCallHydrationHooks);
+            $childSchema->hydrateStatePartially($statePaths, $shouldCallHydrationHooks);
         }
 
         $rawState = $this->getRawState();
@@ -429,7 +429,7 @@ trait HasState
             $this->rawState($rawState);
         }
 
-        if ($andCallHydrationHooks) {
+        if ($shouldCallHydrationHooks) {
             $this->callAfterStateHydrated();
         }
     }
