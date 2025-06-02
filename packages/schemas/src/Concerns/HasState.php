@@ -103,13 +103,15 @@ trait HasState
     {
         try {
             foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
-                if ($component->getStatePath() === $path) {
+                $componentStatePath = $component->getStatePath();
+
+                if ($componentStatePath === $path) {
                     $component->callAfterStateUpdated();
 
                     return true;
                 }
 
-                if (str($path)->startsWith("{$component->getStatePath()}.")) {
+                if (str($path)->startsWith("{$componentStatePath}.")) {
                     $component->callAfterStateUpdated();
                 }
 
