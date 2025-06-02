@@ -27,7 +27,7 @@
             :wire:key="$action ? $this->getId() . '.actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedActions.length) open()"
             x-on:modal-closed.stop="
-                if ($event.detail.id !== '{{ $this->getId() }}-action') {
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}')) {
                     return
                 }
 
@@ -93,7 +93,7 @@
             :wire:key="$action ? $this->getId() . '.table.actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableActions.length) open()"
             x-on:modal-closed.stop="
-                if ($event.detail.id !== '{{ $this->getId() }}-table-action') {
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}')) {
                     return
                 }
 
@@ -153,7 +153,7 @@
             :wire:key="$action ? $this->getId() . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableBulkAction) open()"
             x-on:modal-closed.stop="
-                if ($event.detail.id !== '{{ $this->getId() }}-table-bulk-action') {
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}')) {
                     return
                 }
 
@@ -219,7 +219,7 @@
             :wire:key="$action ? $this->getId() . '.infolist.actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedInfolistActions.length) open()"
             x-on:modal-closed.stop="
-                if ($event.detail.id !== '{{ $this->getId() }}-infolist-action') {
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}')) {
                     return
                 }
 
@@ -284,7 +284,7 @@
             :width="$action?->getModalWidth()"
             :wire:key="$action ? $this->getId() . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
             x-on:modal-closed.stop="
-                if ($event.detail.id !== '{{ $this->getId() }}-form-component-action') {
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}')) {
                     return
                 }
 
