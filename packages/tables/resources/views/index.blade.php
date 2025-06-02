@@ -1118,19 +1118,7 @@
                         </table>
                     @endif
                 @elseif ((! ($content || $hasColumnsLayout)) && ($records !== null))
-                    <table
-                        @if ($isReorderable)
-                            x-on:end.stop="
-                                $wire.reorderTable(
-                                    $event.target.sortable.toArray(),
-                                    $event.item.getAttribute('x-sortable-item'),
-                                )
-                            "
-                            x-sortable
-                            data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
-                        @endif
-                        class="fi-ta-table"
-                    >
+                    <table class="fi-ta-table">
                         <thead>
                             @if ($hasColumnGroups)
                                 <tr class="fi-ta-table-head-groups-row">
@@ -1379,7 +1367,18 @@
                         </thead>
 
                         @if ($isColumnSearchVisible || count($records))
-                            <tbody>
+                            <tbody
+                                @if ($isReorderable)
+                                    x-on:end.stop="
+                                        $wire.reorderTable(
+                                            $event.target.sortable.toArray(),
+                                            $event.item.getAttribute('x-sortable-item'),
+                                        )
+                                    "
+                                    x-sortable
+                                    data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
+                                @endif
+                            >
                                 @if ($isColumnSearchVisible)
                                     <tr
                                         class="fi-ta-row fi-ta-row-not-reorderable"
@@ -1640,7 +1639,7 @@
                                             <tr
                                                 wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
                                                 {{ $isReordering ? 'x-sortable-handle' : null }}
-                                                {{ $isReordering ? "x-sortable-item=\"{$recordKey}\"" : null }}
+                                                {!! $isReordering ? 'x-sortable-item="' . e($recordKey) . '"' : null !!}
                                                 x-bind:class="{
                                                     {{ $group?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . '),' : '' }}
                                                     'fi-selected': isRecordSelected(@js($recordKey)),
