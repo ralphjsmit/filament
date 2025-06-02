@@ -1542,6 +1542,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/tabs/vertical': {
+        url: 'schemas/layout',
+        selector: '#tabsVertical',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/wizard/simple': {
         url: 'schemas/layout',
         selector: '#wizard',
