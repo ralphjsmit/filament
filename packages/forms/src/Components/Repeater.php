@@ -54,8 +54,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected bool | Closure $isReorderableWithButtons = false;
 
-    protected bool | Closure $isInset = false;
-
     protected ?Collection $cachedExistingRecords = null;
 
     protected string | Closure | null $orderColumn = null;
