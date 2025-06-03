@@ -133,6 +133,10 @@
         }
     }
 
+    & .fi-section-collapse-btn .fi-icon {
+        @apply !self-center;
+    }
+
     &.fi-collapsed {
         & .fi-section-collapse-btn {
             @apply rotate-180;
