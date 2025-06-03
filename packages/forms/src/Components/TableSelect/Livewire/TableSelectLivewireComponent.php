@@ -65,7 +65,7 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
         $table
             ->headerActions([])
             ->actions([])
-            ->bulkActions([])
+            ->toolbarActions([])
             ->emptyStateActions([])
             ->selectable()
             ->trackDeselectedRecords(false)

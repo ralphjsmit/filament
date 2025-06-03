@@ -35,7 +35,7 @@ trait CanGenerateModelTables
                 ->actions([
                     //
                 ])
-                ->bulkActions([
+                ->toolbarActions([
                     {$this->simplifyFqn(BulkActionGroup::class)}::make([
                         //
                     ]),

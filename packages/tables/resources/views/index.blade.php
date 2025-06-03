@@ -41,14 +41,14 @@
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
-        fn (\Filament\Actions\Action | \Filament\Actions\BulkAction | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+        fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $headerActionsPosition = $getHeaderActionsPosition();
     $heading = $getHeading();
     $group = $getGrouping();
-    $bulkActions = array_filter(
-        $getBulkActions(),
-        fn (\Filament\Actions\BulkAction | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+    $toolbarActions = array_filter(
+        $getToolbarActions(),
+        fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $groups = $getGroups();
     $description = $getDescription();
@@ -131,7 +131,7 @@
     >
         <div
             @if (! $hasHeader) x-cloak @endif
-            x-show="@js($hasHeader) || (getSelectedRecordsCount() && @js(count($bulkActions)))"
+            x-show="@js($hasHeader) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
             class="fi-ta-header-ctn"
         >
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::HEADER_BEFORE, scopes: static::class) }}
@@ -206,179 +206,173 @@
 
             <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
-                x-show="@js($hasHeaderToolbar) || (getSelectedRecordsCount() && @js(count($bulkActions)))"
+                x-show="@js($hasHeaderToolbar) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
                 class="fi-ta-header-toolbar"
             >
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
 
-                <div>
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
+                @if ($isReorderable || ((! $isReordering) && count($toolbarActions)) || $areGroupingSettingsVisible)
+                    <div class="fi-ta-actions fi-align-start fi-wrapped">
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
 
-                    @if ($isReorderable)
-                        <span x-show="! getSelectedRecordsCount()">
+                        @if ($isReorderable)
                             {{ $reorderRecordsTriggerAction }}
-                        </span>
-                    @endif
+                        @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
 
-                    @if ((! $isReordering) && count($bulkActions))
-                        <div
-                            x-cloak
-                            x-show="getSelectedRecordsCount()"
-                            class="fi-ta-actions"
-                        >
-                            @foreach ($bulkActions as $action)
+                        @if ((! $isReordering) && count($toolbarActions))
+                            @foreach ($toolbarActions as $action)
                                 {{ $action }}
                             @endforeach
-                        </div>
-                    @endif
+                        @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
 
-                    @if ($areGroupingSettingsVisible)
-                        <div
-                            x-data="{
-                                direction: $wire.$entangle('tableGroupingDirection', true),
-                                group: $wire.$entangle('tableGrouping', true),
-                            }"
-                            x-init="
-                                $watch('group', function (newGroup, oldGroup) {
-                                    if (newGroup && direction) {
-                                        return
-                                    }
+                        @if ($areGroupingSettingsVisible)
+                            <div
+                                x-data="{
+                                    direction: $wire.$entangle('tableGroupingDirection', true),
+                                    group: $wire.$entangle('tableGrouping', true),
+                                }"
+                                x-init="
+                                    $watch('group', function (newGroup, oldGroup) {
+                                        if (newGroup && direction) {
+                                            return
+                                        }
 
-                                    if (! newGroup) {
-                                        direction = null
+                                        if (! newGroup) {
+                                            direction = null
 
-                                        return
-                                    }
+                                            return
+                                        }
 
-                                    if (oldGroup) {
-                                        return
-                                    }
+                                        if (oldGroup) {
+                                            return
+                                        }
 
-                                    direction = 'asc'
-                                })
-                            "
-                            class="fi-ta-grouping-settings"
-                        >
-                            <x-filament::dropdown
-                                placement="bottom-start"
-                                shift
-                                width="xs"
-                                wire:key="{{ $this->getId() }}.table.grouping"
-                                @class([
-                                    'sm:fi-hidden' => ! $areGroupingSettingsInDropdownOnDesktop,
-                                ])
+                                        direction = 'asc'
+                                    })
+                                "
+                                class="fi-ta-grouping-settings"
                             >
-                                <x-slot name="trigger">
-                                    {{ $getGroupRecordsTriggerAction() }}
-                                </x-slot>
+                                <x-filament::dropdown
+                                    placement="bottom-start"
+                                    shift
+                                    width="xs"
+                                    wire:key="{{ $this->getId() }}.table.grouping"
+                                    @class([
+                                        'sm:fi-hidden' => ! $areGroupingSettingsInDropdownOnDesktop,
+                                    ])
+                                >
+                                    <x-slot name="trigger">
+                                        {{ $getGroupRecordsTriggerAction() }}
+                                    </x-slot>
 
-                                <div class="fi-ta-grouping-settings-fields">
-                                    <label>
-                                        <span>
-                                            {{ __('filament-tables::table.grouping.fields.group.label') }}
-                                        </span>
-
-                                        <x-filament::input.wrapper>
-                                            <x-filament::input.select
-                                                x-model="group"
-                                                x-on:change="resetCollapsedGroups()"
-                                            >
-                                                <option value="">-</option>
-
-                                                @foreach ($groups as $groupOption)
-                                                    <option
-                                                        value="{{ $groupOption->getId() }}"
-                                                    >
-                                                        {{ $groupOption->getLabel() }}
-                                                    </option>
-                                                @endforeach
-                                            </x-filament::input.select>
-                                        </x-filament::input.wrapper>
-                                    </label>
-
-                                    @if (! $isGroupingDirectionSettingHidden)
-                                        <label x-cloak x-show="group">
+                                    <div class="fi-ta-grouping-settings-fields">
+                                        <label>
                                             <span>
-                                                {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                                {{ __('filament-tables::table.grouping.fields.group.label') }}
                                             </span>
 
                                             <x-filament::input.wrapper>
                                                 <x-filament::input.select
-                                                    x-model="direction"
+                                                    x-model="group"
+                                                    x-on:change="resetCollapsedGroups()"
                                                 >
-                                                    <option value="asc">
-                                                        {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                                                    </option>
+                                                    <option value="">-</option>
 
-                                                    <option value="desc">
-                                                        {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                                                    </option>
+                                                    @foreach ($groups as $groupOption)
+                                                        <option
+                                                            value="{{ $groupOption->getId() }}"
+                                                        >
+                                                            {{ $groupOption->getLabel() }}
+                                                        </option>
+                                                    @endforeach
                                                 </x-filament::input.select>
                                             </x-filament::input.wrapper>
                                         </label>
-                                    @endif
-                                </div>
-                            </x-filament::dropdown>
 
-                            @if (! $areGroupingSettingsInDropdownOnDesktop)
-                                <div class="fi-ta-grouping-settings-fields">
-                                    <label>
-                                        <span class="fi-sr-only">
-                                            {{ __('filament-tables::table.grouping.fields.group.label') }}
-                                        </span>
+                                        @if (! $isGroupingDirectionSettingHidden)
+                                            <label x-cloak x-show="group">
+                                                <span>
+                                                    {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                                </span>
 
-                                        <x-filament::input.wrapper>
-                                            <x-filament::input.select
-                                                x-model="group"
-                                                x-on:change="resetCollapsedGroups()"
-                                            >
-                                                <option value="">
-                                                    {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
-                                                </option>
-
-                                                @foreach ($groups as $groupOption)
-                                                    <option
-                                                        value="{{ $groupOption->getId() }}"
+                                                <x-filament::input.wrapper>
+                                                    <x-filament::input.select
+                                                        x-model="direction"
                                                     >
-                                                        {{ $groupOption->getLabel() }}
-                                                    </option>
-                                                @endforeach
-                                            </x-filament::input.select>
-                                        </x-filament::input.wrapper>
-                                    </label>
+                                                        <option value="asc">
+                                                            {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                                        </option>
 
-                                    @if (! $isGroupingDirectionSettingHidden)
-                                        <label x-cloak x-show="group">
+                                                        <option value="desc">
+                                                            {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                                                        </option>
+                                                    </x-filament::input.select>
+                                                </x-filament::input.wrapper>
+                                            </label>
+                                        @endif
+                                    </div>
+                                </x-filament::dropdown>
+
+                                @if (! $areGroupingSettingsInDropdownOnDesktop)
+                                    <div class="fi-ta-grouping-settings-fields">
+                                        <label>
                                             <span class="fi-sr-only">
-                                                {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                                {{ __('filament-tables::table.grouping.fields.group.label') }}
                                             </span>
 
                                             <x-filament::input.wrapper>
                                                 <x-filament::input.select
-                                                    x-model="direction"
+                                                    x-model="group"
+                                                    x-on:change="resetCollapsedGroups()"
                                                 >
-                                                    <option value="asc">
-                                                        {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                                    <option value="">
+                                                        {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
                                                     </option>
 
-                                                    <option value="desc">
-                                                        {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                                                    </option>
+                                                    @foreach ($groups as $groupOption)
+                                                        <option
+                                                            value="{{ $groupOption->getId() }}"
+                                                        >
+                                                            {{ $groupOption->getLabel() }}
+                                                        </option>
+                                                    @endforeach
                                                 </x-filament::input.select>
                                             </x-filament::input.wrapper>
                                         </label>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
-                    @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
-                </div>
+                                        @if (! $isGroupingDirectionSettingHidden)
+                                            <label x-cloak x-show="group">
+                                                <span class="fi-sr-only">
+                                                    {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                                </span>
+
+                                                <x-filament::input.wrapper>
+                                                    <x-filament::input.select
+                                                        x-model="direction"
+                                                    >
+                                                        <option value="asc">
+                                                            {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                                        </option>
+
+                                                        <option value="desc">
+                                                            {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                                                        </option>
+                                                    </x-filament::input.select>
+                                                </x-filament::input.wrapper>
+                                            </label>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
+                    </div>
+                @endif
 
                 @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown)
                     <div>

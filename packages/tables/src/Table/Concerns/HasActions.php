@@ -5,6 +5,7 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
 use Filament\Support\Enums\Size;
 use Filament\Tables\Enums\ActionsPosition;
 use Illuminate\Contracts\Support\Htmlable;
@@ -22,6 +23,11 @@ trait HasActions
      * @var array<string, Action>
      */
     protected array $flatActions = [];
+
+    /**
+     * @var array<string, BulkAction>
+     */
+    protected array $flatBulkActions = [];
 
     protected string | Htmlable | Closure | null $actionsColumnLabel = null;
 
@@ -110,6 +116,11 @@ trait HasActions
         return $this->getFlatActions()[$name] ?? null;
     }
 
+    public function getBulkAction(string $name): ?BulkAction
+    {
+        return $this->getFlatBulkActions()[$name] ?? null;
+    }
+
     /**
      * @return array<string, Action>
      */
@@ -118,18 +129,43 @@ trait HasActions
         return $this->flatActions;
     }
 
+    /**
+     * @return array<string, BulkAction>
+     */
+    public function getFlatBulkActions(): array
+    {
+        return $this->flatBulkActions;
+    }
+
     public function hasAction(string $name): bool
     {
         return array_key_exists($name, $this->getFlatActions());
     }
 
+    public function hasBulkAction(string $name): bool
+    {
+        return array_key_exists($name, $this->getFlatBulkActions());
+    }
+
     protected function cacheAction(Action $action, bool $shouldOverwriteExistingAction = true): void
     {
-        if ($shouldOverwriteExistingAction) {
-            $this->flatActions[$action->getName()] = $action;
-        } else {
-            $this->flatActions[$action->getName()] ??= $action;
+        if (! $shouldOverwriteExistingAction) {
+            if ($action instanceof BulkAction) {
+                $this->flatBulkActions[$action->getName()] ??= $action;
+            } else {
+                $this->flatActions[$action->getName()] ??= $action;
+            }
+
+            return;
         }
+
+        if ($action instanceof BulkAction) {
+            $this->flatBulkActions[$action->getName()] = $action;
+
+            return;
+        }
+
+        $this->flatActions[$action->getName()] = $action;
     }
 
     /**
@@ -137,16 +173,8 @@ trait HasActions
      */
     protected function mergeCachedFlatActions(array $actions, bool $shouldOverwriteExistingActions = true): void
     {
-        if ($shouldOverwriteExistingActions) {
-            $this->flatActions = [
-                ...$this->flatActions,
-                ...$actions,
-            ];
-        } else {
-            $this->flatActions = [
-                ...$actions,
-                ...$this->flatActions,
-            ];
+        foreach ($actions as $action) {
+            $this->cacheAction($action, $shouldOverwriteExistingActions);
         }
     }
 
@@ -173,5 +201,21 @@ trait HasActions
     public function getActionsColumnLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->actionsColumnLabel);
+    }
+
+    /**
+     * @param  array<Action>  $actions
+     */
+    protected function removeCachedActions(array $actions): void
+    {
+        $this->flatActions = array_filter(
+            $this->flatActions,
+            fn (Action $existingAction): bool => ! in_array($existingAction, $actions, true),
+        );
+
+        $this->flatBulkActions = array_filter(
+            $this->flatBulkActions,
+            fn (Action $existingAction): bool => ! in_array($existingAction, $actions, true),
+        );
     }
 }

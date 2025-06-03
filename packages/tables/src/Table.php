@@ -36,6 +36,7 @@ class Table extends ViewComponent
     use Table\Concerns\HasRecordClasses;
     use Table\Concerns\HasRecords;
     use Table\Concerns\HasRecordUrl;
+    use Table\Concerns\HasToolbarActions;
 
     /**
      * @var view-string
