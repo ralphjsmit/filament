@@ -7,6 +7,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Table;
 use Filament\Upgrade\Rector;
 use Filament\Widgets\Widget;
 use Rector\Config\RectorConfig;
@@ -306,5 +307,12 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodCallRename(Filament::class, 'getCurrentPanel', 'getCurrentOrDefaultPanel'),
         new MethodCallRename(Color::class, 'hex', 'generateV3Palette'),
         new MethodCallRename(Color::class, 'rgb', 'generateV3Palette'),
+        new MethodCallRename(Table::class, 'actions', 'recordActions'),
+        new MethodCallRename(Table::class, 'pushActions', 'pushRecordActions'),
+        new MethodCallRename(Table::class, 'actionsColumnLabel', 'recordActionsColumnLabel'),
+        new MethodCallRename(Table::class, 'actionsAlignment', 'recordActionsAlignment'),
+        new MethodCallRename(Table::class, 'actionsPosition', 'recordActionsPosition'),
+        new MethodCallRename(Table::class, 'bulkActions', 'toolbarActions'),
+        new MethodCallRename(Table::class, 'pushBulkActions', 'pushToolbarActions'),
     ]);
 };
