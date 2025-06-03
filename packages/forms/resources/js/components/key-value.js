@@ -75,7 +75,7 @@ export default function keyValueFormComponent({ state }) {
             const state = Alpine.raw(this.state)
             const mergedRows = state.map(({ key, value }) => ({ key, value }))
 
-            this.rows.forEach(row => {
+            this.rows.forEach((row) => {
                 if (row.key === '' || row.key === null) {
                     mergedRows.push({
                         key: '',
