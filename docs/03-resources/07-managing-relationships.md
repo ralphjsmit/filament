@@ -259,6 +259,10 @@ php artisan make:filament-relation-manager CategoryResource posts title --attach
 Alternatively, if you've already generated your resource, you can just add the actions to the `$table` arrays:
 
 ```php
+use Filament\Actions\AttachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -269,16 +273,16 @@ public function table(Table $table): Table
         ])
         ->headerActions([
             // ...
-            \Filament\Actions\AttachAction::make(),
+            AttachAction::make(),
         ])
         ->actions([
             // ...
-            \Filament\Actions\DetachAction::make(),
+            DetachAction::make(),
         ])
-        ->bulkActions([
-            \Filament\Actions\BulkActionGroup::make([
+        ->toolbarActions([
+            BulkActionGroup::make([
                 // ...
-                \Filament\Actions\DetachBulkAction::make(),
+                DetachBulkAction::make(),
             ]),
         ]);
 }
@@ -434,7 +438,7 @@ public function table(Table $table): Table
             // ...
             \Filament\Actions\DissociateAction::make(),
         ])
-        ->bulkActions([
+        ->toolbarActions([
             \Filament\Actions\BulkActionGroup::make([
                 // ...
                 \Filament\Actions\DissociateBulkAction::make(),
@@ -590,7 +594,7 @@ public function table(Table $table): Table
             \Filament\Actions\RestoreAction::make(),
             // ...
         ])
-        ->bulkActions([
+        ->toolbarActions([
             BulkActionGroup::make([
                 \Filament\Actions\DeleteBulkAction::make(),
                 \Filament\Actions\ForceDeleteBulkAction::make(),

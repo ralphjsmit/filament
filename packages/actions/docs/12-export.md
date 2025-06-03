@@ -69,7 +69,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->bulkActions([
+        ->toolbarActions([
             ExportBulkAction::make()
                 ->exporter(ProductExporter::class),
         ]);

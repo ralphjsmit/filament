@@ -148,7 +148,7 @@ public function table(Table $table): Table
                 })
                 ->visible(fn (Post $record): bool => $record->is_featured),
         ])
-        ->bulkActions([
+        ->toolbarActions([
             BulkActionGroup::make([
                 DeleteBulkAction::make(),
             ]),

@@ -116,7 +116,7 @@ public function table(Table $table): Table
 
 ## Bulk actions
 
-Tables also support "bulk actions". These can be used when the user selects rows in the table. Traditionally, when rows are selected, a "bulk actions" button appears in the top left corner of the table. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. You can put them in the `$table->bulkActions()` method:
+Tables also support "bulk actions". These can be used when the user selects rows in the table. Traditionally, when rows are selected, a "bulk actions" button appears in the top left corner of the table. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. You can put them in the `$table->toolbarActions()` method:
 
 ```php
 use Filament\Tables\Table;
@@ -124,7 +124,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->bulkActions([
+        ->toolbarActions([
             // ...
         ]);
 }
@@ -283,7 +283,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->bulkActions([
+        ->toolbarActions([
             BulkActionGroup::make([
                 BulkAction::make('delete')
                     ->requiresConfirmation()
@@ -341,7 +341,7 @@ use Illuminate\Database\Eloquent\Model;
 public function table(Table $table): Table
 {
     return $table
-        ->bulkActions([
+        ->toolbarActions([
             // ...
         ])
         ->checkIfRecordIsSelectableUsing(
@@ -360,7 +360,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->bulkActions([
+        ->toolbarActions([
             // ...
         ])
         ->selectCurrentPageOnly();

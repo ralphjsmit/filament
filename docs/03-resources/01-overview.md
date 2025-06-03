@@ -242,7 +242,7 @@ public static function configure(Table $table): Table
         ->actions([
             EditAction::make(),
         ])
-        ->bulkActions([
+        ->toolbarActions([
             BulkActionGroup::make([
                 DeleteBulkAction::make(),
             ]),
@@ -280,7 +280,7 @@ Check out the [tables](../tables) docs to find out how to add table columns, fil
             ->actions([
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
