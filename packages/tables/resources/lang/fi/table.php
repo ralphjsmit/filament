@@ -42,9 +42,9 @@ return [
         ],
 
         'search' => [
-            'label' => 'Hae',
+            'label' => 'Haku',
             'placeholder' => 'Hae',
-            'indicator' => 'Hae',
+            'indicator' => 'Haku',
         ],
 
     ],
