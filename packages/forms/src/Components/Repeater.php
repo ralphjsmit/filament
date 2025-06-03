@@ -162,21 +162,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         });
     }
 
-    protected function callAfterStateUpdatedOnParents(Component $component, bool $isLive = false): void
-    {
-        if (! $isLive && ! $component->isLive()) {
-            return;
-        }
-
-        $parent = $component->getContainer()->getParentComponent();
-
-        if ($parent) {
-            $parent->callAfterStateUpdated();
-
-            $this->callAfterStateUpdatedOnParents($parent, true);
-        }
-    }
-
     public function getAddAction(): Action
     {
         $action = Action::make($this->getAddActionName())
@@ -200,8 +185,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
-
-                $this->callAfterStateUpdatedOnParents($component);
             })
             ->button()
             ->size(ActionSize::Small)
@@ -277,8 +260,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
-
-                $this->callAfterStateUpdatedOnParents($component);
             })
             ->button()
             ->size(ActionSize::Small)
@@ -339,8 +320,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
-
-                $this->callAfterStateUpdatedOnParents($component);
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -380,8 +359,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
-
-                $this->callAfterStateUpdatedOnParents($component);
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -420,8 +397,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
-
-                $this->callAfterStateUpdatedOnParents($component);
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -460,8 +435,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
-
-                $this->callAfterStateUpdatedOnParents($component);
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -503,8 +476,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
-
-                $this->callAfterStateUpdatedOnParents($component);
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
