@@ -116,12 +116,14 @@
     </head>
 
     <body
-        {{ $attributes
+        {{
+            $attributes
                 ->merge($livewire?->getExtraBodyAttributes() ?? [], escape: false)
                 ->class([
                     'fi-body',
                     'fi-panel-' . filament()->getId(),
-                ]) }}
+                ])
+        }}
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::BODY_START, scopes: $renderHookScopes) }}
 
