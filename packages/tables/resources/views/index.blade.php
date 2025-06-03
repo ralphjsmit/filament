@@ -12,14 +12,14 @@
     use Illuminate\Support\Str;
     use Illuminate\View\ComponentAttributeBag;
 
-    $actions = $getActions();
-    $flatActionsCount = count($getFlatActions());
-    $actionsAlignment = $getActionsAlignment();
-    $actionsPosition = $getActionsPosition();
-    $actionsColumnLabel = $getActionsColumnLabel();
+    $recordActions = $getRecordActions();
+    $flatRecordActionsCount = count($getFlatRecordActions());
+    $recordActionsAlignment = $getRecordActionsAlignment();
+    $recordActionsPosition = $getRecordActionsPosition();
+    $recordActionsColumnLabel = $getRecordActionsColumnLabel();
 
-    if (! $actionsAlignment instanceof Alignment) {
-        $actionsAlignment = filled($actionsAlignment) ? (Alignment::tryFrom($actionsAlignment) ?? $actionsAlignment) : null;
+    if (! $recordActionsAlignment instanceof Alignment) {
+        $recordActionsAlignment = filled($recordActionsAlignment) ? (Alignment::tryFrom($recordActionsAlignment) ?? $recordActionsAlignment) : null;
     }
 
     $activeFiltersCount = $getActiveFiltersCount();
@@ -89,7 +89,7 @@
     $defaultSortOptionLabel = $getDefaultSortOptionLabel();
     $sortDirection = $getSortDirection();
 
-    if (count($actions) && (! $isReordering)) {
+    if (count($recordActions) && (! $isReordering)) {
         $columnsCount++;
     }
 
@@ -791,7 +791,7 @@
                                     $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
 
                                     $recordActions = array_reduce(
-                                        $actions,
+                                        $recordActions,
                                         function (array $carry, $action) use ($record): array {
                                             if (! $action instanceof \Filament\Actions\ActionGroup) {
                                                 $action = clone $action;
@@ -985,7 +985,7 @@
                                                 </a>
                                             @elseif ($recordAction)
                                                 @php
-                                                    $recordWireClickAction = $getAction($recordAction)
+                                                    $recordWireClickAction = $getRecordAction($recordAction)
                                                         ? "mountTableAction('{$recordAction}', '{$recordKey}')"
                                                         : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
                                                 @endphp
@@ -1040,7 +1040,7 @@
                                                     'fi-ta-actions fi-wrapped sm:fi-not-wrapped',
                                                     'fi-align-start' => $contentGrid,
                                                     'md:fi-align-end' => ! $contentGrid,
-                                                    'fi-ta-actions-before-columns-position' => $actionsPosition === RecordActionsPosition::BeforeColumns,
+                                                    'fi-ta-actions-before-columns-position' => $recordActionsPosition === RecordActionsPosition::BeforeColumns,
                                                 ])
                                             >
                                                 @foreach ($recordActions as $action)
@@ -1120,7 +1120,7 @@
                                         @if ($isReordering)
                                             <th></th>
                                         @else
-                                            @if (count($actions) && in_array($actionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
+                                            @if (count($recordActions) && in_array($recordActionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
                                                 <th></th>
                                             @endif
 
@@ -1160,7 +1160,7 @@
                                     @endforeach
 
                                     @if ((! $isReordering) && count($records))
-                                        @if (count($actions) && in_array($actionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
+                                        @if (count($recordActions) && in_array($recordActionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
                                             <th></th>
                                         @endif
 
@@ -1176,14 +1176,14 @@
                                     @if ($isReordering)
                                         <th></th>
                                     @else
-                                        @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeCells)
-                                            @if ($actionsColumnLabel)
+                                        @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeCells)
+                                            @if ($recordActionsColumnLabel)
                                                 <th class="fi-ta-header-cell">
-                                                    {{ $actionsColumnLabel }}
+                                                    {{ $recordActionsColumnLabel }}
                                                 </th>
                                             @else
                                                 <th
-                                                    aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                                    aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
                                                     class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                                 ></th>
                                             @endif
@@ -1222,14 +1222,14 @@
                                             </th>
                                         @endif
 
-                                        @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeColumns)
-                                            @if ($actionsColumnLabel)
+                                        @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeColumns)
+                                            @if ($recordActionsColumnLabel)
                                                 <th class="fi-ta-header-cell">
-                                                    {{ $actionsColumnLabel }}
+                                                    {{ $recordActionsColumnLabel }}
                                                 </th>
                                             @else
                                                 <th
-                                                    aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                                    aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
                                                     class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                                 ></th>
                                             @endif
@@ -1294,16 +1294,16 @@
                                 @endforeach
 
                                 @if ((! $isReordering) && count($records))
-                                    @if (count($actions) && $actionsPosition === RecordActionsPosition::AfterColumns)
-                                        @if ($actionsColumnLabel)
+                                    @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::AfterColumns)
+                                        @if ($recordActionsColumnLabel)
                                             <th
                                                 class="fi-ta-header-cell fi-align-end"
                                             >
-                                                {{ $actionsColumnLabel }}
+                                                {{ $recordActionsColumnLabel }}
                                             </th>
                                         @else
                                             <th
-                                                aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                                aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
                                                 class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                             ></th>
                                         @endif
@@ -1342,16 +1342,16 @@
                                         </th>
                                     @endif
 
-                                    @if (count($actions) && $actionsPosition === RecordActionsPosition::AfterCells)
-                                        @if ($actionsColumnLabel)
+                                    @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::AfterCells)
+                                        @if ($recordActionsColumnLabel)
                                             <th
                                                 class="fi-ta-header-cell fi-align-end"
                                             >
-                                                {{ $actionsColumnLabel }}
+                                                {{ $recordActionsColumnLabel }}
                                             </th>
                                         @else
                                             <th
-                                                aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                                aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
                                                 class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                             ></th>
                                         @endif
@@ -1381,7 +1381,7 @@
                                             @if ($isReordering)
                                                 <td></td>
                                             @else
-                                                @if (count($actions) && in_array($actionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
+                                                @if (count($recordActions) && in_array($recordActionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
                                                     <td></td>
                                                 @endif
 
@@ -1414,7 +1414,7 @@
                                         @endforeach
 
                                         @if ((! $isReordering) && count($records))
-                                            @if (count($actions) && in_array($actionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
+                                            @if (count($recordActions) && in_array($recordActionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
                                                 <td></td>
                                             @endif
 
@@ -1443,7 +1443,7 @@
                                             $recordGroupTitle = $group?->getTitle($record);
 
                                             $recordActions = array_reduce(
-                                                $actions,
+                                                $recordActions,
                                                 function (array $carry, $action) use ($record): array {
                                                     if (! $action instanceof \Filament\Actions\ActionGroup) {
                                                         $action = clone $action;
@@ -1473,8 +1473,8 @@
                                                 @endphp
 
                                                 <x-filament-tables::summary.row
-                                                    :actions="count($actions)"
-                                                    :actions-position="$actionsPosition"
+                                                    :actions="count($recordActions)"
+                                                    :actions-position="$recordActionsPosition"
                                                     :columns="$columns"
                                                     :group-column="$groupColumn"
                                                     :groups-only="$isGroupsOnly"
@@ -1499,8 +1499,8 @@
 
                                                             if (
                                                                 ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) &&
-                                                                count($actions) &&
-                                                                ($actionsPosition === RecordActionsPosition::BeforeCells)
+                                                                count($recordActions) &&
+                                                                ($recordActionsPosition === RecordActionsPosition::BeforeCells)
                                                             ) {
                                                                 $groupHeaderColspan--;
                                                             }
@@ -1508,7 +1508,7 @@
                                                     @endphp
 
                                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                                        @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeCells)
+                                                        @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeCells)
                                                             <td></td>
                                                         @endif
 
@@ -1656,17 +1656,17 @@
                                                     </td>
                                                 @endif
 
-                                                @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeCells && (! $isReordering))
+                                                @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeCells && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
                                                                 'fi-ta-actions',
-                                                                match ($actionsAlignment) {
+                                                                match ($recordActionsAlignment) {
                                                                     Alignment::Center => 'fi-align-center',
                                                                     Alignment::Start, Alignment::Left => 'fi-align-start',
                                                                     Alignment::Between, Alignment::Justify => 'fi-align-between',
                                                                     Alignment::End, Alignment::Right => '',
-                                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                                    default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
                                                                 },
                                                             ])
                                                         >
@@ -1698,17 +1698,17 @@
                                                     </td>
                                                 @endif
 
-                                                @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeColumns && (! $isReordering))
+                                                @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeColumns && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
                                                                 'fi-ta-actions',
-                                                                match ($actionsAlignment) {
+                                                                match ($recordActionsAlignment) {
                                                                     Alignment::Center => 'fi-align-center',
                                                                     Alignment::Start, Alignment::Left => 'fi-align-start',
                                                                     Alignment::Between, Alignment::Justify => 'fi-align-between',
                                                                     Alignment::End, Alignment::Right => '',
-                                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                                    default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
                                                                 },
                                                             ])
                                                         >
@@ -1784,17 +1784,17 @@
                                                     </td>
                                                 @endforeach
 
-                                                @if (count($actions) && $actionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
+                                                @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
                                                                 'fi-ta-actions',
-                                                                match ($actionsAlignment) {
+                                                                match ($recordActionsAlignment) {
                                                                     Alignment::Center => 'fi-align-center',
                                                                     Alignment::Start, Alignment::Left => 'fi-align-start',
                                                                     Alignment::Between, Alignment::Justify => 'fi-align-between',
                                                                     Alignment::End, Alignment::Right => '',
-                                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                                    default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
                                                                 },
                                                             ])
                                                         >
@@ -1826,17 +1826,17 @@
                                                     </td>
                                                 @endif
 
-                                                @if (count($actions) && $actionsPosition === RecordActionsPosition::AfterCells && (! $isReordering))
+                                                @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::AfterCells && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
                                                                 'fi-ta-actions',
-                                                                match ($actionsAlignment) {
+                                                                match ($recordActionsAlignment) {
                                                                     Alignment::Center => 'fi-align-center',
                                                                     Alignment::Start, Alignment::Left => 'fi-align-start',
                                                                     Alignment::Between, Alignment::Justify => 'fi-align-between',
                                                                     Alignment::End, Alignment::Right => '',
-                                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                                    default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
                                                                 },
                                                             ])
                                                         >
@@ -1864,8 +1864,8 @@
                                         @endphp
 
                                         <x-filament-tables::summary.row
-                                            :actions="count($actions)"
-                                            :actions-position="$actionsPosition"
+                                            :actions="count($recordActions)"
+                                            :actions-position="$recordActionsPosition"
                                             :columns="$columns"
                                             :group-column="$groupColumn"
                                             :groups-only="$isGroupsOnly"
@@ -1883,8 +1883,8 @@
                                         @endphp
 
                                         <x-filament-tables::summary
-                                            :actions="count($actions)"
-                                            :actions-position="$actionsPosition"
+                                            :actions="count($recordActions)"
+                                            :actions-position="$recordActionsPosition"
                                             :columns="$columns"
                                             :group-column="$groupColumn"
                                             :groups-only="$isGroupsOnly"

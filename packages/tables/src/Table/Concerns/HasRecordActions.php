@@ -212,4 +212,22 @@ trait HasRecordActions
     {
         return $this->getRecordActionsColumnLabel();
     }
+
+    /**
+     * @return array<string, Action>
+     */
+    public function getFlatRecordActions(): array
+    {
+        $flatActions = [];
+
+        foreach ($this->getRecordActions() as $action) {
+            if ($action instanceof ActionGroup) {
+                $flatActions = array_merge($flatActions, $action->getFlatActions());
+            } else {
+                $flatActions[$action->getName()] = $action;
+            }
+        }
+
+        return $flatActions;
+    }
 }
