@@ -239,10 +239,10 @@ public static function configure(Table $table): Table
                 ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             // ...
         ])
-        ->actions([
+        ->recordActions([
             EditAction::make(),
         ])
-        ->bulkActions([
+        ->toolbarActions([
             BulkActionGroup::make([
                 DeleteBulkAction::make(),
             ]),
@@ -277,10 +277,10 @@ Check out the [tables](../tables) docs to find out how to add table columns, fil
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
                 // ...
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

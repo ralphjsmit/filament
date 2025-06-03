@@ -188,7 +188,7 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 AttachAction::make('attachMultiple')
                     ->multiple(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
                 ForceDeleteAction::make(),
@@ -287,7 +287,7 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                         ]),
                 ]),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
                 BulkAction::make('data')
                     ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))

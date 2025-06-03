@@ -63,10 +63,10 @@ class ListProducts extends Component implements HasForms, HasTable
             ->filters([
                 // ...
             ])
-            ->actions([
+            ->recordActions([
                 // ...
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 // ...
             ]);
     }

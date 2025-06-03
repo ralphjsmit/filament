@@ -6,20 +6,20 @@
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
-    use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
+    use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Illuminate\Support\Str;
     use Illuminate\View\ComponentAttributeBag;
 
-    $actions = $getActions();
-    $flatActionsCount = count($getFlatActions());
-    $actionsAlignment = $getActionsAlignment();
-    $actionsPosition = $getActionsPosition();
-    $actionsColumnLabel = $getActionsColumnLabel();
+    $recordActions = $getRecordActions();
+    $flatRecordActionsCount = count($getFlatRecordActions());
+    $recordActionsAlignment = $getRecordActionsAlignment();
+    $recordActionsPosition = $getRecordActionsPosition();
+    $recordActionsColumnLabel = $getRecordActionsColumnLabel();
 
-    if (! $actionsAlignment instanceof Alignment) {
-        $actionsAlignment = filled($actionsAlignment) ? (Alignment::tryFrom($actionsAlignment) ?? $actionsAlignment) : null;
+    if (! $recordActionsAlignment instanceof Alignment) {
+        $recordActionsAlignment = filled($recordActionsAlignment) ? (Alignment::tryFrom($recordActionsAlignment) ?? $recordActionsAlignment) : null;
     }
 
     $activeFiltersCount = $getActiveFiltersCount();
@@ -41,14 +41,14 @@
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
-        fn (\Filament\Actions\Action | \Filament\Actions\BulkAction | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+        fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $headerActionsPosition = $getHeaderActionsPosition();
     $heading = $getHeading();
     $group = $getGrouping();
-    $bulkActions = array_filter(
-        $getBulkActions(),
-        fn (\Filament\Actions\BulkAction | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+    $toolbarActions = array_filter(
+        $getToolbarActions(),
+        fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $groups = $getGroups();
     $description = $getDescription();
@@ -89,7 +89,7 @@
     $defaultSortOptionLabel = $getDefaultSortOptionLabel();
     $sortDirection = $getSortDirection();
 
-    if (count($actions) && (! $isReordering)) {
+    if (count($recordActions) && (! $isReordering)) {
         $columnsCount++;
     }
 
@@ -131,7 +131,7 @@
     >
         <div
             @if (! $hasHeader) x-cloak @endif
-            x-show="@js($hasHeader) || (getSelectedRecordsCount() && @js(count($bulkActions)))"
+            x-show="@js($hasHeader) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
             class="fi-ta-header-ctn"
         >
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::HEADER_BEFORE, scopes: static::class) }}
@@ -206,179 +206,173 @@
 
             <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
-                x-show="@js($hasHeaderToolbar) || (getSelectedRecordsCount() && @js(count($bulkActions)))"
+                x-show="@js($hasHeaderToolbar) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
                 class="fi-ta-header-toolbar"
             >
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
 
-                <div>
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
+                @if ($isReorderable || ((! $isReordering) && count($toolbarActions)) || $areGroupingSettingsVisible)
+                    <div class="fi-ta-actions fi-align-start fi-wrapped">
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
 
-                    @if ($isReorderable)
-                        <span x-show="! getSelectedRecordsCount()">
+                        @if ($isReorderable)
                             {{ $reorderRecordsTriggerAction }}
-                        </span>
-                    @endif
+                        @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
 
-                    @if ((! $isReordering) && count($bulkActions))
-                        <div
-                            x-cloak
-                            x-show="getSelectedRecordsCount()"
-                            class="fi-ta-actions"
-                        >
-                            @foreach ($bulkActions as $action)
+                        @if ((! $isReordering) && count($toolbarActions))
+                            @foreach ($toolbarActions as $action)
                                 {{ $action }}
                             @endforeach
-                        </div>
-                    @endif
+                        @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
 
-                    @if ($areGroupingSettingsVisible)
-                        <div
-                            x-data="{
-                                direction: $wire.$entangle('tableGroupingDirection', true),
-                                group: $wire.$entangle('tableGrouping', true),
-                            }"
-                            x-init="
-                                $watch('group', function (newGroup, oldGroup) {
-                                    if (newGroup && direction) {
-                                        return
-                                    }
+                        @if ($areGroupingSettingsVisible)
+                            <div
+                                x-data="{
+                                    direction: $wire.$entangle('tableGroupingDirection', true),
+                                    group: $wire.$entangle('tableGrouping', true),
+                                }"
+                                x-init="
+                                    $watch('group', function (newGroup, oldGroup) {
+                                        if (newGroup && direction) {
+                                            return
+                                        }
 
-                                    if (! newGroup) {
-                                        direction = null
+                                        if (! newGroup) {
+                                            direction = null
 
-                                        return
-                                    }
+                                            return
+                                        }
 
-                                    if (oldGroup) {
-                                        return
-                                    }
+                                        if (oldGroup) {
+                                            return
+                                        }
 
-                                    direction = 'asc'
-                                })
-                            "
-                            class="fi-ta-grouping-settings"
-                        >
-                            <x-filament::dropdown
-                                placement="bottom-start"
-                                shift
-                                width="xs"
-                                wire:key="{{ $this->getId() }}.table.grouping"
-                                @class([
-                                    'sm:fi-hidden' => ! $areGroupingSettingsInDropdownOnDesktop,
-                                ])
+                                        direction = 'asc'
+                                    })
+                                "
+                                class="fi-ta-grouping-settings"
                             >
-                                <x-slot name="trigger">
-                                    {{ $getGroupRecordsTriggerAction() }}
-                                </x-slot>
+                                <x-filament::dropdown
+                                    placement="bottom-start"
+                                    shift
+                                    width="xs"
+                                    wire:key="{{ $this->getId() }}.table.grouping"
+                                    @class([
+                                        'sm:fi-hidden' => ! $areGroupingSettingsInDropdownOnDesktop,
+                                    ])
+                                >
+                                    <x-slot name="trigger">
+                                        {{ $getGroupRecordsTriggerAction() }}
+                                    </x-slot>
 
-                                <div class="fi-ta-grouping-settings-fields">
-                                    <label>
-                                        <span>
-                                            {{ __('filament-tables::table.grouping.fields.group.label') }}
-                                        </span>
-
-                                        <x-filament::input.wrapper>
-                                            <x-filament::input.select
-                                                x-model="group"
-                                                x-on:change="resetCollapsedGroups()"
-                                            >
-                                                <option value="">-</option>
-
-                                                @foreach ($groups as $groupOption)
-                                                    <option
-                                                        value="{{ $groupOption->getId() }}"
-                                                    >
-                                                        {{ $groupOption->getLabel() }}
-                                                    </option>
-                                                @endforeach
-                                            </x-filament::input.select>
-                                        </x-filament::input.wrapper>
-                                    </label>
-
-                                    @if (! $isGroupingDirectionSettingHidden)
-                                        <label x-cloak x-show="group">
+                                    <div class="fi-ta-grouping-settings-fields">
+                                        <label>
                                             <span>
-                                                {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                                {{ __('filament-tables::table.grouping.fields.group.label') }}
                                             </span>
 
                                             <x-filament::input.wrapper>
                                                 <x-filament::input.select
-                                                    x-model="direction"
+                                                    x-model="group"
+                                                    x-on:change="resetCollapsedGroups()"
                                                 >
-                                                    <option value="asc">
-                                                        {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                                                    </option>
+                                                    <option value="">-</option>
 
-                                                    <option value="desc">
-                                                        {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                                                    </option>
+                                                    @foreach ($groups as $groupOption)
+                                                        <option
+                                                            value="{{ $groupOption->getId() }}"
+                                                        >
+                                                            {{ $groupOption->getLabel() }}
+                                                        </option>
+                                                    @endforeach
                                                 </x-filament::input.select>
                                             </x-filament::input.wrapper>
                                         </label>
-                                    @endif
-                                </div>
-                            </x-filament::dropdown>
 
-                            @if (! $areGroupingSettingsInDropdownOnDesktop)
-                                <div class="fi-ta-grouping-settings-fields">
-                                    <label>
-                                        <span class="fi-sr-only">
-                                            {{ __('filament-tables::table.grouping.fields.group.label') }}
-                                        </span>
+                                        @if (! $isGroupingDirectionSettingHidden)
+                                            <label x-cloak x-show="group">
+                                                <span>
+                                                    {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                                </span>
 
-                                        <x-filament::input.wrapper>
-                                            <x-filament::input.select
-                                                x-model="group"
-                                                x-on:change="resetCollapsedGroups()"
-                                            >
-                                                <option value="">
-                                                    {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
-                                                </option>
-
-                                                @foreach ($groups as $groupOption)
-                                                    <option
-                                                        value="{{ $groupOption->getId() }}"
+                                                <x-filament::input.wrapper>
+                                                    <x-filament::input.select
+                                                        x-model="direction"
                                                     >
-                                                        {{ $groupOption->getLabel() }}
-                                                    </option>
-                                                @endforeach
-                                            </x-filament::input.select>
-                                        </x-filament::input.wrapper>
-                                    </label>
+                                                        <option value="asc">
+                                                            {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                                        </option>
 
-                                    @if (! $isGroupingDirectionSettingHidden)
-                                        <label x-cloak x-show="group">
+                                                        <option value="desc">
+                                                            {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                                                        </option>
+                                                    </x-filament::input.select>
+                                                </x-filament::input.wrapper>
+                                            </label>
+                                        @endif
+                                    </div>
+                                </x-filament::dropdown>
+
+                                @if (! $areGroupingSettingsInDropdownOnDesktop)
+                                    <div class="fi-ta-grouping-settings-fields">
+                                        <label>
                                             <span class="fi-sr-only">
-                                                {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                                {{ __('filament-tables::table.grouping.fields.group.label') }}
                                             </span>
 
                                             <x-filament::input.wrapper>
                                                 <x-filament::input.select
-                                                    x-model="direction"
+                                                    x-model="group"
+                                                    x-on:change="resetCollapsedGroups()"
                                                 >
-                                                    <option value="asc">
-                                                        {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                                    <option value="">
+                                                        {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
                                                     </option>
 
-                                                    <option value="desc">
-                                                        {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                                                    </option>
+                                                    @foreach ($groups as $groupOption)
+                                                        <option
+                                                            value="{{ $groupOption->getId() }}"
+                                                        >
+                                                            {{ $groupOption->getLabel() }}
+                                                        </option>
+                                                    @endforeach
                                                 </x-filament::input.select>
                                             </x-filament::input.wrapper>
                                         </label>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
-                    @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
-                </div>
+                                        @if (! $isGroupingDirectionSettingHidden)
+                                            <label x-cloak x-show="group">
+                                                <span class="fi-sr-only">
+                                                    {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                                </span>
+
+                                                <x-filament::input.wrapper>
+                                                    <x-filament::input.select
+                                                        x-model="direction"
+                                                    >
+                                                        <option value="asc">
+                                                            {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                                        </option>
+
+                                                        <option value="desc">
+                                                            {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                                                        </option>
+                                                    </x-filament::input.select>
+                                                </x-filament::input.wrapper>
+                                            </label>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
+                    </div>
+                @endif
 
                 @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown)
                     <div>
@@ -797,7 +791,7 @@
                                     $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
 
                                     $recordActions = array_reduce(
-                                        $actions,
+                                        $recordActions,
                                         function (array $carry, $action) use ($record): array {
                                             if (! $action instanceof \Filament\Actions\ActionGroup) {
                                                 $action = clone $action;
@@ -991,7 +985,7 @@
                                                 </a>
                                             @elseif ($recordAction)
                                                 @php
-                                                    $recordWireClickAction = $getAction($recordAction)
+                                                    $recordWireClickAction = $getRecordAction($recordAction)
                                                         ? "mountTableAction('{$recordAction}', '{$recordKey}')"
                                                         : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
                                                 @endphp
@@ -1046,7 +1040,7 @@
                                                     'fi-ta-actions fi-wrapped sm:fi-not-wrapped',
                                                     'fi-align-start' => $contentGrid,
                                                     'md:fi-align-end' => ! $contentGrid,
-                                                    'fi-ta-actions-before-columns-position' => $actionsPosition === ActionsPosition::BeforeColumns,
+                                                    'fi-ta-actions-before-columns-position' => $recordActionsPosition === RecordActionsPosition::BeforeColumns,
                                                 ])
                                             >
                                                 @foreach ($recordActions as $action)
@@ -1126,7 +1120,7 @@
                                         @if ($isReordering)
                                             <th></th>
                                         @else
-                                            @if (count($actions) && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
+                                            @if (count($recordActions) && in_array($recordActionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
                                                 <th></th>
                                             @endif
 
@@ -1166,7 +1160,7 @@
                                     @endforeach
 
                                     @if ((! $isReordering) && count($records))
-                                        @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+                                        @if (count($recordActions) && in_array($recordActionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
                                             <th></th>
                                         @endif
 
@@ -1182,14 +1176,14 @@
                                     @if ($isReordering)
                                         <th></th>
                                     @else
-                                        @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
-                                            @if ($actionsColumnLabel)
+                                        @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeCells)
+                                            @if ($recordActionsColumnLabel)
                                                 <th class="fi-ta-header-cell">
-                                                    {{ $actionsColumnLabel }}
+                                                    {{ $recordActionsColumnLabel }}
                                                 </th>
                                             @else
                                                 <th
-                                                    aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                                    aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
                                                     class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                                 ></th>
                                             @endif
@@ -1228,14 +1222,14 @@
                                             </th>
                                         @endif
 
-                                        @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
-                                            @if ($actionsColumnLabel)
+                                        @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeColumns)
+                                            @if ($recordActionsColumnLabel)
                                                 <th class="fi-ta-header-cell">
-                                                    {{ $actionsColumnLabel }}
+                                                    {{ $recordActionsColumnLabel }}
                                                 </th>
                                             @else
                                                 <th
-                                                    aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                                    aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
                                                     class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                                 ></th>
                                             @endif
@@ -1300,16 +1294,16 @@
                                 @endforeach
 
                                 @if ((! $isReordering) && count($records))
-                                    @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
-                                        @if ($actionsColumnLabel)
+                                    @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::AfterColumns)
+                                        @if ($recordActionsColumnLabel)
                                             <th
                                                 class="fi-ta-header-cell fi-align-end"
                                             >
-                                                {{ $actionsColumnLabel }}
+                                                {{ $recordActionsColumnLabel }}
                                             </th>
                                         @else
                                             <th
-                                                aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                                aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
                                                 class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                             ></th>
                                         @endif
@@ -1348,16 +1342,16 @@
                                         </th>
                                     @endif
 
-                                    @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
-                                        @if ($actionsColumnLabel)
+                                    @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::AfterCells)
+                                        @if ($recordActionsColumnLabel)
                                             <th
                                                 class="fi-ta-header-cell fi-align-end"
                                             >
-                                                {{ $actionsColumnLabel }}
+                                                {{ $recordActionsColumnLabel }}
                                             </th>
                                         @else
                                             <th
-                                                aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                                aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
                                                 class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                             ></th>
                                         @endif
@@ -1387,7 +1381,7 @@
                                             @if ($isReordering)
                                                 <td></td>
                                             @else
-                                                @if (count($actions) && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
+                                                @if (count($recordActions) && in_array($recordActionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
                                                     <td></td>
                                                 @endif
 
@@ -1420,7 +1414,7 @@
                                         @endforeach
 
                                         @if ((! $isReordering) && count($records))
-                                            @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+                                            @if (count($recordActions) && in_array($recordActionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
                                                 <td></td>
                                             @endif
 
@@ -1449,7 +1443,7 @@
                                             $recordGroupTitle = $group?->getTitle($record);
 
                                             $recordActions = array_reduce(
-                                                $actions,
+                                                $recordActions,
                                                 function (array $carry, $action) use ($record): array {
                                                     if (! $action instanceof \Filament\Actions\ActionGroup) {
                                                         $action = clone $action;
@@ -1479,8 +1473,8 @@
                                                 @endphp
 
                                                 <x-filament-tables::summary.row
-                                                    :actions="count($actions)"
-                                                    :actions-position="$actionsPosition"
+                                                    :actions="count($recordActions)"
+                                                    :actions-position="$recordActionsPosition"
                                                     :columns="$columns"
                                                     :group-column="$groupColumn"
                                                     :groups-only="$isGroupsOnly"
@@ -1505,8 +1499,8 @@
 
                                                             if (
                                                                 ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) &&
-                                                                count($actions) &&
-                                                                ($actionsPosition === ActionsPosition::BeforeCells)
+                                                                count($recordActions) &&
+                                                                ($recordActionsPosition === RecordActionsPosition::BeforeCells)
                                                             ) {
                                                                 $groupHeaderColspan--;
                                                             }
@@ -1514,7 +1508,7 @@
                                                     @endphp
 
                                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                                        @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
+                                                        @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeCells)
                                                             <td></td>
                                                         @endif
 
@@ -1662,17 +1656,17 @@
                                                     </td>
                                                 @endif
 
-                                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells && (! $isReordering))
+                                                @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeCells && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
                                                                 'fi-ta-actions',
-                                                                match ($actionsAlignment) {
+                                                                match ($recordActionsAlignment) {
                                                                     Alignment::Center => 'fi-align-center',
                                                                     Alignment::Start, Alignment::Left => 'fi-align-start',
                                                                     Alignment::Between, Alignment::Justify => 'fi-align-between',
                                                                     Alignment::End, Alignment::Right => '',
-                                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                                    default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
                                                                 },
                                                             ])
                                                         >
@@ -1704,17 +1698,17 @@
                                                     </td>
                                                 @endif
 
-                                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns && (! $isReordering))
+                                                @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::BeforeColumns && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
                                                                 'fi-ta-actions',
-                                                                match ($actionsAlignment) {
+                                                                match ($recordActionsAlignment) {
                                                                     Alignment::Center => 'fi-align-center',
                                                                     Alignment::Start, Alignment::Left => 'fi-align-start',
                                                                     Alignment::Between, Alignment::Justify => 'fi-align-between',
                                                                     Alignment::End, Alignment::Right => '',
-                                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                                    default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
                                                                 },
                                                             ])
                                                         >
@@ -1774,7 +1768,8 @@
                                                             @if ($columnWrapperTag === 'a')
                                                                 {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
                                                             @elseif ($columnWrapperTag === 'button')
-                                                                type="button"
+                                                                type
+                                                                ="button"
                                                                 wire:click.stop.prevent="{{ $columnWireClickAction }}"
                                                                 wire:loading.attr="disabled"
                                                                 wire:target="{{ $columnWireClickAction }}"
@@ -1789,17 +1784,17 @@
                                                     </td>
                                                 @endforeach
 
-                                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns && (! $isReordering))
+                                                @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
                                                                 'fi-ta-actions',
-                                                                match ($actionsAlignment) {
+                                                                match ($recordActionsAlignment) {
                                                                     Alignment::Center => 'fi-align-center',
                                                                     Alignment::Start, Alignment::Left => 'fi-align-start',
                                                                     Alignment::Between, Alignment::Justify => 'fi-align-between',
                                                                     Alignment::End, Alignment::Right => '',
-                                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                                    default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
                                                                 },
                                                             ])
                                                         >
@@ -1831,17 +1826,17 @@
                                                     </td>
                                                 @endif
 
-                                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells && (! $isReordering))
+                                                @if (count($recordActions) && $recordActionsPosition === RecordActionsPosition::AfterCells && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
                                                                 'fi-ta-actions',
-                                                                match ($actionsAlignment) {
+                                                                match ($recordActionsAlignment) {
                                                                     Alignment::Center => 'fi-align-center',
                                                                     Alignment::Start, Alignment::Left => 'fi-align-start',
                                                                     Alignment::Between, Alignment::Justify => 'fi-align-between',
                                                                     Alignment::End, Alignment::Right => '',
-                                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                                    default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
                                                                 },
                                                             ])
                                                         >
@@ -1869,8 +1864,8 @@
                                         @endphp
 
                                         <x-filament-tables::summary.row
-                                            :actions="count($actions)"
-                                            :actions-position="$actionsPosition"
+                                            :actions="count($recordActions)"
+                                            :actions-position="$recordActionsPosition"
                                             :columns="$columns"
                                             :group-column="$groupColumn"
                                             :groups-only="$isGroupsOnly"
@@ -1888,8 +1883,8 @@
                                         @endphp
 
                                         <x-filament-tables::summary
-                                            :actions="count($actions)"
-                                            :actions-position="$actionsPosition"
+                                            :actions="count($recordActions)"
+                                            :actions-position="$recordActionsPosition"
                                             :columns="$columns"
                                             :group-column="$groupColumn"
                                             :groups-only="$isGroupsOnly"

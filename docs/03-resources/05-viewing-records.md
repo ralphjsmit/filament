@@ -60,9 +60,10 @@ public static function getPages(): array
 
 If your resource is simple, you may wish to view records in modals rather than on the [View page](viewing-records). If this is the case, you can just [delete the view page](overview#deleting-resource-pages).
 
-If your resource doesn't contain a `ViewAction`, you can add one to the `$table->actions()` array:
+If your resource doesn't contain a `ViewAction`, you can add one to the `$table->recordActions()` array:
 
 ```php
+use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
@@ -71,8 +72,8 @@ public static function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->actions([
-            \Filament\Actions\ViewAction::make(),
+        ->recordActions([
+            ViewAction::make(),
             // ...
         ]);
 }
