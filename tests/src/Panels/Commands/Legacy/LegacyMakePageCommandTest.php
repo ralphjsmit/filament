@@ -303,7 +303,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
         '--no-interaction' => true,
     ])
         ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
-        ->expectsQuestion('Does the model use soft deletes?', false);
+        ->expectsQuestion('Does the model use soft-deletes?', false);
 
     $testCase->artisan('make:filament-resource', [
         'model' => 'User',
@@ -312,7 +312,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
     ])
         ->expectsQuestion('Would you like to generate a read-only view page for the resource?', false)
         ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
-        ->expectsQuestion('Does the model use soft deletes?', false);
+        ->expectsQuestion('Does the model use soft-deletes?', false);
 
     require_once __DIR__ . '/../../../Fixtures/Models/Team.php';
     require_once app_path('Filament/Resources/TeamResource.php');
@@ -349,7 +349,7 @@ $generateManageRelatedRecordsPageCommandQuestions = [
     'titleAttribute' => 'What is the title attribute for this model?',
     'isGeneratedTable' => 'Should the table columns be generated from the current database columns?',
     'hasViewOperation' => 'Would you like to generate a read-only view modal for the table?',
-    'isSoftDeletable' => 'Does the related model use soft deletes?',
+    'isSoftDeletable' => 'Does the related model use soft-deletes?',
     'relationshipType' => 'What type of relationship is this?',
 ];
 
@@ -421,7 +421,7 @@ it('can generate a manage related records page class in a resource with a view o
         ->toMatchSnapshot();
 });
 
-it('can generate a manage related records page class in a resource with soft deletes', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
+it('can generate a manage related records page class in a resource with soft-deletes', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
