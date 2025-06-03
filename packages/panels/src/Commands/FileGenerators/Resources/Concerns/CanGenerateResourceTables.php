@@ -81,7 +81,7 @@ trait CanGenerateResourceTables
                 ->filters([
                     {$this->outputTableFilters()}
                 ]){$headerActionsOutput}
-                ->actions([
+                ->recordActions([
                     {$this->outputTableActions()}
                 ])
                 ->toolbarActions([

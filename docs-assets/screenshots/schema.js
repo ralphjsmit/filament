@@ -3263,6 +3263,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'tables/actions/toolbar': {
+        url: 'tables?table=toolbarActions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/actions/group': {
         url: 'tables?table=groupedActions',
         selector: 'body',

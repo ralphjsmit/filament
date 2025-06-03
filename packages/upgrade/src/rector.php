@@ -249,6 +249,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Resources\\Pages\\ViewRecord\\Concerns\\Translatable' => 'LaraZeus\\SpatieTranslatable\\Resources\\Pages\\ListRecords\\Concerns\\Translatable',
             'Filament\\Resources\\Pages\\ManageRecords\\Concerns\\Translatable' => 'LaraZeus\\SpatieTranslatable\\Resources\\Pages\\ListRecords\\Concerns\\Translatable',
             'Filament\\Tables\\Actions\\LocaleSwitcher' => 'LaraZeus\\SpatieTranslatable\\Tables\\Actions\\LocaleSwitcher',
+            'Filament\\Tables\\Enums\\ActionsPosition' => 'Filament\\Tables\\Enums\\RecordActionsPosition',
         ],
     );
 

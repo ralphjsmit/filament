@@ -58,11 +58,11 @@ class UserResource extends Resource
                     ->sum('posts', 'rating')
                     ->label('Posts Rating Sum'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ]);
     }

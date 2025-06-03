@@ -41,7 +41,7 @@ public static function table(Table $table): Table
             TrashedFilter::make(),
             // ...
         ])
-        ->actions([
+        ->recordActions([
             // You may add these actions to your table if you're using a simple
             // resource, or you just want to be able to delete records without
             // leaving the table.
@@ -90,6 +90,7 @@ protected function getHeaderActions(): array
 By default, you can bulk-delete records in your table. You may also wish to delete single records, using a `DeleteAction`:
 
 ```php
+use Filament\Actions\DeleteAction;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
@@ -98,9 +99,9 @@ public static function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->actions([
+        ->recordActions([
             // ...
-            \Filament\Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ]);
 }
 ```

@@ -32,7 +32,7 @@ trait CanGenerateModelTables
                 ->headerActions([
                     //
                 ])
-                ->actions([
+                ->recordActions([
                     //
                 ])
                 ->toolbarActions([

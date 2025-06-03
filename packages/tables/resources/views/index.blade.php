@@ -6,8 +6,8 @@
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
-    use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
+    use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Illuminate\Support\Str;
     use Illuminate\View\ComponentAttributeBag;
@@ -1040,7 +1040,7 @@
                                                     'fi-ta-actions fi-wrapped sm:fi-not-wrapped',
                                                     'fi-align-start' => $contentGrid,
                                                     'md:fi-align-end' => ! $contentGrid,
-                                                    'fi-ta-actions-before-columns-position' => $actionsPosition === ActionsPosition::BeforeColumns,
+                                                    'fi-ta-actions-before-columns-position' => $actionsPosition === RecordActionsPosition::BeforeColumns,
                                                 ])
                                             >
                                                 @foreach ($recordActions as $action)
@@ -1120,7 +1120,7 @@
                                         @if ($isReordering)
                                             <th></th>
                                         @else
-                                            @if (count($actions) && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
+                                            @if (count($actions) && in_array($actionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
                                                 <th></th>
                                             @endif
 
@@ -1160,7 +1160,7 @@
                                     @endforeach
 
                                     @if ((! $isReordering) && count($records))
-                                        @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+                                        @if (count($actions) && in_array($actionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
                                             <th></th>
                                         @endif
 
@@ -1176,7 +1176,7 @@
                                     @if ($isReordering)
                                         <th></th>
                                     @else
-                                        @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
+                                        @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeCells)
                                             @if ($actionsColumnLabel)
                                                 <th class="fi-ta-header-cell">
                                                     {{ $actionsColumnLabel }}
@@ -1222,7 +1222,7 @@
                                             </th>
                                         @endif
 
-                                        @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
+                                        @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeColumns)
                                             @if ($actionsColumnLabel)
                                                 <th class="fi-ta-header-cell">
                                                     {{ $actionsColumnLabel }}
@@ -1294,7 +1294,7 @@
                                 @endforeach
 
                                 @if ((! $isReordering) && count($records))
-                                    @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                    @if (count($actions) && $actionsPosition === RecordActionsPosition::AfterColumns)
                                         @if ($actionsColumnLabel)
                                             <th
                                                 class="fi-ta-header-cell fi-align-end"
@@ -1342,7 +1342,7 @@
                                         </th>
                                     @endif
 
-                                    @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                    @if (count($actions) && $actionsPosition === RecordActionsPosition::AfterCells)
                                         @if ($actionsColumnLabel)
                                             <th
                                                 class="fi-ta-header-cell fi-align-end"
@@ -1381,7 +1381,7 @@
                                             @if ($isReordering)
                                                 <td></td>
                                             @else
-                                                @if (count($actions) && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
+                                                @if (count($actions) && in_array($actionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
                                                     <td></td>
                                                 @endif
 
@@ -1414,7 +1414,7 @@
                                         @endforeach
 
                                         @if ((! $isReordering) && count($records))
-                                            @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+                                            @if (count($actions) && in_array($actionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
                                                 <td></td>
                                             @endif
 
@@ -1500,7 +1500,7 @@
                                                             if (
                                                                 ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) &&
                                                                 count($actions) &&
-                                                                ($actionsPosition === ActionsPosition::BeforeCells)
+                                                                ($actionsPosition === RecordActionsPosition::BeforeCells)
                                                             ) {
                                                                 $groupHeaderColspan--;
                                                             }
@@ -1508,7 +1508,7 @@
                                                     @endphp
 
                                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                                        @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
+                                                        @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeCells)
                                                             <td></td>
                                                         @endif
 
@@ -1656,7 +1656,7 @@
                                                     </td>
                                                 @endif
 
-                                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells && (! $isReordering))
+                                                @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeCells && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
@@ -1698,7 +1698,7 @@
                                                     </td>
                                                 @endif
 
-                                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns && (! $isReordering))
+                                                @if (count($actions) && $actionsPosition === RecordActionsPosition::BeforeColumns && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
@@ -1768,7 +1768,8 @@
                                                             @if ($columnWrapperTag === 'a')
                                                                 {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
                                                             @elseif ($columnWrapperTag === 'button')
-                                                                type="button"
+                                                                type
+                                                                ="button"
                                                                 wire:click.stop.prevent="{{ $columnWireClickAction }}"
                                                                 wire:loading.attr="disabled"
                                                                 wire:target="{{ $columnWireClickAction }}"
@@ -1783,7 +1784,7 @@
                                                     </td>
                                                 @endforeach
 
-                                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns && (! $isReordering))
+                                                @if (count($actions) && $actionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([
@@ -1825,7 +1826,7 @@
                                                     </td>
                                                 @endif
 
-                                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells && (! $isReordering))
+                                                @if (count($actions) && $actionsPosition === RecordActionsPosition::AfterCells && (! $isReordering))
                                                     <td class="fi-ta-cell">
                                                         <div
                                                             @class([

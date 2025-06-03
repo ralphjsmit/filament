@@ -55,12 +55,12 @@ class TeamsRelationManager extends RelationManager
                 CreateAction::make(),
                 AttachAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DetachAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make(),
                     DeleteBulkAction::make(),

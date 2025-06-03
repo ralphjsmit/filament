@@ -59,14 +59,14 @@ class ManageUserTeams extends ManageRelatedRecords
                 CreateAction::make(),
                 AttachAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DetachAction::make(),
                 DeleteAction::make(),
                 ForceDeleteAction::make(),
                 RestoreAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make(),
                     DeleteBulkAction::make(),

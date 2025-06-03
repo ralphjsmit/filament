@@ -239,7 +239,7 @@ public static function configure(Table $table): Table
                 ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             // ...
         ])
-        ->actions([
+        ->recordActions([
             EditAction::make(),
         ])
         ->toolbarActions([
@@ -277,7 +277,7 @@ Check out the [tables](../tables) docs to find out how to add table columns, fil
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
                 // ...
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
             ->toolbarActions([

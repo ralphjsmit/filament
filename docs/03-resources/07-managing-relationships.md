@@ -275,7 +275,7 @@ public function table(Table $table): Table
             // ...
             AttachAction::make(),
         ])
-        ->actions([
+        ->recordActions([
             // ...
             DetachAction::make(),
         ])
@@ -422,6 +422,10 @@ php artisan make:filament-relation-manager CategoryResource posts title --associ
 Alternatively, if you've already generated your resource, you can just add the actions to the `$table` arrays:
 
 ```php
+use Filament\Actions\AssociateAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -432,16 +436,16 @@ public function table(Table $table): Table
         ])
         ->headerActions([
             // ...
-            \Filament\Actions\AssociateAction::make(),
+            AssociateAction::make(),
         ])
-        ->actions([
+        ->recordActions([
             // ...
-            \Filament\Actions\DissociateAction::make(),
+            DissociateAction::make(),
         ])
         ->toolbarActions([
-            \Filament\Actions\BulkActionGroup::make([
+            BulkActionGroup::make([
                 // ...
-                \Filament\Actions\DissociateBulkAction::make(),
+                DissociateBulkAction::make(),
             ]),
         ]);
 }
@@ -541,9 +545,10 @@ When generating your relation manager, you may pass the `--view` flag to also ad
 php artisan make:filament-relation-manager CategoryResource posts title --view
 ```
 
-Alternatively, if you've already generated your relation manager, you can just add the `ViewAction` to the `$table->actions()` array:
+Alternatively, if you've already generated your relation manager, you can just add the `ViewAction` to the `$table->recordActions()` array:
 
 ```php
+use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -552,8 +557,8 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->actions([
-            \Filament\Actions\ViewAction::make(),
+        ->recordActions([
+            ViewAction::make(),
             // ...
         ]);
 }
@@ -570,7 +575,13 @@ php artisan make:filament-relation-manager CategoryResource posts title --soft-d
 Alternatively, you may add soft-deleting functionality to an existing relation manager:
 
 ```php
-use Filament\Tables;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -585,20 +596,20 @@ public function table(Table $table): Table
             // ...
         ])
         ->filters([
-            Tables\Filters\TrashedFilter::make(),
+            TrashedFilter::make(),
             // ...
         ])
-        ->actions([
-            \Filament\Actions\DeleteAction::make(),
-            \Filament\Actions\ForceDeleteAction::make(),
-            \Filament\Actions\RestoreAction::make(),
+        ->recordActions([
+            DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
             // ...
         ])
         ->toolbarActions([
             BulkActionGroup::make([
-                \Filament\Actions\DeleteBulkAction::make(),
-                \Filament\Actions\ForceDeleteBulkAction::make(),
-                \Filament\Actions\RestoreBulkAction::make(),
+                DeleteBulkAction::make(),
+                ForceDeleteBulkAction::make(),
+                RestoreBulkAction::make(),
                 // ...
             ]),
         ]);
@@ -860,14 +871,16 @@ It is probably also useful to provide extra configuration on the relation manage
 
 ```php
 use App\Filament\Resources\Blog\Posts\PostResource;
+use Filament\Actions\AttachAction;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
     return PostResource::table($table)
         ->headerActions([
-            \Filament\Actions\CreateAction::make(),
-            \Filament\Actions\AttachAction::make(),
+            CreateAction::make(),
+            AttachAction::make(),
         ]);
 }
 ```
