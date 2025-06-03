@@ -782,7 +782,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             if (isset($baseRelationshipQuery->limit)) {
                 $component->optionsLimit($baseRelationshipQuery->limit);
-            } elseif ($component->isSearchable()) {
+            } elseif ($component->isSearchable() && filled($component->getSearchColumns())) {
                 $relationshipQuery->limit($component->getOptionsLimit());
             }
 
@@ -1215,6 +1215,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function hasDynamicSearchResults(): bool
     {
+        if ($this->hasRelationship() && blank($this->getRelationshipTitleAttribute()) && empty($this->searchColumns)) {
+            return false;
+        }
+
         return $this->getSearchResultsUsing instanceof Closure;
     }
 
