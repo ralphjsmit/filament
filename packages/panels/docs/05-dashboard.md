@@ -215,6 +215,17 @@ class Dashboard extends BaseDashboard
 
 Handling data from the filter action is the same as handling data from the filters header form, except that the data is validated before being passed to the widget. The `InteractsWithPageFilters` trait still applies.
 
+### Persisting Filter State In Session
+
+By default the filters applied will persist in the session on page reload. To change this add the the `persistsFiltersInSession()` method to your Dashboard.php file:
+
+```php
+public function persistsFiltersInSession(): bool
+{
+    return false;
+}
+```
+
 ## Disabling the default widgets
 
 By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets()` array of the [configuration](configuration):
