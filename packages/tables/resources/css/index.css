@@ -22,4 +22,4 @@
 @import './header-cell.css' layer(components);
 @import './row.css' layer(components);
 @import './table.css' layer(components);
-@import './toggle-columns.css' layer(components);
+@import './column-manager.css' layer(components);

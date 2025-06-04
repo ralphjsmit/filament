@@ -4,22 +4,22 @@
     'reorderAnimationDuration' => 300,
 ])
 
-<div class="fi-ta-col-toggle">
+<div class="fi-ta-col-manager">
     <div
         @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
             {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
         @else
             x-load
         @endif
-        x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('toggle-columns', 'filament/tables') }}"
-        x-data="toggleColumnsComponent({
+        x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('column-manager', 'filament/tables') }}"
+        x-data="columnManagerComponent({
                     columns: $wire.entangle('toggledTableColumns'),
                     isLive: {{ $applyAction->isVisible() ? 'false' : 'true' }},
                 })"
-        class="fi-ta-col-toggle-ctn"
+        class="fi-ta-col-manager-ctn"
     >
-        <div class="fi-ta-col-toggle-header">
-            <{{ $headingTag }} class="fi-ta-col-toggle-heading">
+        <div class="fi-ta-col-manager-header">
+            <{{ $headingTag }} class="fi-ta-col-manager-heading">
                 {{ __('filament-tables::table.column_toggle.heading') }}
             </{{ $headingTag }}>
         </div>
@@ -29,7 +29,7 @@
             x-sortable
             x-on:end.stop="reorderColumns($event.target.sortable.toArray())"
             data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
-            class="fi-ta-col-toggle-items"
+            class="fi-ta-col-manager-items"
         >
             <template
                 x-for="(column, index) in columns"
@@ -39,9 +39,9 @@
                     x-bind:x-sortable-item="column.type === 'group' ? 'group::' + column.name : 'column::' + column.name"
                 >
                     <template x-if="column.type === 'group'">
-                        <div class="fi-ta-col-toggle-group">
-                            <div class="fi-ta-col-toggle-item">
-                                <label class="fi-ta-col-toggle-label">
+                        <div class="fi-ta-col-manager-group">
+                            <div class="fi-ta-col-manager-item">
+                                <label class="fi-ta-col-manager-label">
                                     <input
                                         type="checkbox"
                                         class="fi-checkbox-input fi-valid"
@@ -56,7 +56,7 @@
                                 <button
                                     x-sortable-handle
                                     x-on:click.stop
-                                    class="fi-ta-col-toggle-reorder-handle fi-icon-btn"
+                                    class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                     type="button"
                                 >
                                     {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
@@ -66,7 +66,7 @@
                                 x-sortable
                                 x-on:end.stop="reorderGroupColumns($event.target.sortable.toArray(), column.name)"
                                 data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
-                                class="fi-ta-col-toggle-group-items"
+                                class="fi-ta-col-manager-group-items"
                             >
                                 <template
                                     x-for="(groupColumn, index) in column.columns"
@@ -75,9 +75,9 @@
                                     <div
                                         x-bind:x-sortable-item="'column::' + groupColumn.name"
                                     >
-                                        <div class="fi-ta-col-toggle-item">
+                                        <div class="fi-ta-col-manager-item">
                                             <label
-                                                class="fi-ta-col-toggle-label"
+                                                class="fi-ta-col-manager-label"
                                             >
                                                 <input
                                                     type="checkbox"
@@ -94,7 +94,7 @@
                                             <button
                                                 x-sortable-handle
                                                 x-on:click.stop
-                                                class="fi-ta-col-toggle-reorder-handle fi-icon-btn"
+                                                class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                                 type="button"
                                             >
                                                 {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
@@ -106,8 +106,8 @@
                         </div>
                     </template>
                     <template x-if="column.type !== 'group'">
-                        <div class="fi-ta-col-toggle-item">
-                            <label class="fi-ta-col-toggle-label">
+                        <div class="fi-ta-col-manager-item">
+                            <label class="fi-ta-col-manager-label">
                                 <input
                                     type="checkbox"
                                     class="fi-checkbox-input fi-valid"
@@ -121,7 +121,7 @@
                             <button
                                 x-sortable-handle
                                 x-on:click.stop
-                                class="fi-ta-col-toggle-reorder-handle fi-icon-btn"
+                                class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                 type="button"
                             >
                                 {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
@@ -133,7 +133,7 @@
         </div>
 
         @if ($applyAction->isVisible())
-            <div class="fi-ta-col-toggle-apply-action-ctn">
+            <div class="fi-ta-col-manager-apply-action-ctn">
                 {{ $applyAction }}
             </div>
         @endif

@@ -489,13 +489,13 @@
                                     shift
                                     :width="$columnToggleFormWidth"
                                     :wire:key="$this->getId() . '.table.column-toggle'"
-                                    class="fi-ta-col-toggle-dropdown"
+                                    class="fi-ta-col-manager-dropdown"
                                 >
                                     <x-slot name="trigger">
                                         {{ $toggleColumnsTriggerAction }}
                                     </x-slot>
 
-                                    <x-filament-tables::toggle-columns
+                                    <x-filament-tables::column-manager
                                         :apply-action="$toggleableColumnsApplyAction"
                                         :heading-tag="$secondLevelHeadingTag"
                                         :reorder-animation-duration="$getReorderAnimationDuration()"

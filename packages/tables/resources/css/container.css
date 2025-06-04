@@ -78,8 +78,8 @@
             }
         }
 
-        & .fi-ta-col-toggle-dropdown {
-            & .fi-ta-col-toggle {
+        & .fi-ta-col-manager-dropdown {
+            & .fi-ta-col-manager {
                 @apply p-6;
             }
         }

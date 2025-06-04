@@ -2770,7 +2770,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-col-toggle button')
+            await page.click('.fi-ta-col-manager-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         }

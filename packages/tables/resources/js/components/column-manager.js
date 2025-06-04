@@ -1,4 +1,4 @@
-export default function toggleColumnsComponent({ columns, isLive }) {
+export default function columnManagerComponent({ columns, isLive }) {
     return {
         error: undefined,
 
