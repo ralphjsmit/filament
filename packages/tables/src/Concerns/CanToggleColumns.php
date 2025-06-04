@@ -17,7 +17,7 @@ trait CanToggleColumns
     public const COLUMN = 'column';
 
     /**
-     * @var array<array<string, mixed>>
+     * @var array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
      */
     public array $toggledTableColumns = [];
 
@@ -42,23 +42,25 @@ trait CanToggleColumns
     }
 
     /**
-     * @return array<array<string, mixed>>
+     * @return array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
      */
     public function getDefaultTableColumnToggleState(): array
     {
         return collect($this->getTable()->getColumnsLayout())
-            ->map(
-                fn (Component $component) => $component instanceof ColumnGroup
-                ? $this->mapColumnGroup($component)
-                : $this->mapColumn($component)
-            )
+            ->map(fn (Component $component): ?array => match (true) {
+                $component instanceof ColumnGroup => $this->mapColumnGroup($component),
+                $component instanceof Column => $this->mapColumn($component),
+                default => null,
+            })
+            ->filter()
+            ->values()
             ->toArray();
     }
 
     public function updatedToggledTableColumns(): void
     {
         $reorderedColumns = collect($this->toggledTableColumns)
-            ->map(function (array $item) {
+            ->map(function (array $item): Column | ColumnGroup | null {
                 if ($item['type'] === self::COLUMN) {
                     return $this->getTable()->getColumn($item['name']);
                 }
@@ -68,7 +70,7 @@ trait CanToggleColumns
                 }
 
                 $columns = collect($item['columns'])
-                    ->map(fn (array $column) => $this->getTable()->getColumn($column['name']))
+                    ->map(fn (array $column): ?Column => $this->getTable()->getColumn($column['name']))
                     ->filter()
                     ->toArray();
 
@@ -143,14 +145,7 @@ trait CanToggleColumns
     }
 
     /**
-     * @return array{
-     *     type: string,
-     *     name: string,
-     *     label: string,
-     *     toggled: bool,
-     *     toggleable: bool,
-     *     columns: array<int, mixed>
-     * }
+     * @return array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}
      */
     protected function mapColumnGroup(ColumnGroup $group): array
     {
@@ -161,20 +156,14 @@ trait CanToggleColumns
             'toggled' => true,
             'toggleable' => true,
             'columns' => collect($group->getColumns())
-                ->map(fn (Column $column) => $this->mapColumn($column))
+                ->map(fn (Column $column): array => $this->mapColumn($column))
                 ->values()
                 ->toArray(),
         ];
     }
 
     /**
-     * @return array{
-     *     type: string,
-     *     name: string,
-     *     label: string,
-     *     toggled: bool,
-     *     toggleable: bool
-     * }
+     * @return array{type: string, name: string, label: string, toggled: bool, toggleable: bool}
      */
     protected function mapColumn(Column $column): array
     {
