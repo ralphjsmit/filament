@@ -11,7 +11,7 @@ import { keymap } from '@codemirror/view'
 export default function codeEditorFormComponent({
     isDisabled,
     language,
-    state
+    state,
 }) {
     return {
         editor: null,
