@@ -11,8 +11,25 @@ import { keymap } from '@codemirror/view'
 export default function codeEditorFormComponent({ isDisabled, state }) {
     return {
         editor: null,
-
+        language,
         state,
+
+        getLanguageExtension() {
+            switch (language) {
+                case 'css':
+                    return css()
+                case 'html':
+                    return html()
+                case 'javascript':
+                    return javascript()
+                case 'json':
+                    return json()
+                case 'php':
+                    return php()
+                default:
+                    return []
+            }
+        },
 
         init: function () {
             this.editor = new EditorView({
@@ -31,11 +48,6 @@ export default function codeEditorFormComponent({ isDisabled, state }) {
 
                             this.state = viewUpdate.state.doc.toString()
                         }),
-                        css(),
-                        html(),
-                        javascript(),
-                        json(),
-                        php(),
                     ],
                 }),
             })
