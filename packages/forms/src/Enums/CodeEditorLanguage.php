@@ -13,4 +13,6 @@ enum CodeEditorLanguage: string
     case JSON = 'json';
 
     case PHP = 'php';
+
+    case PlainText = 'plaintext';
 }
