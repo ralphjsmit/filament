@@ -8,10 +8,13 @@ import { php } from '@codemirror/lang-php'
 import { EditorState } from '@codemirror/state'
 import { keymap } from '@codemirror/view'
 
-export default function codeEditorFormComponent({ isDisabled, state }) {
+export default function codeEditorFormComponent({
+    isDisabled,
+    language,
+    state
+}) {
     return {
         editor: null,
-        language,
         state,
 
         getLanguageExtension() {
