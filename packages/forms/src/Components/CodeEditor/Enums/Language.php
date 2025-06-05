@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\CodeEditor\Enums;
 
-enum CodeEditorLanguage: string
+enum Language: string
 {
     case CSS = 'css';
 
