@@ -8,7 +8,7 @@ enum CodeEditorLanguage: string
 
     case HTML = 'html';
 
-    case JavaScript = 'javascript';
+    case Javascript = 'javascript';
 
     case JSON = 'json';
 
