@@ -17,11 +17,11 @@ CodeEditor::make('code')
 
 ## Changing the code editor's language
 
-You may change the language of the code editor using the `language()` method. The editor supports CSS, HTML, JavaScript, JSON, PHP and plain text. You can open the `Filament\Forms\Enums\CodeEditorLanguage` enum class to see the full list. To switch to use JavaScript as the language, you can use the `CodeEditorLanguage::Javascript` enum value:
+You may change the language of the code editor using the `language()` method. The editor supports CSS, HTML, JavaScript, JSON, PHP and plain text. You can open the `Filament\Forms\Components\CodeEditor\Enums\CodeEditorLanguage` enum class to see the full list. To switch to use JavaScript as the language, you can use the `CodeEditorLanguage::Javascript` enum value:
 
 ```php
 use Filament\Forms\Components\CodeEditor;
-use Filament\Forms\Enums\CodeEditorLanguage;
+use Filament\Forms\Components\CodeEditor\Enums\CodeEditorLanguage;
 
 CodeEditor::make('code')
     ->language(CodeEditorLanguage::Javascript)

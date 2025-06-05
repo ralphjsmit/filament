@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Forms\Enums\CodeEditorLanguage;
+use Filament\Forms\Components\CodeEditor\Enums\CodeEditorLanguage;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class CodeEditor extends Field

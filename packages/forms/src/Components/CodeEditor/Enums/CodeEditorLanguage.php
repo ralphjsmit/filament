@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Enums;
+namespace Filament\Forms\Components\CodeEditor\Enums;
 
 enum CodeEditorLanguage: string
 {
