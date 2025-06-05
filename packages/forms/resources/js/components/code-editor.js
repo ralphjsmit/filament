@@ -51,6 +51,7 @@ export default function codeEditorFormComponent({
 
                             this.state = viewUpdate.state.doc.toString()
                         }),
+                        this.getLanguageExtension(),
                     ],
                 }),
             })
