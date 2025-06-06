@@ -5,17 +5,12 @@ namespace Filament\Upgrade\Rector;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name\FullyQualified;
-use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class ReplaceStringPanelParamWithPanelParamRector extends AbstractRector
 {
-    public function __construct(
-        protected BetterNodeFinder $betterNodeFinder
-    ) {}
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
