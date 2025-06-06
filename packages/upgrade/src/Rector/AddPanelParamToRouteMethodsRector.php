@@ -25,7 +25,7 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Add `Filament::getCurrentOrDefaultPanel()` to static method calls to getRoutePath() and getRelativeRouteName()',
+            'Add `Filament::getCurrentOrDefaultPanel()` to static method calls to `getRoutePath()` and `getRelativeRouteName()`',
             [
                 new CodeSample(
                     'Page::getRoutePath();',
@@ -65,23 +65,21 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
         if (count($node->args) > 0) {
             return null;
         }
-	    
-		$scope = $node->getAttribute(AttributeKey::SCOPE);
-		
-		$panelVariableExistsInScope = false;
-		
-		if ($scope instanceof Scope) {
-			$panelVariableExistsInScope = in_array('panel', $scope->getDefinedVariables());
-		}
-		
+
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+
+        $panelVariableExistsInScope = false;
+
+        if ($scope instanceof Scope) {
+            $panelVariableExistsInScope = in_array('panel', $scope->getDefinedVariables());
+        }
+
         if ($panelVariableExistsInScope) {
-            // Use the existing $panel variable
             $node->args[] = new Node\Arg(new Variable('panel'));
         } else {
-            // Fall back to Filament::getCurrentOrDefaultPanel()
-            $filamentCall = new StaticCall(new FullyQualified('Filament\Facades\Filament'), 'getCurrentOrDefaultPanel');
-			
-            $node->args[] = new Node\Arg($filamentCall);
+            $getCurrentOrDefaultPanelStaticCall = new StaticCall(new FullyQualified('Filament\Facades\Filament'), 'getCurrentOrDefaultPanel');
+
+            $node->args[] = new Node\Arg($getCurrentOrDefaultPanelStaticCall);
         }
 
         return $node;
