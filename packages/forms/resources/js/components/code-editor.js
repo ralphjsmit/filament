@@ -5,8 +5,9 @@ import { html } from '@codemirror/lang-html'
 import { javascript } from '@codemirror/lang-javascript'
 import { json } from '@codemirror/lang-json'
 import { php } from '@codemirror/lang-php'
-import { EditorState } from '@codemirror/state'
+import { EditorState, Compartment } from '@codemirror/state'
 import { keymap } from '@codemirror/view'
+import { oneDark } from '@codemirror/theme-one-dark'
 
 export default function codeEditorFormComponent({
     isDisabled,
@@ -15,7 +16,16 @@ export default function codeEditorFormComponent({
 }) {
     return {
         editor: null,
+        themeCompartment: new Compartment(),
         state,
+
+        isDarkMode() {
+            return document.documentElement.classList.contains('dark')
+        },
+
+        getThemeExtensions() {
+            return this.isDarkMode() ? [oneDark] : []
+        },
 
         getLanguageExtension() {
             const extensions = {
@@ -47,6 +57,7 @@ export default function codeEditorFormComponent({
                             this.state = viewUpdate.state.doc.toString()
                         }),
                         this.getLanguageExtension(),
+                        this.themeCompartment.of(this.getThemeExtensions()),
                     ],
                 }),
             })
@@ -64,6 +75,31 @@ export default function codeEditorFormComponent({
                     },
                 })
             })
+
+            this.themeObserver = new MutationObserver(() => {
+                this.editor.dispatch({
+                    effects: this.themeCompartment.reconfigure(
+                        this.getThemeExtensions(),
+                    ),
+                })
+            })
+
+            this.themeObserver.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['class'],
+            })
+        },
+
+        destroy: function () {
+            if (this.themeObserver) {
+                this.themeObserver.disconnect()
+                this.themeObserver = null
+            }
+
+            if (this.editor) {
+                this.editor.destroy()
+                this.editor = null
+            }
         },
     }
 }
