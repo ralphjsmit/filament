@@ -287,6 +287,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->rules([
         Rector\AddPanelParamToRouteMethodsRector::class,
+        Rector\ReplaceStringPanelParamWithPanelParamRector::class,
         Rector\SimpleMethodChangesRector::class,
         Rector\SimplePropertyChangesRector::class,
         Rector\RenameSchemaParamToMatchTypeRector::class,
