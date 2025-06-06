@@ -4,10 +4,7 @@ namespace Filament\Upgrade\Rector;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name\FullyQualified;
-use PHPStan\Analyser\Scope;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -63,7 +60,7 @@ class ReplaceStringPanelParamWithPanelParamRector extends AbstractRector
             return null;
         }
 
-	    // Replace first argument with `Filament\Facades\Filament::getPanel(<value of first argument>)`...
+        // Replace first argument with `Filament\Facades\Filament::getPanel(<value of first argument>)`...
         $firstArg = $node->args[0];
         $firstArgValue = $firstArg->value;
 
