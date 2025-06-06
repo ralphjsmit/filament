@@ -1,12 +1,15 @@
 <?php
 
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Get;
-use Filament\Tests\Forms\Fixtures\Livewire;
-use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
+use Filament\Tests\TestCase;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Placeholder;
+use Filament\Tests\Forms\Fixtures\Livewire;
 
 uses(TestCase::class);
 
@@ -797,3 +800,49 @@ test('parent sibling state can be retrieved absolutely from another component', 
     expect($placeholder)
         ->getContent()->toBe($state);
 });
+
+test(
+    'fields in hidden section should not be included in dehydrated state',
+    function () {
+        $container = ComponentContainer::make(Livewire::make())
+            ->components([
+                Section::make("User Information")
+                    ->statePath('data')
+                    ->schema([
+                        Radio::make('show_input')
+                            ->label('Control Input Visibility')
+                            ->options([
+                                'show' => 'Show',
+                                'hide' => 'Hide',
+                            ])
+                            ->live(),
+
+                        Section::make("Name")
+                            ->schema([
+                                TextInput::make('name')
+                                    ->label('Conditional Name')
+                            ])
+                            ->hidden(fn (Get $get): bool => $get('show_input') === 'hide' || $get('show_input') === null)
+                            ->dehydrated(fn (Get $get): bool => $get('show_input') === 'show'),
+                    ]),
+            ])
+            ->fill([
+                'data' => [
+                    'show_input' => 'hide',
+                    'name' => 'lorem ipsum',
+                ]
+            ]);
+
+        $dehydratedState = $container->dehydrateState();
+
+        // Assert: Expect 'name' field NOT to be present in dehydrated state when 'show_input' is 'hide'
+        // This assertion is designed to FAIL due to the bug, thus documenting it.
+        expect($dehydratedState)
+            ->toBe([
+                'data' => [
+                    'show_input' => 'hide',
+                    // 'name' field with 'lorem ipsum' should NOT be here if the bug was fixed.
+                ],
+            ]);
+    }
+);
