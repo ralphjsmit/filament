@@ -1,6 +1,5 @@
 <?php
 
-use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tests\Fixtures\Pages\Settings;

@@ -44,11 +44,11 @@ trait HasRoutes
         return (string) str(static::getSlug($panel))->replace('/', '.');
     }
 
-    public static function getSlug(Panel $panel = null): string
+    public static function getSlug(?Panel $panel = null): string
     {
-	    $panel ??= Filament::getCurrentOrDefaultPanel();
-	    
-	    if (filled(static::$slug)) {
+        $panel ??= Filament::getCurrentOrDefaultPanel();
+
+        if (filled(static::$slug)) {
             return static::$slug;
         }
 

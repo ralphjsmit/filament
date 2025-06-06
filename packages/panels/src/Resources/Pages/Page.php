@@ -53,11 +53,11 @@ abstract class Page extends BasePage
 
         return static::getResource()::getUrl($name, $parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
     }
-	
-	public static function getRouteName(?Panel $panel = null): string
-	{
-		$panel ??= Filament::getCurrentOrDefaultPanel();
-		
+
+    public static function getRouteName(?Panel $panel = null): string
+    {
+        $panel ??= Filament::getCurrentOrDefaultPanel();
+
         $routeBaseName = static::getResource()::getRouteBaseName(panel: $panel);
 
         return $routeBaseName . '.' . static::getResourcePageName();

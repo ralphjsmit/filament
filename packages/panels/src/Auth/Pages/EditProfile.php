@@ -126,10 +126,10 @@ class EditProfile extends Page
 
         static::routes($panel);
     }
-	
-	public static function getRouteName(?Panel $panel = null): string
-	{
-		$panel ??= Filament::getCurrentOrDefaultPanel();
+
+    public static function getRouteName(?Panel $panel = null): string
+    {
+        $panel ??= Filament::getCurrentOrDefaultPanel();
 
         return $panel->generateRouteName('auth.' . static::getRelativeRouteName($panel));
     }
@@ -394,11 +394,11 @@ class EditProfile extends Page
         return static::getLabel();
     }
 
-    public static function getSlug(Panel $panel = null): string
+    public static function getSlug(?Panel $panel = null): string
     {
-	    $panel ??= Filament::getCurrentOrDefaultPanel();
-		
-	    return static::$slug ?? 'profile';
+        $panel ??= Filament::getCurrentOrDefaultPanel();
+
+        return static::$slug ?? 'profile';
     }
 
     public function hasLogo(): bool
