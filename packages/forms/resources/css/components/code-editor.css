@@ -12,7 +12,7 @@
             & .cm-gutter {
                 &.cm-lineNumbers {
                     & .cm-gutterElement {
-                        @apply ms-1;
+                        @apply ms-1 rounded-s-md;
 
                         &.cm-activeLineGutter {
                             @apply bg-gray-200! dark:bg-gray-800!;
