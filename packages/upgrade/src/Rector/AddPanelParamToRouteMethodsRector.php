@@ -25,11 +25,15 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Add `Filament::getCurrentOrDefaultPanel()` to static method calls to `getRoutePath()` and `getRelativeRouteName()`',
+            'Prepend `Filament::getCurrentOrDefaultPanel()` or `$panel` to static method calls to `getRoutePath()`, `getRelativeRouteName()`, etc.',
             [
                 new CodeSample(
                     'Page::getRoutePath();',
                     'Page::getRoutePath(Filament\Facades\Filament::getCurrentOrDefaultPanel());'
+                ),
+                new CodeSample(
+                    'Page::getRoutePath($param1, $param2);',
+                    'Page::getRoutePath(Filament\Facades\Filament::getCurrentOrDefaultPanel(), $param1, $param2);'
                 ),
             ]
         );
@@ -61,11 +65,6 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
             return null;
         }
 
-        // Only act on static calls with no arguments...
-        if (count($node->args) > 0) {
-            return null;
-        }
-
         $scope = $node->getAttribute(AttributeKey::SCOPE);
 
         $panelVariableExistsInScope = false;
@@ -74,13 +73,17 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
             $panelVariableExistsInScope = in_array('panel', $scope->getDefinedVariables());
         }
 
+        // Create the panel parameter
         if ($panelVariableExistsInScope) {
-            $node->args[] = new Node\Arg(new Variable('panel'));
+            $panelArg = new Node\Arg(new Variable('panel'));
         } else {
             $getCurrentOrDefaultPanelStaticCall = new StaticCall(new FullyQualified('Filament\Facades\Filament'), 'getCurrentOrDefaultPanel');
 
-            $node->args[] = new Node\Arg($getCurrentOrDefaultPanelStaticCall);
+            $panelArg = new Node\Arg($getCurrentOrDefaultPanelStaticCall);
         }
+
+        // Prepend the panel parameter to the existing arguments
+        array_unshift($node->args, $panelArg);
 
         return $node;
     }
