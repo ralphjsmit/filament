@@ -14,5 +14,5 @@ enum Language: string
 
     case PHP = 'php';
 
-    case PlainText = 'plaintext';
+    case PlainText = 'plain_text';
 }
