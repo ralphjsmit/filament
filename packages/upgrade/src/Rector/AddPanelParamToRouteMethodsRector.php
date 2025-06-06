@@ -64,13 +64,13 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
 
         $scope = $node->getAttribute(AttributeKey::SCOPE);
 
-        $panelVariableDefinedInScope = false;
+        $isPanelVariableDefinedInScope = false;
 
         if ($scope instanceof Scope) {
-            $panelVariableDefinedInScope = in_array('panel', $scope->getDefinedVariables());
+            $isPanelVariableDefinedInScope = in_array('panel', $scope->getDefinedVariables());
         }
 
-        if ($panelVariableDefinedInScope) {
+        if ($isPanelVariableDefinedInScope) {
             // Assuming `$panel` variable always refers to a panel in Filament-context...
             $panelArg = new Node\Arg(new Variable('panel'));
         } else {
