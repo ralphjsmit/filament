@@ -65,14 +65,14 @@ class ReplaceStringPanelParamWithPanelParamRector extends AbstractRector
         $firstArgValue = $firstArg->value;
 
         // Create a new static call to Filament::getPanel() with the first argument value
-        $getPanelCall = new StaticCall(
+        $getPanelStaticCall = new StaticCall(
             new FullyQualified('Filament\Facades\Filament'),
             'getPanel',
             [new Node\Arg($firstArgValue)]
         );
 
         // Replace the first argument with the new static call
-        $node->args[0] = new Node\Arg($getPanelCall);
+        $node->args[0] = new Node\Arg($getPanelStaticCall);
 
         return $node;
     }

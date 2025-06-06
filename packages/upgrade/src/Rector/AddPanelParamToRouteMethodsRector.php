@@ -73,8 +73,8 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
             $panelVariableExistsInScope = in_array('panel', $scope->getDefinedVariables());
         }
 
-        // Create the panel parameter
         if ($panelVariableExistsInScope) {
+            // Assuming `$panel` variable always refers to a panel in Filament-context...
             $panelArg = new Node\Arg(new Variable('panel'));
         } else {
             $getCurrentOrDefaultPanelStaticCall = new StaticCall(new FullyQualified('Filament\Facades\Filament'), 'getCurrentOrDefaultPanel');
