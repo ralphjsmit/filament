@@ -12,12 +12,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class ReplaceStringPanelParamWithPanelParamRector extends AbstractRector
 {
-    private BetterNodeFinder $betterNodeFinder;
-
-    public function __construct(BetterNodeFinder $betterNodeFinder)
-    {
-        $this->betterNodeFinder = $betterNodeFinder;
-    }
+    public function __construct(
+        protected BetterNodeFinder $betterNodeFinder
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
