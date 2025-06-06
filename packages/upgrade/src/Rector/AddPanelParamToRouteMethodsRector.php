@@ -79,7 +79,7 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
             $panelArg = new Node\Arg($getCurrentOrDefaultPanelStaticCall);
         }
 
-        // Prepend the panel parameter to the existing arguments
+        // Prepend new argument...
         array_unshift($node->args, $panelArg);
 
         return $node;
