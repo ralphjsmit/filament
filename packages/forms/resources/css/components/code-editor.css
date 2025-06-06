@@ -1,5 +1,7 @@
 .fi-fo-code-editor {
     & .cm-editor {
+        @apply rounded-lg;
+
         &.cm-focused {
             @apply outline-none!;
         }
