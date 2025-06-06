@@ -18,20 +18,15 @@ export default function codeEditorFormComponent({
         state,
 
         getLanguageExtension() {
-            switch (language) {
-                case 'css':
-                    return css()
-                case 'html':
-                    return html()
-                case 'javascript':
-                    return javascript()
-                case 'json':
-                    return json()
-                case 'php':
-                    return php()
-                default:
-                    return []
+            const extensions = {
+                css: css,
+                html: html,
+                javascript: javascript,
+                json: json,
+                php: php,
             }
+
+            return extensions[language]?.() || []
         },
 
         init: function () {
