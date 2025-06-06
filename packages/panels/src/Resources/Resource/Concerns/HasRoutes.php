@@ -37,14 +37,14 @@ trait HasRoutes
             ->resolveRouteBindingQuery($query, $key, static::getRecordRouteKeyName())
             ->first();
     }
-
-    public static function getRouteBaseName(?string $panel = null): string
-    {
+	
+	public static function getRouteBaseName(?Panel $panel = null): string
+	{
+		$panel ??= Filament::getCurrentOrDefaultPanel();
+		
         if ($parentResource = static::getParentResourceRegistration()) {
             return $parentResource->getParentResource()::getRouteBaseName($panel) . '.' . $parentResource->getRouteName();
         }
-
-        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentOrDefaultPanel();
 
         $routeBaseName = (string) str(static::getSlug($panel))
             ->replace('/', '.')
@@ -138,8 +138,10 @@ trait HasRoutes
         return $panel->getTenantBillingProvider()->getSubscribedMiddleware();
     }
 
-    public static function getSlug(Panel $panel): string
+    public static function getSlug(Panel $panel = null): string
     {
+		$panel ??= Filament::getCurrentOrDefaultPanel();
+		
         if (filled(static::$slug)) {
             return static::$slug;
         }

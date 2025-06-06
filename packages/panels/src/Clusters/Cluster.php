@@ -99,9 +99,11 @@ class Cluster extends Page
             ->append(".{$name}");
     }
 
-    public static function getSlug(Panel $panel): string
+    public static function getSlug(Panel $panel = null): string
     {
-        if (filled(static::$slug)) {
+	    $panel ??= Filament::getCurrentOrDefaultPanel();
+	    
+	    if (filled(static::$slug)) {
             return static::$slug;
         }
 
@@ -110,10 +112,10 @@ class Cluster extends Page
             ->kebab()
             ->slug();
     }
-
-    public static function getRouteName(?string $panel = null): string
-    {
-        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentOrDefaultPanel();
+	
+	public static function getRouteName(?Panel $panel = null): string
+	{
+		$panel ??= Filament::getCurrentOrDefaultPanel();
 
         return $panel->generateRouteName(static::getRelativeRouteName($panel));
     }

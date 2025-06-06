@@ -49,7 +49,7 @@ trait CanGenerateUrls
             return static::getIndexUrl($parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
         }
 
-        if (blank($panel) || Filament::getPanel($panel)->hasTenancy()) {
+        if (blank($panel) || ($panel = Filament::getPanel($panel))->hasTenancy()) {
             $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
         }
 

@@ -17,7 +17,7 @@ it('can render page', function (): void {
 });
 
 it('can generate a slug based on the page name', function (): void {
-    expect(Settings::getSlug(Filament::getCurrentOrDefaultPanel()))
+    expect(Settings::getSlug())
         ->toBe('settings');
 });
 
