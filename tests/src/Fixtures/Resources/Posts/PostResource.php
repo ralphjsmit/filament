@@ -64,7 +64,7 @@ class PostResource extends Resource
                 Tables\Filters\Filter::make('is_published')
                     ->query(fn (Builder $query) => $query->where('is_published', true)),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 Action::make('randomize_title')
@@ -79,7 +79,7 @@ class PostResource extends Resource
                     }),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ]);
     }

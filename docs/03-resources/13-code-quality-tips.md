@@ -173,7 +173,7 @@ public static function configure(Table $table): Table
         ->columns([
             // ...
         ])
-        ->actions([
+        ->recordActions([
             EmailCustomerAction::make(),
         ]);
 }

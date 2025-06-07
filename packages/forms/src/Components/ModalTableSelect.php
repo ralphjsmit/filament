@@ -103,7 +103,7 @@ class ModalTableSelect extends Field
             ->iconPosition(IconPosition::After)
             ->fillForm(['selection' => $this->getState()])
             ->schema([$this->getTableSelect()])
-            ->action(fn (array $data) => $this->state($data['selection']));
+            ->action(fn (array $data) => $this->state($data['selection'])->callAfterStateUpdated());
 
         if ($this->isMultiple() || blank($this->getState())) {
             $action->link();

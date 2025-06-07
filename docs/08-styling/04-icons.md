@@ -115,9 +115,9 @@ FilamentIcon::register([
 - `actions::edit-action` - Trigger button of an edit action
 - `actions::edit-action.grouped` - Trigger button of a grouped edit action
 - `actions::export-action.grouped` - Trigger button of a grouped export action
-- `actions::force-delete-action` - Trigger button of a force delete action
-- `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
-- `actions::force-delete-action.modal` - Modal of a force delete action
+- `actions::force-delete-action` - Trigger button of a force-delete action
+- `actions::force-delete-action.grouped` - Trigger button of a grouped force-delete action
+- `actions::force-delete-action.modal` - Modal of a force-delete action
 - `actions::import-action.grouped` - Trigger button of a grouped import action
 - `actions::modal.confirmation` - Modal of an action that requires confirmation
 - `actions::replicate-action` - Trigger button of a replicate action

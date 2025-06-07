@@ -45,12 +45,12 @@ class ManageUserTeams extends ManageRelatedRecords
                 Actions\CreateAction::make(),
                 Actions\AssociateAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 Actions\EditAction::make(),
                 Actions\DissociateAction::make(),
                 Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 Actions\BulkActionGroup::make([
                     Actions\DissociateBulkAction::make(),
                     Actions\DeleteBulkAction::make(),

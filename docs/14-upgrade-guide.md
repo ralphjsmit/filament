@@ -600,4 +600,10 @@ The Nepalese translations have been moved from `np` to `ne`, which appears to be
 The Norwegian translations have been moved from `no` to `nb`, which appears to be the more commonly used language code for the language within the Laravel community.
 </Disclosure>
 
+<Disclosure x-show="packages.includes('actions')">
+<span slot="summary">Khmer translations</span>
+
+The Khmer translations have been moved from `kh` to `km`, which appears to be the more commonly used language code for the language within the Laravel community.
+</Disclosure>
+
 </div>

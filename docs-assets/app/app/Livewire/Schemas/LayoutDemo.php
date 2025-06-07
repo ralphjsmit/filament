@@ -200,6 +200,35 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
+                    ->id('tabsVertical')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Tabs::make('Tabs')
+                            ->statePath('tabsVertical')
+                            ->schema([
+                                Tab::make('Rate Limiting')
+                                    ->schema([
+                                        TextInput::make('hits')
+                                            ->default(30),
+                                        Select::make('period')
+                                            ->default('hour')
+                                            ->options([
+                                                'hour' => 'Hour',
+                                            ]),
+                                        TextInput::make('maximum')
+                                            ->default(100),
+                                        Textarea::make('notes')
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(3),
+                                Tab::make('Proxy'),
+                                Tab::make('Meta'),
+                            ])
+                            ->vertical(),
+                    ]),
+                Group::make()
                     ->id('wizard')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',

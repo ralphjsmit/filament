@@ -44,8 +44,8 @@ use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
@@ -871,7 +871,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
-            ], position: ActionsPosition::BeforeColumns);
+            ], position: RecordActionsPosition::BeforeColumns);
     }
 
     public function actionsBeforeCells(Table $table): Table
@@ -880,7 +880,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
-            ], position: ActionsPosition::BeforeCells)
+            ], position: RecordActionsPosition::BeforeCells)
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
@@ -914,6 +914,14 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     {
         return $this->actionsTable($table)
             ->headerActions([
+                CreateAction::make(),
+            ]);
+    }
+
+    public function toolbarActions(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->toolbarActions([
                 CreateAction::make(),
             ]);
     }
