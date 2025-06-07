@@ -64,21 +64,22 @@ Now, run `composer update`.
 
 Once you've finished making changes, you can commit them and submit a pull request to [the GitHub repository](https://github.com/filamentphp/filament).
 
-## Checking for missing translations
+## Checking for outdated translations
 
-To check for missing translations, you can use the Artisan command `php artisan filament:check-translations` followed by a locale. For example, to check for missing Spanish translations run:
-
-```bash
-php artisan filament:check-translations es
-```
-
-This command will show you which translations are missing for the specified locale. You can then submit a pull request with the missing translations to [the GitHub repository](https://github.com/filamentphp/filament).
-
-If you've published the translations to your application and would like to check those instead of the package translations, use:
+To check for outdated translations, you can use our Translation Tool. Clone the Filament repository, install the dependencies for the commands and then run the command.
 
 ```bash
-php artisan filament:check-translations es --source=app
+# Clone
+git clone git@github.com:filamentphp/filament.git
+
+# Install dependencies
+composer install -d bin/TranslationTool
+
+# Run the tool  
+./bin/translation-tool.php
 ```
+
+First select "List outdated translations" as the command and then choose the locale you want to check. This command will show you which translations are missing for the specified locale. You can then submit a pull request with the missing translations to [the GitHub repository](https://github.com/filamentphp/filament).
 
 ## Security vulnerabilities
 
