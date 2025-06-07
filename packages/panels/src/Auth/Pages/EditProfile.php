@@ -396,8 +396,6 @@ class EditProfile extends Page
 
     public static function getSlug(?Panel $panel = null): string
     {
-        $panel ??= Filament::getCurrentOrDefaultPanel();
-
         return static::$slug ?? 'profile';
     }
 

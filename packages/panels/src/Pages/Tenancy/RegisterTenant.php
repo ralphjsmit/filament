@@ -146,8 +146,6 @@ abstract class RegisterTenant extends SimplePage
 
     public static function getSlug(?Panel $panel = null): string
     {
-        $panel ??= Filament::getCurrentOrDefaultPanel();
-
         return static::$slug ?? 'new';
     }
 

@@ -2,7 +2,6 @@
 
 namespace Filament\Pages\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Panel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
@@ -46,8 +45,6 @@ trait HasRoutes
 
     public static function getSlug(?Panel $panel = null): string
     {
-        $panel ??= Filament::getCurrentOrDefaultPanel();
-
         if (filled(static::$slug)) {
             return static::$slug;
         }

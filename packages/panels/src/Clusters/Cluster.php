@@ -101,8 +101,6 @@ class Cluster extends Page
 
     public static function getSlug(?Panel $panel = null): string
     {
-        $panel ??= Filament::getCurrentOrDefaultPanel();
-
         if (filled(static::$slug)) {
             return static::$slug;
         }
