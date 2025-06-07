@@ -19,21 +19,21 @@ export default function codeEditorFormComponent({
         themeCompartment: new Compartment(),
         state,
 
-        isDarkMode() {
+        isDarkMode: function () {
             return document.documentElement.classList.contains('dark')
         },
 
-        getThemeExtensions() {
+        getThemeExtensions: function () {
             return this.isDarkMode() ? [oneDark] : []
         },
 
-        getLanguageExtension() {
+        getLanguageExtension: function () {
             const extensions = {
-                css: css,
-                html: html,
-                javascript: javascript,
-                json: json,
-                php: php,
+                css,
+                html,
+                javascript,
+                json,
+                php,
             }
 
             return extensions[language]?.() || []
