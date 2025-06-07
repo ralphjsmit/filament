@@ -17,8 +17,8 @@ class ReplaceStringPanelParamWithPanelParamRector extends AbstractRector
             'Replaces the first argument with `Filament::getPanel(...)` in static method calls to `getRouteName()` and `getRouteBaseName()`',
             [
                 new CodeSample(
-                    'Page::getRouteName("admin");',
-                    'Page::getRouteName(Filament\Facades\Filament::getPanel("admin"));'
+                    'Page::getRouteName(\'admin\');',
+                    'Page::getRouteName(Filament\Facades\Filament::getPanel(\'admin\'));'
                 ),
             ]
         );
