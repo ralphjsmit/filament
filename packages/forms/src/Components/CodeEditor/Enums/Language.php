@@ -4,15 +4,15 @@ namespace Filament\Forms\Components\CodeEditor\Enums;
 
 enum Language: string
 {
-    case CSS = 'css';
+    case Css = 'css';
 
-    case HTML = 'html';
+    case Html = 'html';
 
-    case Javascript = 'javascript';
+    case JavaScript = 'javascript';
 
-    case JSON = 'json';
+    case Json = 'json';
 
-    case PHP = 'php';
+    case Php = 'php';
 
     case PlainText = 'plain_text';
 }
