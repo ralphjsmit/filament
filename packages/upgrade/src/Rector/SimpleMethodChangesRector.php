@@ -13,9 +13,12 @@ use Filament\Resources\Resource;
 use Filament\Tables\Contracts\HasTable;
 use PhpParser\Modifiers;
 use PhpParser\Node;
+use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -47,6 +50,22 @@ class SimpleMethodChangesRector extends AbstractRector
             array_unshift($node->params, $panelParam);
         };
 
+        $prependNullablePanelParamModifier = static function (ClassMethod $node): void {
+            $panelParam = new Param(
+                var: new Variable('panel'),
+                type: new Node\NullableType(new FullyQualified('Filament\\Panel')),
+                default: new Node\Expr\ConstFetch(new Node\Name('null'))
+            );
+
+            foreach ($node->getParams() as $param) {
+                if ($param->var->name === 'panel') {
+                    return;
+                }
+            }
+
+            array_unshift($node->params, $panelParam);
+        };
+
         return [
             [
                 'class' => [
@@ -66,7 +85,7 @@ class SimpleMethodChangesRector extends AbstractRector
                     },
                     'getRoutePath' => $prependPanelParamModifier,
                     'getRelativeRouteName' => $prependPanelParamModifier,
-                    'getSlug' => $prependPanelParamModifier,
+                    'getSlug' => $prependNullablePanelParamModifier,
                     'prependClusterSlug' => $prependPanelParamModifier,
                     'prependClusterBaseName' => $prependPanelParamModifier,
                 ],
@@ -78,7 +97,7 @@ class SimpleMethodChangesRector extends AbstractRector
                 'changes' => [
                     'getRelativeRouteName' => $prependPanelParamModifier,
                     'getRoutePrefix' => $prependPanelParamModifier,
-                    'getSlug' => $prependPanelParamModifier,
+                    'getSlug' => $prependNullablePanelParamModifier,
                 ],
             ],
             [
