@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Filament\Forms\Components\CodeEditor\Enums\Language;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
@@ -14,9 +15,9 @@ class CodeEditor extends Field
      */
     protected string $view = 'filament-forms::components.code-editor';
 
-    protected Language $language = Language::PlainText;
+    protected Language | Closure $language = Language::PlainText;
 
-    public function language(Language $language): static
+    public function language(Language | Closure $language): static
     {
         $this->language = $language;
 
@@ -25,6 +26,6 @@ class CodeEditor extends Field
 
     public function getLanguage(): Language
     {
-        return $this->language;
+        return $this->evaluate($this->language);
     }
 }

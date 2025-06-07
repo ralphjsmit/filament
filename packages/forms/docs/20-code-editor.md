@@ -26,3 +26,5 @@ use Filament\Forms\Components\CodeEditor\Enums\Language;
 CodeEditor::make('code')
     ->language(Language::JavaScript)
 ```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the language() method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
