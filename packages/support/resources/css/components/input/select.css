@@ -9,4 +9,9 @@
     &.fi-select-input-has-inline-prefix {
         @apply ps-0;
     }
+    
+    :dir(rtl) & {
+        background-position: left 0.5rem center;
+    }
+    
 }
