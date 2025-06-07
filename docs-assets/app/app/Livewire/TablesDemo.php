@@ -252,7 +252,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ]);
     }
 
-    public function toggleableColumns(Table $table): Table
+    public function columnManager(Table $table): Table
     {
         return $this->usersTable($table)
             ->columns([

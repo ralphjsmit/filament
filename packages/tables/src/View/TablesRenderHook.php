@@ -32,7 +32,17 @@ class TablesRenderHook
 
     const TOOLBAR_START = 'tables::toolbar.start';
 
-    const TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER = 'tables::toolbar.toggle-column-trigger.after';
+    /**
+     * @deprecated Use `TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` instead.
+     */
+    const TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER = self::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER;
 
-    const TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE = 'tables::toolbar.toggle-column-trigger.before';
+    const TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER = 'tables::toolbar.toggle-column-trigger.after';
+
+    /**
+     * @deprecated Use `TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` instead.
+     */
+    const TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE = self::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE;
+
+    const TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE = 'tables::toolbar.toggle-column-trigger.before';
 }

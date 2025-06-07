@@ -19,9 +19,9 @@ trait InteractsWithTable
     use CanSearchRecords;
     use CanSortRecords;
     use CanSummarizeRecords;
-    use CanToggleColumns;
     use HasActions;
     use HasBulkActions;
+    use HasColumnManager;
     use HasColumns;
     use HasContent;
     use HasEmptyState;
@@ -49,7 +49,7 @@ trait InteractsWithTable
 
         $this->cacheMountedActions($this->mountedActions);
 
-        $this->initializeToggledTableColumns();
+        $this->initializeColumnManager();
 
         if (! $this->shouldMountInteractsWithTable) {
             return;
@@ -186,9 +186,9 @@ trait InteractsWithTable
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
             ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
             ->columns($this->getTableColumns())
-            ->columnToggleFormColumns($this->getTableColumnToggleFormColumns())
-            ->columnToggleFormMaxHeight($this->getTableColumnToggleFormMaxHeight())
-            ->columnToggleFormWidth($this->getTableColumnToggleFormWidth())
+            ->columnManagerFormColumns($this->getTableColumnToggleFormColumns())
+            ->columnManagerFormMaxHeight($this->getTableColumnToggleFormMaxHeight())
+            ->columnManagerFormWidth($this->getTableColumnToggleFormWidth())
             ->content($this->getTableContent())
             ->contentFooter($this->getTableContentFooter())
             ->contentGrid($this->getTableContentGrid())

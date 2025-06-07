@@ -2762,7 +2762,7 @@ export default {
         },
     },
     'tables/columns/toggleable': {
-        url: 'tables?table=toggleableColumns',
+        url: 'tables?table=columnManager',
         selector: 'body',
         viewport: {
             width: 1080,

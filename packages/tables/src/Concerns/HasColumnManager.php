@@ -10,7 +10,7 @@ use Filament\Tables\Columns\ColumnGroup;
 /**
  * @property-read Schema $toggleTableColumnForm
  */
-trait CanToggleColumns
+trait HasColumnManager
 {
     public const GROUP = 'group';
 
@@ -19,32 +19,30 @@ trait CanToggleColumns
     /**
      * @var array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
      */
-    public array $toggledTableColumns = [];
+    public array $columnManager = [];
 
-    public function initializeToggledTableColumns(): void
+    public function initializeColumnManager(): void
     {
         if ($this->getTable()->hasColumnsLayout()) {
             return;
         }
 
-        if (filled($this->toggledTableColumns)) {
-            return;
+        if (blank($this->columnManager)) {
+            $columnManagerSessionKey = $this->getColumnManagerSessionKey();
+
+            $this->columnManager = session()->get(
+                $columnManagerSessionKey,
+                $this->getDefaultColumnManagerState()
+            );
         }
 
-        $toggledTableColumnsSessionKey = $this->getToggledTableColumnsSessionKey();
-
-        $this->toggledTableColumns = session()->get(
-            $toggledTableColumnsSessionKey,
-            $this->getDefaultTableColumnToggleState()
-        );
-
-        $this->updatedToggledTableColumns();
+        $this->updatedColumnManager();
     }
 
     /**
      * @return array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
      */
-    public function getDefaultTableColumnToggleState(): array
+    public function getDefaultColumnManagerState(): array
     {
         return collect($this->getTable()->getColumnsLayout())
             ->map(fn (Component $component): ?array => match (true) {
@@ -57,9 +55,17 @@ trait CanToggleColumns
             ->toArray();
     }
 
+    /**
+     * @deprecated Use the `updatedColumnManager()` method instead.
+     */
     public function updatedToggledTableColumns(): void
     {
-        $reorderedColumns = collect($this->toggledTableColumns)
+        $this->updatedColumnManager();
+    }
+
+    public function updatedColumnManager(): void
+    {
+        $reorderedColumns = collect($this->columnManager)
             ->map(function (array $item): Column | ColumnGroup | null {
                 if ($item['type'] === self::COLUMN) {
                     return $this->getTable()->getColumn($item['name']);
@@ -88,13 +94,13 @@ trait CanToggleColumns
         $this->getTable()->columns($reorderedColumns);
 
         session()->put([
-            $this->getToggledTableColumnsSessionKey() => $this->toggledTableColumns,
+            $this->getColumnManagerSessionKey() => $this->columnManager,
         ]);
     }
 
     public function isTableColumnToggledHidden(string $name): bool
     {
-        foreach ($this->toggledTableColumns as $item) {
+        foreach ($this->columnManager as $item) {
             if ($item['type'] === self::COLUMN && $item['name'] === $name) {
                 return ! $item['toggled'];
             }
@@ -111,11 +117,19 @@ trait CanToggleColumns
         return true;
     }
 
-    public function getToggledTableColumnsSessionKey(): string
+    /**
+     * @deprecated Use the `getColumnManagerSessionKey()` method instead.
+     */
+    protected function getToggledTableColumnsSessionKey(): string
+    {
+        return $this->getColumnManagerSessionKey();
+    }
+
+    public function getColumnManagerSessionKey(): string
     {
         $table = md5($this::class);
 
-        return "tables.{$table}_toggled_columns";
+        return "tables.{$table}_column_manager";
     }
 
     /**

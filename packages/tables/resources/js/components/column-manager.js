@@ -125,7 +125,7 @@ export default function columnManagerComponent({ columns, isLive }) {
             this.columns = [...this.columns]
 
             if (this.isLive) {
-                this.applyTableToggleColumns()
+                this.applyColumnManager()
             }
         },
 
@@ -140,7 +140,7 @@ export default function columnManagerComponent({ columns, isLive }) {
             this.columns = [...this.columns]
 
             if (this.isLive) {
-                this.applyTableToggleColumns()
+                this.applyColumnManager()
             }
         },
 
@@ -149,7 +149,7 @@ export default function columnManagerComponent({ columns, isLive }) {
             this.reorderTopLevel(newOrder)
 
             if (this.isLive) {
-                this.applyTableToggleColumns()
+                this.applyColumnManager()
             }
         },
 
@@ -180,7 +180,7 @@ export default function columnManagerComponent({ columns, isLive }) {
             this.columns = [...this.columns]
 
             if (this.isLive) {
-                this.applyTableToggleColumns()
+                this.applyColumnManager()
             }
         },
 
@@ -206,7 +206,7 @@ export default function columnManagerComponent({ columns, isLive }) {
             this.columns = reordered
         },
 
-        async applyTableToggleColumns() {
+        async applyColumnManager() {
             this.isLoading = true
 
             try {

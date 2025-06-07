@@ -13,14 +13,14 @@
         @endif
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('column-manager', 'filament/tables') }}"
         x-data="columnManagerComponent({
-                    columns: $wire.entangle('toggledTableColumns'),
+                    columns: $wire.entangle('columnManager'),
                     isLive: {{ $applyAction->isVisible() ? 'false' : 'true' }},
                 })"
         class="fi-ta-col-manager-ctn"
     >
         <div class="fi-ta-col-manager-header">
             <{{ $headingTag }} class="fi-ta-col-manager-heading">
-                {{ __('filament-tables::table.column_toggle.heading') }}
+                {{ __('filament-tables::table.column_manager.heading') }}
             </{{ $headingTag }}>
         </div>
 

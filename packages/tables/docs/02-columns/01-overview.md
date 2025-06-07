@@ -823,9 +823,9 @@ TextColumn::make('id')
     ->toggleable(isToggledHiddenByDefault: true)
 ```
 
-#### Customizing the toggle columns dropdown trigger action
+#### Customizing the column manager dropdown trigger action
 
-To customize the toggle dropdown trigger button, you may use the `toggleColumnsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/overview) can be used:
+To customize the column manager dropdown trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;
@@ -837,10 +837,10 @@ public function table(Table $table): Table
         ->filters([
             // ...
         ])
-        ->toggleColumnsTriggerAction(
+        ->columnManagerTriggerAction(
             fn (Action $action) => $action
                 ->button()
-                ->label('Toggle columns'),
+                ->label('Column Manager'),
         );
 }
 ```
