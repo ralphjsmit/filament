@@ -53,7 +53,7 @@ trait CanGenerateUrls
             $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
         }
 
-        $routeBaseName = static::getRouteBaseName(panel: $panel);
+        $routeBaseName = static::getRouteBaseName($panel);
 
         return route("{$routeBaseName}.{$name}", $parameters, $isAbsolute);
     }
