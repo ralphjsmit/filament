@@ -361,7 +361,7 @@ public function table(Table $table): Table
             TextColumn::make('title'),
             TextColumn::make('slug'),
         ])
-        ->actions([
+        ->recordActions([
             Action::make('view')
                 ->color('gray')
                 ->icon(Heroicon::Eye)
@@ -408,7 +408,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->actions([
+        ->recordActions([
             BulkAction::make('feature')
                 ->requiresConfirmation()
                 ->action(function (Collection $records): void {
@@ -472,7 +472,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->actions([
+        ->recordActions([
             BulkAction::make('feature')
                 ->requiresConfirmation()
                 ->action(function (Collection $records): void {
@@ -853,7 +853,7 @@ public function table(Table $table): Table
             TextColumn::make('title'),
             TextColumn::make('category'),
         ])
-        ->actions([
+        ->recordActions([
             Action::make('edit')
                 ->icon(Heroicon::PencilSquare)
                 ->modalHeading('Edit product')
@@ -947,7 +947,7 @@ public function table(Table $table): Table
             TextColumn::make('title'),
             TextColumn::make('category'),
         ])
-        ->actions([
+        ->recordActions([
             Action::make('view')
                 ->color('gray')
                 ->icon(Heroicon::Eye)
@@ -1030,7 +1030,7 @@ public function table(Table $table): Table
             TextColumn::make('price')
                 ->money(),
         ])
-        ->actions([
+        ->recordActions([
             Action::make('delete')
                 ->color('danger')
                 ->icon(Heroicon::Trash)

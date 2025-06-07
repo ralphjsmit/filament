@@ -629,7 +629,9 @@ test('hidden components are excluded from state dehydration even if their parent
     invade($schema->getLivewire())->cacheSchema('form', $schema);
 
     expect($schema)
-        ->getState()->toBe([]);
+        ->getState()->toBe([
+            'nested' => null,
+        ]);
 });
 
 test('components are not excluded from state dehydration if there is another dehydrated field with the same name', function (): void {

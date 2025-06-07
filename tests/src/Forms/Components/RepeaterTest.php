@@ -155,7 +155,10 @@ it('loads a relationship', function (): void {
         ->statePath('data')
         ->components([
             (new Repeater('repeater'))
-                ->relationship('posts'),
+                ->relationship('posts')
+                ->schema([
+                    TextInput::make('title'),
+                ]),
         ])
         ->model($user);
 

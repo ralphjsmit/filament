@@ -131,3 +131,23 @@ By default, a tab's underlying HTML tag is `<button>`. You can change it to be a
     {{-- Other tabs --}}
 </x-filament::tabs>
 ```
+
+## Using vertical tabs
+
+You can render the tabs vertically by using the `vertical` attribute:
+
+```blade
+<x-filament::tabs vertical>
+    <x-filament::tabs.item>
+        Tab 1
+    </x-filament::tabs.item>
+
+    <x-filament::tabs.item>
+        Tab 2
+    </x-filament::tabs.item>
+
+    <x-filament::tabs.item>
+        Tab 3
+    </x-filament::tabs.item>
+</x-filament::tabs>
+```

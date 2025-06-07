@@ -2,24 +2,31 @@
 title: Deleting records
 ---
 
-## Handling soft deletes
+## Handling soft-deletes
 
-## Creating a resource with soft delete
+## Creating a resource with soft-delete
 
-By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
+By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force-delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
 
 ```bash
 php artisan make:filament-resource Customer --soft-deletes
 ```
 
-## Adding soft deletes to an existing resource
+## Adding soft-deletes to an existing resource
 
-Alternatively, you may add soft deleting functionality to an existing resource.
+Alternatively, you may add soft-deleting functionality to an existing resource.
 
 Firstly, you must update the resource:
 
 ```php
-use Filament\Tables;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -31,23 +38,23 @@ public static function table(Table $table): Table
             // ...
         ])
         ->filters([
-            Tables\Filters\TrashedFilter::make(),
+            TrashedFilter::make(),
             // ...
         ])
-        ->actions([
+        ->recordActions([
             // You may add these actions to your table if you're using a simple
             // resource, or you just want to be able to delete records without
             // leaving the table.
-            \Filament\Actions\DeleteAction::make(),
-            \Filament\Actions\ForceDeleteAction::make(),
-            \Filament\Actions\RestoreAction::make(),
+            DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
             // ...
         ])
-        ->bulkActions([
-            \Filament\Actions\BulkActionGroup::make([
-                \Filament\Actions\DeleteBulkAction::make(),
-                \Filament\Actions\ForceDeleteBulkAction::make(),
-                \Filament\Actions\RestoreBulkAction::make(),
+        ->toolbarActions([
+            BulkActionGroup::make([
+                DeleteBulkAction::make(),
+                ForceDeleteBulkAction::make(),
+                RestoreBulkAction::make(),
                 // ...
             ]),
         ]);
@@ -83,6 +90,7 @@ protected function getHeaderActions(): array
 By default, you can bulk-delete records in your table. You may also wish to delete single records, using a `DeleteAction`:
 
 ```php
+use Filament\Actions\DeleteAction;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
@@ -91,9 +99,9 @@ public static function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->actions([
+        ->recordActions([
             // ...
-            \Filament\Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ]);
 }
 ```
@@ -108,7 +116,7 @@ They also have the ability to bulk-delete records if the `deleteAny()` method of
 
 You can use the `authorizeIndividualRecords()` method on the `BulkDeleteAction` to check the `delete()` policy for each record individually.
 
-### Authorizing soft deletes
+### Authorizing soft-deletes
 
 The `forceDelete()` policy method is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant.
 

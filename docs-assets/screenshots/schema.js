@@ -1542,6 +1542,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/tabs/vertical': {
+        url: 'schemas/layout',
+        selector: '#tabsVertical',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/wizard/simple': {
         url: 'schemas/layout',
         selector: '#wizard',
@@ -3247,6 +3256,15 @@ export default {
     },
     'tables/actions/header': {
         url: 'tables?table=headerActions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/actions/toolbar': {
+        url: 'tables?table=toolbarActions',
         selector: 'body',
         viewport: {
             width: 1080,

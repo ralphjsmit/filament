@@ -46,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Contracts\View\View;
+use Filament\Schemas\Schema;
 use Livewire\Component;
 
 class CreatePost extends Component implements HasSchemas
