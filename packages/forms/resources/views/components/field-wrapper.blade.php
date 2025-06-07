@@ -4,6 +4,7 @@
 
 @props([
     'field' => null,
+    'hasErrors' => true,
     'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => null,
     'id' => null,
@@ -15,7 +16,6 @@
     'labelSuffix' => null,
     'required' => null,
     'statePath' => null,
-    'shouldVerifyErrors' => true,
 ])
 
 @php
@@ -41,7 +41,7 @@
     $aboveErrorMessageSchema = $field?->getChildSchema($field::ABOVE_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
     $belowErrorMessageSchema = $field?->getChildSchema($field::BELOW_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
 
-    $hasError = $shouldVerifyErrors && filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
+    $hasError = $hasErrors && filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
 @endphp
 
 <div
