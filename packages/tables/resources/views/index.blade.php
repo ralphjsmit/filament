@@ -472,6 +472,7 @@
                                 @php
                                     $columnManagerFormMaxHeight = $getColumnManagerFormMaxHeight();
                                     $columnManagerFormWidth = $getColumnManagerFormWidth();
+                                    $columnManagerFormColumns = $getColumnManagerFormColumns();
                                 @endphp
 
                                 <x-filament::dropdown
@@ -488,6 +489,7 @@
 
                                     <x-filament-tables::column-manager
                                         :apply-action="$columnManagerApplyAction"
+                                        :columns="$columnManagerFormColumns"
                                         :heading-tag="$secondLevelHeadingTag"
                                         :reorder-animation-duration="$getReorderAnimationDuration()"
                                     />

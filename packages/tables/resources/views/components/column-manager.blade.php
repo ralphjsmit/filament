@@ -1,12 +1,19 @@
 @props([
     'applyAction',
+    'columns' => null,
     'headingTag' => 'h3',
     'reorderAnimationDuration' => 300,
 ])
 
+@php
+    use Filament\Support\Enums\GridDirection;
+    use Filament\Support\Facades\FilamentView;
+    use Illuminate\View\ComponentAttributeBag;
+@endphp
+
 <div class="fi-ta-col-manager">
     <div
-        @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
+        @if (FilamentView::hasSpaMode())
             {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
         @else
             x-load
@@ -29,7 +36,11 @@
             x-sortable
             x-on:end.stop="reorderColumns($event.target.sortable.toArray())"
             data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
-            class="fi-ta-col-manager-items"
+            {{
+                (new ComponentAttributeBag)
+                    ->grid($columns, GridDirection::Column)
+                    ->class(['fi-ta-col-manager-items'])
+            }}
         >
             <template
                 x-for="(column, index) in columns"
