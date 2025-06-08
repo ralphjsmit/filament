@@ -9,6 +9,7 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\CodeEditor\Enums\Language;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -1974,6 +1975,23 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     // ...
                                 }
                                 PHP),
+                    ]),
+                Group::make()
+                    ->id('codeEditorLanguage')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CodeEditor::make('code')
+                            ->language(Language::JavaScript)
+                            ->default(<<<'JS'
+                                function calculateArea(width, height) {
+                                    return width * height;
+                                }
+
+                                const area = calculateArea(10, 5);
+                                console.log('Area:', area);
+                                JS),
                     ]),
             ]);
     }
