@@ -16,9 +16,9 @@ CodeEditor::make('code')
 
 <AutoScreenshot name="forms/fields/code-editor/simple" alt="Code editor" version="4.x" />
 
-## Changing the code editor's language
+## Changing the code editor's language syntax highlighting
 
-You may change the language of the code editor using the `language()` method. The editor supports CSS, HTML, JavaScript, JSON, PHP and plain text. You can open the `Filament\Forms\Components\CodeEditor\Enums\Language` enum class to see the full list. To switch to using JavaScript as the language, you can use the `Language::JavaScript` enum value:
+You may change the language syntax highlighting of the code editor using the `language()` method. The editor supports CSS, HTML, JavaScript, JSON and PHP. You can open the `Filament\Forms\Components\CodeEditor\Enums\Language` enum class to see the full list. To switch to using JavaScript syntax highlighting, you can use the `Language::JavaScript` enum value:
 
 ```php
 use Filament\Forms\Components\CodeEditor;
@@ -28,6 +28,6 @@ CodeEditor::make('code')
     ->language(Language::JavaScript)
 ```
 
-<AutoScreenshot name="forms/fields/code-editor/language" alt="Code editor" version="4.x" />
+<AutoScreenshot name="forms/fields/code-editor/language" alt="Code editor with syntax highlighting" version="4.x" />
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the language() method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
