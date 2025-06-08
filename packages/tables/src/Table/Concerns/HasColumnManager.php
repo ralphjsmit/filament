@@ -155,7 +155,7 @@ trait HasColumnManager
             2 => Width::TwoExtraLarge,
             3 => Width::FourExtraLarge,
             4 => Width::SixExtraLarge,
-            default => null,
+            default => Width::ExtraSmall,
         };
     }
 
