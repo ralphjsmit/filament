@@ -28,6 +28,11 @@ final class Translator
         return createLink('https:://github.com/' . $this->githubHandle, $this->githubHandle);
     }
 
+    public function getPreferredHandle(): string
+    {
+        return filled($this->githubHandle) ? $this->githubHandle : $this->discordHandle;
+    }
+
     public function getLocales(): string
     {
         return implode(', ', $this->locales);

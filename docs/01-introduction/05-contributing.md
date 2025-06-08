@@ -73,7 +73,7 @@ To check for outdated translations, you can use our Translation Tool. Clone the 
 git clone git@github.com:filamentphp/filament.git
 
 # Install dependencies
-composer install -d bin/TranslationTool
+composer install
 
 # Run the tool  
 ./bin/translation-tool.php

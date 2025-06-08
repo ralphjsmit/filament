@@ -19,7 +19,7 @@ final class ListTranslators
                 'code' => $locale->code,
                 'nr_of_translators' => count($translators = Translator::getTranslatorsForLocale($locale)),
                 'translators' => $translators
-                    ->map(fn (Translator $translator) => filled($translator->githubHandle) ? $translator->githubHandle : $translator->discordHandle)
+                    ->map(fn (Translator $translator) => $translator->getPreferredHandle())
                     ->implode(', ')
             ])
             ->sortBy(['nr_of_translators', 'name']);

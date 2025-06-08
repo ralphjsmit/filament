@@ -1,24 +1,21 @@
 <?php
 
-namespace Filament\TranslationTool;
+namespace Filament\TranslationTool\Actions;
 
 use Filament\TranslationTool\DataObjects\Locale;
+use Filament\TranslationTool\DataObjects\Package;
 use Filament\TranslationTool\DataObjects\Results\FileResult;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use SplFileInfo;
 
 
 class FindOutdatedTranslations
 {
     public function __construct(
         public Collection $locales,
-        public ?array $packages = null,
+        public ?Collection $packages = null,
         public ?Locale $targetLocale = null,
     ) {
-        $this->packages ??= $this->getPackages();
+        $this->packages ??= Package::all();
         $this->targetLocale ??= new Locale('en');
     }
 
@@ -35,17 +32,9 @@ class FindOutdatedTranslations
         return $results;
     }
 
-    protected function getPackages(): array
+    protected function getTranslationStatus(Package $package, Locale $locale): array
     {
-        return array_filter(
-            scandir(PACKAGES_DIR),
-            fn($package) => is_dir(PACKAGES_DIR.$package) && !in_array($package, ['.', '..', '.DS_Store'])
-        );
-    }
-
-    protected function getTranslationStatus(string $package, Locale $locale): array
-    {
-        $originDir = PACKAGES_DIR.$package.'/resources/lang/'.$this->targetLocale;
+        $originDir = $package->getLangFolder($this->targetLocale);
 
         if (!is_dir($originDir)) {
             return [];
@@ -53,23 +42,12 @@ class FindOutdatedTranslations
 
         $results = [];
 
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($originDir, RecursiveDirectoryIterator::SKIP_DOTS)
-        );
+        foreach ($package->getTranslationFiles() as $file) {
+            $originKeys = $file->getTranslations($this->targetLocale);
 
-        $files = array_map(
-            fn(SplFileInfo $file) => str_replace($originDir.DIRECTORY_SEPARATOR, '', $file->getPathname()),
-            iterator_to_array($iterator, false)
-        );
-
-        foreach ($files as $file) {
-            $originFilePath = PACKAGES_DIR.$package.'/resources/lang/'.$this->targetLocale.'/'.$file;
-            $localeFilePath = PACKAGES_DIR.$package.'/resources/lang/'.$locale->code.'/'.$file;
-
-            $originKeys = Arr::dot(require $originFilePath);
             $totalKeys = count($originKeys);
 
-            if (!file_exists($localeFilePath)) {
+            if (!file_exists($file->getFilePath($locale->code))) {
                 $results[] = new FileResult(
                     package: $package,
                     file: $file,
@@ -82,7 +60,7 @@ class FindOutdatedTranslations
                 continue;
             }
 
-            $localeKeys = Arr::dot(require $localeFilePath);
+            $localeKeys = $file->getTranslations($locale->code);
 
             $missingKeys = array_diff_key($originKeys, $localeKeys);
             $removedKeys = array_diff_key($localeKeys, $originKeys);
