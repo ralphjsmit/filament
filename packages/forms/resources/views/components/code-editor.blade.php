@@ -24,7 +24,7 @@
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms') }}"
             x-data="codeEditorFormComponent({
                         isDisabled: @js($isDisabled),
-                        language: @js($language->value),
+                        language: @js($language?->value),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     })"
             wire:ignore

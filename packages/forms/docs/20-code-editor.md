@@ -2,10 +2,11 @@
 title: Code editor
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-The code editor component allows you to write code in a set of common programming languages: HTML, CSS, JavaScript, PHP and JSON.
+The code editor component allows you to write code in a set of common programming languages. By default, no language syntax highlighting is applied.
 
 ```php
 use Filament\Forms\Components\CodeEditor;

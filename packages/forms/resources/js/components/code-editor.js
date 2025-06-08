@@ -28,6 +28,10 @@ export default function codeEditorFormComponent({
         },
 
         getLanguageExtension: function () {
+            if (!language) {
+                return []
+            }
+
             const extensions = {
                 css,
                 html,
