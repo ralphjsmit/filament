@@ -84,7 +84,7 @@ class SimpleMethodChangesRector extends AbstractRector
                     'getRelativeRouteName' => $prependPanelParamModifier,
                     'getSlug' => $prependNullablePanelParamModifier,
                     'prependClusterSlug' => $prependPanelParamModifier,
-                    'prependClusterBaseName' => $prependPanelParamModifier,
+                    'prependClusterRouteBaseName' => $prependPanelParamModifier,
                 ],
             ],
             [
