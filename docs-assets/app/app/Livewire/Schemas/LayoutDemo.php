@@ -68,6 +68,28 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->columns(3),
                     ]),
                 Group::make()
+                    ->id('fieldsetNotContained')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Fieldset::make('Rate limiting')
+                            ->statePath('fieldsetNotContained')
+                            ->contained(false)
+                            ->schema([
+                                TextInput::make('hits')
+                                    ->default(30),
+                                Select::make('period')
+                                    ->default('hour')
+                                    ->options([
+                                        'hour' => 'Hour',
+                                    ]),
+                                TextInput::make('maximum')
+                                    ->default(100),
+                            ])
+                            ->columns(3),
+                    ]),
+                Group::make()
                     ->id('tabs')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',

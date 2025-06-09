@@ -1517,6 +1517,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/fieldset/not-contained': {
+        url: 'schemas/layout',
+        selector: '#fieldsetNotContained',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/tabs/simple': {
         url: 'schemas/layout',
         selector: '#tabs',
