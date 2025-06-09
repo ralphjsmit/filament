@@ -521,3 +521,38 @@ it('can generate a manage related records page class in a resource for a `HasMan
     expect(file_get_contents($path))
         ->toMatchSnapshot();
 });
+
+it('can generate a custom record page class in a resource', function (): void {
+    $this->withoutMockingConsoleOutput();
+
+    $this->artisan('make:filament-resource', [
+        'model' => 'User',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    require_once app_path('Filament/Resources/Users/UserResource.php');
+    require_once app_path('Filament/Resources/Users/Pages/ListUsers.php');
+    require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
+    require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
+
+    invade(Filament::getCurrentOrDefaultPanel())->resources = [
+        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+        'App\\Filament\\Resources\\Users\\UserResource',
+    ];
+
+    $this->mockConsoleOutput = true;
+
+    $this->artisan('make:filament-page', [
+        'name' => 'ManageUserPermissions',
+        '--panel' => 'admin',
+        '--resource' => 'Users\\UserResource',
+        '--type' => 'custom',
+        '--no-interaction' => true,
+    ])
+        ->expectsQuestion('Does this new page relate to a specific record in the resource like this?', true);
+
+    assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserPermissions.php'));
+    expect(file_get_contents($path))
+        ->toMatchSnapshot();
+});

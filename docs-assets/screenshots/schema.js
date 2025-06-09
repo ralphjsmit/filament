@@ -1458,6 +1458,26 @@ export default {
         before: async (page) => {
             await page.waitForNetworkIdle()
 
+            const el = await page.locator('#codeEditorLanguage').waitHandle()
+            await el.scrollIntoView()
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/code-editor/language': {
+        url: 'forms/fields',
+        selector: '#codeEditorLanguage',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.waitForNetworkIdle()
+
+            const el = await page.locator('#codeEditorLanguage').waitHandle()
+            await el.scrollIntoView()
+
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -1491,6 +1511,15 @@ export default {
     'schemas/layout/fieldset/simple': {
         url: 'schemas/layout',
         selector: '#fieldset',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/fieldset/not-contained': {
+        url: 'schemas/layout',
+        selector: '#fieldsetNotContained',
         viewport: {
             width: 1920,
             height: 640,

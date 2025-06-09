@@ -13,6 +13,7 @@
         "filament/support": "*",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
+        "laravel/prompts": "^0.3.5",
         "league/csv": "^9.16",
         "league/flysystem-aws-s3-v3": "^3.0",
         "nunomaduro/termwind": "^2.0",
@@ -60,6 +61,7 @@
             "Filament\\Tables\\": "packages/tables/src",
             "Filament\\Tests\\": "tests/src",
             "Filament\\Tests\\Database\\Factories\\": "tests/database/factories",
+            "Filament\\TranslationTool\\": "bin/TranslationTool/src",
             "Filament\\Upgrade\\": "packages/upgrade/src",
             "Filament\\Widgets\\": "packages/widgets/src"
         }
