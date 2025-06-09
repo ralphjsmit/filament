@@ -1963,18 +1963,13 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ])
                     ->schema([
                         CodeEditor::make('code')
-                            ->default(<<<PHP
-                                <?php
-
-                                namespace App\Models;
-
-                                use Illuminate\Database\Eloquent\Model;
-
-                                class Post extends Model
-                                {
-                                    // ...
-                                }
-                                PHP),
+                            ->default(<<<'YAML'
+                                name: Filament
+                                framework: Laravel
+                                packageManager: Composer
+                                releaseYear: 2021
+                                website: https://filamentphp.com
+                                YAML),
                     ]),
                 Group::make()
                     ->id('codeEditorLanguage')
@@ -1982,15 +1977,23 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         'class' => 'p-16 max-w-xl',
                     ])
                     ->schema([
-                        CodeEditor::make('code')
+                        CodeEditor::make('codeWithLanguage')
+                            ->label('Code')
                             ->language(Language::JavaScript)
                             ->default(<<<'JS'
-                                function calculateArea(width, height) {
-                                    return width * height;
+                                const fetchUser = async (id) => {
+                                    const res = await fetch(`https://api.example.com/users/${id}`)
+
+                                    if (! res.ok) {
+                                        throw new Error('User not found')
+                                    }
+
+                                    return res.json()
                                 }
 
-                                const area = calculateArea(10, 5);
-                                console.log('Area:', area);
+                                fetchUser(1)
+                                    .then((user) => console.log(`👤 ${user.name}`))
+                                    .catch((error) => console.error('⚠️', error.message))
                                 JS),
                     ]),
             ]);
