@@ -983,7 +983,7 @@
                                                 </a>
                                             @elseif ($recordAction)
                                                 @php
-                                                    $recordWireClickAction = $getRecordAction($recordAction)
+                                                    $recordWireClickAction = $getRecordAction($record)
                                                         ? "mountTableAction('{$recordAction}', '{$recordKey}')"
                                                         : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
                                                 @endphp
@@ -1036,8 +1036,12 @@
                                             <div
                                                 @class([
                                                     'fi-ta-actions fi-wrapped sm:fi-not-wrapped',
-                                                    'fi-align-start' => $contentGrid,
-                                                    'md:fi-align-end' => ! $contentGrid,
+                                                    match ($recordActionsAlignment ?? Alignment::Start) {
+                                                        Alignment::Start => 'fi-align-start',
+                                                        Alignment::Center => 'fi-align-center',
+                                                        Alignment::End => 'fi-align-end',
+                                                    } => $contentGrid,
+                                                    'fi-align-start md:fi-align-end' => ! $contentGrid,
                                                     'fi-ta-actions-before-columns-position' => $recordActionsPosition === RecordActionsPosition::BeforeColumns,
                                                 ])
                                             >
