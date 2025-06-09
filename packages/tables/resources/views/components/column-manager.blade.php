@@ -13,12 +13,6 @@
 
 <div class="fi-ta-col-manager">
     <div
-        @if (FilamentView::hasSpaMode())
-            {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-        @else
-            x-load
-        @endif
-        x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('column-manager', 'filament/tables') }}"
         x-data="columnManagerComponent({
                     columns: $wire.entangle('columnManager'),
                     isLive: {{ $applyAction->isVisible() ? 'false' : 'true' }},
