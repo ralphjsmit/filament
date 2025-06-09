@@ -1,6 +1,8 @@
 @props([
     'applyAction',
     'columns' => null,
+    'hasReorderableColumns',
+    'hasToggleableColumns',
     'headingTag' => 'h3',
     'reorderAnimationDuration' => 300,
 ])
@@ -26,10 +28,11 @@
         </div>
 
         <div
-            x-show="hasToggleable"
-            x-sortable
-            x-on:end.stop="reorderColumns($event.target.sortable.toArray())"
-            data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
+            @if ($hasReorderableColumns)
+                x-sortable
+                x-on:end.stop="reorderColumns($event.target.sortable.toArray())"
+                data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
+            @endif
             {{
                 (new ComponentAttributeBag)
                     ->grid($columns, GridDirection::Column)
@@ -41,36 +44,46 @@
                 x-bind:key="(column.type === 'group' ? 'group::' : 'column::') + column.name + '_' + index"
             >
                 <div
-                    x-bind:x-sortable-item="column.type === 'group' ? 'group::' + column.name : 'column::' + column.name"
+                    @if ($hasReorderableColumns)
+                        x-bind:x-sortable-item="column.type === 'group' ? 'group::' + column.name : 'column::' + column.name"
+                    @endif
                 >
                     <template x-if="column.type === 'group'">
                         <div class="fi-ta-col-manager-group">
                             <div class="fi-ta-col-manager-item">
                                 <label class="fi-ta-col-manager-label">
-                                    <input
-                                        type="checkbox"
-                                        class="fi-checkbox-input fi-valid"
-                                        x-bind:id="'group-' + column.name"
-                                        x-bind:checked="(groupedColumns[column.name] || {}).checked || false"
-                                        x-bind:disabled="(groupedColumns[column.name] || {}).disabled || false"
-                                        x-effect="$el.indeterminate = (groupedColumns[column.name] || {}).indeterminate || false"
-                                        x-on:change="toggleGroup(column.name)"
-                                    />
+                                    @if ($hasToggleableColumns)
+                                        <input
+                                            type="checkbox"
+                                            class="fi-checkbox-input fi-valid"
+                                            x-bind:id="'group-' + column.name"
+                                            x-bind:checked="(groupedColumns[column.name] || {}).checked || false"
+                                            x-bind:disabled="(groupedColumns[column.name] || {}).disabled || false"
+                                            x-effect="$el.indeterminate = (groupedColumns[column.name] || {}).indeterminate || false"
+                                            x-on:change="toggleGroup(column.name)"
+                                        />
+                                    @endif
+
                                     <span x-text="column.label"></span>
                                 </label>
-                                <button
-                                    x-sortable-handle
-                                    x-on:click.stop
-                                    class="fi-ta-col-manager-reorder-handle fi-icon-btn"
-                                    type="button"
-                                >
-                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
-                                </button>
+
+                                @if ($hasReorderableColumns)
+                                    <button
+                                        x-sortable-handle
+                                        x-on:click.stop
+                                        class="fi-ta-col-manager-reorder-handle fi-icon-btn"
+                                        type="button"
+                                    >
+                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
+                                    </button>
+                                @endif
                             </div>
                             <div
-                                x-sortable
-                                x-on:end.stop="reorderGroupColumns($event.target.sortable.toArray(), column.name)"
-                                data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
+                                @if ($hasReorderableColumns)
+                                    x-sortable
+                                    x-on:end.stop="reorderGroupColumns($event.target.sortable.toArray(), column.name)"
+                                    data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
+                                @endif
                                 class="fi-ta-col-manager-group-items"
                             >
                                 <template
@@ -78,32 +91,40 @@
                                     x-bind:key="'column::' + groupColumn.name + '_' + index"
                                 >
                                     <div
-                                        x-bind:x-sortable-item="'column::' + groupColumn.name"
+                                        @if ($hasReorderableColumns)
+                                            x-bind:x-sortable-item="'column::' + groupColumn.name"
+                                        @endif
                                     >
                                         <div class="fi-ta-col-manager-item">
                                             <label
                                                 class="fi-ta-col-manager-label"
                                             >
-                                                <input
-                                                    type="checkbox"
-                                                    class="fi-checkbox-input fi-valid"
-                                                    x-bind:id="'column-' + groupColumn.name.replace('.', '-')"
-                                                    x-bind:checked="(getColumn(groupColumn.name, column.name) || {}).toggled || false"
-                                                    x-bind:disabled="(getColumn(groupColumn.name, column.name) || {}).toggleable === false"
-                                                    x-on:change="toggleColumn(groupColumn.name, column.name)"
-                                                />
+                                                @if ($hasToggleableColumns)
+                                                    <input
+                                                        type="checkbox"
+                                                        class="fi-checkbox-input fi-valid"
+                                                        x-bind:id="'column-' + groupColumn.name.replace('.', '-')"
+                                                        x-bind:checked="(getColumn(groupColumn.name, column.name) || {}).toggled || false"
+                                                        x-bind:disabled="(getColumn(groupColumn.name, column.name) || {}).toggleable === false"
+                                                        x-on:change="toggleColumn(groupColumn.name, column.name)"
+                                                    />
+                                                @endif
+
                                                 <span
                                                     x-text="groupColumn.label"
                                                 ></span>
                                             </label>
-                                            <button
-                                                x-sortable-handle
-                                                x-on:click.stop
-                                                class="fi-ta-col-manager-reorder-handle fi-icon-btn"
-                                                type="button"
-                                            >
-                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
-                                            </button>
+
+                                            @if ($hasReorderableColumns)
+                                                <button
+                                                    x-sortable-handle
+                                                    x-on:click.stop
+                                                    class="fi-ta-col-manager-reorder-handle fi-icon-btn"
+                                                    type="button"
+                                                >
+                                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
+                                                </button>
+                                            @endif
                                         </div>
                                     </div>
                                 </template>
@@ -113,24 +134,30 @@
                     <template x-if="column.type !== 'group'">
                         <div class="fi-ta-col-manager-item">
                             <label class="fi-ta-col-manager-label">
-                                <input
-                                    type="checkbox"
-                                    class="fi-checkbox-input fi-valid"
-                                    x-bind:id="'column-' + column.name.replace('.', '-')"
-                                    x-bind:checked="(getColumn(column.name, null) || {}).toggled || false"
-                                    x-bind:disabled="(getColumn(column.name, null) || {}).toggleable === false"
-                                    x-on:change="toggleColumn(column.name)"
-                                />
+                                @if ($hasToggleableColumns)
+                                    <input
+                                        type="checkbox"
+                                        class="fi-checkbox-input fi-valid"
+                                        x-bind:id="'column-' + column.name.replace('.', '-')"
+                                        x-bind:checked="(getColumn(column.name, null) || {}).toggled || false"
+                                        x-bind:disabled="(getColumn(column.name, null) || {}).toggleable === false"
+                                        x-on:change="toggleColumn(column.name)"
+                                    />
+                                @endif
+
                                 <span x-text="column.label"></span>
                             </label>
-                            <button
-                                x-sortable-handle
-                                x-on:click.stop
-                                class="fi-ta-col-manager-reorder-handle fi-icon-btn"
-                                type="button"
-                            >
-                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
-                            </button>
+
+                            @if ($hasReorderableColumns)
+                                <button
+                                    x-sortable-handle
+                                    x-on:click.stop
+                                    class="fi-ta-col-manager-reorder-handle fi-icon-btn"
+                                    type="button"
+                                >
+                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
+                                </button>
+                            @endif
                         </div>
                     </template>
                 </div>

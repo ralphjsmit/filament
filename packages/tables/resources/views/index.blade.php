@@ -73,7 +73,9 @@
     $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
     $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
-    $hasColumnManagerDropdown = $hasToggleableColumns();
+    $hasColumnManagerDropdown = $hasColumnManager();
+    $hasReorderableColumns = $hasReorderableColumns();
+    $hasToggleableColumns = $hasToggleableColumns();
     $columnManagerApplyAction = $getColumnManagerApplyAction();
     $columnManagerTriggerAction = $getColumnManagerTriggerAction();
     $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnManagerDropdown;
@@ -490,6 +492,8 @@
                                     <x-filament-tables::column-manager
                                         :apply-action="$columnManagerApplyAction"
                                         :columns="$columnManagerFormColumns"
+                                        :has-reorderable-columns="$hasReorderableColumns"
+                                        :has-toggleable-columns="$hasToggleableColumns"
                                         :heading-tag="$secondLevelHeadingTag"
                                         :reorder-animation-duration="$getReorderAnimationDuration()"
                                     />

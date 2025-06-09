@@ -16,22 +16,6 @@ export default function columnManagerComponent({ columns, isLive }) {
             }
         },
 
-        get hasToggleable() {
-            if (!this.columns || this.columns.length === 0) {
-                return false
-            }
-
-            return this.columns.some((column) => {
-                if (column.type === 'group') {
-                    return column.columns?.some(
-                        (child) => child.toggleable !== false,
-                    )
-                }
-
-                return column.toggleable !== false
-            })
-        },
-
         get groupedColumns() {
             const groupedColumns = {}
 

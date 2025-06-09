@@ -11,6 +11,10 @@ use Filament\Support\Icons\Heroicon;
 
 trait HasColumnManager
 {
+    protected bool | Closure | null $hasColumnManager = null;
+
+    protected bool | Closure $hasReorderableColumns = true;
+
     /**
      * @var int | array<string, int | null> | Closure
      */
@@ -26,11 +30,41 @@ trait HasColumnManager
 
     protected ?Closure $modifyColumnManagerApplyActionUsing = null;
 
+    public function columnManager(bool | Closure | null $condition = true): static
+    {
+        $this->hasColumnManager = $condition;
+
+        return $this;
+    }
+
     public function deferColumnManager(bool | Closure $condition = true): static
     {
         $this->hasDeferredColumnManager = $condition;
 
         return $this;
+    }
+
+    public function reorderableColumns(bool | Closure $condition = true): static
+    {
+        $this->hasReorderableColumns = $condition;
+
+        return $this;
+    }
+
+    public function hasColumnManager(): bool
+    {
+        return (bool) (
+            $this->evaluate($this->hasColumnManager) ?? (
+                ($hasReorderableColumns = $this->hasReorderableColumns())
+                    ? $hasReorderableColumns
+                    : $this->hasToggleableColumns()
+            )
+        );
+    }
+
+    public function hasReorderableColumns(): bool
+    {
+        return (bool) $this->evaluate($this->hasReorderableColumns);
     }
 
     public function hasDeferredColumnManager(): bool
