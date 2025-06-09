@@ -19,7 +19,7 @@ export default function codeEditorFormComponent({
         themeCompartment: new Compartment(),
         state,
 
-        init: function () {
+        init() {
             const languageExtension = this.getLanguageExtension()
 
             this.editor = new EditorView({
@@ -72,15 +72,15 @@ export default function codeEditorFormComponent({
             })
         },
 
-        isDarkMode: function () {
+        isDarkMode() {
             return document.documentElement.classList.contains('dark')
         },
 
-        getThemeExtensions: function () {
+        getThemeExtensions() {
             return this.isDarkMode() ? [oneDark] : []
         },
 
-        getLanguageExtension: function () {
+        getLanguageExtension() {
             if (!language) {
                 return null
             }
@@ -96,7 +96,7 @@ export default function codeEditorFormComponent({
             return extensions[language]?.() || null
         },
 
-        destroy: function () {
+        destroy() {
             if (this.themeObserver) {
                 this.themeObserver.disconnect()
                 this.themeObserver = null
