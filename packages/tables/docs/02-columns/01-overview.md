@@ -810,7 +810,7 @@ TextColumn::make('email')
     ->toggleable()
 ```
 
-<AutoScreenshot name="tables/columns/toggleable" alt="Table with toggleable column" version="4.x" />
+<AutoScreenshot name="tables/columns/column-manager" alt="Table with column manager" version="4.x" />
 
 #### Making toggleable columns hidden by default
 

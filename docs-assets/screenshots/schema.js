@@ -2799,7 +2799,7 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'tables/columns/toggleable': {
+    'tables/columns/column-manager': {
         url: 'tables?table=columnManager',
         selector: 'body',
         viewport: {
