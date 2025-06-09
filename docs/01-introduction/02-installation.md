@@ -38,10 +38,18 @@ Installation comes in two flavors, depending on whether you want to build an app
 
 ## Installing the panel builder
 
+Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages:
+
+```json
+{
+    "minimum-stability": "beta"
+}
+```
+
 Install the Filament Panel Builder by running the following commands in your Laravel project directory:
 
 ```bash
-composer require filament/filament
+composer require filament/filament:"^4.0"
 
 php artisan filament:install --panels
 ```
@@ -70,17 +78,25 @@ Open `/admin` in your web browser, sign in, and [start building your app](../get
 
 ## Installing the individual components
 
-First, install the Filament components you want to use with Composer:
+Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages:
+
+```json
+{
+    "minimum-stability": "beta"
+}
+```
+
+Install the Filament components you want to use with Composer:
 
 ```bash
 composer require
-    filament/tables
-    filament/schemas
-    filament/forms
-    filament/infolists
-    filament/actions
-    filament/notifications
-    filament/widgets
+    filament/tables:"^4.0"
+    filament/schemas:"^4.0"
+    filament/forms:"^4.0"
+    filament/infolists:"^4.0"
+    filament/actions:"^4.0"
+    filament/notifications:"^4.0"
+    filament/widgets:"^4.0"
 ```
 
 You can install additional packages later in your project without having to repeat these installation steps.
