@@ -113,7 +113,7 @@
                 class="fi-hidden"
                 x-data="{
                     isDisabled: @js($isDisabled),
-                    init: function () {
+                    init() {
                         const container = $el.nextElementSibling
                         container.dispatchEvent(
                             new CustomEvent('set-select-property', {

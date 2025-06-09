@@ -160,7 +160,7 @@ export default function selectFormComponent({
             })
         },
 
-        destroy: function () {
+        destroy() {
             this.select.destroy()
             this.select = null
         },
@@ -194,7 +194,7 @@ export default function selectFormComponent({
             }
         },
 
-        setChoices: function (choices) {
+        setChoices(choices) {
             this.select.setChoices(choices, 'value', 'label', true)
         },
 
@@ -242,7 +242,7 @@ export default function selectFormComponent({
             })
         },
 
-        refreshPlaceholder: function () {
+        refreshPlaceholder() {
             if (isMultiple) {
                 return
             }
@@ -259,7 +259,7 @@ export default function selectFormComponent({
                 }</div>`
         },
 
-        formatState: function (state) {
+        formatState(state) {
             if (isMultiple) {
                 return (state ?? []).map((item) => item?.toString())
             }

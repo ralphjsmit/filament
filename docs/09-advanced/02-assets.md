@@ -247,7 +247,7 @@ const defaultOptions = {
     minify: !isDev,
     plugins: [{
         name: 'watchPlugin',
-        setup: function (build) {
+        setup(build) {
             build.onStart(() => {
                 console.log(`Build started at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`)
             })
@@ -285,7 +285,7 @@ export default function testComponent({
         
         // You can define any other Alpine.js properties here.
 
-        init: function () {
+        init() {
             // Initialise the Alpine component here, if you need to.
         },
         

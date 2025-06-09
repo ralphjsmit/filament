@@ -4,7 +4,7 @@ export default function keyValueFormComponent({ state }) {
 
         rows: [],
 
-        init: function () {
+        init() {
             this.updateRows()
 
             if (this.rows.length <= 0) {
@@ -38,13 +38,13 @@ export default function keyValueFormComponent({ state }) {
             })
         },
 
-        addRow: function () {
+        addRow() {
             this.rows.push({ key: '', value: '' })
 
             this.updateState()
         },
 
-        deleteRow: function (index) {
+        deleteRow(index) {
             this.rows.splice(index, 1)
 
             if (this.rows.length <= 0) {
@@ -54,7 +54,7 @@ export default function keyValueFormComponent({ state }) {
             this.updateState()
         },
 
-        reorderRows: function (event) {
+        reorderRows(event) {
             const rows = Alpine.raw(this.rows)
 
             this.rows = []
@@ -71,7 +71,7 @@ export default function keyValueFormComponent({ state }) {
 
         // https://github.com/filamentphp/filament/issues/1107
         // https://github.com/filamentphp/filament/issues/12824
-        updateRows: function () {
+        updateRows() {
             const state = Alpine.raw(this.state)
             const mergedRows = state.map(({ key, value }) => ({ key, value }))
 
@@ -87,7 +87,7 @@ export default function keyValueFormComponent({ state }) {
             this.rows = mergedRows
         },
 
-        updateState: function () {
+        updateState() {
             let state = []
 
             this.rows.forEach((row) => {
