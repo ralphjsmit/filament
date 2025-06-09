@@ -20,7 +20,7 @@ final class ListTranslations
             required: true,
         );
 
-        $output = new Prompts\Output\ConsoleOutput();
+        $output = new Prompts\Output\ConsoleOutput;
 
         foreach (Package::all() as $package) {
             $files = $package->getTranslationFiles();
@@ -34,14 +34,14 @@ final class ListTranslations
 
                 if (! $file->exists($localeCode)) {
                     Prompts\error(
-                        "[{$package->name}] {$file->name} ⋅ Missing ⋅ ".createLink($file->getFileUrl('en'), '↗ Open EN file')
+                        "[{$package->name}] {$file->name} ⋅ Missing ⋅ " . createLink($file->getFileUrl('en'), '↗ Open EN file')
                     );
 
                     continue;
                 }
 
                 Prompts\info(
-                    "[{$package->name}] {$file->name} ⋅ ".createLink($file->getFileUrl($localeCode), '↗ Open file')
+                    "[{$package->name}] {$file->name} ⋅ " . createLink($file->getFileUrl($localeCode), '↗ Open file')
                 );
 
                 $originTranslations = $file->getTranslations('en');
@@ -51,11 +51,11 @@ final class ListTranslations
 
                 foreach ($originTranslations as $key => $originTranslation) {
                     $translation = ($localeTranslations[$key] ?? '<bg=red;fg=white> Missing </>');
-                    $content = '  ' . $originTranslation."  ➡  ".$translation;
+                    $content = '  ' . $originTranslation . '  ➡  ' . $translation;
 
                     $output->writeln(
                         $index++ % 2 === 0
-                            ? "<fg=cyan>".$content."</>"
+                            ? '<fg=cyan>' . $content . '</>'
                             : $content
                     );
                 }

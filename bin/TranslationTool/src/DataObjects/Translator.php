@@ -1,4 +1,5 @@
 <?php
+
 namespace Filament\TranslationTool\DataObjects;
 
 use Illuminate\Support\Collection;
@@ -12,9 +13,7 @@ final class Translator
         public string $discordHandle,
         public ?string $discordId = null,
         public array $locales = []
-    ) {
-
-    }
+    ) {}
 
     public function getDiscordLink(): string
     {
@@ -40,7 +39,7 @@ final class Translator
 
     public static function count(): int
     {
-        return count(static::$translators);
+        return count(self::$translators);
     }
 
     public static function getTranslatorsForLocale(Locale $locale): Collection
@@ -59,7 +58,7 @@ final class Translator
 
     public static function fromCsvLine(string $line): self
     {
-        [$locales, $githubHandle, $discordHandle, $discordId] = str_getcsv($line, ';', '"', escape:  false);
+        [$locales, $githubHandle, $discordHandle, $discordId] = str_getcsv($line, ';', '"', escape: false);
 
         $translator = new self(
             githubHandle: $githubHandle,
@@ -77,7 +76,7 @@ final class Translator
 
     public static function loadFromFile(): Collection
     {
-        $translatorsFile = __DIR__.'/../../../../translators.csv';
+        $translatorsFile = __DIR__ . '/../../../../translators.csv';
 
         return collect(file($translatorsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES))
             ->map(fn (string $line) => self::fromCsvLine($line));

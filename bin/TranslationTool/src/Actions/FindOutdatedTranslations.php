@@ -7,7 +7,6 @@ use Filament\TranslationTool\DataObjects\Package;
 use Filament\TranslationTool\DataObjects\Results\FileResult;
 use Illuminate\Support\Collection;
 
-
 class FindOutdatedTranslations
 {
     public function __construct(
@@ -36,7 +35,7 @@ class FindOutdatedTranslations
     {
         $originDir = $package->getLangFolder($this->targetLocale);
 
-        if (!is_dir($originDir)) {
+        if (! is_dir($originDir)) {
             return [];
         }
 
@@ -47,7 +46,7 @@ class FindOutdatedTranslations
 
             $totalKeys = count($originKeys);
 
-            if (!file_exists($file->getFilePath($locale->code))) {
+            if (! file_exists($file->getFilePath($locale->code))) {
                 $results[] = new FileResult(
                     package: $package,
                     file: $file,

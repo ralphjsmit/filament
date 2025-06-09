@@ -2,12 +2,11 @@
 
 namespace Filament\TranslationTool\Commands;
 
+use Filament\TranslationTool\Actions\FindOutdatedTranslations;
 use Filament\TranslationTool\DataObjects\Locale;
-use Filament\TranslationTool\DataObjects\Translator;
 use Filament\TranslationTool\DataObjects\Results\FileResult;
 use Filament\TranslationTool\DataObjects\Results\Result;
-use Filament\TranslationTool\Actions\FindOutdatedTranslations;
-use Illuminate\Support\Arr;
+use Filament\TranslationTool\DataObjects\Translator;
 use Illuminate\Support\Collection;
 
 use function Laravel\Prompts\table;
@@ -45,9 +44,10 @@ final class ShowLocaleStatus
                     'locale' => $locale->code,
                     'nr_of_outdated' => count($result->missingTranslations) + count($result->removedTranslations),
                     'coverage_value' => $result->coverage(),
-                    'coverage' => $result->coverage().'%',
+                    'coverage' => $result->coverage() . '%',
                     'translators' => Translator::getTranslatorsForLocale($locale)
-                        ->map(fn (Translator $translator) => $translator->discordId
+                        ->map(
+                            fn (Translator $translator) => $translator->discordId
                             ? $translator->getDiscordLink()
                             : $translator->discordHandle
                         )
@@ -55,13 +55,14 @@ final class ShowLocaleStatus
                 ];
             })
             ->sortBy('coverage_value')
-            ->map(fn (array $row) => collect($row)
-                ->only(['language', 'locale', 'nr_of_outdated', 'coverage', 'translators'])
-                ->map(fn (string $value, string $key) => $key === 'translators' ? $value : match(true) {
-                    $row['coverage_value'] > 99 => "<fg=green>$value</>",
-                    $row['coverage_value'] > 90 => "<fg=yellow>$value</>",
-                    default => "<fg=red>$value</>"
-                })
+            ->map(
+                fn (array $row) => collect($row)
+                    ->only(['language', 'locale', 'nr_of_outdated', 'coverage', 'translators'])
+                    ->map(fn (string $value, string $key) => $key === 'translators' ? $value : match (true) {
+                        $row['coverage_value'] > 99 => "<fg=green>$value</>",
+                        $row['coverage_value'] > 90 => "<fg=yellow>$value</>",
+                        default => "<fg=red>$value</>"
+                    })
             )
             ->toArray();
 

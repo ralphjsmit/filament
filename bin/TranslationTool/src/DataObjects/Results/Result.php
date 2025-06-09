@@ -8,8 +8,7 @@ class Result
         public int $totalTranslations = 0,
         public array $missingTranslations = [],
         public array $removedTranslations = []
-    ) {
-    }
+    ) {}
 
     public function correctTranslationCount(): int
     {

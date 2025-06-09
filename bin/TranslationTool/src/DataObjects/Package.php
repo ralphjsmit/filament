@@ -11,12 +11,11 @@ final class Package
 {
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 
     public function getLangFolder($locale): string
     {
-        return PACKAGES_DIR.$this->name.'/resources/lang/'.$locale;
+        return PACKAGES_DIR . $this->name . '/resources/lang/' . $locale;
     }
 
     /**
@@ -36,7 +35,7 @@ final class Package
 
         return collect(iterator_to_array($iterator, false))
             ->map(function (SplFileInfo $file) use ($originDir) {
-                $filename = str_replace($originDir.DIRECTORY_SEPARATOR, '', $file->getPathname());
+                $filename = str_replace($originDir . DIRECTORY_SEPARATOR, '', $file->getPathname());
 
                 return new TranslationFile($this, $filename);
             });
@@ -48,7 +47,7 @@ final class Package
     public static function all(): Collection
     {
         return collect(scandir(PACKAGES_DIR))
-            ->filter(fn (string $package) => is_dir(PACKAGES_DIR.$package) && !in_array($package, ['.', '..', '.DS_Store']))
+            ->filter(fn (string $package) => is_dir(PACKAGES_DIR . $package) && ! in_array($package, ['.', '..', '.DS_Store']))
             ->map(fn ($package) => new Package($package));
     }
 }

@@ -2,11 +2,10 @@
 
 namespace Filament\TranslationTool\Commands;
 
+use Filament\TranslationTool\Actions\FindOutdatedTranslations;
 use Filament\TranslationTool\DataObjects\Locale;
 use Filament\TranslationTool\DataObjects\Results\FileResult;
-use Filament\TranslationTool\Actions\FindOutdatedTranslations;
 use Illuminate\Support\Collection;
-
 use Laravel\Prompts;
 
 final class ListOutdatedTranslationKeys
@@ -57,19 +56,18 @@ final class ListOutdatedTranslationKeys
                             'status' => 'Removed',
                         ]);
 
-
                         $file = $result->file;
                         $locale = $result->locale;
 
                         return [
                             'file_exists' => $file->exists($locale),
-                            'header' => "[{$result->package->name}] {$file->name} ⋅ ".
+                            'header' => "[{$result->package->name}] {$file->name} ⋅ " .
                                 (
                                     $file->exists($locale)
                                         ? createLink($file->getFileUrl($locale), '↗ Open file')
-                                        : 'Missing ⋅ '.createLink($file->getFileUrl('en'), '↗ Open EN file')
+                                        : 'Missing ⋅ ' . createLink($file->getFileUrl('en'), '↗ Open EN file')
                                 ),
-                            'rows' => $missingTranslations->merge($removedTranslations)->toArray()
+                            'rows' => $missingTranslations->merge($removedTranslations)->toArray(),
                         ];
                     });
             })
@@ -77,7 +75,8 @@ final class ListOutdatedTranslationKeys
             ->filter(fn ($table) => count($table['rows']) > 0);
 
         if (count($data) === 0) {
-            Prompts\info("🎉🎉🎉 All translations are up to date 🎉🎉🎉");
+            Prompts\info('🎉🎉🎉 All translations are up to date 🎉🎉🎉');
+
             return;
         }
 
@@ -95,7 +94,6 @@ final class ListOutdatedTranslationKeys
             }
         }
 
-
-        Prompts\info("Total outdated translations: ".count($data));
+        Prompts\info('Total outdated translations: ' . count($data));
     }
 }

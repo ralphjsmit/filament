@@ -15,6 +15,5 @@ final class FileResult extends Result
         public int $totalTranslations = 0,
         public array $missingTranslations = [],
         public array $removedTranslations = []
-    ) {
-    }
+    ) {}
 }

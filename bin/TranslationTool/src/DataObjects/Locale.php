@@ -8,8 +8,7 @@ final class Locale
 {
     public function __construct(
         public string $code,
-    ) {
-    }
+    ) {}
 
     /**
      * @return Collection<Locale>

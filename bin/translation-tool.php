@@ -1,7 +1,7 @@
 #! /usr/bin/env php
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use Filament\TranslationTool\Commands;
 
@@ -23,11 +23,11 @@ $commandName = select(
     default: 'status',
 );
 
-$command = match($commandName) {
+$command = match ($commandName) {
     'status' => new Commands\ShowLocaleStatus,
     'list_outdated' => new Commands\ListOutdatedTranslationKeys,
     'list_translators' => new Commands\ListTranslators,
-    'list_translations' => new Commands\ListTranslations()
+    'list_translations' => new Commands\ListTranslations
 };
 
 $command();
