@@ -43,37 +43,6 @@ You can now `composer remove filament/upgrade` as you don't need it anymore.
     Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 </Aside>
 
-### Cleaning up your code style after upgrading to v4
-
-The automated upgrade script uses [Rector](https://getrector.org) to make changes to your code. Sometimes, the tool may change how your code is formatted or introduce references to classes that are not yet imported.
-
-Filament suggests using [Laravel Pint](https://laravel.com/docs/12.x/pint) or [PHP CS Fixer](https://cs.symfony.com) to clean up your code style after running the upgrade script.
-
-Specifically, the [`fully_qualified_strict_types` rule](https://cs.symfony.com/doc/rules/import/fully_qualified_strict_types.html) and [`global_namespace_import` rule](https://cs.symfony.com/doc/rules/import/global_namespace_import.html) in these tools will fix any references to classes that are not yet imported, which is a common issue after running the upgrade script.
-
-This is the Laravel Pint configuration that Filament uses for its own codebase if you would like a good starting point:
-
-```json
-{
-    "preset": "laravel",
-    "rules": {
-        "blank_line_before_statement": true,
-        "concat_space": {
-            "spacing": "one"
-        },
-        "fully_qualified_strict_types": {
-            "import_symbols": true
-        },
-        "global_namespace_import": true,
-        "method_argument_space": true,
-        "single_trait_insert_per_statement": true,
-        "types_spaces": {
-            "space": "single"
-        }
-    }
-}
-```
-
 ## Publishing the configuration file
 
 Some changes in Filament v4 can be reverted using the configuration file. If you haven't published the configuration file yet, you can do so by running the following command:

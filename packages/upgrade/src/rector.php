@@ -19,6 +19,9 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->importNames();
+    $rectorConfig->importShortClasses();
+
     $rectorConfig->ruleWithConfiguration(
         RenameClassRector::class,
         [
