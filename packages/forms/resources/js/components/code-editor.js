@@ -19,31 +19,9 @@ export default function codeEditorFormComponent({
         themeCompartment: new Compartment(),
         state,
 
-        isDarkMode: function () {
-            return document.documentElement.classList.contains('dark')
-        },
-
-        getThemeExtensions: function () {
-            return this.isDarkMode() ? [oneDark] : []
-        },
-
-        getLanguageExtension: function () {
-            if (!language) {
-                return []
-            }
-
-            const extensions = {
-                css,
-                html,
-                javascript,
-                json,
-                php,
-            }
-
-            return extensions[language]?.() || []
-        },
-
         init: function () {
+            const languageExtension = this.getLanguageExtension()
+
             this.editor = new EditorView({
                 parent: this.$refs.editor,
                 state: EditorState.create({
@@ -60,7 +38,7 @@ export default function codeEditorFormComponent({
 
                             this.state = viewUpdate.state.doc.toString()
                         }),
-                        this.getLanguageExtension(),
+                        ...(languageExtension ? [languageExtension] : []),
                         this.themeCompartment.of(this.getThemeExtensions()),
                     ],
                 }),
@@ -92,6 +70,30 @@ export default function codeEditorFormComponent({
                 attributes: true,
                 attributeFilter: ['class'],
             })
+        },
+
+        isDarkMode: function () {
+            return document.documentElement.classList.contains('dark')
+        },
+
+        getThemeExtensions: function () {
+            return this.isDarkMode() ? [oneDark] : []
+        },
+
+        getLanguageExtension: function () {
+            if (!language) {
+                return null
+            }
+
+            const extensions = {
+                css,
+                html,
+                javascript,
+                json,
+                php,
+            }
+
+            return extensions[language]?.() || null
         },
 
         destroy: function () {
