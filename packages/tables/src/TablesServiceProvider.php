@@ -38,7 +38,6 @@ class TablesServiceProvider extends PackageServiceProvider
             AlpineComponent::make('columns/select', __DIR__ . '/../dist/components/columns/select.js'),
             AlpineComponent::make('columns/text-input', __DIR__ . '/../dist/components/columns/text-input.js'),
             AlpineComponent::make('columns/toggle', __DIR__ . '/../dist/components/columns/toggle.js'),
-            AlpineComponent::make('column-manager', __DIR__ . '/../dist/components/column-manager.js'),
             Js::make('tables', __DIR__ . '/../dist/index.js'),
         ], 'filament/tables');
 
