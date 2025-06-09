@@ -1458,6 +1458,9 @@ export default {
         before: async (page) => {
             await page.waitForNetworkIdle()
 
+            const el = await page.locator('#codeEditorLanguage').waitHandle()
+            await el.scrollIntoView()
+
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -1471,6 +1474,9 @@ export default {
         },
         before: async (page) => {
             await page.waitForNetworkIdle()
+
+            const el = await page.locator('#codeEditorLanguage').waitHandle()
+            await el.scrollIntoView()
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
