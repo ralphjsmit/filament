@@ -9,6 +9,7 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\CodeEditor\Enums\Language;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -1962,18 +1963,38 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ])
                     ->schema([
                         CodeEditor::make('code')
-                            ->default(<<<PHP
-                                <?php
+                            ->default(<<<'YAML'
+                                name: Filament
+                                framework: Laravel
+                                packageManager: Composer
+                                releaseYear: 2021
+                                website: https://filamentphp.com
+                                YAML),
+                    ]),
+                Group::make()
+                    ->id('codeEditorLanguage')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CodeEditor::make('codeWithLanguage')
+                            ->label('Code')
+                            ->language(Language::JavaScript)
+                            ->default(<<<'JS'
+                                const fetchUser = async (id) => {
+                                    const res = await fetch(`https://api.example.com/users/${id}`)
 
-                                namespace App\Models;
+                                    if (! res.ok) {
+                                        throw new Error('User not found')
+                                    }
 
-                                use Illuminate\Database\Eloquent\Model;
-
-                                class Post extends Model
-                                {
-                                    // ...
+                                    return res.json()
                                 }
-                                PHP),
+
+                                fetchUser(1)
+                                    .then((user) => console.log(`👤 ${user.name}`))
+                                    .catch((error) => console.error('⚠️', error.message))
+                                JS),
                     ]),
             ]);
     }
