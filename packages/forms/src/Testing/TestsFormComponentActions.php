@@ -41,7 +41,7 @@ class TestsFormComponentActions
     public function setFormComponentActionData(): Closure
     {
         return function (array $data): static {
-            $this->setActionData($data);
+            $this->fillForm($data);
 
             return $this;
         };
@@ -50,7 +50,7 @@ class TestsFormComponentActions
     public function assertFormComponentActionDataSet(): Closure
     {
         return function (array | Closure $data): static {
-            $this->assertActionDataSet($data);
+            $this->assertSchemaStateSet($data);
 
             return $this;
         };
@@ -320,7 +320,7 @@ class TestsFormComponentActions
     public function assertHasFormComponentActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasActionErrors($keys);
+            $this->assertHasFormErrors($keys);
 
             return $this;
         };
@@ -329,7 +329,7 @@ class TestsFormComponentActions
     public function assertHasNoFormComponentActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasNoActionErrors($keys);
+            $this->assertHasNoFormErrors($keys);
 
             return $this;
         };

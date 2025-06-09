@@ -81,10 +81,10 @@ trait CanGenerateResourceTables
                 ->filters([
                     {$this->outputTableFilters()}
                 ]){$headerActionsOutput}
-                ->actions([
+                ->recordActions([
                     {$this->outputTableActions()}
                 ])
-                ->bulkActions([
+                ->toolbarActions([
                     {$this->simplifyFqn(BulkActionGroup::class)}::make([
                         {$this->outputTableMethodBulkActions()}
                     ]),
@@ -171,6 +171,10 @@ trait CanGenerateResourceTables
 
         foreach ($actions as $action) {
             $this->importUnlessPartial($action);
+        }
+
+        if ($this->hasPartialImports()) {
+            $this->namespace->addUse('Filament\Actions');
         }
 
         return $actions;

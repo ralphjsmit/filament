@@ -27,28 +27,57 @@ trait CanNotify
 
     protected string | Closure | null $failureNotificationBody = null;
 
-    protected string | Closure | null $failureNotificationMissingMessage = null;
+    protected string | Closure | null $missingBulkAuthorizationFailureNotificationMessage = null;
+
+    protected string | Closure | null $missingBulkProcessingFailureNotificationMessage = null;
+
+    public function missingBulkAuthorizationFailureNotificationMessage(string | Closure | null $message): static
+    {
+        $this->missingBulkAuthorizationFailureNotificationMessage = $message;
+
+        return $this;
+    }
+
+    public function missingBulkProcessingFailureNotificationMessage(string | Closure | null $message): static
+    {
+        $this->missingBulkProcessingFailureNotificationMessage = $message;
+
+        return $this;
+    }
 
     /**
-     * @param  array<string>  $messages
+     * @return array<string, mixed>
      */
-    public function sendFailureNotification(int $successCount = 0, int $totalCount = 0, int $missingMessageCount = 0, array $messages = []): static
+    protected function getFailureNotificationNamedInjections(): array
+    {
+        $processingFailureMessages = $this->getBulkProcessingFailureMessages();
+
+        return [
+            'authorizationFailureMessages' => $this->bulkAuthorizationFailureMessages,
+            'failureCount' => $this->totalSelectedRecordsCount - $this->successfulSelectedRecordsCount,
+            'failureMessages' => [...$this->bulkAuthorizationFailureMessages, ...$processingFailureMessages],
+            'isAll' => ! $this->successfulSelectedRecordsCount,
+            'missingAuthorizationFailureMessageCount' => $this->bulkAuthorizationFailureWithoutMessageCount,
+            'missingProcessingFailureMessageCount' => $this->bulkProcessingFailureWithoutMessageCount,
+            'processingFailureMessages' => $processingFailureMessages,
+            'successCount' => $this->successfulSelectedRecordsCount,
+            'totalCount' => $this->totalSelectedRecordsCount,
+        ];
+    }
+
+    public function sendFailureNotification(): static
     {
         $notification = $this->evaluate($this->failureNotification, [
-            'isPartial' => $successCount > 0,
-            'messages' => $messages,
-            'missingMessageCount' => $missingMessageCount,
+            ...$this->getFailureNotificationNamedInjections(),
             'notification' => $notification = Notification::make()
                 ->when(
-                    $successCount,
+                    $this->successfulSelectedRecordsCount,
                     fn (Notification $notification) => $notification->warning(),
                     fn (Notification $notification) => $notification->danger(),
                 )
-                ->title($this->getFailureNotificationTitle($successCount, $totalCount, $missingMessageCount, $messages))
-                ->body($this->getFailureNotificationBody($successCount, $totalCount, $missingMessageCount, $messages))
+                ->title($this->getFailureNotificationTitle())
+                ->body($this->getFailureNotificationBody())
                 ->persistent(),
-            'successCount' => $successCount,
-            'totalCount' => $totalCount,
         ]) ?? $notification;
 
         if (filled($notification?->getTitle())) {
@@ -83,13 +112,6 @@ trait CanNotify
     public function failureNotificationBody(string | Closure | null $body): static
     {
         $this->failureNotificationBody = $body;
-
-        return $this;
-    }
-
-    public function failureNotificationMissingMessage(string | Closure | null $message): static
-    {
-        $this->failureNotificationMissingMessage = $message;
 
         return $this;
     }
@@ -204,52 +226,51 @@ trait CanNotify
         return $this->evaluate($this->successNotificationTitle);
     }
 
-    /**
-     * @param  array<string>  $messages
-     */
-    public function getFailureNotificationTitle(int $successCount = 0, int $totalCount = 0, int $missingMessageCount = 0, array $messages = []): ?string
+    public function getFailureNotificationTitle(): ?string
     {
-        return $this->evaluate($this->failureNotificationTitle, [
-            'isPartial' => $successCount > 0,
-            'messages' => $messages,
-            'missingMessageCount' => $missingMessageCount,
-            'successCount' => $successCount,
-            'totalCount' => $totalCount,
-        ]);
+        return $this->evaluate($this->failureNotificationTitle, $this->getFailureNotificationNamedInjections());
     }
 
-    /**
-     * @param  array<string>  $messages
-     */
-    public function getFailureNotificationBody(int $successCount = 0, int $totalCount = 0, int $missingMessageCount = 0, array $messages = []): ?string
+    public function getFailureNotificationBody(): ?string
     {
-        return $this->evaluate($this->failureNotificationBody, [
-            'isPartial' => $successCount > 0,
-            'messages' => $messages,
-            'missingMessageCount' => $missingMessageCount,
-            'successCount' => $successCount,
-            'totalCount' => $totalCount,
-        ]) ?? implode(
-            ' ',
-            [
-                ...($missingMessageCount ? [$this->getFailureNotificationMissingMessage($successCount, $totalCount, $missingMessageCount, $messages)] : []),
-                ...$messages,
-            ],
+        $body = $this->evaluate($this->failureNotificationBody, $this->getFailureNotificationNamedInjections());
+
+        if (filled($body)) {
+            return $body;
+        }
+
+        $messages = [
+            ...$this->bulkAuthorizationFailureMessages,
+            ...($this->bulkAuthorizationFailureWithoutMessageCount && filled($message = $this->evaluate(
+                $this->missingBulkAuthorizationFailureNotificationMessage,
+                [
+                    'count' => $this->bulkAuthorizationFailureWithoutMessageCount,
+                    'failureCount' => $this->bulkAuthorizationFailureWithoutMessageCount,
+                    'isAll' => $this->bulkAuthorizationFailureWithoutMessageCount === $this->totalSelectedRecordsCount,
+                    'total' => $this->totalSelectedRecordsCount,
+                    'totalCount' => $this->totalSelectedRecordsCount,
+                ],
+            )) ? [$message] : []),
+            ...$this->getBulkProcessingFailureMessages(),
+            ...($this->bulkProcessingFailureWithoutMessageCount && filled($message = $this->evaluate(
+                $this->missingBulkProcessingFailureNotificationMessage,
+                [
+                    'count' => $this->bulkProcessingFailureWithoutMessageCount,
+                    'failureCount' => $this->bulkProcessingFailureWithoutMessageCount,
+                    'isAll' => $this->bulkProcessingFailureWithoutMessageCount === $this->totalSelectedRecordsCount,
+                    'total' => $this->totalSelectedRecordsCount,
+                    'totalCount' => $this->totalSelectedRecordsCount,
+                ],
+            )) ? [$message] : []),
+        ];
+
+        return implode(
+            '',
+            array_map(
+                fn (string $message): string => "<p>{$message}</p>",
+                $messages,
+            ),
         );
-    }
-
-    /**
-     * @param  array<string>  $messages
-     */
-    public function getFailureNotificationMissingMessage(int $successCount = 0, int $totalCount = 0, int $missingMessageCount = 0, array $messages = []): ?string
-    {
-        return $this->evaluate($this->failureNotificationMissingMessage, [
-            'isPartial' => $successCount > 0,
-            'messages' => $messages,
-            'missingMessageCount' => $missingMessageCount,
-            'successCount' => $successCount,
-            'totalCount' => $totalCount,
-        ]);
     }
 
     public function getUnauthorizedNotificationTitle(Response $response): ?string

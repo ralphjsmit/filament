@@ -4,11 +4,16 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\HasTooltip;
+use Filament\Actions\Enums\ActionStatus;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
+use Filament\Support\Concerns\HasBadgeTooltip;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Concerns\HasIconPosition;
+use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
@@ -19,6 +24,7 @@ use Filament\Support\View\Concerns\CanGenerateLinkHtml;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -39,8 +45,8 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\BelongsToLivewire;
     use Concerns\BelongsToSchemaComponent;
     use Concerns\BelongsToTable;
-    use Concerns\CanAccessSelectedRecords;
     use Concerns\CanBeAuthorized;
+    use Concerns\CanBeBooted;
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeLabeledFrom;
@@ -62,8 +68,8 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasAction;
     use Concerns\HasArguments;
+    use Concerns\HasData;
     use Concerns\HasExtraModalWindowAttributes;
-    use Concerns\HasForm;
     use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;
     use Concerns\HasKeyBindings;
@@ -77,10 +83,14 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\HasTableIcon;
     use Concerns\HasWizard;
     use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithSelectedRecords;
     use HasBadge;
+    use HasBadgeTooltip;
     use HasColor;
     use HasExtraAttributes;
     use HasIcon;
+    use HasIconPosition;
+    use HasIconSize;
     use HasTooltip;
 
     protected bool | Closure $isBulk = false;
@@ -108,6 +118,8 @@ class Action extends ViewComponent implements Arrayable
     protected bool | Closure $shouldMarkAsUnread = false;
 
     protected ?int $nestingIndex = null;
+
+    protected ?ActionStatus $status = null;
 
     final public function __construct(?string $name)
     {
@@ -309,7 +321,7 @@ class Action extends ViewComponent implements Arrayable
             return null;
         }
 
-        return $this->getJavaScriptClickHandler();
+        return $this->getJsClickHandler();
     }
 
     public function getLivewireEventClickHandler(): ?string
@@ -363,7 +375,7 @@ class Action extends ViewComponent implements Arrayable
             return null;
         }
 
-        return $this->getJavaScriptClickHandler();
+        return $this->getJsClickHandler();
     }
 
     public function livewireTarget(?string $target): static
@@ -383,7 +395,7 @@ class Action extends ViewComponent implements Arrayable
             return null;
         }
 
-        return $this->getJavaScriptClickHandler();
+        return $this->getJsClickHandler();
     }
 
     /**
@@ -401,7 +413,15 @@ class Action extends ViewComponent implements Arrayable
         return 'callMountedAction';
     }
 
+    /**
+     * @deprecated Use `getJsClickHandler()` instead.
+     */
     protected function getJavaScriptClickHandler(): ?string
+    {
+        return $this->getJsClickHandler();
+    }
+
+    protected function getJsClickHandler(): ?string
     {
         if ($this->shouldClose()) {
             return null;
@@ -455,18 +475,19 @@ class Action extends ViewComponent implements Arrayable
     {
         return match ($parameterName) {
             'arguments' => [$this->getArguments()],
-            'component', 'schemaComponent' => [$this->getSchemaComponent()],
-            'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
-            'data' => [$this->getFormData()],
-            'get' => [$this->getSchemaComponent()->makeGetUtility()],
+            'data' => [$this->getData()],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel() ?? $this->getSchemaContainer()?->getModel() ?? $this->getSchemaComponent()?->getModel()],
             'mountedActions' => [$this->getLivewire()->getMountedActions()],
             'record' => [$this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
-            'records', 'selectedRecords' => [$this->getSelectedRecords()],
+            'selectedRecords', 'records' => [$this->getIndividuallyAuthorizedSelectedRecords()],
+            'selectedRecordsQuery', 'recordsQuery' => [$this->getSelectedRecordsQuery()],
             'schema' => [$this->getSchemaContainer()],
-            'set' => [$this->getSchemaComponent()->makeSetUtility()],
-            'state' => [$this->getSchemaComponent()->getState()],
+            'schemaComponent', 'component' => [$this->getSchemaComponent()],
+            'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
+            'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()],
+            'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()],
+            'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
@@ -480,7 +501,8 @@ class Action extends ViewComponent implements Arrayable
         $record = $this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord();
 
         return match ($parameterType) {
-            EloquentCollection::class, Collection::class => [$this->getSelectedRecords()],
+            Builder::class => [$this->getSelectedRecordsQuery()],
+            EloquentCollection::class, Collection::class => [$this->getIndividuallyAuthorizedSelectedRecords()],
             Model::class, ($record instanceof Model) ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
@@ -540,17 +562,29 @@ class Action extends ViewComponent implements Arrayable
 
     public function success(): void
     {
-        $this->sendSuccessNotification();
-        $this->dispatchSuccessRedirect();
+        $this->status = ActionStatus::Success;
     }
 
-    /**
-     * @param  array<string>  $messages
-     */
-    public function failure(int $successCount = 0, int $totalCount = 0, int $missingMessageCount = 0, array $messages = []): void
+    public function failure(): void
     {
-        $this->sendFailureNotification($successCount, $totalCount, $missingMessageCount, $messages);
-        $this->dispatchFailureRedirect();
+        $this->status = ActionStatus::Failure;
+    }
+
+    public function getStatus(): ActionStatus
+    {
+        if ($this->status) {
+            return $this->status;
+        }
+
+        if (! $this->canAccessSelectedRecords()) {
+            return ActionStatus::Success;
+        }
+
+        if ($this->successfulSelectedRecordsCount === $this->totalSelectedRecordsCount) {
+            return ActionStatus::Success;
+        }
+
+        return ActionStatus::Failure;
     }
 
     public function bulk(bool | Closure $condition = true): static
@@ -611,6 +645,10 @@ class Action extends ViewComponent implements Arrayable
 
     public function toHtml(): string
     {
+        if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
+            return $this->toEmbeddedHtml();
+        }
+
         return match ($this->getView()) {
             static::BADGE_VIEW => $this->toBadgeHtml(),
             static::BUTTON_VIEW => $this->toButtonHtml(),

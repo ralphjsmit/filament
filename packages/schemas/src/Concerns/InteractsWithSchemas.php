@@ -37,7 +37,7 @@ trait InteractsWithSchemas
      * @var array<string>
      */
     #[Locked]
-    public array $discoveredSchemaKeys = [];
+    public array $discoveredSchemaNames = [];
 
     /**
      * @var array<string, ?Schema>
@@ -45,6 +45,8 @@ trait InteractsWithSchemas
     protected array $cachedSchemas = [];
 
     protected bool $isCachingSchemas = false;
+
+    protected ?Schema $currentlyValidatingSchema = null;
 
     public function isCachingSchemas(): bool
     {
@@ -122,8 +124,8 @@ trait InteractsWithSchemas
 
     public function updatedInteractsWithSchemas(string $statePath): void
     {
-        foreach ($this->getCachedSchemas() as $form) {
-            $form->callAfterStateUpdated($statePath);
+        foreach ($this->getCachedSchemas() as $schema) {
+            $schema->callAfterStateUpdated($statePath);
         }
     }
 
@@ -133,9 +135,9 @@ trait InteractsWithSchemas
             return null;
         }
 
-        $schemaKey = (string) str($key)->before('.');
+        $schemaName = (string) str($key)->before('.');
 
-        $schema = $this->getSchema($schemaKey);
+        $schema = $this->getSchema($schemaName);
 
         return $schema?->getComponent($key, withHidden: $withHidden, isAbsoluteKey: true, skipComponentChildContainersWhileSearching: $skipComponentChildContainersWhileSearching);
     }
@@ -194,12 +196,12 @@ trait InteractsWithSchemas
                     return null;
                 }
 
-                if (! in_array($name, $this->discoveredSchemaKeys)) {
-                    $this->discoveredSchemaKeys[] = $name;
+                if (! in_array($name, $this->discoveredSchemaNames)) {
+                    $this->discoveredSchemaNames[] = $name;
                 }
 
                 if (method_exists($this, 'default' . ucfirst($name))) {
-                    $schema = $this->{'default' . ucfirst($name)}($schema);
+                    $this->{'default' . ucfirst($name)}($schema);
                 }
 
                 return $this->cachedSchemas[$name] = ($this->{$methodName}())->key($name);
@@ -233,8 +235,8 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            if (! in_array($name, $this->discoveredSchemaKeys)) {
-                $this->discoveredSchemaKeys[] = $name;
+            if (! in_array($name, $this->discoveredSchemaNames)) {
+                $this->discoveredSchemaNames[] = $name;
             }
 
             $schema = $this->makeSchema();
@@ -274,12 +276,12 @@ trait InteractsWithSchemas
     public function getCachedSchemas(): array
     {
         if (! $this->isCachingSchemas) {
-            foreach ($this->discoveredSchemaKeys as $schemaKey) {
-                if (array_key_exists($schemaKey, $this->cachedSchemas)) {
+            foreach ($this->discoveredSchemaNames as $schemaName) {
+                if (array_key_exists($schemaName, $this->cachedSchemas)) {
                     continue;
                 }
 
-                $this->cacheSchema($schemaKey);
+                $this->cacheSchema($schemaName);
             }
         }
 
@@ -334,8 +336,12 @@ trait InteractsWithSchemas
      */
     protected function prepareForValidation($attributes): array
     {
-        foreach ($this->getCachedSchemas() as $form) {
-            $attributes = $form->mutateStateForValidation($attributes);
+        if ($this->currentlyValidatingSchema) {
+            $attributes = $this->currentlyValidatingSchema->mutateStateForValidation($attributes);
+        } else {
+            foreach ($this->getCachedSchemas() as $schema) {
+                $attributes = $schema->mutateStateForValidation($attributes);
+            }
         }
 
         return $attributes;
@@ -348,10 +354,10 @@ trait InteractsWithSchemas
     {
         $rules = parent::getRules();
 
-        foreach ($this->getCachedSchemas() as $form) {
+        foreach ($this->getCachedSchemas() as $schema) {
             $rules = [
                 ...$rules,
-                ...$form->getValidationRules(),
+                ...$schema->getValidationRules(),
             ];
         }
 
@@ -365,10 +371,10 @@ trait InteractsWithSchemas
     {
         $attributes = parent::getValidationAttributes();
 
-        foreach ($this->getCachedSchemas() as $form) {
+        foreach ($this->getCachedSchemas() as $schema) {
             $attributes = [
                 ...$attributes,
-                ...$form->getValidationAttributes(),
+                ...$schema->getValidationAttributes(),
             ];
         }
 
@@ -378,7 +384,7 @@ trait InteractsWithSchemas
     /**
      * @param  array<mixed>  $state
      */
-    public function fillFormDataForTesting(array $state = []): void
+    public function fillFormDataForTesting(array $state = [], ?string $schemaStatePath = null): void
     {
         if (! app()->runningUnitTests()) {
             return;
@@ -392,12 +398,12 @@ trait InteractsWithSchemas
             $this->updatedInteractsWithSchemas($statePath);
         }
 
-        foreach ($state as $statePath => $value) {
+        foreach (Arr::undot($state) as $statePath => $value) {
             if (! is_array($value)) {
                 continue;
             }
 
-            $this->unsetMissingNumericArrayKeys($this->{$statePath}, $value);
+            $this->unsetMissingNumericArrayKeys($this->{$statePath}, $value, $statePath, $schemaStatePath);
         }
     }
 
@@ -405,18 +411,34 @@ trait InteractsWithSchemas
      * @param  array<mixed>  $target
      * @param  array<mixed>  $state
      */
-    protected function unsetMissingNumericArrayKeys(array &$target, array $state): void
+    protected function unsetMissingNumericArrayKeys(array &$target, array $state, string $currentStatePath, ?string $schemaStatePath = null): void
     {
         foreach ($target as $key => $value) {
-            if (is_numeric($key) && (! array_key_exists($key, $state))) {
+            $currentStatePath .= ".{$key}";
+
+            if (
+                is_numeric($key) &&
+                (! array_key_exists($key, $state)) &&
+                str($currentStatePath)->startsWith($schemaStatePath)
+            ) {
                 unset($target[$key]);
 
                 continue;
             }
 
             if (is_array($value) && is_array($state[$key] ?? null)) {
-                $this->unsetMissingNumericArrayKeys($target[$key], $state[$key]);
+                $this->unsetMissingNumericArrayKeys($target[$key], $state[$key], $currentStatePath, $schemaStatePath);
             }
         }
+    }
+
+    public function currentlyValidatingSchema(?Schema $schema): void
+    {
+        $this->currentlyValidatingSchema = $schema;
+    }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return array_key_first($this->getCachedSchemas());
     }
 }

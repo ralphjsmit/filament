@@ -1,14 +1,16 @@
 ---
 title: Color column
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
-The color column allows you to show the color preview from a CSS color definition, typically entered using the color picker field, in one of the supported formats (HEX, HSL, RGB, RGBA).
+The color column allows you to show the color preview from a CSS color definition, typically entered using the [color picker field](../../forms/color-picker), in one of the supported formats (HEX, HSL, RGB, RGBA).
 
 ```php
-use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Components\ColorColumn;
 
 ColorColumn::make('color')
 ```
@@ -20,38 +22,26 @@ ColorColumn::make('color')
 You may make the color copyable, such that clicking on the preview copies the CSS value to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
 
 ```php
-use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Components\ColorColumn;
 
 ColorColumn::make('color')
     ->copyable()
-    ->copyMessage('Color code copied')
+    ->copyMessage('Copied!')
     ->copyMessageDuration(1500)
 ```
 
 <AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" version="4.x" />
 
-### Customizing the text that is copied to the clipboard
-
-You can customize the text that gets copied to the clipboard using the `copyableState()` method:
+Optionally, you may pass a boolean value to control if the text should be copyable or not:
 
 ```php
-use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Components\ColorColumn;
 
 ColorColumn::make('color')
-    ->copyable()
-    ->copyableState(fn (string $state): string => "Color: {$state}")
+    ->copyable(FeatureFlag::active())
 ```
 
-In this function, you can access the whole table row with `$record`:
-
-```php
-use App\Models\Post;
-use Filament\Tables\Columns\ColorColumn;
-
-ColorColumn::make('color')
-    ->copyable()
-    ->copyableState(fn (Post $record): string => "Color: {$record->color}")
-```
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Wrapping multiple color blocks
 
@@ -64,5 +54,6 @@ ColorColumn::make('color')
     ->wrap()
 ```
 
-Note: the "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
-
+<Aside variant="tip">
+    The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
+</Aside>

@@ -7,6 +7,7 @@ use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanOpenUrl;
 use Filament\Schemas\Components\Concerns\HasDescription;
+use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Contracts\Support\Htmlable;
@@ -16,6 +17,7 @@ class Stat extends Component
     use CanOpenUrl;
     use HasColor;
     use HasDescription;
+    use HasLabel;
 
     protected string $view = 'filament-widgets::stats-overview-widget.stat';
 
@@ -25,7 +27,7 @@ class Stat extends Component
     protected ?array $chart = null;
 
     /**
-     * @var string | array<int | string, string | int> | null
+     * @var string | array<string> | null
      */
     protected string | array | null $chartColor = null;
 
@@ -36,7 +38,7 @@ class Stat extends Component
     protected IconPosition | string | null $descriptionIconPosition = null;
 
     /**
-     * @var string | array<int | string, string | int> | null
+     * @var string | array<string> | null
      */
     protected string | array | null $descriptionColor = null;
 
@@ -63,7 +65,7 @@ class Stat extends Component
     }
 
     /**
-     * @param  string | array<int | string, string | int> | null  $color
+     * @param  string | array<string> | null  $color
      */
     public function chartColor(string | array | null $color): static
     {
@@ -80,7 +82,7 @@ class Stat extends Component
     }
 
     /**
-     * @param  string | array<int | string, string | int> | null  $color
+     * @param  string | array<string> | null  $color
      */
     public function descriptionColor(string | array | null $color): static
     {
@@ -126,7 +128,7 @@ class Stat extends Component
     }
 
     /**
-     * @return string | array<int | string, string | int> | null
+     * @return string | array<string> | null
      */
     public function getChartColor(): string | array | null
     {
@@ -139,7 +141,7 @@ class Stat extends Component
     }
 
     /**
-     * @return string | array<int | string, string | int> | null
+     * @return string | array<string> | null
      */
     public function getDescriptionColor(): string | array | null
     {

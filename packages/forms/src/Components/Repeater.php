@@ -5,11 +5,13 @@ namespace Filament\Forms\Components;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater\StateCasts\RepeaterStateCast;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
-use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
@@ -27,7 +29,7 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Repeater extends Field implements CanConcealComponents, HasExtraItemActions
+class Repeater extends Field implements HasExtraItemActions
 {
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
@@ -50,8 +52,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     protected bool | Closure $isReorderableWithDragAndDrop = true;
 
     protected bool | Closure $isReorderableWithButtons = false;
-
-    protected bool | Closure $isInset = false;
 
     protected ?Collection $cachedExistingRecords = null;
 
@@ -100,13 +100,16 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
      */
     protected ?array $hydratedDefaultState = null;
 
-    protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
-
     protected string | Closure | null $labelBetweenItems = null;
 
     protected bool | Closure $isItemLabelTruncated = true;
 
     protected ?Field $cachedSimpleField = null;
+
+    /**
+     * @var array<TableColumn> | Closure | null
+     */
+    protected array | Closure | null $tableColumns = null;
 
     protected function setUp(): void
     {
@@ -114,35 +117,12 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
         $this->defaultItems(1);
 
-        $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
-            if (
-                is_array($component->hydratedDefaultState) &&
-                $component->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated
-            ) {
-                $component->mergeHydratedDefaultStateWithItemsState();
-            }
-
-            if (is_array($component->hydratedDefaultState)) {
+        $this->afterStateHydrated(function (Repeater $component): void {
+            if (! is_array($component->hydratedDefaultState)) {
                 return;
             }
 
-            $items = [];
-
-            $simpleField = $component->getSimpleField();
-
-            foreach ($state ?? [] as $itemData) {
-                if ($simpleField) {
-                    $itemData = [$simpleField->getName() => $itemData];
-                }
-
-                if ($uuid = $component->generateUuid()) {
-                    $items[$uuid] = $itemData;
-                } else {
-                    $items[] = $itemData;
-                }
-            }
-
-            $component->state($items);
+            $component->mergeHydratedDefaultStateWithItemsState();
         });
 
         $this->registerActions([
@@ -158,17 +138,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             fn (Repeater $component): Action => $component->getMoveUpAction(),
             fn (Repeater $component): Action => $component->getReorderAction(),
         ]);
-
-        $this->mutateDehydratedStateUsing(static function (Repeater $component, ?array $state): array {
-            if ($simpleField = $component->getSimpleField()) {
-                return collect($state ?? [])
-                    ->values()
-                    ->pluck($simpleField->getName())
-                    ->all();
-            }
-
-            return array_values($state ?? []);
-        });
     }
 
     public function getAddAction(): Action
@@ -179,7 +148,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             ->action(function (Repeater $component): void {
                 $newUuid = $component->generateUuid();
 
-                $items = $component->getState();
+                $items = $component->getRawState();
 
                 if ($newUuid) {
                     $items[$newUuid] = [];
@@ -187,7 +156,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                     $items[] = [];
                 }
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->getChildSchema($newUuid ?? array_key_last($items))->fill();
 
@@ -250,7 +219,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $items = [];
 
-                foreach ($component->getState() ?? [] as $key => $item) {
+                foreach ($component->getRawState() ?? [] as $key => $item) {
                     $items[$key] = $item;
 
                     if ($key === $arguments['afterItem']) {
@@ -264,7 +233,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                     }
                 }
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->getChildSchema($newKey)->fill();
 
@@ -320,7 +289,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             ->action(function (array $arguments, Repeater $component): void {
                 $newUuid = $component->generateUuid();
 
-                $items = $component->getState();
+                $items = $component->getRawState();
 
                 if ($newUuid) {
                     $items[$newUuid] = $items[$arguments['item']];
@@ -328,7 +297,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                     $items[] = $items[$arguments['item']];
                 }
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -368,10 +337,10 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             ->icon(FilamentIcon::resolve('forms::components.repeater.actions.delete') ?? Heroicon::Trash)
             ->color('danger')
             ->action(function (array $arguments, Repeater $component): void {
-                $items = $component->getState();
+                $items = $component->getRawState();
                 unset($items[$arguments['item']]);
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->callAfterStateUpdated();
 
@@ -409,9 +378,9 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             ->icon(FilamentIcon::resolve('forms::components.repeater.actions.move-down') ?? Heroicon::ArrowDown)
             ->color('gray')
             ->action(function (array $arguments, Repeater $component): void {
-                $items = array_move_after($component->getState(), $arguments['item']);
+                $items = array_move_after($component->getRawState(), $arguments['item']);
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->callAfterStateUpdated();
 
@@ -449,9 +418,9 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             ->icon(FilamentIcon::resolve('forms::components.repeater.actions.move-up') ?? Heroicon::ArrowUp)
             ->color('gray')
             ->action(function (array $arguments, Repeater $component): void {
-                $items = array_move_before($component->getState(), $arguments['item']);
+                $items = array_move_before($component->getRawState(), $arguments['item']);
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->callAfterStateUpdated();
 
@@ -491,10 +460,10 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             ->action(function (array $arguments, Repeater $component): void {
                 $items = [
                     ...array_flip($arguments['items']),
-                    ...$component->getState(),
+                    ...$component->getRawState(),
                 ];
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->callAfterStateUpdated();
 
@@ -691,38 +660,14 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             return array_fill(0, $count, $component->isSimple() ? null : []);
         });
 
-        $this->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = false;
-
         return $this;
     }
 
     public function default(mixed $state): static
     {
         parent::default(function (Repeater $component) use ($state) {
-            $state = $component->evaluate($state);
-
-            $simpleField = $component->getSimpleField();
-
-            $items = [];
-
-            foreach ($state ?? [] as $itemData) {
-                if ($simpleField) {
-                    $itemData = [$simpleField->getName() => $itemData];
-                }
-
-                if ($uuid = $component->generateUuid()) {
-                    $items[$uuid] = $itemData;
-                } else {
-                    $items[] = $itemData;
-                }
-            }
-
-            $component->hydratedDefaultState = $items;
-
-            return $items;
+            return $component->hydratedDefaultState = $component->evaluate($state);
         });
-
-        $this->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
 
         return $this;
     }
@@ -811,7 +756,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
         $items = [];
 
-        foreach ($this->getState() ?? [] as $itemKey => $itemData) {
+        foreach ($this->getRawState() ?? [] as $itemKey => $itemData) {
             $items[$itemKey] = $this
                 ->getChildSchema()
                 ->statePath($itemKey)
@@ -901,14 +846,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
-
-        $this->afterStateHydrated(function (Repeater $component): void {
-            if (! is_array($component->hydratedDefaultState)) {
-                return;
-            }
-
-            $component->mergeHydratedDefaultStateWithItemsState();
-        });
 
         $this->loadStateFromRelationshipsUsing(static function (Repeater $component): void {
             $component->clearCachedExistingRecords();
@@ -1008,17 +945,21 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
      */
     protected function mergeHydratedDefaultStateWithItemsState(): void
     {
-        $state = $this->getState();
+        $state = $this->getRawState();
         $items = $this->hydratedDefaultState;
 
+        $simpleFieldName = $this->getSimpleField()?->getName();
+
         foreach ($items as $itemKey => $itemData) {
-            $items[$itemKey] = [
+            $items[$itemKey] = blank($simpleFieldName) ? [
                 ...$state[$itemKey] ?? [],
                 ...$itemData,
+            ] : [
+                $simpleFieldName => $itemData,
             ];
         }
 
-        $this->state($items);
+        $this->rawState($items);
     }
 
     public function itemLabel(string | Closure | null $label): static
@@ -1146,15 +1087,17 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         );
     }
 
-    public function getItemLabel(string $uuid): string | Htmlable | null
+    public function getItemLabel(string $key): string | Htmlable | null
     {
-        $container = $this->getChildSchema($uuid);
+        $container = $this->getChildSchema($key);
 
         return $this->evaluate($this->itemLabel, [
             'container' => $container,
             'item' => $container,
+            'key' => $key,
+            'schema' => $container,
             'state' => $container->getRawState(),
-            'uuid' => $uuid,
+            'uuid' => $key,
         ]);
     }
 
@@ -1174,6 +1117,29 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function isSimple(): bool
     {
         return $this->simpleField !== null;
+    }
+
+    /**
+     * @param  array<TableColumn> | Closure | null  $columns
+     */
+    public function table(array | Closure | null $columns): static
+    {
+        $this->tableColumns = $columns;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<TableColumn>
+     */
+    public function getTableColumns(): ?array
+    {
+        return $this->evaluate($this->tableColumns);
+    }
+
+    public function isTable(): bool
+    {
+        return filled($this->getTableColumns());
     }
 
     public function getSimpleField(): ?Field
@@ -1273,16 +1239,15 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $data;
     }
 
-    public function canConcealComponents(): bool
-    {
-        return $this->isCollapsible();
-    }
-
     /**
      * @return view-string
      */
     public function getDefaultView(): string
     {
+        if ($this->isTable()) {
+            return 'filament-forms::components.repeater.table';
+        }
+
         if ($this->isSimple()) {
             return 'filament-forms::components.repeater.simple';
         }
@@ -1303,17 +1268,17 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @return array<string, mixed>
      */
-    public function getItemState(string $uuid): array
+    public function getItemState(string $key): array
     {
-        return $this->getChildSchema($uuid)->getState(shouldCallHooksBefore: false);
+        return $this->getChildSchema($key)->getState(shouldCallHooksBefore: false);
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function getRawItemState(string $uuid): array
+    public function getRawItemState(string $key): array
     {
-        return $this->getChildSchema($uuid)->getRawState();
+        return $this->getChildSchema($key)->getRawState();
     }
 
     public function getHeadingsCount(): int
@@ -1323,5 +1288,16 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         }
 
         return 1;
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        return [
+            ...parent::getDefaultStateCasts(),
+            app(RepeaterStateCast::class, ['repeater' => $this]),
+        ];
     }
 }

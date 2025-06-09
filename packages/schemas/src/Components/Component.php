@@ -4,7 +4,6 @@ namespace Filament\Schemas\Components;
 
 use Filament\Schemas\Components\Concerns\BelongsToContainer;
 use Filament\Schemas\Components\Concerns\BelongsToModel;
-use Filament\Schemas\Components\Concerns\CanBeConcealed;
 use Filament\Schemas\Components\Concerns\CanBeDisabled;
 use Filament\Schemas\Components\Concerns\CanBeGridContainer;
 use Filament\Schemas\Components\Concerns\CanBeHidden;
@@ -21,7 +20,6 @@ use Filament\Schemas\Components\Concerns\HasHeadings;
 use Filament\Schemas\Components\Concerns\HasId;
 use Filament\Schemas\Components\Concerns\HasInlineLabel;
 use Filament\Schemas\Components\Concerns\HasKey;
-use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Concerns\HasMaxWidth;
 use Filament\Schemas\Components\Concerns\HasMeta;
 use Filament\Schemas\Components\Concerns\HasState;
@@ -42,7 +40,6 @@ class Component extends ViewComponent
 {
     use BelongsToContainer;
     use BelongsToModel;
-    use CanBeConcealed;
     use CanBeDisabled;
     use CanBeGridContainer;
     use CanBeHidden;
@@ -64,7 +61,6 @@ class Component extends ViewComponent
     use HasId;
     use HasInlineLabel;
     use HasKey;
-    use HasLabel;
     use HasMaxWidth;
     use HasMeta;
     use HasState;
@@ -99,7 +95,7 @@ class Component extends ViewComponent
     {
         $record = $this->getRecord();
 
-        if (! $record) {
+        if ((! $record) || is_array($record)) {
             return match ($parameterType) {
                 Get::class => [$this->makeGetUtility()],
                 Set::class => [$this->makeSetUtility()],
@@ -140,5 +136,17 @@ class Component extends ViewComponent
         } catch (RootTagMissingFromViewException) {
             return $html;
         }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtraViewData(): array
+    {
+        return [
+            'get' => $this->makeGetUtility(),
+            'operation' => $this->getContainer()->getOperation(),
+            'record' => $this->getRecord(),
+        ];
     }
 }

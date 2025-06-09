@@ -33,6 +33,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected bool | Closure $isOpenable = false;
 
+    protected bool | Closure $isPasteable = true;
+
     protected bool | Closure $isPreviewable = true;
 
     protected bool | Closure $isReorderable = false;
@@ -63,7 +65,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected string | Closure | null $fileNamesStatePath = null;
 
-    protected string | Closure $visibility = 'public';
+    protected string | Closure $visibility = 'private';
 
     protected ?Closure $deleteUploadedFileUsing = null;
 
@@ -103,7 +105,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         $this->beforeStateDehydrated(static function (BaseFileUpload $component): void {
             $component->saveUploadedFiles();
-        });
+        }, shouldUpdateValidatedStateAfter: true);
 
         $this->getUploadedFileUsing(static function (BaseFileUpload $component, string $file, string | array | null $storedFileNames): ?array {
             /** @var FilesystemAdapter $storage */
@@ -127,7 +129,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 try {
                     $url = $storage->temporaryUrl(
                         $file,
-                        now()->addMinutes(5),
+                        now()->addMinutes(30)->endOfHour(),
                     );
                 } catch (Throwable $exception) {
                     // This driver does not support creating temporary URLs.
@@ -232,6 +234,13 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function reorderable(bool | Closure $condition = true): static
     {
         $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    public function pasteable(bool | Closure $condition = true): static
+    {
+        $this->isPasteable = $condition;
 
         return $this;
     }
@@ -442,6 +451,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return (bool) $this->evaluate($this->isOpenable);
     }
 
+    public function isPasteable(): bool
+    {
+        return (bool) $this->evaluate($this->isPasteable);
+    }
+
     public function isPreviewable(): bool
     {
         return (bool) $this->evaluate($this->isPreviewable);
@@ -478,7 +492,28 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->diskName) ?? config('filament.default_filesystem_disk');
+        $name = $this->getCustomDiskName();
+
+        if (filled($name)) {
+            return $name;
+        }
+
+        $name = config('filament.default_filesystem_disk');
+
+        if ($name !== 'public') {
+            return $name;
+        }
+
+        if ($this->getVisibility() !== 'private') {
+            return $name;
+        }
+
+        return 'local';
+    }
+
+    public function getCustomDiskName(): ?string
+    {
+        return $this->evaluate($this->diskName);
     }
 
     public function getMaxFiles(): ?int
@@ -508,7 +543,17 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     public function getVisibility(): string
     {
-        return $this->evaluate($this->visibility);
+        $visibility = $this->evaluate($this->visibility);
+
+        if ($visibility !== 'private') {
+            return $visibility;
+        }
+
+        if ($this->getCustomDiskName() !== 'public') {
+            return $visibility;
+        }
+
+        return 'public';
     }
 
     public function shouldPreserveFilenames(): bool
@@ -821,9 +866,9 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     /**
      * @return array<string, string>
      */
-    public function getStateToDehydrate(): array
+    public function getStateToDehydrate(mixed $state): array
     {
-        $state = parent::getStateToDehydrate();
+        $state = parent::getStateToDehydrate($state);
 
         if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
             $state = [

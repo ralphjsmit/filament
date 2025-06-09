@@ -50,4 +50,6 @@ interface HasActions
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response;
 
     public function getDefaultActionIndividualRecordAuthorizationResponseResolver(Action $action): ?Closure;
+
+    public function getMountedActionSchemaName(): ?string;
 }

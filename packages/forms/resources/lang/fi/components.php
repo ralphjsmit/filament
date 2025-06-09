@@ -111,7 +111,7 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Poista valinta kaikista',
+                'label' => 'Poista valinnat',
             ],
 
             'select_all' => [
@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Liitä tiedostoja',
             'blockquote' => 'Lainaus',
             'bold' => 'Lihavointi',
@@ -382,7 +382,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Liitä tiedostoja',
             'blockquote' => 'Lainaus',
             'bold' => 'Lihavointi',
@@ -408,6 +408,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'Uusi',
+
                 'modal' => [
 
                     'heading' => 'Uusi',
@@ -429,6 +431,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Muokkaa',
 
                 'modal' => [
 
@@ -455,7 +459,7 @@ return [
 
         'loading_message' => 'Ladataan...',
 
-        'max_items_message' => 'Vain :count voi valita.',
+        'max_items_message' => 'Voit valita enintään :count.',
 
         'no_search_results_message' => 'Haku ei löytänyt tuloksia.',
 

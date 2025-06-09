@@ -10,11 +10,11 @@ use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use ReflectionClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
+use function Filament\Support\discover_app_classes;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\suggest;
@@ -180,10 +180,7 @@ class MakeLivewireFormCommand extends Command
             return;
         }
 
-        $modelFqns = collect(get_declared_classes())
-            ->filter(fn (string $class): bool => is_subclass_of($class, Model::class) &&
-                (! str((new ReflectionClass($class))->getFileName())->startsWith(base_path('vendor'))))
-            ->all();
+        $modelFqns = discover_app_classes(parentClass: Model::class);
 
         $this->modelFqn = suggest(
             label: 'What is the model?',
@@ -229,7 +226,7 @@ class MakeLivewireFormCommand extends Command
         }
 
         $this->isGenerated = $this->option('generate') || confirm(
-            label: 'Would you like to generate the form fields based on the attributes of the model?',
+            label: 'Should the form fields be generated from the current database columns?',
             default: false,
         );
     }

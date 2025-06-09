@@ -20,6 +20,7 @@ use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\View\Components\BadgeComponent;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -307,7 +308,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                     ], escape: false)
                     ->class([
                         'fi-in-text-item',
-                        'fi-in-text-item-prose' => $isProse || $isMarkdown,
+                        'fi-prose' => $isProse || $isMarkdown,
                         (($fontFamily = $this->getFontFamily($stateItem)) instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : (is_string($fontFamily) ? $fontFamily : ''),
                         'fi-copyable' => $isCopyable,
                     ])
@@ -453,24 +454,24 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 <?php if ($stateOverListLimitCount) { ?>
                     <p class="fi-in-text-list-limited-message">
                         <?php if ($isLimitedListExpandable) { ?>
-                            <button
-                                type="button"
-                                x-on:click.prevent="isLimited = false"
+                            <div
+                                role="button"
+                                x-on:click.prevent.stop="isLimited = false"
                                 x-show="isLimited"
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-infolists::components.entries.text.actions.expand_list', $stateOverListLimitCount) ?>
-                            </button>
+                            </div>
 
-                            <button
-                                type="button"
-                                x-on:click.prevent="isLimited = true"
+                            <div
+                                role="button"
+                                x-on:click.prevent.stop="isLimited = true"
                                 x-cloak
                                 x-show="! isLimited"
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-infolists::components.entries.text.actions.collapse_list', $stateOverListLimitCount) ?>
-                            </button>
+                            </div>
                         <?php } else { ?>
                             <?= trans_choice('filament-infolists::components.entries.text.more_list_items', $stateOverListLimitCount) ?>
                         <?php } ?>
@@ -526,5 +527,109 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
     public function canWrapByDefault(): bool
     {
         return true;
+    }
+
+    /**
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
+     */
+    public function avg(string | array | Closure | null $relationship, string | Closure | null $column): static
+    {
+        $this->state(function (TextEntry $entry, ?Model $record) use ($relationship, $column): int | float | null {
+            if (blank($record)) {
+                return null;
+            }
+
+            $record->loadAvg(
+                $entry->evaluate($relationship),
+                $entry->evaluate($column),
+            );
+
+            return $record->getAttributeValue($entry->getName());
+        });
+
+        return $this;
+    }
+
+    /**
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationships
+     */
+    public function counts(string | array | Closure | null $relationships): static
+    {
+        $this->state(function (TextEntry $entry, ?Model $record) use ($relationships): int | float | null {
+            if (blank($record)) {
+                return null;
+            }
+
+            $record->loadCount(
+                $entry->evaluate($relationships),
+            );
+
+            return $record->getAttributeValue($entry->getName());
+        });
+
+        return $this;
+    }
+
+    /**
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
+     */
+    public function max(string | array | Closure | null $relationship, string | Closure | null $column): static
+    {
+        $this->state(function (TextEntry $entry, ?Model $record) use ($relationship, $column): int | float | null {
+            if (blank($record)) {
+                return null;
+            }
+
+            $record->loadMax(
+                $entry->evaluate($relationship),
+                $entry->evaluate($column),
+            );
+
+            return $record->getAttributeValue($entry->getName());
+        });
+
+        return $this;
+    }
+
+    /**
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
+     */
+    public function min(string | array | Closure | null $relationship, string | Closure | null $column): static
+    {
+        $this->state(function (TextEntry $entry, ?Model $record) use ($relationship, $column): int | float | null {
+            if (blank($record)) {
+                return null;
+            }
+
+            $record->loadMin(
+                $entry->evaluate($relationship),
+                $entry->evaluate($column),
+            );
+
+            return $record->getAttributeValue($entry->getName());
+        });
+
+        return $this;
+    }
+
+    /**
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
+     */
+    public function sum(string | array | Closure | null $relationship, string | Closure | null $column): static
+    {
+        $this->state(function (TextEntry $entry, ?Model $record) use ($relationship, $column): int | float | null {
+            if (blank($record)) {
+                return null;
+            }
+
+            $record->loadSum(
+                $entry->evaluate($relationship),
+                $entry->evaluate($column),
+            );
+
+            return $record->getAttributeValue($entry->getName());
+        });
+
+        return $this;
     }
 }

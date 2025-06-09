@@ -6,9 +6,13 @@ use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
+use Throwable;
 
 class DissociateBulkAction extends BulkAction
 {
@@ -31,7 +35,7 @@ class DissociateBulkAction extends BulkAction
 
         $this->successNotificationTitle(__('filament-actions::dissociate.multiple.notifications.dissociated.title'));
 
-        $this->color('danger');
+        $this->defaultColor('danger');
 
         $this->icon(FilamentIcon::resolve('actions::dissociate-action') ?? Heroicon::XMark);
 
@@ -40,17 +44,49 @@ class DissociateBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::dissociate-action.modal') ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
-            $this->process(function (Collection $records, Table $table): void {
-                $records->each(function (Model $record) use ($table): void {
-                    /** @var BelongsTo $inverseRelationship */
-                    $inverseRelationship = $table->getInverseRelationshipFor($record);
+            $this->process(function (DissociateBulkAction $action, EloquentCollection | Collection | LazyCollection $records, Table $table): void {
+                if (! $action->shouldFetchSelectedRecords()) {
+                    /** @var HasMany $relationship */
+                    $relationship = $table->getRelationship();
 
-                    $inverseRelationship->dissociate();
-                    $record->save();
+                    try {
+                        $action->reportBulkProcessingSuccessfulRecordsCount(
+                            $action->getSelectedRecordsQuery()->update([
+                                $relationship->getQualifiedForeignKeyName() => null,
+                            ]),
+                        );
+                    } catch (Throwable $exception) {
+                        $action->reportCompleteBulkProcessingFailure();
+
+                        report($exception);
+                    }
+
+                    return;
+                }
+
+                $isFirstException = true;
+
+                $records->each(function (Model $record) use ($action, &$isFirstException, $table): void {
+                    try {
+                        /** @var BelongsTo $inverseRelationship */
+                        $inverseRelationship = $table->getInverseRelationshipFor($record);
+
+                        $inverseRelationship->dissociate();
+                        $record->save();
+                    } catch (Throwable $exception) {
+                        $action->reportBulkProcessingFailure();
+
+                        if ($isFirstException) {
+                            // Only report the first exception so as to not flood error logs. Even
+                            // if Filament did not catch exceptions like this, only the first
+                            // would be reported as the rest of the process would be halted.
+                            report($exception);
+
+                            $isFirstException = false;
+                        }
+                    }
                 });
             });
-
-            $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();

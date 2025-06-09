@@ -78,7 +78,7 @@
 
     & .choices__list--dropdown,
     & .choices__list[aria-expanded] {
-        @apply absolute top-full z-10 mt-2 hidden w-full overflow-hidden rounded-lg bg-white text-sm break-words ring-1 shadow-lg ring-gray-950/5 will-change-[visibility] dark:bg-gray-900 dark:ring-white/10;
+        @apply absolute top-full z-10 mt-2 hidden w-full overflow-hidden rounded-lg bg-white text-sm break-words shadow-lg ring-1 ring-gray-950/5 will-change-[visibility] dark:bg-gray-900 dark:ring-white/10;
     }
 
     & .is-active.choices__list--dropdown,

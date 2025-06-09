@@ -7,9 +7,10 @@
 @endphp
 
 <x-filament::fieldset
+    :contained="$isContained"
     :label="$label"
     :label-hidden="$isLabelHidden"
-    :contained="$isContained"
+    :required="isset($isMarkedAsRequired) ? $isMarkedAsRequired() : false"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge([

@@ -4,6 +4,7 @@
 
     $activeTab = $getActiveTab();
     $isContained = $isContained();
+    $isVertical = $isVertical();
     $label = $getLabel();
     $livewireProperty = $getLivewireProperty();
     $renderHookScopes = $getRenderHookScopes();
@@ -25,7 +26,6 @@
             tabQueryStringKey: @js($getTabQueryStringKey()),
         })"
         wire:ignore.self
-        x-cloak
         {{
             $attributes
                 ->merge([
@@ -37,6 +37,7 @@
                 ->class([
                     'fi-sc-tabs',
                     'fi-contained' => $isContained,
+                    'fi-vertical' => $isVertical,
                 ])
         }}
     >
@@ -52,7 +53,12 @@
             x-ref="tabsData"
         />
 
-        <x-filament::tabs :contained="$isContained" :label="$label">
+        <x-filament::tabs
+            :contained="$isContained"
+            :label="$label"
+            :vertical="$isVertical"
+            x-cloak
+        >
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
             @endforeach
@@ -111,10 +117,15 @@
                 ->class([
                     'fi-sc-tabs',
                     'fi-contained' => $isContained,
+                    'fi-vertical' => $isVertical,
                 ])
         }}
     >
-        <x-filament::tabs :contained="$isContained" :label="$label">
+        <x-filament::tabs
+            :contained="$isContained"
+            :label="$label"
+            :vertical="$isVertical"
+        >
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
             @endforeach

@@ -9,9 +9,8 @@ use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
-use Filament\Schemas\SchemaServiceProvider;
+use Filament\Schemas\SchemasServiceProvider;
 use Filament\SpatieLaravelSettingsPluginServiceProvider;
-use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Tests\Fixtures\Models\Department;
@@ -20,11 +19,11 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Providers\AdminPanelProvider;
+use Filament\Tests\Fixtures\Providers\AppAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\CustomPanelProvider;
 use Filament\Tests\Fixtures\Providers\DomainTenancyPanelProvider;
-use Filament\Tests\Fixtures\Providers\EmailCodeAuthenticationPanelProvider;
+use Filament\Tests\Fixtures\Providers\EmailAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\Fixtures\Providers\SingleDomainPanel;
-use Filament\Tests\Fixtures\Providers\GoogleTwoFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\MultiDomainPanel;
 use Filament\Tests\Fixtures\Providers\RequiredMultiFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\SlugsPanelProvider;
@@ -55,16 +54,15 @@ abstract class TestCase extends BaseTestCase
             InfolistsServiceProvider::class,
             LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
-            SchemaServiceProvider::class,
+            SchemasServiceProvider::class,
             SpatieLaravelSettingsPluginServiceProvider::class,
-            SpatieLaravelTranslatablePluginServiceProvider::class,
             SupportServiceProvider::class,
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             AdminPanelProvider::class,
             CustomPanelProvider::class,
-            EmailCodeAuthenticationPanelProvider::class,
-            GoogleTwoFactorAuthenticationPanelProvider::class,
+            EmailAuthenticationPanelProvider::class,
+            AppAuthenticationPanelProvider::class,
             RequiredMultiFactorAuthenticationPanelProvider::class,
             DomainTenancyPanelProvider::class,
             MultiDomainPanel::class,

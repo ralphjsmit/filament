@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 trait BelongsToModel
 {
     /**
-     * @var Model|class-string<Model>|Closure|null
+     * @var Model | array<string, mixed> | class-string<Model> | Closure | null
      */
-    protected Model | string | Closure | null $model = null;
+    protected Model | array | string | Closure | null $model = null;
 
     protected ?Closure $loadStateFromRelationshipsUsing = null;
 
@@ -23,9 +23,9 @@ trait BelongsToModel
     protected bool | Closure $shouldSaveRelationshipsWhenHidden = false;
 
     /**
-     * @param  Model|class-string<Model>|Closure|null  $model
+     * @param  Model | array<string, mixed> | class-string<Model> | Closure | null  $model
      */
-    public function model(Model | string | Closure | null $model = null): static
+    public function model(Model | array | string | Closure | null $model = null): static
     {
         $this->model = $model;
 
@@ -78,7 +78,7 @@ trait BelongsToModel
         $this->evaluate($callback);
     }
 
-    public function loadStateFromRelationships(bool $andHydrate = false): void
+    public function loadStateFromRelationships(bool $shouldHydrate = false): void
     {
         $callback = $this->loadStateFromRelationshipsUsing;
 
@@ -92,7 +92,7 @@ trait BelongsToModel
 
         $this->evaluate($callback);
 
-        if ($andHydrate) {
+        if ($shouldHydrate) {
             $this->callAfterStateHydrated();
 
             foreach ($this->getChildSchemas() as $childSchema) {
@@ -159,6 +159,10 @@ trait BelongsToModel
             return $model::class;
         }
 
+        if (is_array($model)) {
+            return null;
+        }
+
         if (filled($model)) {
             return $model;
         }
@@ -166,15 +170,22 @@ trait BelongsToModel
         return $this->getContainer()->getModel();
     }
 
-    public function getRecord(): ?Model
+    /**
+     * @return Model | array<string, mixed> | null
+     */
+    public function getRecord(bool $withContainerRecord = true): Model | array | null
     {
         $model = $this->evaluate($this->model);
 
-        if ($model instanceof Model) {
+        if (($model instanceof Model) || is_array($model)) {
             return $model;
         }
 
         if (is_string($model)) {
+            return null;
+        }
+
+        if (! $withContainerRecord) {
             return null;
         }
 
@@ -185,7 +196,7 @@ trait BelongsToModel
     {
         $model = $this->evaluate($this->model);
 
-        if ($model === null) {
+        if (($model === null) || is_array($model)) {
             return $this->getContainer()->getModelInstance();
         }
 

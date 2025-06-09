@@ -15,7 +15,9 @@ use Symfony\Component\Console\Input\InputOption;
 
 use function Laravel\Prompts\confirm;
 
-#[AsCommand(name: 'filament:install')]
+#[AsCommand(name: 'filament:install', aliases: [
+    'install:filament',
+])]
 class InstallCommand extends Command
 {
     use CanGeneratePanels;
@@ -25,6 +27,13 @@ class InstallCommand extends Command
     protected $description = 'Install Filament';
 
     protected $name = 'filament:install';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'install:filament',
+    ];
 
     /**
      * @return array<InputOption>
@@ -97,8 +106,6 @@ class InstallCommand extends Command
             return;
         }
 
-        static::updateNpmPackages();
-
         $filesystem = app(Filesystem::class);
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 
@@ -107,7 +114,7 @@ class InstallCommand extends Command
         if (
             InstalledVersions::isInstalled('filament/notifications') &&
             ($this->option('notifications') || confirm(
-                label: 'Would you like to be able to send flash notifications using Filament? If so, we will install the notification Livewire component into the base layout file.',
+                label: 'Do you want to send flash notifications using Filament?',
                 default: true,
             ))
         ) {
@@ -140,42 +147,7 @@ class InstallCommand extends Command
 
         $this->components->info('Scaffolding installed successfully.');
 
-        $this->components->info('Please run `npm install && npm run dev` to compile your new assets.');
-    }
-
-    protected static function updateNpmPackages(bool $dev = true): void
-    {
-        if (! file_exists(base_path('package.json'))) {
-            return;
-        }
-
-        $configurationKey = $dev ? 'devDependencies' : 'dependencies';
-
-        $packages = json_decode(file_get_contents(base_path('package.json')), associative: true);
-
-        $packages[$configurationKey] = static::updateNpmPackageArray(
-            array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : []
-        );
-
-        ksort($packages[$configurationKey]);
-
-        file_put_contents(
-            base_path('package.json'),
-            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
-        );
-    }
-
-    /**
-     * @param  array<string, string>  $packages
-     * @return array<string, string>
-     */
-    protected static function updateNpmPackageArray(array $packages): array
-    {
-        return [
-            ...$packages,
-            '@tailwindcss/forms' => '^0.5.2',
-            '@tailwindcss/typography' => '^0.5.4',
-        ];
+        $this->components->info('Please run `npm run build` to compile your new assets.');
     }
 
     protected function installUpgradeCommand(): void

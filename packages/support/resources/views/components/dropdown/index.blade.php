@@ -32,7 +32,7 @@
     {{ $attributes->class(['fi-dropdown']) }}
 >
     <div
-        x-on:click="toggle"
+        x-on:mousedown="toggle"
         {{ $trigger->attributes->class(['fi-dropdown-trigger']) }}
     >
         {{ $trigger }}
@@ -51,7 +51,7 @@
             @endif
             @class([
                 'fi-dropdown-panel',
-                ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : 'fi-width-default'),
+                ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : ''),
                 'fi-scrollable' => $maxHeight || $size,
             ])
             @style([

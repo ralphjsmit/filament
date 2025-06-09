@@ -3,6 +3,7 @@
 namespace Filament\Support\Colors;
 
 use Closure;
+use Exception;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Support\View\Components\Contracts\HasColor;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
@@ -31,24 +32,29 @@ class ColorManager
     protected array $cachedColors;
 
     /**
-     * @var array<string,array<int | string>>
+     * @var array<class-string<HasColor>, array<string, array<string>>>
      */
-    protected array $overridingShades = [];
-
-    /**
-     * @var array<string,array<int | string>>
-     */
-    protected array $addedShades = [];
-
-    /**
-     * @var array<string,array<int | string>>
-     */
-    protected array $removedShades = [];
+    protected array $componentClasses = [];
 
     /**
      * @var array<class-string<HasColor>, array<string, array<string>>>
      */
-    protected array $componentClasses = [];
+    protected array $componentCustomStyles = [];
+
+    /**
+     * @var array<string,array<int>>
+     */
+    protected array $overridingShades = [];
+
+    /**
+     * @var array<string,array<int>>
+     */
+    protected array $addedShades = [];
+
+    /**
+     * @var array<string,array<int>>
+     */
+    protected array $removedShades = [];
 
     /**
      * @param  array<string, array<int, string> | string> | Closure  $colors
@@ -100,54 +106,6 @@ class ColorManager
     }
 
     /**
-     * @param  array<int | string>  $shades
-     */
-    public function overrideShades(string $alias, array $shades): void
-    {
-        $this->overridingShades[$alias] = $shades;
-    }
-
-    /**
-     * @return array<int | string> | null
-     */
-    public function getOverridingShades(string $alias): ?array
-    {
-        return $this->overridingShades[$alias] ?? null;
-    }
-
-    /**
-     * @param  array<int | string>  $shades
-     */
-    public function addShades(string $alias, array $shades): void
-    {
-        $this->addedShades[$alias] = $shades;
-    }
-
-    /**
-     * @return array<int | string> | null
-     */
-    public function getAddedShades(string $alias): ?array
-    {
-        return $this->addedShades[$alias] ?? null;
-    }
-
-    /**
-     * @param  array<int | string>  $shades
-     */
-    public function removeShades(string $alias, array $shades): void
-    {
-        $this->removedShades[$alias] = $shades;
-    }
-
-    /**
-     * @return array<int | string> | null
-     */
-    public function getRemovedShades(string $alias): ?array
-    {
-        return $this->removedShades[$alias] ?? null;
-    }
-
-    /**
      * @param  class-string<HasColor> | HasColor  $component
      * @return array<string>
      */
@@ -158,11 +116,12 @@ class ColorManager
         }
 
         $component = is_string($component) ? app($component) : $component;
-        $componentKey = serialize($component);
 
         if (($color === 'gray') && ($component instanceof HasDefaultGrayColor)) {
             return [];
         }
+
+        $componentKey = serialize($component);
 
         if ($this->componentClasses[$componentKey][$color] ?? []) {
             return $this->componentClasses[$componentKey][$color];
@@ -176,9 +135,104 @@ class ColorManager
             return $this->componentClasses[$componentKey][$color] = $classes;
         }
 
+        $map = $component->getColorMap($resolvedColor);
+
         return $this->componentClasses[$componentKey][$color] = [
             ...$classes,
-            ...$component->getColorClasses($resolvedColor),
+            ...array_map(
+                fn (string $shade, string $key): string => match ($key) {
+                    'bg' => "fi-bg-color-{$shade}",
+                    'dark:bg' => "dark:fi-bg-color-{$shade}",
+                    'dark:hover:bg' => "dark:hover:fi-bg-color-{$shade}",
+                    'dark:hover:text' => "dark:hover:fi-text-color-{$shade}",
+                    'dark:text' => "dark:fi-text-color-{$shade}",
+                    'hover:bg' => "hover:fi-bg-color-{$shade}",
+                    'hover:text' => "hover:fi-text-color-{$shade}",
+                    'text' => "fi-text-color-{$shade}",
+                    default => throw new Exception("Invalid color mapping key [{$key}]."),
+                },
+                array_values($map),
+                array_keys($map),
+            ),
         ];
+    }
+
+    /**
+     * @param  class-string<HasColor> | HasColor  $component
+     * @param  array<string>  $color
+     * @return array<string>
+     */
+    public function getComponentCustomStyles(string | HasColor $component, array $color): array
+    {
+        $component = is_string($component) ? app($component) : $component;
+        $componentKey = serialize($component);
+        $colorKey = serialize($color);
+
+        if ($this->componentCustomStyles[$componentKey][$colorKey] ?? []) {
+            return $this->componentCustomStyles[$componentKey][$colorKey];
+        }
+
+        $map = $component->getColorMap($color);
+
+        return $this->componentCustomStyles[$componentKey][$colorKey] = [
+            ...array_map(
+                fn (string $color, string $shade): string => "--color-{$shade}: {$color}",
+                array_values($color),
+                array_keys($color),
+            ),
+            ...array_map(
+                fn (string $shade, string $key): string => '--' . str_replace(':', '-', $key) . ': ' . ($shade ? "var(--color-{$shade})" : 'oklch(1 0 0)'),
+                array_values($map),
+                array_keys($map),
+            ),
+        ];
+    }
+
+    /**
+     * @param  array<int>  $shades
+     */
+    public function overrideShades(string $alias, array $shades): void
+    {
+        $this->overridingShades[$alias] = $shades;
+    }
+
+    /**
+     * @return array<int> | null
+     */
+    public function getOverridingShades(string $alias): ?array
+    {
+        return $this->overridingShades[$alias] ?? null;
+    }
+
+    /**
+     * @param  array<int>  $shades
+     */
+    public function addShades(string $alias, array $shades): void
+    {
+        $this->addedShades[$alias] = $shades;
+    }
+
+    /**
+     * @return array<int> | null
+     */
+    public function getAddedShades(string $alias): ?array
+    {
+        return $this->addedShades[$alias] ?? null;
+    }
+
+    /**
+     * @param  array<int>  $shades
+     */
+    public function removeShades(string $alias, array $shades): void
+    {
+        $this->removedShades[$alias] = $shades;
+    }
+
+    /**
+     * @return array<int> | null
+     */
+    public function getRemovedShades(string $alias): ?array
+    {
+        return $this->removedShades[$alias] ?? null;
     }
 }

@@ -6,6 +6,7 @@ use Closure;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
+use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Url;
+use ReflectionMethod;
+use ReflectionNamedType;
 use Throwable;
 
 use function Livewire\store;
@@ -214,7 +217,7 @@ trait InteractsWithActions
                 $schema->getState(afterValidate: function (array $state) use ($action, $schemaState): void {
                     $action->callAfterFormValidated();
 
-                    $action->formData([
+                    $action->data([
                         ...$schemaState,
                         ...$state,
                     ]);
@@ -222,7 +225,7 @@ trait InteractsWithActions
                     $action->callBefore();
                 });
             } else {
-                $action->formData($schemaState);
+                $action->data($schemaState);
 
                 $action->callBefore();
             }
@@ -236,7 +239,16 @@ trait InteractsWithActions
 
             $this->afterActionCalled();
 
-            $action->commitDatabaseTransaction();
+            (match ($action->getStatus()) {
+                ActionStatus::Success => function () use ($action): void {
+                    $action->sendSuccessNotification();
+                    $action->dispatchSuccessRedirect();
+                },
+                ActionStatus::Failure => function () use ($action): void {
+                    $action->sendFailureNotification();
+                    $action->dispatchFailureRedirect();
+                },
+            })();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
@@ -252,7 +264,7 @@ trait InteractsWithActions
 
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
                 $action->resetArguments();
-                $action->resetFormData();
+                $action->resetData();
 
                 $this->unmountAction();
             }
@@ -264,6 +276,8 @@ trait InteractsWithActions
             throw $exception;
         }
 
+        $action->commitDatabaseTransaction();
+
         if (store($this)->has('redirect')) {
             $this->unmountAction();
 
@@ -271,7 +285,7 @@ trait InteractsWithActions
         }
 
         $action->resetArguments();
-        $action->resetFormData();
+        $action->resetData();
 
         $onlyActionNamesAndContexts = fn (array $actions): array => collect($actions)
             ->map(fn (array $action): array => Arr::only($action, ['name', 'context']))
@@ -420,6 +434,10 @@ trait InteractsWithActions
                 $resolvedAction = $this->resolveAction($action, $resolvedActions);
             }
 
+            if (! $resolvedAction) {
+                continue;
+            }
+
             $resolvedAction->nestingIndex($actionNestingIndex);
 
             $resolvedActions[] = $resolvedAction;
@@ -428,6 +446,8 @@ trait InteractsWithActions
                 "mountedActionSchema{$actionNestingIndex}",
                 $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
             );
+
+            $resolvedAction->boot();
         }
 
         return $resolvedActions;
@@ -437,7 +457,7 @@ trait InteractsWithActions
      * @param  array<string, mixed>  $action
      * @param  array<Action>  $parentActions
      */
-    protected function resolveAction(array $action, array $parentActions): Action
+    protected function resolveAction(array $action, array $parentActions): ?Action
     {
         if (count($parentActions)) {
             $parentAction = Arr::last($parentActions);
@@ -457,7 +477,23 @@ trait InteractsWithActions
             } elseif (method_exists($this, $action['name'])) {
                 $methodName = $action['name'];
             } else {
-                throw new ActionNotResolvableException("Action was not resolvable from methods [{$action['name']}Action] or [{$action['name']}]");
+                return null;
+            }
+
+            $returnTypeReflection = (new ReflectionMethod($this, $methodName))->getReturnType();
+
+            if (! $returnTypeReflection) {
+                return null;
+            }
+
+            if (! $returnTypeReflection instanceof ReflectionNamedType) {
+                return null;
+            }
+
+            $type = $returnTypeReflection->getName();
+
+            if (! is_a($type, Action::class, allow_string: true)) {
+                return null;
             }
 
             $resolvedAction = $this->{$methodName}();
@@ -512,12 +548,12 @@ trait InteractsWithActions
 
         $key = $action['context']['schemaComponent'];
 
-        $schemaKey = (string) str($key)->before('.');
+        $schemaName = (string) str($key)->before('.');
 
-        $schema = $this->getSchema($schemaKey);
+        $schema = $this->getSchema($schemaName);
 
         if (! $schema) {
-            throw new ActionNotResolvableException("Schema [{$schemaKey}] not found.");
+            throw new ActionNotResolvableException("Schema [{$schemaName}] not found.");
         }
 
         $resolvedAction = $schema->getAction(
@@ -545,6 +581,15 @@ trait InteractsWithActions
         return Arr::last($this->resolveActions($actions));
     }
 
+    public function getMountedActionSchemaName(): ?string
+    {
+        if (empty($this->mountedActions)) {
+            return null;
+        }
+
+        return 'mountedActionSchema' . array_key_last($this->mountedActions);
+    }
+
     protected function getMountedActionSchema(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Schema
     {
         $actionNestingIndex ??= array_key_last($this->mountedActions);
@@ -561,7 +606,7 @@ trait InteractsWithActions
 
         return $mountedAction->getSchema(
             $this->makeSchema()
-                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionFormModel() ?? $this->getMountedActionSchemaModel())
+                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(

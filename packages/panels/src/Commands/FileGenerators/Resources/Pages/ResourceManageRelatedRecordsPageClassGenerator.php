@@ -77,7 +77,6 @@ class ResourceManageRelatedRecordsPageClassGenerator extends ClassGenerator
                 ? [$relatedResourceFqn]
                 : [
                     Schema::class,
-                    Table::class,
                     ...($this->hasPartialImports() ? [
                         ...(blank($this->getTableFqn()) ? ['Filament\Actions', 'Filament\Tables'] : []),
                         ...(blank($this->getFormSchemaFqn()) ? ['Filament\Forms'] : []),
@@ -223,17 +222,32 @@ class ResourceManageRelatedRecordsPageClassGenerator extends ClassGenerator
 
     protected function addTableMethodToClass(ClassType $class): void
     {
-        if ($this->hasRelatedResource()) {
+        $relatedResource = $this->getRelatedResourceFqn();
+
+        if ($relatedResource && blank($headerActionsOutput = $this->outputTableHeaderActions())) {
+            // If the related resource is set and there are no table header actions to add, we don't need
+            // to generate the table method since it will be inherited from the related resource.
             return;
         }
 
-        $tableFqn = $this->getTableFqn();
+        $this->namespace->addUse(Table::class);
 
-        $methodBody = filled($tableFqn)
-            ? <<<PHP
+        if ($relatedResource) {
+            $methodBody = <<<PHP
+                return \$table
+                    ->headerActions([
+                        {$headerActionsOutput}
+                    ]);
+                PHP;
+        } else {
+            $tableFqn = $this->getTableFqn();
+
+            $methodBody = filled($tableFqn)
+                ? <<<PHP
                 return {$this->simplifyFqn($tableFqn)}::configure(\$table);
                 PHP
-            : $this->generateTableMethodBody($this->getRelatedModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
+                : $this->generateTableMethodBody($this->getRelatedModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
+        }
 
         $method = $class->addMethod('table')
             ->setPublic()
@@ -284,7 +298,14 @@ class ResourceManageRelatedRecordsPageClassGenerator extends ClassGenerator
             return null;
         }
 
-        $relationship = app($model)->{$this->getRelationship()}();
+        $modelInstance = app($model);
+        $relationshipName = $this->getRelationship();
+
+        if (! method_exists($modelInstance, $relationshipName)) {
+            return null;
+        }
+
+        $relationship = $modelInstance->{$relationshipName}();
 
         if (! ($relationship instanceof HasMany)) {
             return null;

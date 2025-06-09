@@ -47,7 +47,7 @@ it('redirects the user away from the setup page if they have already set up mult
     Filament::setCurrentPanel('required-multi-factor-authentication');
 
     $user = User::factory()
-        ->hasEmailCodeAuthentication()
+        ->hasEmailAuthentication()
         ->create();
 
     $this->actingAs($user);

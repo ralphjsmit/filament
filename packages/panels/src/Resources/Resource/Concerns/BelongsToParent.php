@@ -15,7 +15,7 @@ trait BelongsToParent
      */
     protected static ?string $parentResource = null;
 
-    public static function getParentResource(): string | ParentResourceRegistration | null
+    public static function getParentResource(): ?string
     {
         return static::$parentResource;
     }

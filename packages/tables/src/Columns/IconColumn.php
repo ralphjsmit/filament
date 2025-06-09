@@ -32,14 +32,14 @@ class IconColumn extends Column implements HasEmbeddedView
     protected bool | Closure | null $isBoolean = null;
 
     /**
-     * @var string | array<int | string, string | int> | Closure | null
+     * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $falseColor = null;
 
     protected string | BackedEnum | Closure | null $falseIcon = null;
 
     /**
-     * @var string | array<int | string, string | int> | Closure | null
+     * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $trueColor = null;
 
@@ -75,7 +75,7 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
+     * @param  string | array<string> | Closure | null  $color
      */
     public function falseColor(string | array | Closure | null $color): static
     {
@@ -105,7 +105,7 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
+     * @param  string | array<string> | Closure | null  $color
      */
     public function trueColor(string | array | Closure | null $color): static
     {
@@ -201,7 +201,7 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @return string | array<int | string, string | int>
+     * @return string | array<string>
      */
     public function getFalseColor(): string | array
     {
@@ -216,7 +216,7 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @return string | array<int | string, string | int>
+     * @return string | array<string>
      */
     public function getTrueColor(): string | array
     {

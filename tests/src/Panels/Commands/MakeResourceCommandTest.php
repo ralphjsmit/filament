@@ -180,6 +180,21 @@ it('can generate the resource form content', function (): void {
         ->toMatchSnapshot();
 });
 
+it('can generate the resource infolist content', function (): void {
+    $this->artisan('make:filament-resource', [
+        'model' => 'Post',
+        '--generate' => true,
+        '--view' => true,
+        '--model-namespace' => 'Filament\Tests\Fixtures\Models',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists($path = app_path('Filament/Resources/Posts/Schemas/PostInfolist.php'));
+    expect(file_get_contents($path))
+        ->toMatchSnapshot();
+});
+
 it('can generate the resource table content', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
@@ -194,12 +209,13 @@ it('can generate the resource table content', function (): void {
         ->toMatchSnapshot();
 });
 
-it('can generate the form and table content embedded in a resource class', function (): void {
+it('can generate the form, infolist, and table content embedded in a resource class', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--embed-schemas' => true,
         '--embed-table' => true,
         '--generate' => true,
+        '--view' => true,
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
         '--panel' => 'admin',
         '--no-interaction' => true,
@@ -210,7 +226,7 @@ it('can generate the form and table content embedded in a resource class', funct
         ->toMatchSnapshot();
 });
 
-it('can generate a resource class with soft deletes', function (): void {
+it('can generate a resource class with soft-deletes', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--soft-deletes' => true,
@@ -224,7 +240,7 @@ it('can generate a resource class with soft deletes', function (): void {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource table with soft deletes', function (): void {
+it('can generate a resource table with soft-deletes', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--soft-deletes' => true,
@@ -238,7 +254,7 @@ it('can generate a resource table with soft deletes', function (): void {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource edit page with soft deletes', function (): void {
+it('can generate a resource edit page with soft-deletes', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--soft-deletes' => true,

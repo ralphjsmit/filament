@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Resources\Posts;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -15,12 +16,16 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use RuntimeException;
+use UnitEnum;
 
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-    protected static ?string $navigationGroup = 'Blog';
+    protected static string | UnitEnum | null $navigationGroup = 'Blog';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
 
@@ -59,12 +64,22 @@ class PostResource extends Resource
                 Tables\Filters\Filter::make('is_published')
                     ->query(fn (Builder $query) => $query->where('is_published', true)),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                Action::make('randomize_title')
+                    ->databaseTransaction()
+                    ->action(action: function (Post $record): void {
+                        DB::afterCommit(function (): void {
+                            throw new RuntimeException('This exception, happening after the successful commit of the current transaction, should not trigger a rollback by Filament.');
+                        });
+
+                        $record->title = Str::random(10);
+                        $record->save();
+                    }),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ]);
     }

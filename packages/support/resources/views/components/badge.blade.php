@@ -97,7 +97,7 @@
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ]))->class([$iconClasses]), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
             }}
         @endif
 
@@ -106,7 +106,7 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ]))->class([$iconClasses]), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
             }}
         @endif
     @endif
@@ -166,7 +166,7 @@
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ]))->class([$iconClasses]), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
             }}
         @endif
 
@@ -175,7 +175,7 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ]))->class([$iconClasses]), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
             }}
         @endif
     @endif

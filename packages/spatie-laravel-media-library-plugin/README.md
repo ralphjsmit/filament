@@ -26,7 +26,7 @@ You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-media
 
 ## Form component
 
-You may use the field in the same way as the [original file upload](https://filamentphp.com/docs/forms/fields/file-upload) field:
+You may use the field in the same way as the [original file upload](https://filamentphp.com/docs/forms/file-upload) field:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -34,9 +34,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 SpatieMediaLibraryFileUpload::make('avatar')
 ```
 
-The media library file upload supports all the customization options of the [original file upload component](https://filamentphp.com/docs/forms/fields/file-upload).
-
-> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [setting a form model](https://filamentphp.com/docs/forms/adding-a-form-to-a-livewire-component#setting-a-form-model) section**. If you're using a [panel](../panels), you can skip this step.
+The media library file upload supports all the customization options of the [original file upload component](https://filamentphp.com/docs/forms/file-upload).
 
 ### Passing a collection
 
@@ -173,6 +171,51 @@ SpatieMediaLibraryFileUpload::make('images')
             $get('gallery_id')
         ),
     )
+```
+
+### Using media library for rich editor file attachments
+
+You can use media library to store file attachments in the [rich editor](https://filamentphp.com/docs/forms/rich-editor). To do this, you must [register a rich content attribute](https://filamentphp.com/docs/forms/rich-editor#registering-rich-content-attributes) on your model, similar to how a media library collection is registered. You should call `fileAttachmentProvider()` on the attribute registration, passing in a `SpatieMediaLibraryFileAttachmentProvider::make()` object:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model implements HasRichContent
+{
+    use InteractsWithRichContent;
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->fileAttachmentsProvider(SpatieMediaLibraryFileAttachmentProvider::make());
+    }
+}
+```
+
+A media collection with the same name as the attribute (`content` in this example) will be used for the file attachments. The collection must not contain any other media apart from file attachments for that attribute, since Filament will clear any unused media from the collection when the model is saved. To customize the name of the collection, you can pass it to the `collection()` method of the provider:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model implements HasRichContent
+{
+    use InteractsWithRichContent;
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->fileAttachmentsProvider(
+                SpatieMediaLibraryFileAttachmentProvider::make()
+                    ->collection('content-file-attachments'),
+            );
+    }
+}
 ```
 
 ## Table column

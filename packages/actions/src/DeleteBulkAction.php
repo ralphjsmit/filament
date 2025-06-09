@@ -7,8 +7,12 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Number;
+use Throwable;
 
 class DeleteBulkAction extends BulkAction
 {
@@ -45,17 +49,27 @@ class DeleteBulkAction extends BulkAction
             ]);
         });
 
-        $this->failureNotificationMissingMessage(function (int $missingMessageCount, int $successCount): string {
+        $this->missingBulkAuthorizationFailureNotificationMessage(function (int $failureCount, int $totalCount): string {
             return trans_choice(
-                $successCount
-                    ? 'filament-actions::delete.multiple.notifications.deleted_partial.missing_message'
-                    : 'filament-actions::delete.multiple.notifications.deleted_none.missing_message',
-                $missingMessageCount,
-                ['count' => Number::format($missingMessageCount)],
+                ($failureCount === $totalCount)
+                    ? 'filament-actions::delete.multiple.notifications.deleted_none.missing_authorization_failure_message'
+                    : 'filament-actions::delete.multiple.notifications.deleted_partial.missing_authorization_failure_message',
+                $failureCount,
+                ['count' => Number::format($failureCount)],
             );
         });
 
-        $this->color('danger');
+        $this->missingBulkProcessingFailureNotificationMessage(function (int $failureCount, int $totalCount): string {
+            return trans_choice(
+                ($failureCount === $totalCount)
+                    ? 'filament-actions::delete.multiple.notifications.deleted_none.missing_processing_failure_message'
+                    : 'filament-actions::delete.multiple.notifications.deleted_partial.missing_processing_failure_message',
+                $failureCount,
+                ['count' => Number::format($failureCount)],
+            );
+        });
+
+        $this->defaultColor('danger');
 
         $this->icon(FilamentIcon::resolve('actions::delete-action') ?? Heroicon::Trash);
 
@@ -63,9 +77,42 @@ class DeleteBulkAction extends BulkAction
 
         $this->modalIcon(FilamentIcon::resolve('actions::delete-action.modal') ?? Heroicon::OutlinedTrash);
 
-        $this->action(fn () => $this->processIndividualRecords(
-            static fn (Model $record) => $record->delete(),
-        ));
+        $this->action(function (): void {
+            $this->process(static function (DeleteBulkAction $action, EloquentCollection | Collection | LazyCollection $records): void {
+                if (! $action->shouldFetchSelectedRecords()) {
+                    try {
+                        $action->reportBulkProcessingSuccessfulRecordsCount(
+                            $action->getSelectedRecordsQuery()->delete(),
+                        );
+                    } catch (Throwable $exception) {
+                        $action->reportCompleteBulkProcessingFailure();
+
+                        report($exception);
+                    }
+
+                    return;
+                }
+
+                $isFirstException = true;
+
+                $records->each(static function (Model $record) use ($action, &$isFirstException): void {
+                    try {
+                        $record->delete() || $action->reportBulkProcessingFailure();
+                    } catch (Throwable $exception) {
+                        $action->reportBulkProcessingFailure();
+
+                        if ($isFirstException) {
+                            // Only report the first exception to not flood error logs. Even if Filament
+                            // did not catch exceptions like this, only the first would be reported
+                            // as the rest of the process would be halted.
+                            report($exception);
+
+                            $isFirstException = false;
+                        }
+                    }
+                });
+            });
+        });
 
         $this->deselectRecordsAfterCompletion();
 

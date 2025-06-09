@@ -3,8 +3,8 @@
 namespace Filament\Commands\FileGenerators\Resources;
 
 use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceForms;
+use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceInfolists;
 use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceTables;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
@@ -25,6 +25,7 @@ use Nette\PhpGenerator\Property;
 class RelationManagerClassGenerator extends ClassGenerator
 {
     use CanGenerateResourceForms;
+    use CanGenerateResourceInfolists;
     use CanGenerateResourceTables;
     use CanReadModelSchemas;
 
@@ -69,7 +70,6 @@ class RelationManagerClassGenerator extends ClassGenerator
                 ? [$relatedResourceFqn]
                 : [
                     Schema::class,
-                    Table::class,
                     ...($this->hasPartialImports() ? [
                         ...(blank($this->getTableFqn()) ? ['Filament\Actions', 'Filament\Tables'] : []),
                         ...(blank($this->getFormSchemaFqn()) ? ['Filament\Forms'] : []),
@@ -170,20 +170,11 @@ class RelationManagerClassGenerator extends ClassGenerator
 
         $infolistSchemaFqn = $this->getInfolistSchemaFqn();
 
-        if (filled($infolistSchemaFqn)) {
-            $methodBody = <<<PHP
+        $methodBody = filled($infolistSchemaFqn)
+            ? <<<PHP
                 return {$this->simplifyFqn($infolistSchemaFqn)}::configure(\$schema);
-                PHP;
-        } else {
-            $this->importUnlessPartial(TextEntry::class);
-
-            $methodBody = new Literal(<<<PHP
-                return \$schema
-                    ->components([
-                        {$this->simplifyFqn(TextEntry::class)}::make(?),
-                    ]);
-                PHP, [$this->getRecordTitleAttribute()]);
-        }
+                PHP
+            : $this->generateInfolistMethodBody($this->getRelatedModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
 
         $method = $class->addMethod('infolist')
             ->setPublic()
@@ -199,17 +190,32 @@ class RelationManagerClassGenerator extends ClassGenerator
 
     protected function addTableMethodToClass(ClassType $class): void
     {
-        if ($this->hasRelatedResource()) {
+        $relatedResource = $this->getRelatedResourceFqn();
+
+        if ($relatedResource && blank($headerActionsOutput = $this->outputTableHeaderActions())) {
+            // If the related resource is set and there are no table header actions to add, we don't need
+            // to generate the table method since it will be inherited from the related resource.
             return;
         }
 
-        $tableFqn = $this->getTableFqn();
+        $this->namespace->addUse(Table::class);
 
-        $methodBody = filled($tableFqn)
-            ? <<<PHP
+        if ($relatedResource) {
+            $methodBody = <<<PHP
+                return \$table
+                    ->headerActions([
+                        {$headerActionsOutput}
+                    ]);
+                PHP;
+        } else {
+            $tableFqn = $this->getTableFqn();
+
+            $methodBody = filled($tableFqn)
+                ? <<<PHP
                 return {$this->simplifyFqn($tableFqn)}::configure(\$table);
                 PHP
-            : $this->generateTableMethodBody($this->getRelatedModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
+                : $this->generateTableMethodBody($this->getRelatedModelFqn(), exceptColumns: Arr::wrap($this->getForeignKeyColumnToNotGenerate()));
+        }
 
         $method = $class->addMethod('table')
             ->setPublic()
@@ -260,7 +266,14 @@ class RelationManagerClassGenerator extends ClassGenerator
             return null;
         }
 
-        $relationship = app($model)->{$this->getRelationship()}();
+        $modelInstance = app($model);
+        $relationshipName = $this->getRelationship();
+
+        if (! method_exists($modelInstance, $relationshipName)) {
+            return null;
+        }
+
+        $relationship = $modelInstance->{$relationshipName}();
 
         if (! ($relationship instanceof HasMany)) {
             return null;

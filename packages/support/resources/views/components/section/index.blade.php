@@ -73,9 +73,7 @@
         >
             {{
                 \Filament\Support\generate_icon_html($icon, attributes: (new \Illuminate\View\ComponentAttributeBag)
-                    ->class([
-                        ...\Filament\Support\get_component_color_classes(IconComponent::class, $iconColor),
-                    ]), size: $iconSize ?? IconSize::Large)
+                    ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
             }}
 
             @if ($hasHeading || $hasDescription)
@@ -99,7 +97,7 @@
             @if ($collapsible)
                 <x-filament::icon-button
                     color="gray"
-                    :icon="\Filament\Support\Icons\Heroicon::ChevronDown"
+                    :icon="\Filament\Support\Icons\Heroicon::ChevronUp"
                     icon-alias="section.collapse-button"
                     x-on:click.stop="isCollapsed = ! isCollapsed"
                     class="fi-section-collapse-btn"
@@ -119,10 +117,22 @@
     >
         @if ($hasContentEl)
             <div class="fi-section-content">
-                {{ $slot }}
+                @if ($collapsible)
+                    <template x-if="! isCollapsed">
+                        {{ $slot }}
+                    </template>
+                @else
+                    {{ $slot }}
+                @endif
             </div>
         @else
-            {{ $slot }}
+            @if ($collapsible)
+                <template x-if="! isCollapsed">
+                    {{ $slot }}
+                </template>
+            @else
+                {{ $slot }}
+            @endif
         @endif
 
         @if (! is_slot_empty($footer))

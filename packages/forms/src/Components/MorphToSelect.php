@@ -6,18 +6,25 @@ use Closure;
 use Exception;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class MorphToSelect extends Component
 {
     use Concerns\CanAllowHtml;
+    use Concerns\CanBeMarkedAsRequired;
     use Concerns\CanBeNative;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\HasLoadingMessage;
-    use Concerns\HasName;
+    use HasLabel {
+        getLabel as getBaseLabel;
+    }
+    use HasName;
 
     protected string $view = 'filament-schemas::components.fieldset';
 
@@ -29,6 +36,10 @@ class MorphToSelect extends Component
      * @var array<Type> | Closure
      */
     protected array | Closure $types = [];
+
+    protected ?Closure $modifyTypeSelectUsing = null;
+
+    protected ?Closure $modifyKeySelectUsing = null;
 
     final public function __construct(string $name)
     {
@@ -63,54 +74,91 @@ class MorphToSelect extends Component
             $types = $component->getTypes();
             $isRequired = $component->isRequired();
 
-            return [
-                Select::make($typeColumn)
-                    ->label($component->getLabel())
-                    ->hiddenLabel()
-                    ->options(array_map(
-                        fn (Type $type): string => $type->getLabel(),
-                        $types,
-                    ))
-                    ->native($component->isNative())
-                    ->required($isRequired)
-                    ->live()
-                    ->afterStateUpdated(function (Set $set) use ($component, $keyColumn): void {
-                        $set($keyColumn, null);
-                        $component->callAfterStateUpdated();
-                    }),
-                Select::make($keyColumn)
-                    ->label(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getLabel())
-                    ->hiddenLabel()
-                    ->options(fn (Select $component, Get $get): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionsUsing))
-                    ->getSearchResultsUsing(fn (Select $component, Get $get, $search): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getSearchResultsUsing, ['search' => $search]))
-                    ->getOptionLabelUsing(fn (Select $component, Get $get, $value): ?string => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionLabelUsing, ['value' => $value]))
-                    ->native($component->isNative())
-                    ->required(fn (Get $get): bool => filled(($types[$get($typeColumn)] ?? null)))
-                    ->hidden(fn (Get $get): bool => blank(($types[$get($typeColumn)] ?? null)))
-                    ->dehydratedWhenHidden()
-                    ->searchable($component->isSearchable())
-                    ->searchDebounce($component->getSearchDebounce())
-                    ->searchPrompt($component->getSearchPrompt())
-                    ->searchingMessage($component->getSearchingMessage())
-                    ->noSearchResultsMessage($component->getNoSearchResultsMessage())
-                    ->loadingMessage($component->getLoadingMessage())
-                    ->allowHtml($component->isHtmlAllowed())
-                    ->optionsLimit($component->getOptionsLimit())
-                    ->preload($component->isPreloaded())
-                    ->when(
-                        $component->isLive(),
-                        fn (Select $component) => $component->live(onBlur: $this->isLiveOnBlur()),
-                    )
-                    ->afterStateUpdated(function () use ($component): void {
-                        $component->callAfterStateUpdated();
-                    }),
-            ];
+            $typeSelect = Select::make($typeColumn)
+                ->label($component->getLabel())
+                ->hiddenLabel()
+                ->options(array_map(
+                    fn (Type $type): string => $type->getLabel(),
+                    $types,
+                ))
+                ->native($component->isNative())
+                ->required($isRequired)
+                ->live()
+                ->afterStateUpdated(function (Set $set) use ($component, $keyColumn): void {
+                    $set($keyColumn, null);
+                    $component->callAfterStateUpdated();
+                });
+
+            $keySelect = Select::make($keyColumn)
+                ->label(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getLabel())
+                ->hiddenLabel()
+                ->options(fn (Select $component, Get $get): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionsUsing))
+                ->getSearchResultsUsing(fn (Select $component, Get $get, $search): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getSearchResultsUsing, ['search' => $search]))
+                ->getOptionLabelUsing(fn (Select $component, Get $get, $value): ?string => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionLabelUsing, ['value' => $value]))
+                ->native($component->isNative())
+                ->required(fn (Get $get): bool => filled(($types[$get($typeColumn)] ?? null)))
+                ->hidden(fn (Get $get): bool => blank(($types[$get($typeColumn)] ?? null)))
+                ->dehydratedWhenHidden()
+                ->searchable($component->isSearchable())
+                ->searchDebounce($component->getSearchDebounce())
+                ->searchPrompt($component->getSearchPrompt())
+                ->searchingMessage($component->getSearchingMessage())
+                ->noSearchResultsMessage($component->getNoSearchResultsMessage())
+                ->loadingMessage($component->getLoadingMessage())
+                ->allowHtml($component->isHtmlAllowed())
+                ->optionsLimit($component->getOptionsLimit())
+                ->preload($component->isPreloaded())
+                ->when(
+                    $component->isLive(),
+                    fn (Select $component) => $component->live(onBlur: $this->isLiveOnBlur()),
+                )
+                ->afterStateUpdated(function () use ($component): void {
+                    $component->callAfterStateUpdated();
+                });
+
+            if ($callback = $component->getModifyTypeSelectUsingCallback()) {
+                $typeSelect = $component->evaluate($callback, [
+                    'select' => $typeSelect,
+                ]) ?? $typeSelect;
+            }
+
+            if ($callback = $component->getModifyKeySelectUsingCallback()) {
+                $keySelect = $component->evaluate($callback, [
+                    'select' => $keySelect,
+                ]) ?? $keySelect;
+            }
+
+            return [$typeSelect, $keySelect];
         });
     }
 
     public static function getDefaultName(): ?string
     {
         return null;
+    }
+
+    public function modifyTypeSelectUsing(?Closure $callback): static
+    {
+        $this->modifyTypeSelectUsing = $callback;
+
+        return $this;
+    }
+
+    public function modifyKeySelectUsing(?Closure $callback): static
+    {
+        $this->modifyKeySelectUsing = $callback;
+
+        return $this;
+    }
+
+    public function getModifyTypeSelectUsingCallback(): ?Closure
+    {
+        return $this->modifyTypeSelectUsing;
+    }
+
+    public function getModifyKeySelectUsingCallback(): ?Closure
+    {
+        return $this->modifyKeySelectUsing;
     }
 
     public function optionsLimit(int | Closure $limit): static
@@ -172,5 +220,20 @@ class MorphToSelect extends Component
     public function getOptionsLimit(): int
     {
         return $this->evaluate($this->optionsLimit);
+    }
+
+    public function getLabel(): string | Htmlable | null
+    {
+        if (filled($label = $this->getBaseLabel())) {
+            return $label;
+        }
+
+        $label = (string) str($this->getName())
+            ->afterLast('.')
+            ->kebab()
+            ->replace(['-', '_'], ' ')
+            ->ucfirst();
+
+        return $this->shouldTranslateLabel ? __($label) : $label;
     }
 }

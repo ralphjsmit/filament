@@ -304,4 +304,9 @@ class Register extends SimplePage
                     ->fullWidth($this->hasFullWidthFormActions()),
             ]);
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
+    }
 }

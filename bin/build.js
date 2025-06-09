@@ -108,6 +108,7 @@ compile({
 
 const formComponents = [
     'checkbox-list',
+    'code-editor',
     'color-picker',
     'date-time-picker',
     'file-upload',
@@ -115,6 +116,7 @@ const formComponents = [
     'markdown-editor',
     'rich-editor',
     'select',
+    'slider',
     'tags-input',
     'textarea',
 ]
@@ -127,12 +129,6 @@ formComponents.forEach((component) => {
         ],
         outfile: `./packages/forms/dist/components/${component}.js`,
     })
-})
-
-compile({
-    ...defaultOptions,
-    entryPoints: [`./packages/tables/resources/js/components/table.js`],
-    outfile: `./packages/tables/dist/components/table.js`,
 })
 
 const schemaComponents = ['actions', 'tabs', 'wizard']

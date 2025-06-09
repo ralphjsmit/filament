@@ -4,7 +4,6 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
-use Illuminate\Support\Str;
 
 uses(TestCase::class);
 
@@ -44,15 +43,6 @@ it('has child components', function (): void {
                 ->toBeInstanceOf(Component::class)
                 ->getContainer()->getParentComponent()->toBe($parentComponent),
         );
-});
-
-it('has a label', function (): void {
-    $component = (new Component)
-        ->container(Schema::make(Livewire::make()))
-        ->label($label = Str::random());
-
-    expect($component)
-        ->getLabel()->toBe($label);
 });
 
 it('can have meta', function (): void {

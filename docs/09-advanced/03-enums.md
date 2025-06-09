@@ -1,14 +1,17 @@
 ---
 title: Enum tricks
 ---
+import Aside from "@components/Aside.astro"
 
-## Overview
+## Introduction
 
 Enums are special PHP classes that represent a fixed set of constants. They are useful for modeling concepts that have a limited number of possible values, like days of the week, months in a year, or the suits in a deck of cards.
 
 Since enum "cases" are instances of the enum class, adding interfaces to enums proves to be very useful. Filament provides a collection of interfaces that you can add to enums, which enhance your experience when working with them.
 
-> When using an enum with an attribute on your Eloquent model, please [ensure that it is cast correctly](https://laravel.com/docs/eloquent-mutators#enum-casting).
+<Aside variant="warning">
+    When using an enum with an attribute on your Eloquent model, please [ensure that it is cast correctly](https://laravel.com/docs/eloquent-mutators#enum-casting).
+</Aside>
 
 ## Enum labels
 
@@ -42,7 +45,7 @@ enum Status: string implements HasLabel
 
 ### Using the enum label with form field options
 
-The `HasLabel` interface can be used to generate an array of options from an enum, where the enum's value is the key and the enum's label is the value. This applies to Form Builder fields like [`Select`](../forms/fields/select) and [`CheckboxList`](../forms/fields/checkbox-list), as well as the Table Builder's [`SelectColumn`](../tables/columns/select) and [`SelectFilter`](../tables/filters/select):
+The `HasLabel` interface can be used to generate an array of options from an enum, where the enum's value is the key and the enum's label is the value. This applies to form fields like [`Select`](../forms/select) and [`CheckboxList`](../forms/checkbox-list), as well as the Table Builder's [`SelectColumn`](../tables/columns/select) and [`SelectFilter`](../tables/filters/select):
 
 ```php
 use Filament\Forms\Components\CheckboxList;
@@ -88,7 +91,7 @@ If you use a [grouping](../tables/grouping) with the Table Builder, and it is ca
 
 ### Using the enum label with a text entry in your infolist
 
-If you use a [`TextEntry`](../infolists/entries/text) with the Infolist Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasLabel` interface to display the enum's label instead of its raw value.
+If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasLabel` interface to display the enum's label instead of its raw value.
 
 ## Enum colors
 
@@ -122,11 +125,11 @@ If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and 
 
 ### Using the enum color with a text entry in your infolist
 
-If you use a [`TextEntry`](../infolists/entries/text) with the Infolist Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../infolists/entries/text#displaying-as-a-badge) method on the entry.
+If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../infolists/text#displaying-as-a-badge) method on the entry.
 
 ### Using the enum color with a toggle buttons field in your form
 
-If you use a [`ToggleButtons`](../forms/fields/toggle-buttons) with the Form Builder, and it is set to use an enum for its options, Filament will automatically use the `HasColor` interface to display the enum label in its color.
+If you use a [`ToggleButtons`](../forms/toggle-buttons) form field, and it is set to use an enum for its options, Filament will automatically use the `HasColor` interface to display the enum label in its color.
 
 ## Enum icons
 
@@ -160,11 +163,11 @@ If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and 
 
 ### Using the enum icon with a text entry in your infolist
 
-If you use a [`TextEntry`](../infolists/entries/text) with the Infolist Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../infolists/entries/text#displaying-as-a-badge) method on the entry.
+If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../infolists/text#displaying-as-a-badge) method on the entry.
 
 ### Using the enum icon with a toggle buttons field in your form
 
-If you use a [`ToggleButtons`](../forms/fields/toggle-buttons) with the Form Builder, and it is set to use an enum for its options, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label.
+If you use a [`ToggleButtons`](../forms/toggle-buttons) form field, and it is set to use an enum for its options, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label.
 
 ## Enum descriptions
 
@@ -200,7 +203,7 @@ enum Status: string implements HasLabel, HasDescription
 
 ### Using the enum description with form field descriptions
 
-The `HasDescription` interface can be used to generate an array of descriptions from an enum, where the enum's value is the key and the enum's description is the value. This applies to Form Builder fields like [`Radio`](../forms/fields/radio#setting-option-descriptions) and [`CheckboxList`](../forms/fields/checkbox-list#setting-option-descriptions):
+The `HasDescription` interface can be used to generate an array of descriptions from an enum, where the enum's value is the key and the enum's description is the value. This applies to form fields like [`Radio`](../forms/radio#setting-option-descriptions) and [`CheckboxList`](../forms/checkbox-list#setting-option-descriptions):
 
 ```php
 use Filament\Forms\Components\CheckboxList;

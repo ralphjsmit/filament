@@ -11,7 +11,7 @@ trait HasIconColor
     }
 
     /**
-     * @return string | array<int | string, string | int> | null
+     * @return string | array<string> | null
      */
     public function getIconColor(): string | array | null
     {

@@ -6,8 +6,8 @@ use Closure;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
+use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
@@ -55,11 +55,9 @@ trait CanFormatState
         return $this;
     }
 
-    public function date(string | Closure | null $format = null, ?string $timezone = null): static
+    public function date(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDate = true;
-
-        $format ??= Table::$defaultDateDisplayFormat;
 
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
@@ -67,140 +65,103 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $column->getTimezone())
-                ->translatedFormat($column->evaluate($format));
+                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
+                ->translatedFormat($column->evaluate($format) ?? $column->getTable()->getDefaultDateDisplayFormat());
         });
 
         return $this;
     }
 
-    public function dateTime(string | Closure | null $format = null, ?string $timezone = null): static
+    public function dateTime(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
-        $format ??= Table::$defaultDateTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultDateTimeDisplayFormat();
 
         $this->date($format, $timezone);
 
         return $this;
     }
 
-    public function isoDate(?string $format = null): static
+    public function isoDate(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
         $this->isDate = true;
 
-        $format ??= Table::$defaultIsoDateDisplayFormat;
-
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($format): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->isoFormat($format);
+                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
+                ->isoFormat($column->evaluate($format) ?? $column->getTable()->getDefaultIsoDateDisplayFormat());
         });
 
         return $this;
     }
 
-    public function isoDateTime(?string $format = null): static
+    public function isoDateTime(string | Closure | null $format, string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
-        $format ??= Table::$defaultIsoDateTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoDateTimeDisplayFormat();
 
-        $this->isoDate($format);
+        $this->isoDate($format, $timezone);
 
         return $this;
     }
 
-    public function since(?string $timezone = null): static
+    public function since(string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, mixed $state) use ($timezone): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $column->getTimezone())
+                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
                 ->diffForHumans();
         });
 
         return $this;
     }
 
-    public function dateTooltip(string | Closure | null $format = null, ?string $timezone = null): static
+    public function dateTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $format ??= Table::$defaultDateDisplayFormat;
-
         $this->tooltip(static function (TextColumn $column, mixed $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $column->getTimezone())
-                ->translatedFormat($column->evaluate($format));
+                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
+                ->translatedFormat($column->evaluate($format) ?? $column->getTable()->getDefaultDateDisplayFormat());
         });
 
         return $this;
     }
 
-    public function dateTimeTooltip(string | Closure | null $format = null, ?string $timezone = null): static
+    public function dateTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $format ??= Table::$defaultDateTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultDateTimeDisplayFormat();
 
         $this->dateTooltip($format, $timezone);
 
         return $this;
     }
 
-    public function timeTooltip(string | Closure | null $format = null, ?string $timezone = null): static
+    public function timeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $format ??= Table::$defaultTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultTimeDisplayFormat();
 
         $this->dateTooltip($format, $timezone);
 
         return $this;
     }
 
-    public function isoDateTooltip(?string $format = null): static
-    {
-        $format ??= Table::$defaultIsoDateDisplayFormat;
-
-        $this->tooltip(static function (TextColumn $column, mixed $state) use ($format): ?string {
-            if (blank($state)) {
-                return null;
-            }
-
-            return Carbon::parse($state)
-                ->isoFormat($format);
-        });
-
-        return $this;
-    }
-
-    public function isoDateTimeTooltip(?string $format = null): static
-    {
-        $format ??= Table::$defaultIsoDateTimeDisplayFormat;
-
-        $this->isoDateTooltip($format);
-
-        return $this;
-    }
-
-    public function isoTimeTooltip(?string $format = null): static
-    {
-        $format ??= Table::$defaultIsoTimeDisplayFormat;
-
-        $this->isoDateTooltip($format);
-
-        return $this;
-    }
-
-    public function sinceTooltip(?string $timezone = null): static
+    public function sinceTooltip(string | Closure | null $timezone = null): static
     {
         $this->tooltip(static function (TextColumn $column, mixed $state) use ($timezone): ?string {
             if (blank($state)) {
@@ -208,18 +169,51 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $column->getTimezone())
+                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
                 ->diffForHumans();
         });
 
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
+    public function isoDateTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    {
+        $this->tooltip(static function (TextColumn $column, mixed $state) use ($format, $timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
+                ->isoFormat($column->evaluate($format) ?? $column->getTable()->getDefaultIsoDateDisplayFormat());
+        });
+
+        return $this;
+    }
+
+    public function isoDateTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    {
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoDateTimeDisplayFormat();
+
+        $this->isoDateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function isoTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    {
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoTimeDisplayFormat();
+
+        $this->isoDateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function money(string | Closure | null $currency = null, int | Closure $divideBy = 0, string | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
     {
         $this->isMoney = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy, $locale): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy, $locale, $decimalPlaces): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -228,14 +222,15 @@ trait CanFormatState
                 return $state;
             }
 
-            $currency = $column->evaluate($currency) ?? Table::$defaultCurrency;
-            $locale = $column->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+            $currency = $column->evaluate($currency) ?? $column->getTable()->getDefaultCurrency();
+            $locale = $column->evaluate($locale) ?? $column->getTable()->getDefaultNumberLocale() ?? config('app.locale');
+            $decimalPlaces = $column->evaluate($decimalPlaces);
 
-            if ($divideBy) {
+            if ($divideBy = $column->evaluate($divideBy)) {
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $locale);
+            return Number::currency($state, $currency, $locale, $decimalPlaces);
         });
 
         return $this;
@@ -270,32 +265,32 @@ trait CanFormatState
                 );
             }
 
-            $locale = $column->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+            $locale = $column->evaluate($locale) ?? $column->getTable()->getDefaultNumberLocale() ?? config('app.locale');
 
-            return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces), locale: $locale);
+            return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces), $locale);
         });
 
         return $this;
     }
 
-    public function time(string | Closure | null $format = null, ?string $timezone = null): static
+    public function time(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isTime = true;
 
-        $format ??= Table::$defaultTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultTimeDisplayFormat();
 
         $this->date($format, $timezone);
 
         return $this;
     }
 
-    public function isoTime(?string $format = null): static
+    public function isoTime(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isTime = true;
 
-        $format ??= Table::$defaultIsoTimeDisplayFormat;
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoTimeDisplayFormat();
 
-        $this->isoDate($format);
+        $this->isoDate($format, $timezone);
 
         return $this;
     }
@@ -444,7 +439,7 @@ trait CanFormatState
 
     public function getTimezone(): string
     {
-        return $this->evaluate($this->timezone) ?? config('app.timezone');
+        return $this->evaluate($this->timezone) ?? ($this->isDateTime() ? FilamentTimezone::get() : config('app.timezone'));
     }
 
     public function isHtml(): bool

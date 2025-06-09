@@ -17,7 +17,7 @@
             "Filament\\Notifications\\": "src"
         },
         "files": [
-            "src/Testing/Autoload.php"
+            "src/Testing/helpers.php"
         ]
     },
     "extra": {

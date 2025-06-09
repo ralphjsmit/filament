@@ -12,6 +12,7 @@ use Filament\Notifications\View\Components\NotificationComponent\IconComponent;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
+use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
@@ -42,6 +43,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
     use Concerns\HasStatus;
     use Concerns\HasTitle;
     use HasColor;
+    use HasIconSize;
 
     protected string $viewIdentifier = 'notification';
 
@@ -61,14 +63,6 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $static->configure();
 
         return $static;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getViewData(): array
-    {
-        return $this->viewData;
     }
 
     public function toArray(): array
@@ -125,7 +119,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
         $view = $data['view'] ?? null;
 
-        if (filled($view) && ($static->getView() !== $view) && $static->isViewSafe($view)) {
+        if (filled($view) && ((! $static->hasView()) || ($static->getView() !== $view)) && $static->isViewSafe($view)) {
             $static->view($data['view']);
         }
 
@@ -310,7 +304,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
             Assert::assertNotSame(
                 collect($expectedNotification)->except(['id'])->toArray(),
                 collect($notification->toArray())->except(['id'])->toArray(),
-                'The notification with the given configration was sent'
+                'The notification with the given configuration was sent'
             );
 
             return;

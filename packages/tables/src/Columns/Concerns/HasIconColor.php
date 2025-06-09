@@ -7,12 +7,12 @@ use Closure;
 trait HasIconColor
 {
     /**
-     * @var string | array<int | string, string | int> | Closure | null
+     * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $iconColor = null;
 
     /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
+     * @param  string | array<string> | Closure | null  $color
      */
     public function iconColor(string | array | Closure | null $color): static
     {

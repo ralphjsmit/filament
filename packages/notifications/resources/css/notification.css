@@ -1,5 +1,5 @@
 .fi-no-notification {
-    @apply pointer-events-auto invisible flex w-full gap-3 overflow-hidden p-4 transition duration-300;
+    @apply pointer-events-auto invisible flex w-full shrink-0 gap-3 overflow-hidden p-4 transition duration-300;
 
     & .fi-no-notification-icon {
         @apply text-gray-400;
@@ -26,11 +26,15 @@
     }
 
     & .fi-no-notification-body {
-        @apply overflow-hidden text-sm break-words text-gray-500 dark:text-gray-400;
+        @apply overflow-hidden text-sm text-pretty break-words text-gray-500 dark:text-gray-400;
+
+        & > p:not(:first-of-type) {
+            @apply mt-1;
+        }
     }
 
     &:not(.fi-inline) {
-        @apply flex max-w-sm gap-3 rounded-xl bg-white p-4 ring-1 shadow-lg ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply flex max-w-sm gap-3 rounded-xl bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
         &.fi-color {
             @apply ring-color-600/20 dark:ring-color-400/30;

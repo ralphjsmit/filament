@@ -12,11 +12,11 @@ return [
 
             'add' => [
 
-                'label' => 'Tambahkan :label',
+                'label' => 'Tambahkan ke :label',
 
                 'modal' => [
 
-                    'heading' => 'Tambah ke :label',
+                    'heading' => 'Tambahkan ke :label',
 
                     'actions' => [
 
@@ -32,11 +32,11 @@ return [
 
             'add_between' => [
 
-                'label' => 'Sisipkan',
+                'label' => 'Sisipkan di antara blok',
 
                 'modal' => [
 
-                    'heading' => 'Tambah ke :label',
+                    'heading' => 'Tambahkan ke :label',
 
                     'actions' => [
 
@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Lampirkan berkas',
             'blockquote' => 'Kutipan',
             'bold' => 'Tebal',
@@ -296,7 +296,7 @@ return [
             'ordered_list' => 'Daftar berurut',
             'redo' => 'Kembalikan',
             'strike' => 'Coret',
-            'table' => 'Table',
+            'table' => 'Tabel',
             'undo' => 'Batalkan',
         ],
 
@@ -316,11 +316,11 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Tambahkan :label',
+                'label' => 'Tambahkan ke :label',
             ],
 
             'add_between' => [
-                'label' => 'Sisipkan',
+                'label' => 'Sisipkan di antara',
             ],
 
             'delete' => [
@@ -382,7 +382,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Lampirkan berkas',
             'blockquote' => 'Kutipan',
             'bold' => 'Tebal',
@@ -408,6 +408,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'Buat',
+
                 'modal' => [
 
                     'heading' => 'Buat',
@@ -429,6 +431,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Ubah',
 
                 'modal' => [
 

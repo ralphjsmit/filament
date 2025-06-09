@@ -1,7 +1,8 @@
 @props([
+    'contained' => true,
     'label' => null,
     'labelHidden' => false,
-    'contained' => true,
+    'required' => false,
 ])
 
 <fieldset
@@ -15,7 +16,8 @@
 >
     @if (filled($label))
         <legend>
-            {{ $label }}
+            {{ $label }}@if ($required)<sup class="fi-fieldset-label-required-mark">*</sup>
+            @endif
         </legend>
     @endif
 

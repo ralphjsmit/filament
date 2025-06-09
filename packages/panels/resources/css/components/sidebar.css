@@ -8,7 +8,7 @@
     }
 
     &.fi-active {
-        & .fi-sidebar-group-dropdown-trigger-button {
+        & .fi-sidebar-group-dropdown-trigger-btn {
             & .fi-icon {
                 @apply text-primary-600 dark:text-primary-400;
             }
@@ -18,17 +18,17 @@
 
 .fi-sidebar-group-btn {
     @apply flex items-center gap-x-3 px-2 py-2;
-}
 
-.fi-sidebar-group-icon {
-    @apply text-gray-400 dark:text-gray-500;
+    & .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
 }
 
 .fi-sidebar-group-label {
     @apply flex-1 text-sm leading-6 font-medium text-gray-500 dark:text-gray-400;
 }
 
-.fi-sidebar-group-dropdown-trigger-button {
+.fi-sidebar-group-dropdown-trigger-btn {
     @apply relative flex flex-1 items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
     & .fi-icon {
@@ -56,15 +56,19 @@
 }
 
 .fi-sidebar {
-    @apply fixed inset-y-0 start-0 z-30 flex h-screen flex-col content-start bg-white transition-all lg:top-[4rem] lg:z-0 lg:h-[calc(100dvh-4rem)] lg:bg-transparent lg:transition-none dark:bg-gray-900 dark:lg:bg-transparent;
+    @apply fixed inset-y-0 start-0 z-30 flex h-screen flex-col content-start bg-white transition-all lg:top-[4rem] lg:z-20 lg:h-[calc(100dvh-4rem)] lg:bg-transparent lg:transition-none dark:bg-gray-900 dark:lg:bg-transparent;
 
     &.fi-sidebar-open {
-        @apply w-(--sidebar-width) translate-x-0 ring-1 shadow-xl ring-gray-950/5 lg:ring-0 lg:shadow-none rtl:-translate-x-0 dark:ring-white/10;
+        @apply w-(--sidebar-width) translate-x-0 shadow-xl ring-1 ring-gray-950/5 lg:shadow-none lg:ring-0 rtl:-translate-x-0 dark:ring-white/10;
     }
 
     &:not(.fi-sidebar-open) {
         @apply -translate-x-full rtl:translate-x-full;
     }
+}
+
+.fi-sidebar-close-overlay {
+    @apply fixed inset-0 z-30 bg-gray-950/50 transition duration-500 lg:hidden dark:bg-gray-950/75;
 }
 
 .fi-body {

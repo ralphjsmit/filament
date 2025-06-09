@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use BackedEnum;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
@@ -156,6 +157,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return $groupedOptions[$value];
             }
 
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
+            }
+
             if (! array_key_exists($value, $options)) {
                 return null;
             }
@@ -215,7 +220,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->placeholder($placeholder ?? '-');
 
-        $this->stateCast(app(BooleanStateCast::class));
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
 
         return $this;
     }
@@ -819,6 +824,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ]) ?? $relationshipQuery;
             }
 
+            $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+            if (isset($baseRelationshipQuery->limit)) {
+                $component->optionsLimit($baseRelationshipQuery->limit);
+            } elseif ($component->isSearchable() && filled($component->getSearchColumns())) {
+                $relationshipQuery->limit($component->getOptionsLimit());
+            }
+
             $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -903,7 +916,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 $component->state(
                     $relatedRecords
-                        ->pluck($relationship->getForeignKeyName())
+                        ->pluck($relationship->getLocalKeyName())
                         ->all(),
                 );
 
@@ -915,7 +928,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 $component->state(
                     $relatedModel?->getAttribute(
-                        $relationship->getForeignKeyName(),
+                        $relationship->getLocalKeyName(),
                     ),
                 );
 
@@ -943,7 +956,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return $component->getOptionLabelFromRecord($record);
             }
 
-            return $record->getAttributeValue($component->getRelationshipTitleAttribute());
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
+            }
+
+            return data_get($record, $relationshipTitleAttribute);
         });
 
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
@@ -1005,6 +1024,42 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) use ($modifyQueryUsing): void {
             $relationship = $component->getRelationship();
+
+            if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
+                $query = $relationship->getQuery();
+
+                if ($modifyQueryUsing) {
+                    $component->evaluate($modifyQueryUsing, [
+                        'query' => $query,
+                        'search' => null,
+                    ]);
+                }
+
+                $query->update([
+                    $relationship->getForeignKeyName() => null,
+                ]);
+
+                if (! empty($state)) {
+                    $relationship::noConstraints(function () use ($component, $record, $state, $modifyQueryUsing): void {
+                        $relationship = $component->getRelationship();
+
+                        $query = $relationship->getQuery()->whereIn($relationship->getLocalKeyName(), Arr::wrap($state));
+
+                        if ($modifyQueryUsing) {
+                            $component->evaluate($modifyQueryUsing, [
+                                'query' => $query,
+                                'search' => null,
+                            ]);
+                        }
+
+                        $query->update([
+                            $relationship->getForeignKeyName() => $record->getAttribute($relationship->getLocalKeyName()),
+                        ]);
+                    });
+                }
+
+                return;
+            }
 
             if (
                 ($relationship instanceof HasOneOrMany) ||
@@ -1089,7 +1144,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
-    protected function applySearchConstraint(Builder $query, string $search): Builder
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function applySearchConstraint(Builder $query, string $search): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -1099,7 +1157,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $search): Builder {
             $isFirst = true;
 
-            foreach ($this->getSearchColumns() as $searchColumn) {
+            foreach ($this->getSearchColumns() ?? [] as $searchColumn) {
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
                 $query->{$whereClause}(
@@ -1231,23 +1289,23 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function hasDynamicSearchResults(): bool
     {
-        if ($this->hasRelationship() && empty($this->searchColumns)) {
-            return ! $this->isPreloaded();
+        if ($this->hasRelationship() && blank($this->getSearchColumns())) {
+            return false;
         }
 
         return $this->getSearchResultsUsing instanceof Closure;
     }
 
     /**
-     * @return Model|class-string<Model>|null
+     * @return Model | array<string, mixed> | class-string<Model> | null
      */
-    public function getActionFormModel(): Model | string | null
+    public function getActionSchemaModel(): Model | array | string | null
     {
         if ($this->hasRelationship()) {
             return $this->getRelationship()->getModel()::class;
         }
 
-        return parent::getActionFormModel();
+        return parent::getActionSchemaModel();
     }
 
     public function getOptionsLimit(): int
@@ -1291,7 +1349,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
     }
 
-    protected function getQualifiedRelatedKeyNameForRelationship(Relation $relationship): string
+    public function getQualifiedRelatedKeyNameForRelationship(Relation $relationship): string
     {
         if ($relationship instanceof BelongsToMany) {
             return $relationship->getQualifiedRelatedKeyName();
@@ -1359,5 +1417,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function hasInValidationOnMultipleValues(): bool
     {
         return $this->isMultiple();
+    }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return true;
     }
 }

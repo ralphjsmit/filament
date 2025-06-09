@@ -5,11 +5,13 @@ namespace Filament\Schemas\Components\Wizard;
 use BackedEnum;
 use Closure;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Contracts\CanConcealComponents;
+use Filament\Schemas\Components\Concerns\HasLabel;
 use Illuminate\Support\Str;
 
-class Step extends Component implements CanConcealComponents
+class Step extends Component
 {
+    use HasLabel;
+
     protected ?Closure $afterValidation = null;
 
     protected ?Closure $beforeValidation = null;
@@ -123,11 +125,6 @@ class Step extends Component implements CanConcealComponents
     public function getColumnsConfig(): array
     {
         return $this->columns ?? $this->getContainer()->getColumnsConfig();
-    }
-
-    public function canConcealComponents(): bool
-    {
-        return true;
     }
 
     public function formWrapper(bool | Closure $condition = true): static

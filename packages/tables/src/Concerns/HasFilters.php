@@ -87,7 +87,7 @@ trait HasFilters
 
             $field->state($filterResetState[$fieldName] ?? match (true) {
                 is_array($state) => [],
-                is_bool($state) => false,
+                is_bool($state) => $field->hasNullableBooleanState() ? null : false,
                 default => null,
             });
         }
@@ -187,7 +187,7 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = md5($this::class);
 
         return "tables.{$table}_filters";
     }

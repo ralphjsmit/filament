@@ -50,13 +50,13 @@ trait BelongsToModel
         }
     }
 
-    public function loadStateFromRelationships(bool $andHydrate = false): void
+    public function loadStateFromRelationships(bool $shouldHydrate = false): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
-            $component->loadStateFromRelationships($andHydrate);
+            $component->loadStateFromRelationships($shouldHydrate);
 
             foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
-                $childSchema->loadStateFromRelationships($andHydrate);
+                $childSchema->loadStateFromRelationships($shouldHydrate);
             }
         }
     }
@@ -72,6 +72,10 @@ trait BelongsToModel
             return $model::class;
         }
 
+        if (is_array($model)) {
+            return null;
+        }
+
         if (filled($model)) {
             return $model;
         }
@@ -82,7 +86,7 @@ trait BelongsToModel
     /**
      * @return Model | array<string, mixed> | null
      */
-    public function getRecord(): Model | array | null
+    public function getRecord(bool $withParentComponentRecord = true): Model | array | null
     {
         $model = $this->model;
 
@@ -94,6 +98,10 @@ trait BelongsToModel
             return null;
         }
 
+        if (! $withParentComponentRecord) {
+            return null;
+        }
+
         return $this->getParentComponent()?->getRecord();
     }
 
@@ -101,7 +109,7 @@ trait BelongsToModel
     {
         $model = $this->model;
 
-        if ($model === null) {
+        if (($model === null) || is_array($model)) {
             return $this->getParentComponent()?->getModelInstance();
         }
 

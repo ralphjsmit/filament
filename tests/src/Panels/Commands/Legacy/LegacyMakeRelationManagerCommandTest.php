@@ -117,7 +117,7 @@ it('can generate a relation manager with a view operation', function (): void {
         ->toMatchSnapshot();
 });
 
-it('can generate a relation manager with soft deletes', function (): void {
+it('can generate a relation manager with soft-deletes', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',

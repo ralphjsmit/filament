@@ -3,10 +3,12 @@
 namespace Filament\Tables;
 
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Tables\Contracts\HasTable;
 
 class Table extends ViewComponent
 {
+    use HasDefaultDataFormattingSettings;
     use Table\Concerns\BelongsToLivewire;
     use Table\Concerns\CanBeStriped;
     use Table\Concerns\CanDeferLoading;
@@ -31,9 +33,11 @@ class Table extends ViewComponent
     use Table\Concerns\HasQuery;
     use Table\Concerns\HasQueryStringIdentifier;
     use Table\Concerns\HasRecordAction;
+    use Table\Concerns\HasRecordActions;
     use Table\Concerns\HasRecordClasses;
     use Table\Concerns\HasRecords;
     use Table\Concerns\HasRecordUrl;
+    use Table\Concerns\HasToolbarActions;
 
     /**
      * @var view-string
@@ -58,22 +62,6 @@ class Table extends ViewComponent
         'tableRecordsPerPage',
         'tableSearch',
     ];
-
-    public static string $defaultCurrency = 'usd';
-
-    public static string $defaultDateDisplayFormat = 'M j, Y';
-
-    public static string $defaultIsoDateDisplayFormat = 'L';
-
-    public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
-
-    public static string $defaultIsoDateTimeDisplayFormat = 'LLL';
-
-    public static ?string $defaultNumberLocale = null;
-
-    public static string $defaultTimeDisplayFormat = 'H:i:s';
-
-    public static string $defaultIsoTimeDisplayFormat = 'LT';
 
     final public function __construct(HasTable $livewire)
     {

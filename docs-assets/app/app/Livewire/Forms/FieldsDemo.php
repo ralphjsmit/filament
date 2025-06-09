@@ -8,6 +8,8 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\CodeEditor\Enums\Language;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -18,17 +20,26 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Slider;
+use Filament\Forms\Components\Slider\Enums\PipsMode;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Icon;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\RawJs;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
@@ -42,6 +53,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
     public function mount(): void
     {
         $this->form->fill();
+        $this->validate(
+            ['data.aboveErrorMessage' => ['required'], 'data.belowErrorMessage' => ['required']],
+            attributes: ['data.aboveErrorMessage' => 'name', 'data.belowErrorMessage' => 'name'],
+        );
     }
 
     public function form(Schema $form): Schema
@@ -71,6 +86,33 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default('Dan Harrin'),
                     ]),
                 Group::make()
+                    ->id('inlineLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('inlineLabel')
+                            ->label('Name')
+                            ->inlineLabel(),
+                    ]),
+                Group::make()
+                    ->id('inlineLabelSection')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Section::make('Details')
+                            ->schema([
+                                TextInput::make('inlineLabelSectionName')
+                                    ->label('Name'),
+                                TextInput::make('inlineLabelSectionEmail')
+                                    ->label('Email address'),
+                                TextInput::make('inlineLabelSectionPhone')
+                                    ->label('Phone number'),
+                            ])
+                            ->inlineLabel(),
+                    ]),
+                Group::make()
                     ->id('placeholder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -79,6 +121,255 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         TextInput::make('placeholder')
                             ->label('Name')
                             ->placeholder('Dan Harrin'),
+                    ]),
+                Group::make()
+                    ->id('fused')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City'),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ]),
+                    ]),
+                Group::make()
+                    ->id('fusedLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City'),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ])
+                            ->label('Location'),
+                    ]),
+                Group::make()
+                    ->id('fusedColumns')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City'),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ])
+                            ->label('Location')
+                            ->columns(2),
+                    ]),
+                Group::make()
+                    ->id('fusedColumnsSpan')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('city')
+                                ->placeholder('City')
+                                ->columnSpan(2),
+                            Select::make('country')
+                                ->placeholder('Country'),
+                        ])
+                            ->label('Location')
+                            ->columns(3),
+                    ]),
+                Group::make()
+                    ->id('textBelowContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent('This is the user\'s full name.'),
+                    ]),
+                Group::make()
+                    ->id('componentBelowContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold)),
+                    ]),
+                Group::make()
+                    ->id('actionBelowContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent(Action::make('generate')),
+                    ]),
+                Group::make()
+                    ->id('belowContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent([
+                                Icon::make(Heroicon::InformationCircle),
+                                'This is the user\'s full name.',
+                                Action::make('generate'),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('belowContentAlignment')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->belowContent(Schema::end([
+                                Icon::make(Heroicon::InformationCircle),
+                                'This is the user\'s full name.',
+                                Action::make('generate'),
+                            ])),
+                        TextInput::make('name')
+                            ->belowContent(Schema::between([
+                                Icon::make(Heroicon::InformationCircle),
+                                'This is the user\'s full name.',
+                                Action::make('generate'),
+                            ])),
+                        TextInput::make('name')
+                            ->belowContent(Schema::between([
+                                Flex::make([
+                                    Icon::make(Heroicon::InformationCircle)
+                                        ->grow(false),
+                                    'This is the user\'s full name.',
+                                ]),
+                                Action::make('generate'),
+                            ])),
+                    ]),
+                Group::make()
+                    ->id('aboveLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('aboveLabel')
+                            ->label('Name')
+                            ->aboveLabel([
+                                Icon::make(Heroicon::Star),
+                                'This is the content above the field\'s label',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('beforeLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('beforeLabel')
+                            ->label('Name')
+                            ->beforeLabel(Icon::make(Heroicon::Star)),
+                    ]),
+                Group::make()
+                    ->id('afterLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('afterLabel')
+                            ->label('Name')
+                            ->afterLabel([
+                                Icon::make(Heroicon::Star),
+                                'This is the content after the field\'s label',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('afterLabelAlignedStart')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('afterLabelAlignedStart')
+                            ->label('Name')
+                            ->afterLabel(Schema::start([
+                                Icon::make(Heroicon::Star),
+                                'This is the content after the field\'s label',
+                            ])),
+                    ]),
+                Group::make()
+                    ->id('belowLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('belowLabel')
+                            ->label('Name')
+                            ->belowLabel([
+                                Icon::make(Heroicon::Star),
+                                'This is the content below the field\'s label',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('aboveContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('aboveContent')
+                            ->label('Name')
+                            ->belowLabel([
+                                Icon::make(Heroicon::Star),
+                                'This is the content above the field\'s content',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('beforeContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('beforeContent')
+                            ->label('Name')
+                            ->beforeContent(Icon::make(Heroicon::Star)),
+                    ]),
+                Group::make()
+                    ->id('afterContent')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('afterContent')
+                            ->label('Name')
+                            ->afterContent(Icon::make(Heroicon::Star)),
+                    ]),
+                Group::make()
+                    ->id('aboveErrorMessage')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('aboveErrorMessage')
+                            ->label('Name')
+                            ->required()
+                            ->aboveErrorMessage([
+                                Icon::make(Heroicon::Star),
+                                'This is the content above the field\'s error message',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('belowErrorMessage')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('belowErrorMessage')
+                            ->label('Name')
+                            ->required()
+                            ->belowErrorMessage([
+                                Icon::make(Heroicon::Star),
+                                'This is the content below the field\'s error message',
+                            ]),
                     ]),
                 Group::make()
                     ->id('textInput')
@@ -667,6 +958,48 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Repeater::make('repeater')
                             ->label('Members')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                                Select::make('role')
+                                    ->options([
+                                        'member' => 'Member',
+                                        'administrator' => 'Administrator',
+                                        'owner' => 'Owner',
+                                    ])
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->default([
+                                [
+                                    'name' => 'Dan Harrin',
+                                    'role' => 'owner',
+                                ],
+                                [
+                                    'name' => 'Ryan Chandler',
+                                    'role' => 'administrator',
+                                ],
+                                [
+                                    'name' => 'Zep Fietje',
+                                    'role' => 'member',
+                                ],
+                                [
+                                    'name' => null,
+                                    'role' => null,
+                                ],
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('repeaterTable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Repeater::make('repeaterTable')
+                            ->label('Members')
+                            ->table([
+                                Repeater\TableColumn::make('Name'),
+                                Repeater\TableColumn::make('Role'),
+                            ])
                             ->schema([
                                 TextInput::make('name')->required(),
                                 Select::make('role')
@@ -1340,6 +1673,328 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 Action::make('copyCostToPrice')
                                     ->icon(Heroicon::Clipboard),
                             ),
+                    ]),
+                Group::make()
+                    ->id('slider')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('slider')
+                            ->label('Slider')
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderRange')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderRange')
+                            ->label('Slider')
+                            ->range(minValue: 40, maxValue: 80)
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderMultiple')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderMultiple')
+                            ->label('Slider')
+                            ->default([20, 70]),
+                    ]),
+                Group::make()
+                    ->id('sliderVertical')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderVertical')
+                            ->label('Slider')
+                            ->vertical()
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderTooltips')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderTooltips')
+                            ->label('Slider')
+                            ->tooltips()
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderTooltipsMultiple')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderTooltipsMultiple')
+                            ->label('Slider')
+                            ->tooltips([true, false])
+                            ->default([20, 70]),
+                    ]),
+                Group::make()
+                    ->id('sliderTooltipsVertical')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderTooltipsVertical')
+                            ->label('Slider')
+                            ->tooltips()
+                            ->vertical()
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderTooltipsFormatting')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderTooltipsFormatting')
+                            ->label('Slider')
+                            ->tooltips(RawJs::make('`$${$value.toFixed(2)}`'))
+                            ->default(64.99),
+                    ]),
+                Group::make()
+                    ->id('sliderFill')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderFill')
+                            ->label('Slider')
+                            ->fillTrack()
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderFillMultiple')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderFillMultiple')
+                            ->label('Slider')
+                            ->fillTrack([false, true, false])
+                            ->default([20, 70]),
+                    ]),
+                Group::make()
+                    ->id('sliderFillVertical')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderFillVertical')
+                            ->label('Slider')
+                            ->fillTrack()
+                            ->vertical()
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPips')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPips')
+                            ->label('Slider')
+                            ->pips()
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsMultiple')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsMultiple')
+                            ->label('Slider')
+                            ->pips()
+                            ->default([20, 70]),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsVertical')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsVertical')
+                            ->label('Slider')
+                            ->pips()
+                            ->vertical()
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsDensity')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsDensity')
+                            ->label('Slider')
+                            ->pips(density: 5)
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsFormatting')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsFormatting')
+                            ->label('Slider')
+                            ->pips()
+                            ->pipsFormatter(RawJs::make('`$${$value.toFixed(2)}`'))
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsSteps')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsSteps')
+                            ->label('Slider')
+                            ->step(10)
+                            ->pips(PipsMode::Steps)
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsStepsDensity')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsStepsDensity')
+                            ->label('Slider')
+                            ->step(10)
+                            ->pips(PipsMode::Steps, density: 5)
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsPositions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsPositions')
+                            ->label('Slider')
+                            ->pips(PipsMode::Positions)
+                            ->pipsValues([0, 25, 50, 75, 100])
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsCount')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsCount')
+                            ->label('Slider')
+                            ->pips(PipsMode::Count)
+                            ->pipsValues(5)
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsValues')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsValues')
+                            ->label('Slider')
+                            ->pips(PipsMode::Values)
+                            ->pipsValues([5, 15, 25, 35, 45, 55, 65, 75, 85, 95])
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsValuesDensity')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsValuesDensity')
+                            ->label('Slider')
+                            ->pips(PipsMode::Values, density: 5)
+                            ->pipsValues([5, 15, 25, 35, 45, 55, 65, 75, 85, 95])
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderPipsFilter')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderPipsFilter')
+                            ->label('Slider')
+                            ->pips(density: 5)
+                            ->pipsFilter(RawJs::make(<<<'JS'
+                                ($value % 50) === 0
+                                    ? 1
+                                    : ($value % 10) === 0
+                                        ? 2
+                                        : ($value % 25) === 0
+                                            ? 0
+                                            : -1
+                                JS))
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderNonLinear')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderNonLinear')
+                            ->label('Slider')
+                            ->nonLinearPoints(['20%' => 50, '50%' => 75])
+                            ->pips()
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('codeEditor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CodeEditor::make('code')
+                            ->default(<<<'YAML'
+                                name: Filament
+                                framework: Laravel
+                                packageManager: Composer
+                                releaseYear: 2021
+                                website: https://filamentphp.com
+                                YAML),
+                    ]),
+                Group::make()
+                    ->id('codeEditorLanguage')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CodeEditor::make('codeWithLanguage')
+                            ->label('Code')
+                            ->language(Language::JavaScript)
+                            ->default(<<<'JS'
+                                const fetchUser = async (id) => {
+                                    const res = await fetch(`https://api.example.com/users/${id}`)
+
+                                    if (! res.ok) {
+                                        throw new Error('User not found')
+                                    }
+
+                                    return res.json()
+                                }
+
+                                fetchUser(1)
+                                    .then((user) => console.log(`👤 ${user.name}`))
+                                    .catch((error) => console.error('⚠️', error.message))
+                                JS),
                     ]),
             ]);
     }

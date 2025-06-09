@@ -71,7 +71,7 @@ trait InteractsWithRecord
      */
     public function getBreadcrumbs(): array
     {
-        $breadcrumbs = parent::getBreadcrumbs();
+        $breadcrumbs = $this->getResourceBreadcrumbs();
 
         $resource = static::getResource();
         $record = $this->getRecord();

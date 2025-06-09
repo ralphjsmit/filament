@@ -3,9 +3,7 @@
     'entry' => null,
     'hasInlineLabel' => null,
     'label' => null,
-    'labelPrefix' => null,
     'labelSrOnly' => null,
-    'labelSuffix' => null,
 ])
 
 @php
@@ -48,7 +46,7 @@
     <div class="fi-in-entry-label-col">
         {{ $entry?->getChildSchema($entry::ABOVE_LABEL_SCHEMA_KEY) }}
 
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $beforeLabelContainer || $afterLabelContainer)
+        @if (($label && (! $labelSrOnly)) || $beforeLabelContainer || $afterLabelContainer)
             <div
                 @class([
                     'fi-in-entry-label-ctn',
@@ -56,8 +54,6 @@
                 ])
             >
                 {{ $beforeLabelContainer }}
-
-                {{ $labelPrefix }}
 
                 @if ($label && (! $labelSrOnly))
                     <dt
@@ -73,8 +69,6 @@
                         {{ $label }}
                     </dt>
                 @endif
-
-                {{ $labelSuffix }}
 
                 {{ $afterLabelContainer }}
             </div>

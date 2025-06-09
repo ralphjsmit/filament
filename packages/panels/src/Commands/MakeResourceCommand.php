@@ -30,6 +30,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
+use function Filament\Support\discover_app_classes;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\suggest;
 
@@ -157,7 +158,7 @@ class MakeResourceCommand extends Command
                 name: 'generate',
                 shortcut: 'G',
                 mode: InputOption::VALUE_NONE,
-                description: 'Generate the form schema and table columns based on the attributes of the model',
+                description: 'Generate the form schema and table columns from the current database columns',
             ),
             new InputOption(
                 name: 'migration',
@@ -206,7 +207,7 @@ class MakeResourceCommand extends Command
                 name: 'soft-deletes',
                 shortcut: null,
                 mode: InputOption::VALUE_NONE,
-                description: 'Indicate if the model uses soft deletes',
+                description: 'Indicate if the model uses soft-deletes',
             ),
             new InputOption(
                 name: 'view',
@@ -287,10 +288,7 @@ class MakeResourceCommand extends Command
 
             $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
         } else {
-            $modelFqns = collect(get_declared_classes())
-                ->filter(fn (string $class): bool => is_subclass_of($class, Model::class) &&
-                    (! str((new ReflectionClass($class))->getFileName())->startsWith(base_path('vendor'))))
-                ->all();
+            $modelFqns = discover_app_classes(parentClass: Model::class);
 
             $this->modelFqn = suggest(
                 label: 'What is the model?',
@@ -416,8 +414,8 @@ class MakeResourceCommand extends Command
     {
         $this->hasViewOperation = $this->option('view') || confirm(
             label: $this->isSimple
-                ? 'Would you like to generate an infolist and view modal for the resource?'
-                : 'Would you like to generate an infolist and view page for the resource?',
+                ? 'Would you like to generate a read-only view modal for the resource?'
+                : 'Would you like to generate a read-only view page for the resource?',
             default: false,
         );
     }
@@ -425,7 +423,7 @@ class MakeResourceCommand extends Command
     protected function configureIsGenerated(): void
     {
         $this->isGenerated = $this->option('generate') || confirm(
-            label: 'Would you like to generate the form schema and table columns based on the attributes of the model?',
+            label: 'Should the configuration be generated from the current database columns?',
             default: false,
         );
     }
@@ -435,7 +433,7 @@ class MakeResourceCommand extends Command
         $this->isSoftDeletable = $this->option('soft-deletes') || ((static::$shouldCheckModelsForSoftDeletes && class_exists($this->modelFqn))
             ? in_array(SoftDeletes::class, class_uses_recursive($this->modelFqn))
             : confirm(
-                label: 'Does the model use soft deletes?',
+                label: 'Does the model use soft-deletes?',
                 default: false,
             ));
     }
@@ -528,6 +526,7 @@ class MakeResourceCommand extends Command
         $this->writeFile($path, app(ResourceFormSchemaClassGenerator::class, [
             'fqn' => $this->formSchemaFqn,
             'modelFqn' => $this->modelFqn,
+            'parentResourceFqn' => $this->parentResourceFqn,
             'isGenerated' => $this->isGenerated,
         ]));
     }
@@ -554,6 +553,9 @@ class MakeResourceCommand extends Command
 
         $this->writeFile($path, app(ResourceInfolistSchemaClassGenerator::class, [
             'fqn' => $this->infolistSchemaFqn,
+            'modelFqn' => $this->modelFqn,
+            'parentResourceFqn' => $this->parentResourceFqn,
+            'isGenerated' => $this->isGenerated,
         ]));
     }
 
@@ -577,6 +579,7 @@ class MakeResourceCommand extends Command
         $this->writeFile($path, app(ResourceTableClassGenerator::class, [
             'fqn' => $this->tableFqn,
             'modelFqn' => $this->modelFqn,
+            'parentResourceFqn' => $this->parentResourceFqn,
             'hasViewOperation' => $this->hasViewOperation,
             'isGenerated' => $this->isGenerated,
             'isSoftDeletable' => $this->isSoftDeletable,
@@ -700,6 +703,10 @@ class MakeResourceCommand extends Command
 
     protected function createViewPage(): void
     {
+        if (! $this->hasViewOperation) {
+            return;
+        }
+
         if ($this->isSimple) {
             return;
         }

@@ -7,7 +7,7 @@
 }
 
 .fi-global-search-results-ctn {
-    @apply absolute inset-x-4 z-10 mt-2 max-h-96 overflow-auto rounded-lg bg-white ring-1 shadow-lg ring-gray-950/5 transition sm:inset-x-auto sm:end-0 sm:w-screen sm:max-w-sm dark:bg-gray-900 dark:ring-white/10;
+    @apply absolute inset-x-4 z-10 mt-2 max-h-96 overflow-auto rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition sm:inset-x-auto sm:end-0 sm:w-screen sm:max-w-sm dark:bg-gray-900 dark:ring-white/10;
 
     /**
      * This zero translation along the z-axis fixes a Safari bug
@@ -33,7 +33,7 @@
 }
 
 .fi-global-search-result-group-header {
-    @apply sticky top-0 z-10 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-900 dark:bg-white/5 dark:text-white;
+    @apply sticky top-0 z-10 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-800 dark:text-white;
 }
 
 .fi-global-search-result-group-results {

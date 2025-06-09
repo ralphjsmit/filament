@@ -272,7 +272,7 @@ it('can generate a view page class in a resource', function (): void {
     ];
 
     $this->artisan('make:filament-page', [
-        'name' => 'EditUser',
+        'name' => 'ViewUser',
         '--panel' => 'admin',
         '--resource' => 'Users\\UserResource',
         '--type' => 'view',
@@ -293,17 +293,17 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
         '--panel' => 'admin',
         '--no-interaction' => true,
     ])
-        ->expectsQuestion('Would you like to generate the form schema and table columns based on the attributes of the model?', false)
-        ->expectsQuestion('Does the model use soft deletes?', false);
+        ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
+        ->expectsQuestion('Does the model use soft-deletes?', false);
 
     $testCase->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ])
-        ->expectsQuestion('Would you like to generate an infolist and view page for the resource?', false)
-        ->expectsQuestion('Would you like to generate the form schema and table columns based on the attributes of the model?', false)
-        ->expectsQuestion('Does the model use soft deletes?', false);
+        ->expectsQuestion('Would you like to generate a read-only view page for the resource?', false)
+        ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
+        ->expectsQuestion('Does the model use soft-deletes?', false);
 
     require_once __DIR__ . '/../../Fixtures/Models/Team.php';
     require_once app_path('Filament/Resources/Teams/TeamResource.php');
@@ -333,20 +333,20 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
 $generateManageRelatedRecordsPageCommandQuestions = [
     'relationship' => 'What is the relationship?',
-    'hasRelatedResource' => 'Do you want each table row to link to a resource instead of opening a modal? Filament will also inherit the resource\'s configuration.',
+    'hasRelatedResource' => 'Do you want to do this?',
     'relatedResource' => 'Which resource do you want to use?',
-    'hasFormSchemaClass' => 'Would you like to use an existing form schema class instead of defining the form on this page?',
-    'isGenerated' => 'Would you like to generate the page based on the attributes of the model?',
-    'relatedModel' => 'Filament couldn\'t automatically find the related model for the [teams] relationship. What is the fully qualified class name of the related model?',
-    'titleAttribute' => 'What is the title attribute? This is the attribute that will be used to uniquely identify each record in the table.',
-    'formSchemaClass' => 'Which form schema class would you like to use? Please provide the fully qualified class name.',
-    'isGeneratedTable' => 'Would you like to generate the table columns based on the attributes of the model?',
-    'hasViewOperation' => 'Would you like to generate an infolist and view modal for the table?',
-    'hasInfolistSchemaClass' => 'Would you like to use an existing infolist schema class instead of defining the infolist on this page?',
-    'infolistSchemaClass' => 'Which infolist schema class would you like to use? Please provide the fully qualified class name.',
-    'hasTableClass' => 'Would you like to use an existing table class instead of defining the table on this page?',
-    'tableClass' => 'Which table class would you like to use? Please provide the fully qualified class name.',
-    'isSoftDeletable' => 'Does the related model use soft deletes?',
+    'hasFormSchemaClass' => 'Should an existing form schema class be used?',
+    'isGenerated' => 'Should the page be generated from the current database columns?',
+    'relatedModel' => 'What is the related model?',
+    'titleAttribute' => 'What is the title attribute for this model?',
+    'formSchemaClass' => 'Which form schema class would you like to use?',
+    'isGeneratedTable' => 'Should the table columns be generated from the current database columns?',
+    'hasViewOperation' => 'Would you like to generate a read-only view modal for the table?',
+    'hasInfolistSchemaClass' => 'Would you like to use an existing infolist schema class?',
+    'infolistSchemaClass' => 'Which infolist schema class would you like to use?',
+    'hasTableClass' => 'Would you like to use an existing table class?',
+    'tableClass' => 'Which table class would you like to use?',
+    'isSoftDeletable' => 'Does the related model use soft-deletes?',
     'relationshipType' => 'What type of relationship is this?',
 ];
 
@@ -413,7 +413,6 @@ it('can generate a manage related records page class in a resource with a genera
         ->expectsQuestion($questions['hasRelatedResource'], false)
         ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['isGenerated'], true)
-        ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
         ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
         ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['hasTableClass'], false)
@@ -485,7 +484,7 @@ it('can generate a manage related records page class in a resource with a table 
         ->toMatchSnapshot();
 });
 
-it('can generate a manage related records page class in a resource with soft deletes', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
+it('can generate a manage related records page class in a resource with soft-deletes', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
     $runGenerateManageRelatedRecordsPageCommand($this)
@@ -519,6 +518,41 @@ it('can generate a manage related records page class in a resource for a `HasMan
         ->expectsQuestion($questions['relationshipType'], HasMany::class);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserTeams.php'));
+    expect(file_get_contents($path))
+        ->toMatchSnapshot();
+});
+
+it('can generate a custom record page class in a resource', function (): void {
+    $this->withoutMockingConsoleOutput();
+
+    $this->artisan('make:filament-resource', [
+        'model' => 'User',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    require_once app_path('Filament/Resources/Users/UserResource.php');
+    require_once app_path('Filament/Resources/Users/Pages/ListUsers.php');
+    require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
+    require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
+
+    invade(Filament::getCurrentOrDefaultPanel())->resources = [
+        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+        'App\\Filament\\Resources\\Users\\UserResource',
+    ];
+
+    $this->mockConsoleOutput = true;
+
+    $this->artisan('make:filament-page', [
+        'name' => 'ManageUserPermissions',
+        '--panel' => 'admin',
+        '--resource' => 'Users\\UserResource',
+        '--type' => 'custom',
+        '--no-interaction' => true,
+    ])
+        ->expectsQuestion('Does this new page relate to a specific record in the resource like this?', true);
+
+    assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserPermissions.php'));
     expect(file_get_contents($path))
         ->toMatchSnapshot();
 });

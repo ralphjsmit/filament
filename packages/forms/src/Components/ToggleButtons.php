@@ -76,7 +76,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
             0 => FilamentIcon::resolve('forms::components.toggle-buttons.boolean.false') ?? Heroicon::XMark,
         ]);
 
-        $this->stateCast(app(BooleanStateCast::class));
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
 
         return $this;
     }
@@ -159,5 +159,10 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     public function hasInValidationOnMultipleValues(): bool
     {
         return $this->isMultiple();
+    }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return true;
     }
 }

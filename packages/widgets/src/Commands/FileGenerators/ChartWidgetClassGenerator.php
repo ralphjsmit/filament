@@ -66,7 +66,6 @@ class ChartWidgetClassGenerator extends ClassGenerator
                 ->title(),
         )
             ->setProtected()
-            ->setStatic()
             ->setType('?string');
         $this->configureHeadingProperty($property);
     }

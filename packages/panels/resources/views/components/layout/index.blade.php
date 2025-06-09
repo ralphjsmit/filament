@@ -1,12 +1,14 @@
 @php
     use Filament\Support\Enums\Width;
 
+    $livewire ??= null;
+
     $hasTopbar = filament()->hasTopbar();
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
     $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
     $hasTopNavigation = filament()->hasTopNavigation();
     $hasNavigation = filament()->hasNavigation();
-    $renderHookScopes = $livewire->getRenderHookScopes();
+    $renderHookScopes = $livewire?->getRenderHookScopes();
     $maxContentWidth ??= (filament()->getMaxContentWidth() ?? Width::SevenExtraLarge);
 
     if (! $maxContentWidth instanceof Width) {
@@ -34,6 +36,19 @@
     {{-- The sidebar is after the page content in the markup to fix issues with page content overlapping dropdown content from the sidebar. --}}
     <div class="fi-layout">
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::LAYOUT_START, scopes: $renderHookScopes) }}
+
+        @if ($hasNavigation)
+            <div
+                x-cloak
+                x-data="{}"
+                x-on:click="$store.sidebar.close()"
+                x-show="$store.sidebar.isOpen"
+                x-transition.opacity.300ms
+                class="fi-sidebar-close-overlay"
+            ></div>
+
+            @livewire(\Filament\Livewire\Sidebar::class)
+        @endif
 
         <div
             @if ($isSidebarCollapsibleOnDesktop)
@@ -71,19 +86,6 @@
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::FOOTER, scopes: $renderHookScopes) }}
         </div>
-
-        @if ($hasNavigation)
-            <div
-                x-cloak
-                x-data="{}"
-                x-on:click="$store.sidebar.close()"
-                x-show="$store.sidebar.isOpen"
-                x-transition.opacity.300ms
-                class="fi-sidebar-close-overlay"
-            ></div>
-
-            @livewire(\Filament\Livewire\Sidebar::class)
-        @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::LAYOUT_END, scopes: $renderHookScopes) }}
     </div>

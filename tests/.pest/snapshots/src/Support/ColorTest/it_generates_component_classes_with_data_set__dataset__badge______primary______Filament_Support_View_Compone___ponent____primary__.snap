@@ -1,6 +1,6 @@
 [
     "fi-color",
     "fi-color-primary",
-    "fi-text-color-600",
-    "dark:fi-text-color-300"
+    "fi-text-color-700",
+    "dark:fi-text-color-400"
 ]

@@ -37,8 +37,6 @@ use Illuminate\Validation\Rules\Password;
 use League\Uri\Components\Query;
 use Throwable;
 
-use function Filament\Support\is_app_url;
-
 /**
  * @property-read Schema $form
  */
@@ -77,7 +75,7 @@ class EditProfile extends Page
         return __('filament-panels::auth/pages/edit-profile.label');
     }
 
-    public static function getRelativeRouteName(): string
+    public static function getRelativeRouteName(Panel $panel): string
     {
         return 'profile';
     }
@@ -119,8 +117,8 @@ class EditProfile extends Page
     public static function registerRoutes(Panel $panel): void
     {
         if (filled(static::getCluster())) {
-            Route::name(static::prependClusterRouteBaseName(''))
-                ->prefix(static::prependClusterSlug(''))
+            Route::name(static::prependClusterRouteBaseName($panel, ''))
+                ->prefix(static::prependClusterSlug($panel, ''))
                 ->group(fn () => static::routes($panel));
 
             return;
@@ -129,11 +127,11 @@ class EditProfile extends Page
         static::routes($panel);
     }
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(?Panel $panel = null): string
     {
-        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentOrDefaultPanel();
+        $panel ??= Filament::getCurrentOrDefaultPanel();
 
-        return $panel->generateRouteName('auth.' . static::getRelativeRouteName());
+        return $panel->generateRouteName('auth.' . static::getRelativeRouteName($panel));
     }
 
     /**
@@ -172,8 +170,6 @@ class EditProfile extends Page
             $this->handleRecordUpdate($this->getUser(), $data);
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -185,6 +181,8 @@ class EditProfile extends Page
 
             throw $exception;
         }
+
+        $this->commitDatabaseTransaction();
 
         if (request()->hasSession() && array_key_exists('password', $data)) {
             request()->session()->put([
@@ -198,7 +196,7 @@ class EditProfile extends Page
         $this->getSavedNotification()?->send();
 
         if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 
@@ -254,7 +252,7 @@ class EditProfile extends Page
 
         return FilamentNotification::make()
             ->success()
-            ->title($this->getSavedNotificationTitle());
+            ->title($title);
     }
 
     protected function getEmailChangeVerificationSentNotification(string $newEmail): ?FilamentNotification
@@ -396,7 +394,7 @@ class EditProfile extends Page
         return static::getLabel();
     }
 
-    public static function getSlug(): string
+    public static function getSlug(?Panel $panel = null): string
     {
         return static::$slug ?? 'profile';
     }
@@ -471,5 +469,10 @@ class EditProfile extends Page
                 ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider): Component => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
                     ->statePath($multiFactorAuthenticationProvider->getId()))
                 ->all());
+    }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
     }
 }

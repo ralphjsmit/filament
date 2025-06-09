@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
@@ -298,6 +298,28 @@ return [
             'strike' => 'Strikethrough',
             'table' => 'Table',
             'undo' => 'Undo',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Select',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Select',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,34 +387,103 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Upload file',
+
+                'modal' => [
+
+                    'heading' => 'Upload file',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'File',
+                                'existing' => 'Replace file',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Alt text',
+                                'existing' => 'Change alt text',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Insert',
+                        ],
+
+                        'save' => [
+                            'label' => 'Save',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                'label' => 'Edit',
+
+                'modal' => [
+
+                    'heading' => 'Link',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Open in new tab',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Enter a URL',
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'no_merge_tag_search_results_message' => 'No merge tag results.',
+
+        'tools' => [
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
             'code_block' => 'Code block',
+            'custom_blocks' => 'Blocks',
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',
             'italic' => 'Italic',
             'link' => 'Link',
+            'merge_tags' => 'Merge tags',
             'ordered_list' => 'Numbered list',
             'redo' => 'Redo',
             'strike' => 'Strikethrough',

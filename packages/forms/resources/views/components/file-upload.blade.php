@@ -70,6 +70,7 @@
                     isDownloadable: @js($isDownloadable()),
                     isMultiple: @js($isMultiple),
                     isOpenable: @js($isOpenable()),
+                    isPasteable: @js($isPasteable()),
                     isPreviewable: @js($isPreviewable()),
                     isReorderable: @js($isReorderable()),
                     itemPanelAspectRatio: @js($getItemPanelAspectRatio()),
@@ -308,7 +309,11 @@
                             <button
                                 type="button"
                                 x-on:click.stop.prevent="editor.reset()"
-                                class="fi-btn fi-color fi-color-danger fi-fo-file-upload-editor-control-panel-reset-action"
+                                {{
+                                    (new \Illuminate\View\ComponentAttributeBag)
+                                        ->color(\Filament\Support\View\Components\ButtonComponent::class, 'danger')
+                                        ->class(['fi-btn fi-fo-file-upload-editor-control-panel-reset-action'])
+                                }}
                             >
                                 {{ __('filament-forms::components.file_upload.editor.actions.reset.label') }}
                             </button>
@@ -316,7 +321,11 @@
                             <button
                                 type="button"
                                 x-on:click.prevent="saveEditor"
-                                class="fi-btn fi-color fi-color-success"
+                                {{
+                                    (new \Illuminate\View\ComponentAttributeBag)
+                                        ->color(\Filament\Support\View\Components\ButtonComponent::class, 'success')
+                                        ->class(['fi-btn'])
+                                }}
                             >
                                 {{ __('filament-forms::components.file_upload.editor.actions.save.label') }}
                             </button>

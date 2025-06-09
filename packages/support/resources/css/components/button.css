@@ -35,7 +35,7 @@
     }
 
     &.fi-outlined {
-        @apply text-gray-950 ring-1 shadow-sm ring-gray-300 dark:text-white dark:ring-gray-700;
+        @apply text-gray-950 shadow-sm ring-1 ring-gray-300 dark:text-white dark:ring-gray-700;
 
         &:not(.fi-disabled):not([disabled]) {
             @apply hover:bg-gray-400/10 focus-visible:ring-gray-400/40;
@@ -151,7 +151,7 @@
 }
 
 .fi-btn-group {
-    @apply grid grid-flow-col rounded-lg ring-1 shadow-sm ring-gray-950/10 dark:ring-white/20;
+    @apply grid grid-flow-col rounded-lg shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
 
     & > .fi-btn {
         @apply flex-1 rounded-none;

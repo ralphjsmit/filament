@@ -4,6 +4,7 @@
 
 @props([
     'field' => null,
+    'hasErrors' => true,
     'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => null,
     'id' => null,
@@ -29,16 +30,18 @@
         $statePath ??= $field->getStatePath();
     }
 
-    $beforeLabelContainer = $field?->getChildSchema($field::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
-    $afterLabelContainer = $field?->getChildSchema($field::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
-    $aboveContentContainer = $field?->getChildSchema($field::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
-    $belowContentContainer = $field?->getChildSchema($field::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
-    $beforeContentContainer = $field?->getChildSchema($field::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
-    $afterContentContainer = $field?->getChildSchema($field::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
-    $aboveErrorMessageContainer = $field?->getChildSchema($field::ABOVE_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
-    $belowErrorMessageContainer = $field?->getChildSchema($field::BELOW_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
+    $aboveLabelSchema = $field?->getChildSchema($field::ABOVE_LABEL_SCHEMA_KEY)?->toHtmlString();
+    $belowLabelSchema = $field?->getChildSchema($field::BELOW_LABEL_SCHEMA_KEY)?->toHtmlString();
+    $beforeLabelSchema = $field?->getChildSchema($field::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
+    $afterLabelSchema = $field?->getChildSchema($field::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
+    $aboveContentSchema = $field?->getChildSchema($field::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+    $belowContentSchema = $field?->getChildSchema($field::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
+    $beforeContentSchema = $field?->getChildSchema($field::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+    $afterContentSchema = $field?->getChildSchema($field::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
+    $aboveErrorMessageSchema = $field?->getChildSchema($field::ABOVE_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
+    $belowErrorMessageSchema = $field?->getChildSchema($field::BELOW_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
 
-    $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
+    $hasError = $hasErrors && filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
 @endphp
 
 <div
@@ -52,79 +55,96 @@
             ])
     }}
 >
-    @if ($label && $labelSrOnly)
+    @if (filled($label) && $labelSrOnly)
         <label for="{{ $id }}" class="fi-fo-field-label fi-sr-only">
             {{ $label }}
         </label>
     @endif
 
-    <div
-        @class([
-            'fi-fo-field-label-col',
-            "fi-vertical-align-{$inlineLabelVerticalAlignment->value}" => $hasInlineLabel,
-        ])
-    >
-        {{ $field?->getChildSchema($field::ABOVE_LABEL_SCHEMA_KEY) }}
+    @if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema || $labelPrefix || $labelSuffix)
+        <div
+            @class([
+                'fi-fo-field-label-col',
+                "fi-vertical-align-{$inlineLabelVerticalAlignment->value}" => $hasInlineLabel,
+            ])
+        >
+            {{ $aboveLabelSchema }}
 
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $beforeLabelContainer || $afterLabelContainer)
             <div
                 @class([
                     'fi-fo-field-label-ctn',
                     ($label instanceof \Illuminate\View\ComponentSlot) ? $label->attributes->get('class') : null,
                 ])
             >
-                {{ $beforeLabelContainer }}
+                {{ $beforeLabelSchema }}
 
-                {{ $labelPrefix }}
-
-                @if ($label && (! $labelSrOnly))
+                @if ((filled($label) && (! $labelSrOnly)) || $labelPrefix || $labelSuffix)
                     <label class="fi-fo-field-label">
-                        {{ $label }}
+                        {{ $labelPrefix }}
 
-                        @if ($required && (! $isDisabled))
-                            <sup class="fi-fo-field-label-required-mark">*</sup>
+                        @if (filled($label) && (! $labelSrOnly))
+                            <span class="fi-fo-field-label-content">
+                                {{ $label }}@if ($required && (! $isDisabled))<sup class="fi-fo-field-label-required-mark">*</sup>
+                                @endif
+                            </span>
                         @endif
+
+                        {{ $labelSuffix }}
                     </label>
                 @endif
 
-                {{ $labelSuffix }}
-
-                {{ $afterLabelContainer }}
+                {{ $afterLabelSchema }}
             </div>
-        @endif
 
-        {{ $field?->getChildSchema($field::BELOW_LABEL_SCHEMA_KEY) }}
-    </div>
+            {{ $belowLabelSchema }}
+        </div>
+    @endif
 
-    @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $aboveContentContainer || $belowContentContainer || $beforeContentContainer || $afterContentContainer || $aboveErrorMessageContainer || $belowErrorMessageContainer)
+    @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $aboveContentSchema || $belowContentSchema || $beforeContentSchema || $afterContentSchema || $aboveErrorMessageSchema || $belowErrorMessageSchema)
         <div class="fi-fo-field-content-col">
-            {{ $aboveContentContainer }}
+            {{ $aboveContentSchema }}
 
-            @if ($beforeContentContainer || $afterContentContainer)
+            @if ($beforeContentSchema || $afterContentSchema)
                 <div class="fi-fo-field-content-ctn">
-                    {{ $beforeContentContainer }}
+                    {{ $beforeContentSchema }}
 
                     <div class="fi-fo-field-content">
                         {{ $slot }}
                     </div>
 
-                    {{ $afterContentContainer }}
+                    {{ $afterContentSchema }}
                 </div>
             @else
                 {{ $slot }}
             @endif
 
-            {{ $belowContentContainer }}
-
-            {{ $aboveErrorMessageContainer }}
+            {{ $belowContentSchema }}
 
             @if ($hasError)
-                <p data-validation-error class="fi-fo-field-wrp-error-message">
-                    {{ $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
-                </p>
-            @endif
+                @php
+                    $errorMessage = $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
+                @endphp
 
-            {{ $belowErrorMessageContainer }}
+                {{ $aboveErrorMessageSchema }}
+
+                @if ($field?->areHtmlValidationMessagesAllowed())
+                    <div
+                        data-validation-error
+                        class="fi-fo-field-wrp-error-message"
+                    >
+                        {!! $errorMessage !!}
+                    </div>
+                @else
+                    <p
+                        data-validation-error
+                        class="fi-fo-field-wrp-error-message"
+                    >
+                        {{ $errorMessage }}
+                    </p>
+                @endif
+
+                {{ $belowErrorMessageSchema }}
+            @endif
         </div>
     @endif
 </div>

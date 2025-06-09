@@ -7,7 +7,11 @@ use Closure;
 use Filament\Navigation\Concerns\HasExtraSidebarAttributes;
 use Filament\Navigation\Concerns\HasExtraTopbarAttributes;
 use Filament\Support\Components\Component;
+use Filament\Support\Contracts\Collapsible;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Support\Arrayable;
+use UnitEnum;
 
 class NavigationGroup extends Component
 {
@@ -119,5 +123,27 @@ class NavigationGroup extends Component
         }
 
         return false;
+    }
+
+    public static function fromEnum(UnitEnum $case): static
+    {
+        $group = static::make();
+
+        if ($case instanceof HasLabel) {
+            $group->label($case->getLabel());
+        } else {
+            $group->label($case->name);
+        }
+
+        if ($case instanceof HasIcon) {
+            $group->icon($case->getIcon());
+        }
+
+        if ($case instanceof Collapsible) {
+            $group->collapsible($case->isCollapsible());
+            $group->collapsed($case->isCollapsed());
+        }
+
+        return $group;
     }
 }

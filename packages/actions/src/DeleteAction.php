@@ -28,7 +28,7 @@ class DeleteAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::delete.single.notifications.deleted.title'));
 
-        $this->color('danger');
+        $this->defaultColor('danger');
 
         $this->tableIcon(FilamentIcon::resolve('actions::delete-action') ?? Heroicon::Trash);
         $this->groupedIcon(FilamentIcon::resolve('actions::delete-action.grouped') ?? Heroicon::Trash);
@@ -48,7 +48,7 @@ class DeleteAction extends Action
         });
 
         $this->action(function (): void {
-            $result = $this->process(static fn (Model $record) => $record->delete());
+            $result = $this->process(static fn (Model $record): ?bool => $record->delete());
 
             if (! $result) {
                 $this->failure();

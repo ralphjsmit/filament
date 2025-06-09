@@ -10,9 +10,11 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasAlignment;
+use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
@@ -43,27 +45,12 @@ class Schema extends ViewComponent implements HasEmbeddedView
     use Concerns\HasState;
     use Concerns\HasStateBindingModifiers;
     use HasAlignment;
+    use HasDefaultDataFormattingSettings;
     use HasExtraAttributes;
 
     protected string $evaluationIdentifier = 'schema';
 
     protected string $viewIdentifier = 'schema';
-
-    public static string $defaultCurrency = 'usd';
-
-    public static string $defaultDateDisplayFormat = 'M j, Y';
-
-    public static string $defaultIsoDateDisplayFormat = 'L';
-
-    public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
-
-    public static string $defaultIsoDateTimeDisplayFormat = 'LLL';
-
-    public static ?string $defaultNumberLocale = null;
-
-    public static string $defaultTimeDisplayFormat = 'H:i:s';
-
-    public static string $defaultIsoTimeDisplayFormat = 'LT';
 
     final public function __construct((LivewireComponent & HasSchemas) | null $livewire = null)
     {
@@ -114,9 +101,9 @@ class Schema extends ViewComponent implements HasEmbeddedView
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure  $components
      */
-    public static function start(array | Schema | Component | Action | ActionGroup | string | Closure $components): static
+    public static function start(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
     {
         return static::make()
             ->components($components)
@@ -124,9 +111,9 @@ class Schema extends ViewComponent implements HasEmbeddedView
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure  $components
      */
-    public static function end(array | Schema | Component | Action | ActionGroup | string | Closure $components): static
+    public static function end(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
     {
         return static::make()
             ->components($components)
@@ -134,9 +121,9 @@ class Schema extends ViewComponent implements HasEmbeddedView
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure  $components
      */
-    public static function between(array | Schema | Component | Action | ActionGroup | string | Closure $components): static
+    public static function between(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
     {
         return static::make()
             ->components($components)
@@ -225,6 +212,10 @@ class Schema extends ViewComponent implements HasEmbeddedView
 
                     $maxWidth = $schemaComponent->getMaxWidth();
 
+                    $schemaComponentStatePath = $isEmbeddedInParentComponent
+                        ? $parentComponent->getStatePath()
+                        : $schemaComponent->getStatePath();
+
                     $attributes = (new ComponentAttributeBag)
                         ->when(
                             ! $isInline,
@@ -238,36 +229,34 @@ class Schema extends ViewComponent implements HasEmbeddedView
                             ($maxWidth instanceof Width) ? "fi-width-{$maxWidth->value}" : $maxWidth,
                         ]);
                     ?>
-                    <div <?= $attributes->toHtml() ?>>
+                    <div
                         <?php if ($isSchemaComponentVisible) { ?>
-                            <?php
-                                $schemaComponentStatePath = $isEmbeddedInParentComponent
-                                    ? $parentComponent->getStatePath()
-                                    : $schemaComponent->getStatePath();
-                            ?>
-
+                            x-data="filamentSchemaComponent({
+                                path: <?= Js::from($schemaComponentStatePath) ?>,
+                                containerPath: <?= Js::from($statePath) ?>,
+                                isLive: <?= Js::from($schemaComponent->isLive()) ?>,
+                                $wire,
+                            })"
+                            <?php if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs()) { ?>
+                                x-init="<?= implode(';', array_map(
+                                    fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => eval(' . Js::from($js) . '))',
+                                    $afterStateUpdatedJs,
+                                )) ?>"
+                            <?php } ?>
+                            <?php if (filled($visibilityJs = match ([filled($hiddenJs), filled($visibleJs)]) {
+                                [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
+                                [true, false] => "! ({$hiddenJs})",
+                                [false, true] => $visibleJs,
+                                default => null,
+                            })) { ?>
+                                x-bind:class="{ 'fi-hidden': ! (<?= $visibilityJs ?>) }"
+                                x-cloak
+                            <?php } ?>
+                        <?php } ?>
+                        <?= $attributes->toHtml() ?>
+                    >
+                        <?php if ($isSchemaComponentVisible) { ?>
                             <div
-                                x-data="filamentSchemaComponent({
-                                        path: <?= Js::from($schemaComponentStatePath) ?>,
-                                        containerPath: <?= Js::from($statePath) ?>,
-                                        isLive: <?= Js::from($schemaComponent->isLive()) ?>,
-                                        $wire,
-                                    })"
-                                <?php if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs()) { ?>
-                                    x-init="<?= implode(';', array_map(
-                                        fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => eval(' . Js::from($js) . '))',
-                                        $afterStateUpdatedJs,
-                                    )) ?>"
-                                <?php } ?>
-                                <?php if (filled($xShow = match ([filled($hiddenJs), filled($visibleJs)]) {
-                                    [true, true] => "(! {$hiddenJs}) && ({$visibleJs})",
-                                    [true, false] => "! {$hiddenJs}",
-                                    [false, true] => $visibleJs,
-                                    default => null,
-                                })) { ?>
-                                    x-show="<?= $xShow ?>"
-                                    x-cloak
-                                <?php } ?>
                                 class="<?= Arr::toCssClasses([
                                     'fi-sc-component',
                                     'fi-grid-ctn' => $schemaComponent->isGridContainer(),

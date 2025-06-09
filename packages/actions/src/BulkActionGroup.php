@@ -15,12 +15,24 @@ class BulkActionGroup extends ActionGroup
 
         $this->icon(FilamentIcon::resolve('tables::actions.open-bulk-actions') ?? Heroicon::EllipsisVertical);
 
-        $this->color('gray');
+        $this->defaultColor('gray');
 
         $this->button();
 
         $this->dropdownPlacement('bottom-start');
 
         $this->labeledFrom('sm');
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getExtraDropdownAttributes(): array
+    {
+        return [
+            'x-cloak' => true,
+            'x-show' => 'getSelectedRecordsCount()',
+            ...parent::getExtraAttributes(),
+        ];
     }
 }

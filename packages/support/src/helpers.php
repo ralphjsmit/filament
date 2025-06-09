@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
+use Throwable;
 
 if (! function_exists('Filament\Support\format_money')) {
     /**
@@ -77,49 +78,6 @@ if (! function_exists('Filament\Support\get_component_color_classes')) {
         }
 
         return FilamentColor::getComponentClasses($component, $color);
-    }
-}
-
-if (! function_exists('Filament\Support\get_color_css_variables')) {
-    /**
-     * @param  string | array<int | string, string | int> | null  $color
-     * @param  array<int>  $shades
-     */
-    function get_color_css_variables(string | array | null $color, array $shades, ?string $alias = null): ?string
-    {
-        if ($color === null) {
-            return null;
-        }
-
-        if ($alias !== null) {
-            if (($overridingShades = FilamentColor::getOverridingShades($alias)) !== null) {
-                $shades = $overridingShades;
-            }
-
-            if ($addedShades = FilamentColor::getAddedShades($alias)) {
-                $shades = [...$shades, ...$addedShades];
-            }
-
-            if ($removedShades = FilamentColor::getRemovedShades($alias)) {
-                $shades = array_diff($shades, $removedShades);
-            }
-        }
-
-        $variables = [];
-
-        if (is_string($color)) {
-            foreach ($shades as $shade) {
-                $variables[] = "--color-{$shade}:var(--{$color}-{$shade})";
-            }
-        }
-
-        if (is_array($color)) {
-            foreach ($shades as $shade) {
-                $variables[] = "--color-{$shade}:{$color[$shade]}";
-            }
-        }
-
-        return implode(';', $variables);
     }
 }
 
@@ -182,7 +140,10 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 }
 
 if (! function_exists('Filament\Support\generate_icon_html')) {
-    function generate_icon_html(string | BackedEnum | Htmlable | null $icon, ?string $alias = null, ?ComponentAttributeBag $attributes = null, ?IconSize $size = null): ?Htmlable
+    /**
+     * @param  string | array<string> | null  $alias
+     */
+    function generate_icon_html(string | BackedEnum | Htmlable | null $icon, string | array | null $alias = null, ?ComponentAttributeBag $attributes = null, ?IconSize $size = null): ?Htmlable
     {
         if (filled($alias)) {
             $icon = FilamentIcon::resolve($alias) ?: $icon;
@@ -330,5 +291,77 @@ if (! function_exists('Filament\Support\original_request')) {
     function original_request(): Request
     {
         return app('originalRequest');
+    }
+}
+
+if (! function_exists('Filament\Support\discover_app_classes')) {
+    /**
+     * @return array<class-string>
+     */
+    function discover_app_classes(?string $parentClass = null): array
+    {
+        $classLoader = require 'vendor/autoload.php';
+
+        return collect($classLoader->getClassMap())
+            ->filter(function (string $file, string $class) use ($parentClass): bool {
+                if (! str($file)->startsWith(base_path('vendor' . DIRECTORY_SEPARATOR . 'composer/../../'))) {
+                    return false;
+                }
+
+                if (blank($parentClass)) {
+                    return true;
+                }
+
+                try {
+                    return is_subclass_of($class, $parentClass);
+                } catch (Throwable) {
+                    return false;
+                }
+            })
+            ->keys()
+            ->all();
+    }
+}
+
+if (! function_exists('Filament\Support\get_color_css_variables')) {
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     * @param  array<int>  $shades
+     */
+    function get_color_css_variables(string | array | null $color, array $shades, ?string $alias = null): ?string
+    {
+        if ($color === null) {
+            return null;
+        }
+
+        if ($alias !== null) {
+            if (($overridingShades = FilamentColor::getOverridingShades($alias)) !== null) {
+                $shades = $overridingShades;
+            }
+
+            if ($addedShades = FilamentColor::getAddedShades($alias)) {
+                $shades = [...$shades, ...$addedShades];
+            }
+
+            if ($removedShades = FilamentColor::getRemovedShades($alias)) {
+                $shades = array_diff($shades, $removedShades);
+            }
+        }
+
+        $variables = [];
+
+        if (is_string($color)) {
+            foreach ($shades as $shade) {
+                $variables[] = "--color-{$shade}:var(--{$color}-{$shade})";
+            }
+        }
+
+        if (is_array($color)) {
+            foreach ($shades as $shade) {
+                $variables[] = "--color-{$shade}:{$color[$shade]}";
+            }
+        }
+
+        return implode(';', $variables);
     }
 }

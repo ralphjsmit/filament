@@ -17,8 +17,6 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Throwable;
 
-use function Filament\Support\is_app_url;
-
 /**
  * @property-read Schema $form
  */
@@ -86,8 +84,6 @@ class SettingsPage extends Page
             $settings->save();
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -100,12 +96,14 @@ class SettingsPage extends Page
             throw $exception;
         }
 
+        $this->commitDatabaseTransaction();
+
         $this->rememberData();
 
         $this->getSavedNotification()?->send();
 
         if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 
@@ -249,5 +247,10 @@ class SettingsPage extends Page
     public function canEdit(): bool
     {
         return true;
+    }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
     }
 }

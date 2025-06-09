@@ -316,10 +316,7 @@ class ImportColumn extends Component
         return $this;
     }
 
-    /**
-     * @param  array<string, mixed>  $options
-     */
-    public function castState(mixed $state, array $options): mixed
+    public function castState(mixed $state): mixed
     {
         $originalState = $state;
 
@@ -336,7 +333,6 @@ class ImportColumn extends Component
             return $this->evaluate($this->castStateUsing, [
                 'originalState' => $originalState,
                 'state' => $state,
-                'options' => $options,
             ]);
         }
 
@@ -365,7 +361,9 @@ class ImportColumn extends Component
             return;
         }
 
-        $this->getRecord()->{$this->getName()} = $state;
+        $record = $this->getRecord();
+
+        data_set($record, $this->getName(), $state);
     }
 
     public function saveRelationships(mixed $state): void

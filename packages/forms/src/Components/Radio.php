@@ -29,7 +29,7 @@ class Radio extends Field implements Contracts\CanDisableOptions
             0 => $falseLabel ?? __('filament-forms::components.radio.boolean.false'),
         ]);
 
-        $this->stateCast(app(BooleanStateCast::class));
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
 
         return $this;
     }
@@ -69,5 +69,10 @@ class Radio extends Field implements Contracts\CanDisableOptions
         }
 
         return array_keys($this->getEnabledOptions());
+    }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return true;
     }
 }

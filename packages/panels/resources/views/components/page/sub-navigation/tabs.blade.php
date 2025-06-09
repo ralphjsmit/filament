@@ -11,9 +11,9 @@
 >
     @foreach ($navigation as $navigationGroup)
         @php
-            $navigationGroupLabel = $navigationGroup->getLabel()
-                $isNavigationGroupActive = $navigationGroup->isActive();
-                $navigationGroupIcon = $navigationGroup->getIcon();
+            $navigationGroupLabel = $navigationGroup->getLabel();
+            $isNavigationGroupActive = $navigationGroup->isActive();
+            $navigationGroupIcon = $navigationGroup->getIcon();
         @endphp
 
         @if ($navigationGroupLabel)

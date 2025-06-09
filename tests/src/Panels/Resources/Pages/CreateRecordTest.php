@@ -59,7 +59,7 @@ it('can create another', function (): void {
         ->call('create', true)
         ->assertHasNoFormErrors()
         ->assertNoRedirect()
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'author_id' => null,
             'content' => null,
             'tags' => [],
@@ -109,7 +109,7 @@ it('can create another and preserve data', function (): void {
         ->call('create', true)
         ->assertHasNoFormErrors()
         ->assertNoRedirect()
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'author_id' => null,
             'content' => null,
             'tags' => $newData->tags,

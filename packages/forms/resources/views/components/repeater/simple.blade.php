@@ -44,37 +44,37 @@
                             'data-sortable-animation-duration' => $getReorderAnimationDuration(),
                             'wire:end.stop' => 'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
                         ], escape: false)
-                        ->class(['fi-fo-repeater-items'])
+                        ->class(['fi-fo-simple-repeater-items'])
                 }}
             >
-                @foreach ($items as $uuid => $item)
+                @foreach ($items as $itemKey => $item)
                     @php
                         $visibleExtraItemActions = array_filter(
                             $extraItemActions,
-                            fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
+                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
                         );
-                        $cloneAction = $cloneAction(['item' => $uuid]);
+                        $cloneAction = $cloneAction(['item' => $itemKey]);
                         $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
-                        $deleteAction = $deleteAction(['item' => $uuid]);
+                        $deleteAction = $deleteAction(['item' => $itemKey]);
                         $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
-                        $moveDownAction = $moveDownAction(['item' => $uuid])->disabled($loop->last);
+                        $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
                         $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
-                        $moveUpAction = $moveUpAction(['item' => $uuid])->disabled($loop->first);
+                        $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
                         $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                     @endphp
 
                     <li
                         wire:key="{{ $item->getLivewireKey() }}.item"
-                        x-sortable-item="{{ $uuid }}"
-                        class="fi-fo-repeater-item"
+                        x-sortable-item="{{ $itemKey }}"
+                        class="fi-fo-simple-repeater-item"
                     >
-                        <div class="fi-fo-repeater-item-content">
+                        <div class="fi-fo-simple-repeater-item-content">
                             {{ $item }}
                         </div>
 
                         @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $visibleExtraItemActions)
-                            <ul class="fi-fo-repeater-item-actions">
+                            <ul class="fi-fo-simple-repeater-item-actions">
                                 @if ($reorderActionIsVisible)
                                     <li x-sortable-handle x-on:click.stop>
                                         {{ $reorderAction }}
@@ -93,7 +93,7 @@
 
                                 @foreach ($visibleExtraItemActions as $extraItemAction)
                                     <li x-on:click.stop>
-                                        {{ $extraItemAction(['item' => $uuid]) }}
+                                        {{ $extraItemAction(['item' => $itemKey]) }}
                                     </li>
                                 @endforeach
 
@@ -118,7 +118,7 @@
         @if ($isAddable && $addAction->isVisible())
             <div
                 @class([
-                    'fi-fo-repeater-add',
+                    'fi-fo-simple-repeater-add',
                     ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
                 ])
             >

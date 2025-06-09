@@ -1,21 +1,28 @@
 <?php
 
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\FilamentManager;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
+use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Table;
 use Filament\Upgrade\Rector;
+use Filament\Widgets\Widget;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
+use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
+use Rector\Renaming\ValueObject\RenameProperty;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         RenameClassRector::class,
-        // @todo Alphabetical
         [
-            'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeLayoutComponentCommand',
+            'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeComponentCommand',
             'Filament\\Pages\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Forms\\Components\\BelongsToManyCheckboxList' => 'Filament\\Forms\\Components\\CheckboxList',
             'Filament\\Forms\\Components\\BelongsToManyMultiSelect' => 'Filament\\Forms\\Components\\MultiSelect',
@@ -61,6 +68,8 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Concerns\\HasOperation' => 'Filament\\Schemas\\Concerns\\HasOperation',
             'Filament\\Forms\\Concerns\\HasState' => 'Filament\\Schemas\\Concerns\\HasState',
             'Filament\\Forms\\Concerns\\HasColumns' => 'Filament\\Schemas\\Concerns\\HasColumns',
+            'Filament\\Forms\\Concerns\\HasName' => 'Filament\\Schemas\\Concerns\\HasName',
+            'Filament\\Infolists\\Concerns\\HasName' => 'Filament\\Schemas\\Concerns\\HasName',
             'Filament\\Infolists\\Concerns\\HasColumns' => 'Filament\\Schemas\\Concerns\\HasColumns',
             'Filament\\Infolists\\Infolist' => 'Filament\\Schemas\\Schema',
             'Filament\\Forms\\Concerns\\HasStateBindingModifiers' => 'Filament\\Schemas\\Concerns\\HasStateBindingModifiers',
@@ -70,7 +79,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Component' => 'Filament\\Schemas\\Components\\Component',
             'Filament\\Forms\\Components\\Concerns\\BelongsToContainer' => 'Filament\\Schemas\\Components\\Concerns\\BelongsToContainer',
             'Filament\\Forms\\Components\\Concerns\\BelongsToModel' => 'Filament\\Schemas\\Components\\Concerns\\BelongsToModel',
-            'Filament\\Forms\\Components\\Concerns\\CanBeConcealed' => 'Filament\\Schemas\\Components\\Concerns\\CanBeConcealed',
             'Filament\\Forms\\Components\\Concerns\\CanBeDisabled' => 'Filament\\Schemas\\Components\\Concerns\\CanBeDisabled',
             'Filament\\Forms\\Components\\Concerns\\CanBeHidden' => 'Filament\\Schemas\\Components\\Concerns\\CanBeHidden',
             'Filament\\Forms\\Components\\Concerns\\CanBeRepeated' => 'Filament\\Schemas\\Components\\Concerns\\CanBeRepeated',
@@ -91,7 +99,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Forms\\Components\\Tabs' => 'Filament\\Schemas\\Components\\Tabs',
             'Filament\\Forms\\Components\\Tabs\\Tab' => 'Filament\\Schemas\\Components\\Tabs\\Tab',
-            'Filament\\Forms\\Components\\Contracts\\CanConcealComponents' => 'Filament\\Schemas\\Components\\Contracts\\CanConcealComponents',
             'Filament\\Forms\\Components\\Wizard' => 'Filament\\Schemas\\Components\\Wizard',
             'Filament\\Forms\\Components\\Wizard\\Step' => 'Filament\\Schemas\\Components\\Wizard\\Step',
             'Filament\\Forms\\Components\\Fieldset' => 'Filament\\Schemas\\Components\\Fieldset',
@@ -101,7 +108,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Group' => 'Filament\\Schemas\\Components\\Group',
             'Filament\\Forms\\Components\\Livewire' => 'Filament\\Schemas\\Components\\Livewire',
             'Filament\\Forms\\Components\\Section' => 'Filament\\Schemas\\Components\\Section',
-            'Filament\\Forms\\Components\\Split' => 'Filament\\Schemas\\Components\\Split',
+            'Filament\\Forms\\Components\\Split' => 'Filament\\Schemas\\Components\\Flex',
             'Filament\\Forms\\Components\\View' => 'Filament\\Schemas\\Components\\View',
             'Filament\\Forms\\Components\\Concerns\\CanBeCollapsed' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCollapsed',
             'Filament\\Forms\\Components\\Concerns\\CanBeCompacted' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCompact',
@@ -138,7 +145,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Infolists\\Components\\Contracts\\HasAffixActions' => 'Filament\\Schemas\\Components\\Contracts\\HasAffixActions',
             'Filament\\Forms\\Components\\Contracts\\HasAffixActions' => 'Filament\\Schemas\\Components\\Contracts\\HasAffixActions',
             'Filament\\Forms\\Components\\Contracts\\HasExtraItemActions' => 'Filament\\Schemas\\Components\\Contracts\\HasExtraItemActions',
-            'Filament\\Infolists\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeLayoutComponentCommand',
+            'Filament\\Infolists\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeComponentCommand',
             'Filament\\Infolists\\Components\\Actions' => 'Filament\\Schemas\\Components\\Actions',
             'Filament\\Infolists\\Components\\Tabs' => 'Filament\\Schemas\\Components\\Tabs',
             'Filament\\Infolists\\Components\\Tabs\\Tab' => 'Filament\\Schemas\\Components\\Tabs\\Tab',
@@ -148,7 +155,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Infolists\\Components\\Group' => 'Filament\\Schemas\\Components\\Group',
             'Filament\\Infolists\\Components\\Livewire' => 'Filament\\Schemas\\Components\\Livewire',
             'Filament\\Infolists\\Components\\Section' => 'Filament\\Schemas\\Components\\Section',
-            'Filament\\Infolists\\Components\\Split' => 'Filament\\Schemas\\Components\\Split',
+            'Filament\\Infolists\\Components\\Split' => 'Filament\\Schemas\\Components\\Flex',
             'Filament\\Infolists\\Components\\View' => 'Filament\\Schemas\\Components\\View',
             'Filament\\Infolists\\Components\\Concerns\\CanBeCollapsed' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCollapsed',
             'Filament\\Infolists\\Components\\Concerns\\CanBeCompacted' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCompact',
@@ -233,6 +240,16 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Tables\\Columns\\TextColumn\\TextColumnSize' => 'Filament\\Support\\Enums\\TextSize',
             'Filament\\Support\\View\\Components\\Modal' => 'Filament\\Support\\View\\Components\\ModalComponent',
             'Filament\\Support\\Enums\\ActionSize' => 'Filament\\Support\\Enums\\Size',
+            'Filament\\SpatieLaravelTranslatablePlugin' => 'LaraZeus\\SpatieTranslatable\\SpatieTranslatablePlugin',
+            'Filament\\Resources\\Concerns\\Translatable' => 'LaraZeus\\SpatieTranslatable\\Resources\\Concerns\\Translatable',
+            'Filament\\Resources\\Pages\\ListRecords\\Concerns\\Translatable' => 'LaraZeus\\SpatieTranslatable\\Resources\\Pages\\ListRecords\\Concerns\\Translatable',
+            'Filament\\Resources\\Pages\\CreateRecord\\Concerns\\Translatable' => 'LaraZeus\\SpatieTranslatable\\Resources\\Pages\\CreateRecord\\Concerns\\Translatable',
+            'Filament\\Resources\\Pages\\EditRecord\\Concerns\\Translatable' => 'LaraZeus\\SpatieTranslatable\\Resources\\Pages\\EditRecord\\Concerns\\Translatable',
+            'Filament\\Resources\\Pages\\ViewRecord\\Concerns\\Translatable' => 'LaraZeus\\SpatieTranslatable\\Resources\\Pages\\ViewRecord\\Concerns\\Translatable',
+            'Filament\\Resources\\Pages\\ManageRecords\\Concerns\\Translatable' => 'LaraZeus\\SpatieTranslatable\\Resources\\Pages\\ManageRecords\\Concerns\\Translatable',
+            'Filament\\Actions\\LocaleSwitcher' => 'LaraZeus\\SpatieTranslatable\\Actions\\LocaleSwitcher',
+            'Filament\\Tables\\Actions\\LocaleSwitcher' => 'LaraZeus\\SpatieTranslatable\\Actions\\LocaleSwitcher',
+            'Filament\\Tables\\Enums\\ActionsPosition' => 'Filament\\Tables\\Enums\\RecordActionsPosition',
         ],
     );
 
@@ -262,17 +279,41 @@ return static function (RectorConfig $rectorConfig): void {
         ],
     );
 
+    $rectorConfig->ruleWithConfiguration(
+        RenamePropertyRector::class,
+        [
+            new RenameProperty(Widget::class, 'filters', 'pageFilters'),
+        ],
+    );
+
     $rectorConfig->rules([
+        Rector\AddPanelParamToRouteMethodsRector::class,
+        Rector\ReplaceStringPanelParamWithPanelParamRector::class,
         Rector\SimpleMethodChangesRector::class,
         Rector\SimplePropertyChangesRector::class,
         Rector\RenameSchemaParamToMatchTypeRector::class,
+        Rector\ConvertStaticConfigurationToConfigureUsingFunction::class,
     ]);
 
     $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
         new MethodCallRename(Action::class, 'infolist', 'schema'),
         new MethodCallRename(Action::class, 'form', 'schema'),
+        new MethodCallRename(Action::class, 'mutateFormDataUsing', 'mutateDataUsing'),
+        new MethodCallRename(Component::class, 'getChildComponents', 'getDefaultChildComponents'),
         new MethodCallRename(Component::class, 'getChildComponentContainer', 'getChildSchema'),
         new MethodCallRename(Component::class, 'getChildComponentContainers', 'getChildSchemas'),
+        new MethodCallRename(BaseFilter::class, 'form', 'schema'),
         new MethodCallRename(Schema::class, 'schema', 'components'),
+        new MethodCallRename(FilamentManager::class, 'getCurrentPanel', 'getCurrentOrDefaultPanel'),
+        new MethodCallRename(Filament::class, 'getCurrentPanel', 'getCurrentOrDefaultPanel'),
+        new MethodCallRename(Color::class, 'hex', 'generateV3Palette'),
+        new MethodCallRename(Color::class, 'rgb', 'generateV3Palette'),
+        new MethodCallRename(Table::class, 'actions', 'recordActions'),
+        new MethodCallRename(Table::class, 'pushActions', 'pushRecordActions'),
+        new MethodCallRename(Table::class, 'actionsColumnLabel', 'recordActionsColumnLabel'),
+        new MethodCallRename(Table::class, 'actionsAlignment', 'recordActionsAlignment'),
+        new MethodCallRename(Table::class, 'actionsPosition', 'recordActionsPosition'),
+        new MethodCallRename(Table::class, 'bulkActions', 'toolbarActions'),
+        new MethodCallRename(Table::class, 'pushBulkActions', 'pushToolbarActions'),
     ]);
 };

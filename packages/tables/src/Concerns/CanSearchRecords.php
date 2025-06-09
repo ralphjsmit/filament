@@ -138,6 +138,12 @@ trait CanSearchRecords
             return $query;
         }
 
+        if ($this->getTable()->hasSearchUsingCallback()) {
+            $this->getTable()->callSearchUsing($query, $search);
+
+            return $query;
+        }
+
         if (! $this->getTable()->shouldSplitSearchTerms()) {
             $query->where(function (Builder $query) use ($search): void {
                 $isFirst = true;
@@ -316,14 +322,14 @@ trait CanSearchRecords
 
     public function getTableSearchSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = md5($this::class);
 
         return "tables.{$table}_search";
     }
 
     public function getTableColumnSearchesSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = md5($this::class);
 
         return "tables.{$table}_column_search";
     }

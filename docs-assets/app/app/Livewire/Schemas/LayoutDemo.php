@@ -13,10 +13,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Split;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Wizard;
@@ -173,6 +173,60 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                 Tab::make('Security'),
                                 Tab::make('Meta'),
                             ]),
+                    ]),
+                Group::make()
+                    ->id('tabsBadgesColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Tabs::make('Tabs')
+                            ->statePath('tabsBadgesColor')
+                            ->schema([
+                                Tab::make('Notifications')
+                                    ->badge(5)
+                                    ->badgeColor('info')
+                                    ->schema([
+                                        Checkbox::make('enabled')
+                                            ->default(true),
+                                        Select::make('frequency')
+                                            ->default('hourly')
+                                            ->options([
+                                                'hourly' => 'Hourly',
+                                            ]),
+                                    ]),
+                                Tab::make('Security'),
+                                Tab::make('Meta'),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('tabsVertical')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Tabs::make('Tabs')
+                            ->statePath('tabsVertical')
+                            ->schema([
+                                Tab::make('Rate Limiting')
+                                    ->schema([
+                                        TextInput::make('hits')
+                                            ->default(30),
+                                        Select::make('period')
+                                            ->default('hour')
+                                            ->options([
+                                                'hour' => 'Hour',
+                                            ]),
+                                        TextInput::make('maximum')
+                                            ->default(100),
+                                        Textarea::make('notes')
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(3),
+                                Tab::make('Proxy'),
+                                Tab::make('Meta'),
+                            ])
+                            ->vertical(),
                     ]),
                 Group::make()
                     ->id('wizard')
@@ -355,7 +409,7 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Section::make('Rate limiting')
                             ->description('Prevent abuse by limiting the number of requests per period')
-                            ->headerActions([
+                            ->afterHeader([
                                 Action::make('test'),
                             ])
                             ->statePath('section')
@@ -382,7 +436,7 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Section::make('Rate limiting')
                             ->description('Prevent abuse by limiting the number of requests per period')
-                            ->footerActions([
+                            ->footer([
                                 Action::make('test'),
                             ])
                             ->statePath('section')
@@ -493,6 +547,36 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->columns(3),
                     ]),
                 Group::make()
+                    ->id('sectionSecondary')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Section::make('Rate limiting')
+                            ->description('Prevent abuse by limiting the number of requests per period')
+                            ->statePath('sectionSecondary')
+                            ->schema([
+                                TextInput::make('hits')
+                                    ->default(30),
+                                Select::make('period')
+                                    ->default('hour')
+                                    ->options([
+                                        'hour' => 'Hour',
+                                    ]),
+                                TextInput::make('maximum')
+                                    ->default(100),
+                                Section::make('Notes')
+                                    ->compact()
+                                    ->secondary()
+                                    ->schema([
+                                        Textarea::make('notes')
+                                            ->hiddenLabel(),
+                                    ])
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(3),
+                    ]),
+                Group::make()
                     ->id('sectionWithoutHeader')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
@@ -515,12 +599,12 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->columns(3),
                     ]),
                 Group::make()
-                    ->id('split')
+                    ->id('flex')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Split::make([
+                        Flex::make([
                             Section::make([
                                 TextInput::make('title')
                                     ->default('Lorem ipsum dolor sit amet'),
@@ -533,7 +617,7 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                     ->default(true),
                                 Toggle::make('is_featured'),
                             ])->grow(false),
-                        ])->statePath('split'),
+                        ])->statePath('flex'),
                     ]),
                 Group::make()
                     ->id('independentActions')

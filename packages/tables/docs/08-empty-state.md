@@ -3,7 +3,7 @@ title: Empty state
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 The table's "empty state" is rendered when there are no rows in the table.
 

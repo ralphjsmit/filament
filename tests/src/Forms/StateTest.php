@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
@@ -457,15 +458,16 @@ test('state can be dehydrated', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            (new Component)
-                ->statePath($statePath = Str::random())
+            Field::make($statePath = Str::random())
                 ->default($state = Str::random()),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->toBe([
-            'data' => [$statePath => $state],
+        ->getState()->toBe([
+            $statePath => $state,
         ]);
 });
 
@@ -473,16 +475,17 @@ test('state can be dehydrated using custom logic', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            (new Component)
-                ->statePath($statePath = Str::random())
+            Field::make($statePath = Str::random())
                 ->default($state = Str::random())
                 ->dehydrateStateUsing(fn ($state) => strrev($state)),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->toBe([
-            'data' => [$statePath => strrev($state)],
+        ->getState()->toBe([
+            $statePath => strrev($state),
         ]);
 });
 
@@ -490,18 +493,17 @@ test('custom logic can be executed before state is dehydrated', function (): voi
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            (new Component)
-                ->statePath($statePath = Str::random())
+            Field::make($statePath = Str::random())
                 ->default($state = Str::random())
-                ->beforeStateDehydrated(fn (Component $component, $state) => $component->state(strrev($state))),
+                ->beforeStateDehydrated(fn (Component $component, $state) => $component->state(strrev($state)), shouldUpdateValidatedStateAfter: true),
         ])
         ->fill();
 
-    $schema->callBeforeStateDehydrated();
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
 
     expect($schema)
-        ->dehydrateState()->toBe([
-            'data' => [$statePath => strrev($state)],
+        ->getState()->toBe([
+            $statePath => strrev($state),
         ]);
 });
 
@@ -509,15 +511,16 @@ test('components can be excluded from state dehydration', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            (new Component)
-                ->statePath(Str::random())
+            Field::make(Str::random())
                 ->default(Str::random())
                 ->dehydrated(false),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->toBe([]);
+        ->getState()->toBe([]);
 });
 
 test('components can be excluded from state dehydration if their parent component is', function (): void {
@@ -527,30 +530,32 @@ test('components can be excluded from state dehydration if their parent componen
             (new Component)
                 ->dehydrated(false)
                 ->schema([
-                    (new Component)
-                        ->statePath(Str::random())
+                    Field::make(Str::random())
                         ->default(Str::random()),
                 ]),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->toBe([]);
+        ->getState()->toBe([]);
 });
 
 test('hidden components are excluded from state dehydration', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            (new Component)
-                ->statePath(Str::random())
+            Field::make(Str::random())
                 ->default(Str::random())
                 ->hidden(),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->toBe([]);
+        ->getState()->toBe([]);
 });
 
 test('hidden components are excluded from state dehydration if their parent component is', function (): void {
@@ -560,65 +565,157 @@ test('hidden components are excluded from state dehydration if their parent comp
             (new Component)
                 ->hidden()
                 ->schema([
-                    (new Component)
-                        ->statePath(Str::random())
+                    Field::make(Str::random())
                         ->default(Str::random()),
                 ]),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->toBe([]);
+        ->getState()->toBe([]);
 });
 
 test('hidden components are excluded from state dehydration except if they are marked as dehydrated', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            (new Component)
-                ->statePath(Str::random())
+            Field::make(Str::random())
                 ->default(Str::random())
                 ->hidden()
                 ->dehydratedWhenHidden(),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->not()->toBe([]);
+        ->getState()->not()->toBe([]);
 
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
-                ->id('parent')
                 ->hidden()
                 ->dehydratedWhenHidden()
                 ->childComponents([
-                    (new Component)
-                        ->id('child')
-                        ->statePath(Str::random())
+                    Field::make(Str::random())
                         ->default(Str::random()),
                 ]),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->not()->toBe([]);
+        ->getState()->not()->toBe([]);
+});
+
+test('hidden components are excluded from state dehydration even if their parent component has a state path', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->statePath('nested')
+                ->schema([
+                    Field::make(Str::random())
+                        ->default(Str::random())
+                        ->hidden(),
+                ]),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->toBe([
+            'nested' => null,
+        ]);
+});
+
+test('components are not excluded from state dehydration if there is another dehydrated field with the same name', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default(Str::random())
+                ->dehydrated(false),
+            Field::make($statePath)
+                ->default(Str::random()),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->not()->toBe([]);
+
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default(Str::random()),
+            Field::make($statePath)
+                ->default(Str::random())
+                ->dehydrated(false),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->not()->toBe([]);
+});
+
+test('hidden components are not excluded from state dehydration if there is another visible field with the same name', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default(Str::random())
+                ->hidden(),
+            Field::make($statePath)
+                ->default(Str::random()),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->not()->toBe([]);
+
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default(Str::random()),
+            Field::make($statePath)
+                ->default(Str::random())
+                ->hidden(),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->not()->toBe([]);
 });
 
 test('disabled components are excluded from state dehydration', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            (new Component)
-                ->statePath(Str::random())
+            Field::make(Str::random())
                 ->default(Str::random())
                 ->disabled(),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->toBe([]);
+        ->getState()->toBe([]);
 });
 
 test('disabled components are excluded from state dehydration if their parent component is', function (): void {
@@ -628,31 +725,33 @@ test('disabled components are excluded from state dehydration if their parent co
             (new Component)
                 ->disabled()
                 ->schema([
-                    (new Component)
-                        ->statePath(Str::random())
+                    Field::make(Str::random())
                         ->default(Str::random()),
                 ]),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->toBe([]);
+        ->getState()->toBe([]);
 });
 
 test('disabled components are excluded from state dehydration except if they are marked as dehydrated', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            (new Component)
-                ->statePath(Str::random())
+            Field::make(Str::random())
                 ->default(Str::random())
                 ->disabled()
                 ->dehydrated(),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->not()->toBe([]);
+        ->getState()->not()->toBe([]);
 });
 
 test('disabled components are excluded from state dehydration if their parent component is disabled and not marked as dehydrated', function (): void {
@@ -662,34 +761,34 @@ test('disabled components are excluded from state dehydration if their parent co
             (new Component)
                 ->disabled()
                 ->schema([
-                    (new Component)
-                        ->statePath(Str::random())
+                    Field::make(Str::random())
                         ->default(Str::random())
                         ->dehydrated(),
                 ]),
         ])
         ->fill();
 
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
     expect($schema)
-        ->dehydrateState()->toBe([]);
+        ->getState()->toBe([]);
 });
 
 test('dehydrated state can be mutated', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            (new Component)
-                ->statePath($statePath = Str::random())
+            Field::make($statePath = Str::random())
                 ->default($state = Str::random())
                 ->mutateDehydratedStateUsing(fn ($state) => strrev($state)),
         ])
         ->fill();
 
-    $schemaState = $schema->dehydrateState();
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
 
-    expect($schema->mutateDehydratedState($schemaState))
+    expect($schema->getState())
         ->toBe([
-            'data' => [$statePath => strrev($state)],
+            $statePath => strrev($state),
         ]);
 });
 
@@ -818,7 +917,7 @@ test('components can set their own state after they are hydrated', function (): 
                 ->statePath('data');
         }
     })
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => 'bar',
         ]);
 });
@@ -839,7 +938,7 @@ test('components can set their own state after they are updated', function (): v
         ->fillForm([
             'foo' => 'baz',
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => 'bar',
         ]);
 });
@@ -860,7 +959,7 @@ test('components can inject their own state after they are updated', function ()
         ->fillForm([
             'foo' => $state = Str::random(),
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => strrev($state),
         ]);
 });
@@ -881,7 +980,7 @@ test('components can get their own state from the component object', function ()
         ->fillForm([
             'foo' => $state = Str::random(),
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => strrev($state),
         ]);
 });
@@ -930,7 +1029,7 @@ test('components can inject their old state after it is updated', function (): v
             'foo' => $state = Str::random(),
         ])
         ->assertSet('storedOldState', $oldState)
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => $state,
         ]);
 });

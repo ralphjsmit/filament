@@ -38,14 +38,14 @@ trait HasAffixes
     protected string | BackedEnum | Closure | null $prefixIcon = null;
 
     /**
-     * @var string | array<int | string, string | int> | Closure | null
+     * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $prefixIconColor = null;
 
     protected string | BackedEnum | Closure | null $suffixIcon = null;
 
     /**
-     * @var string | array<int | string, string | int> | Closure | null
+     * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $suffixIconColor = null;
 
@@ -139,7 +139,7 @@ trait HasAffixes
     }
 
     /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
+     * @param  string | array<string> | Closure | null  $color
      */
     public function prefixIconColor(string | array | Closure | null $color = null): static
     {
@@ -157,7 +157,7 @@ trait HasAffixes
     }
 
     /**
-     * @param  string | array<int | string, string | int> | Closure | null  $color
+     * @param  string | array<string> | Closure | null  $color
      */
     public function suffixIconColor(string | array | Closure | null $color = null): static
     {
@@ -243,7 +243,7 @@ trait HasAffixes
     }
 
     /**
-     * @return string | array<int | string, string | int> | null
+     * @return string | array<string> | null
      */
     public function getPrefixIconColor(): string | array | null
     {
@@ -251,7 +251,7 @@ trait HasAffixes
     }
 
     /**
-     * @return string | array<int | string, string | int> | null
+     * @return string | array<string> | null
      */
     public function getSuffixIconColor(): string | array | null
     {

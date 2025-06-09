@@ -22,7 +22,6 @@ jobs:
           - spatie-laravel-media-library-plugin
           - spatie-laravel-settings-plugin
           - spatie-laravel-tags-plugin
-          - spatie-laravel-translatable-plugin
           - support
           - tables
           - widgets
@@ -39,7 +38,7 @@ jobs:
           package_directory: 'packages/${{ matrix.package }}'
           repository_organization: 'filamentphp'
           repository_name: '${{ matrix.package }}'
-          branch: 3.x
+          branch: 4.x
           tag: ${{ steps.previous-tag.outputs.tag }}
           user_name: 'Dan Harrin'
           user_email: 'git@danharrin.com'

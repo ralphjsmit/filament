@@ -9,7 +9,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\Testing\Fixtures\TestAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Ticket;

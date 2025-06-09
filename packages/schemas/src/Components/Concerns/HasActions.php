@@ -24,7 +24,7 @@ trait HasActions
     /**
      * @var Model|class-string<Model>|null
      */
-    protected Model | string | null $actionFormModel = null;
+    protected Model | string | null $actionSchemaModel = null;
 
     protected ?Action $action = null;
 
@@ -106,6 +106,12 @@ trait HasActions
     {
         $this->cachedActions = [];
 
+        foreach ($this->getDefaultActions() as $defaultAction) {
+            foreach (Arr::wrap($this->evaluate($defaultAction)) as $action) {
+                $this->cachedActions[$action->getName()] = $this->prepareAction($action);
+            }
+        }
+
         if ($this instanceof HasAffixActions) {
             $this->cachedActions = [
                 ...$this->cachedActions,
@@ -130,6 +136,14 @@ trait HasActions
         return $this->cachedActions;
     }
 
+    /**
+     * @return array<Action>
+     */
+    public function getDefaultActions(): array
+    {
+        return [];
+    }
+
     public function prepareAction(Action $action): Action
     {
         return $action->schemaComponent($this);
@@ -138,19 +152,19 @@ trait HasActions
     /**
      * @param  Model|class-string<Model>|null  $model
      */
-    public function actionFormModel(Model | string | null $model): static
+    public function actionSchemaModel(Model | string | null $model): static
     {
-        $this->actionFormModel = $model;
+        $this->actionSchemaModel = $model;
 
         return $this;
     }
 
     /**
-     * @return Model|class-string<Model>|null
+     * @return Model | array<string, mixed> | class-string<Model> | null
      */
-    public function getActionFormModel(): Model | string | null
+    public function getActionSchemaModel(): Model | array | string | null
     {
-        return $this->actionFormModel ?? $this->getRecord() ?? $this->getModel();
+        return $this->actionSchemaModel ?? $this->getRecord() ?? $this->getModel();
     }
 
     public function hasAction(string $name): bool

@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands\Concerns;
 
+use function Filament\Support\discover_app_classes;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\suggest;
 
@@ -20,7 +21,7 @@ trait CanAskForSchema
         }
 
         $schemaFqns = array_filter(
-            get_declared_classes(),
+            discover_app_classes(),
             fn (string $schemaFqn): bool => method_exists($schemaFqn, 'configure'),
         );
 
@@ -36,6 +37,7 @@ trait CanAskForSchema
                 return array_filter($schemaFqns, fn (string $schemaFqn): bool => str($schemaFqn)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
             },
             placeholder: $questionPlaceholder,
+            hint: 'Please provide the fully-qualified class name.',
         );
     }
 }

@@ -21,12 +21,14 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
+use UnitEnum;
 
 use function Filament\Support\original_request;
 
 abstract class Page extends BasePage
 {
     use Concerns\CanAuthorizeAccess;
+    use Concerns\HasErrorNotifications;
     use Concerns\HasRoutes;
     use Concerns\HasSubNavigation;
     use Concerns\InteractsWithHeaderActions;
@@ -40,7 +42,7 @@ abstract class Page extends BasePage
 
     protected static bool $isDiscovered = true;
 
-    protected static ?string $navigationGroup = null;
+    protected static string | UnitEnum | null $navigationGroup = null;
 
     protected static ?string $navigationBadgeTooltip = null;
 
@@ -68,7 +70,7 @@ abstract class Page extends BasePage
      */
     public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
     {
-        if (blank($panel) || Filament::getPanel($panel)->hasTenancy()) {
+        if (blank($panel) || ($panel = Filament::getPanel($panel))->hasTenancy()) {
             $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
         }
 
@@ -78,8 +80,8 @@ abstract class Page extends BasePage
     public static function registerRoutes(Panel $panel): void
     {
         if (filled(static::getCluster())) {
-            Route::name(static::prependClusterRouteBaseName('pages.'))
-                ->prefix(static::prependClusterSlug(''))
+            Route::name(static::prependClusterRouteBaseName($panel, 'pages.'))
+                ->prefix(static::prependClusterSlug($panel, ''))
                 ->group(fn () => static::routes($panel));
 
             return;
@@ -130,12 +132,12 @@ abstract class Page extends BasePage
         return static::getRouteName();
     }
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(?Panel $panel = null): string
     {
-        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentOrDefaultPanel();
+        $panel ??= Filament::getCurrentOrDefaultPanel();
 
-        $routeName = 'pages.' . static::getRelativeRouteName();
-        $routeName = static::prependClusterRouteBaseName($routeName);
+        $routeName = 'pages.' . static::getRelativeRouteName($panel);
+        $routeName = static::prependClusterRouteBaseName($panel, $routeName);
 
         return $panel->generateRouteName($routeName);
     }
@@ -152,7 +154,7 @@ abstract class Page extends BasePage
         return [];
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string | UnitEnum | null
     {
         return static::$navigationGroup;
     }
@@ -186,7 +188,7 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return string | array<int | string, string | int> | null
+     * @return string | array<string> | null
      */
     public static function getNavigationBadgeColor(): string | array | null
     {
@@ -320,19 +322,19 @@ abstract class Page extends BasePage
         return static::$cluster;
     }
 
-    public static function prependClusterSlug(string $slug): string
+    public static function prependClusterSlug(Panel $panel, string $slug): string
     {
         if (filled($cluster = static::getCluster())) {
-            return $cluster::prependClusterSlug($slug);
+            return $cluster::prependClusterSlug($panel, $slug);
         }
 
         return $slug;
     }
 
-    public static function prependClusterRouteBaseName(string $name): string
+    public static function prependClusterRouteBaseName(Panel $panel, string $name): string
     {
         if (filled($cluster = static::getCluster())) {
-            return $cluster::prependClusterRouteBaseName($name);
+            return $cluster::prependClusterRouteBaseName($panel, $name);
         }
 
         return $name;
@@ -363,7 +365,7 @@ abstract class Page extends BasePage
             ->filter(fn (string | WidgetConfiguration $widget): bool => $this->normalizeWidgetClass($widget)::canView())
             ->map(fn (string | WidgetConfiguration $widget, int $widgetKey): Livewire => Livewire::make(
                 $widgetClass = $this->normalizeWidgetClass($widget),
-                [
+                fn (): array => [
                     ...$this->getWidgetData(),
                     ...$data,
                     ...(($widget instanceof WidgetConfiguration) ? [
@@ -398,5 +400,10 @@ abstract class Page extends BasePage
                 RenderHook::make(PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER),
             ])
             ->hidden(empty($widgets));
+    }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'content';
     }
 }

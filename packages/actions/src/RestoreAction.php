@@ -28,7 +28,7 @@ class RestoreAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::restore.single.notifications.restored.title'));
 
-        $this->color('gray');
+        $this->defaultColor('gray');
 
         $this->tableIcon(FilamentIcon::resolve('actions::restore-action') ?? Heroicon::ArrowUturnLeft);
         $this->groupedIcon(FilamentIcon::resolve('actions::restore-action.grouped') ?? Heroicon::ArrowUturnLeft);
@@ -44,7 +44,7 @@ class RestoreAction extends Action
                 return;
             }
 
-            $result = $this->process(static fn () => $record->restore());
+            $result = $this->process(static fn (): ?bool => $record->restore());
 
             if (! $result) {
                 $this->failure();

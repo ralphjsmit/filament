@@ -10,6 +10,7 @@
     $iconPosition = $getIconPosition();
     $iconSize = $getIconSize();
     $size = $getSize();
+    $tooltip = $getTooltip();
     $weight = $getWeight();
     $fontFamily = $getFontFamily();
 
@@ -36,6 +37,8 @@
             ' : null
         "
         :tag="$isCopyable ? 'button' : 'span'"
+        :tooltip="$tooltip"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag()->class(['fi-sc-text']))"
     >
         {{ $content }}
     </x-filament::badge>
@@ -50,6 +53,9 @@
                 })
             "
         @endif
+        @if (filled($tooltip))
+            x-tooltip="{ content: @js($tooltip), theme: $store.theme }"
+        @endif
         {{
             (new \Illuminate\View\ComponentAttributeBag)
                 ->color(TextComponent::class, $color)
@@ -60,6 +66,7 @@
                     ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : $weight,
                     ($fontFamily instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : $fontFamily,
                 ])
+                ->merge($getExtraAttributes(), escape: false)
         }}
     >
         {{ $content }}

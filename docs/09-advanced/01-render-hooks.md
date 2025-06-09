@@ -2,7 +2,7 @@
 title: Render hooks
 ---
 
-## Overview
+## Introduction
 
 Filament allows you to render Blade content at various points in the frameworks views. It's useful for plugins to be able to inject HTML into the framework. Also, since Filament does not recommend publishing the views due to an increased risk of breaking changes, it's also useful for users.
 
@@ -102,16 +102,16 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::SIDEBAR_FOOTER` - Pinned to the bottom of the sidebar, below the content
 - `PanelsRenderHook::STYLES_AFTER` - After styles are defined
 - `PanelsRenderHook::STYLES_BEFORE` - Before styles are defined
-- `PanelsRenderHook::TENANT_MENU_AFTER` - After the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
-- `PanelsRenderHook::TENANT_MENU_BEFORE` - Before the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
+- `PanelsRenderHook::TENANT_MENU_AFTER` - After the [tenant menu](../users/tenancy#customizing-the-tenant-menu)
+- `PanelsRenderHook::TENANT_MENU_BEFORE` - Before the [tenant menu](../users/tenancy#customizing-the-tenant-menu)
 - `PanelsRenderHook::TOPBAR_AFTER` - Below the topbar
 - `PanelsRenderHook::TOPBAR_BEFORE` - Above the topbar
 - `PanelsRenderHook::TOPBAR_END` - End of the topbar container
 - `PanelsRenderHook::TOPBAR_START` - Start of the topbar container
-- `PanelsRenderHook::USER_MENU_AFTER` - After the [user menu](../panels/navigation#customizing-the-user-menu)
-- `PanelsRenderHook::USER_MENU_BEFORE` - Before the [user menu](../panels/navigation#customizing-the-user-menu)
-- `PanelsRenderHook::USER_MENU_PROFILE_AFTER` - After the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
-- `PanelsRenderHook::USER_MENU_PROFILE_BEFORE` - Before the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
+- `PanelsRenderHook::USER_MENU_AFTER` - After the [user menu](../navigation/user-menu)
+- `PanelsRenderHook::USER_MENU_BEFORE` - Before the [user menu](../navigation/user-menu)
+- `PanelsRenderHook::USER_MENU_PROFILE_AFTER` - After the profile item in the [user menu](../navigation/user-menu)
+- `PanelsRenderHook::USER_MENU_PROFILE_BEFORE` - Before the profile item in the [user menu](../navigation/user-menu)
 
 
 ### Table Builder render hooks
@@ -131,10 +131,10 @@ use Filament\Tables\View\TablesRenderHook;
 - `TablesRenderHook::TOOLBAR_END` - The end of the toolbar
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER` - After the [grouping](../tables/grouping) selector
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE` - Before the [grouping](../tables/grouping) selector
-- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER` - After the [reorder](../tables/advanced#reordering-records) trigger
-- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE` - Before the [reorder](../tables/advanced#reordering-records) trigger
-- `TablesRenderHook::TOOLBAR_SEARCH_AFTER` - After the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
-- `TablesRenderHook::TOOLBAR_SEARCH_BEFORE` - Before the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER` - After the [reorder](../tables/overview#reordering-records) trigger
+- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE` - Before the [reorder](../tables/overview#reordering-records) trigger
+- `TablesRenderHook::TOOLBAR_SEARCH_AFTER` - After the [search](../tables/overview#making-columns-sortable-and-searchable) container
+- `TablesRenderHook::TOOLBAR_SEARCH_BEFORE` - Before the [search](../tables/overview#making-columns-sortable-and-searchable) container
 - `TablesRenderHook::TOOLBAR_START` - The start of the toolbar
 - `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
 - `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
@@ -146,8 +146,8 @@ use Filament\Tables\View\TablesRenderHook;
 use Filament\Widgets\View\WidgetsRenderHook;
 ```
 
-- `WidgetsRenderHook::TABLE_WIDGET_END` - End of the [table widget](../panels/dashboard#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
-- `WidgetsRenderHook::TABLE_WIDGET_START` - Start of the [table widget](../panels/dashboard#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+- `WidgetsRenderHook::TABLE_WIDGET_END` - End of the [table widget](../widgets/overview#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+- `WidgetsRenderHook::TABLE_WIDGET_START` - Start of the [table widget](../widgets/overview#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
 
 
 ## Scoping render hooks

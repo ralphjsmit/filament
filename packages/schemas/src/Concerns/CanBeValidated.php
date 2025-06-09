@@ -15,7 +15,7 @@ trait CanBeValidated
         $attributes = [];
 
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
-            if ($component->isHiddenAndNotDehydratedWhenHidden()) {
+            if ($component->isNeitherDehydratedNorValidated()) {
                 continue;
             }
 
@@ -23,8 +23,8 @@ trait CanBeValidated
                 $component->dehydrateValidationAttributes($attributes);
             }
 
-            foreach ($component->getChildSchemas() as $childSchema) {
-                if ($childSchema->isHidden()) {
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($childSchema->isDirectlyHidden()) {
                     continue;
                 }
 
@@ -46,7 +46,7 @@ trait CanBeValidated
         $messages = [];
 
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
-            if ($component->isHiddenAndNotDehydratedWhenHidden()) {
+            if ($component->isNeitherDehydratedNorValidated()) {
                 continue;
             }
 
@@ -54,8 +54,8 @@ trait CanBeValidated
                 $component->dehydrateValidationMessages($messages);
             }
 
-            foreach ($component->getChildSchemas() as $childSchema) {
-                if ($childSchema->isHidden()) {
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($childSchema->isDirectlyHidden()) {
                     continue;
                 }
 
@@ -85,8 +85,8 @@ trait CanBeValidated
                 $component->dehydrateValidationRules($rules);
             }
 
-            foreach ($component->getChildSchemas() as $childSchema) {
-                if ($childSchema->isHidden()) {
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($childSchema->isDirectlyHidden()) {
                     continue;
                 }
 
@@ -118,6 +118,18 @@ trait CanBeValidated
             return [];
         }
 
-        return $this->getLivewire()->validate($rules, $this->getValidationMessages(), $this->getValidationAttributes());
+        $livewire = $this->getLivewire();
+
+        // By storing the currently validating schema in the Livewire component, we can optimize the validation process
+        // so that the `prepareForValidation()` method is only called for the current schema instead of all schemas.
+        // This can also prevent infinite loops involving schemas that self-validate, such as the table query
+        // builder which crashes when it is being used while an action is submitted.
+        $livewire->currentlyValidatingSchema($this);
+
+        try {
+            return $livewire->validate($rules, $this->getValidationMessages(), $this->getValidationAttributes());
+        } finally {
+            $livewire->currentlyValidatingSchema(null);
+        }
     }
 }

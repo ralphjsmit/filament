@@ -3,7 +3,7 @@ title: Grouping rows
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 You may allow users to group table rows together using a common attribute. This is useful for displaying lots of data in a more organized way.
 
@@ -286,7 +286,7 @@ public function table(Table $table): Table
 
 ## Customizing the groups dropdown trigger action
 
-To customize the groups dropdown trigger button, you may use the `groupRecordsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+To customize the groups dropdown trigger button, you may use the `groupRecordsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;

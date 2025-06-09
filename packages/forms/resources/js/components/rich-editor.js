@@ -3,8 +3,19 @@ import getExtensions from './rich-editor/extensions'
 import { Selection } from '@tiptap/pm/state'
 
 export default function richEditorFormComponent({
+    activePanel,
+    deleteCustomBlockButtonIconHtml,
+    editCustomBlockButtonIconHtml,
+    extensions,
     key,
+    isDisabled,
+    isLiveDebounced,
+    isLiveOnBlur,
+    liveDebounce,
     livewireId,
+    mergeTags,
+    noMergeTagSearchResultsMessage,
+    placeholder,
     state,
     statePath,
     uploadingFileMessage,
@@ -14,6 +25,8 @@ export default function richEditorFormComponent({
     return {
         state,
 
+        activePanel,
+
         editorSelection: { type: 'text', anchor: 1, head: 1 },
 
         isUploadingFile: false,
@@ -22,11 +35,35 @@ export default function richEditorFormComponent({
 
         editorUpdatedAt: Date.now(),
 
-        init: function () {
+        init: async function () {
             editor = new Editor({
+                editable: !isDisabled,
                 element: this.$refs.editor,
-                extensions: getExtensions({
+                extensions: await getExtensions({
+                    customExtensionUrls: extensions,
+                    deleteCustomBlockButtonIconHtml,
+                    editCustomBlockButtonIconHtml,
+                    editCustomBlockUsing: (id, config) =>
+                        this.$wire.mountAction(
+                            'customBlock',
+                            {
+                                editorSelection: this.editorSelection,
+                                id,
+                                config,
+                                mode: 'edit',
+                            },
+                            { schemaComponent: key },
+                        ),
+                    insertCustomBlockUsing: (id, dragPosition = null) =>
+                        this.$wire.mountAction(
+                            'customBlock',
+                            { id, dragPosition, mode: 'insert' },
+                            { schemaComponent: key },
+                        ),
                     key,
+                    mergeTags,
+                    noMergeTagSearchResultsMessage,
+                    placeholder,
                     statePath,
                     uploadingFileMessage,
                     $wire: this.$wire,
@@ -34,22 +71,33 @@ export default function richEditorFormComponent({
                 content: this.state,
             })
 
-            editor.on('create', ({ editor }) => {
+            editor.on('create', () => {
                 this.editorUpdatedAt = Date.now()
             })
 
-            editor.on('update', ({ editor }) => {
-                this.editorUpdatedAt = Date.now()
+            editor.on(
+                'update',
+                Alpine.debounce(({ editor }) => {
+                    this.editorUpdatedAt = Date.now()
 
-                this.state = editor.getJSON()
+                    this.state = editor.getJSON()
 
-                this.shouldUpdateState = false
-            })
+                    this.shouldUpdateState = false
 
-            editor.on('selectionUpdate', ({ editor, transaction }) => {
+                    if (isLiveDebounced) {
+                        this.$wire.commit()
+                    }
+                }, liveDebounce ?? 300),
+            )
+
+            editor.on('selectionUpdate', ({ transaction }) => {
                 this.editorUpdatedAt = Date.now()
                 this.editorSelection = transaction.selection.toJSON()
             })
+
+            if (isLiveOnBlur) {
+                editor.on('blur', () => this.$wire.commit())
+            }
 
             this.$watch('state', () => {
                 if (!this.shouldUpdateState) {
@@ -110,6 +158,10 @@ export default function richEditorFormComponent({
             return editor
         },
 
+        $getEditor: function () {
+            return this.getEditor()
+        },
+
         setEditorSelection: function (selection) {
             if (!selection) {
                 return
@@ -145,6 +197,41 @@ export default function richEditorFormComponent({
             )
 
             commandChain.run()
+        },
+
+        togglePanel: function (id = null) {
+            if (this.isPanelActive(id)) {
+                this.activePanel = null
+
+                return
+            }
+
+            this.activePanel = id
+        },
+
+        isPanelActive: function (id = null) {
+            if (id === null) {
+                return this.activePanel !== null
+            }
+
+            return this.activePanel === id
+        },
+
+        insertMergeTag: function (id) {
+            editor
+                .chain()
+                .focus()
+                .insertContent([
+                    {
+                        type: 'mergeTag',
+                        attrs: { id },
+                    },
+                    {
+                        type: 'text',
+                        text: ' ',
+                    },
+                ])
+                .run()
         },
     }
 }

@@ -261,4 +261,9 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     {
         $this->unmountAction($shouldCancelParentActions);
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
+    }
 }

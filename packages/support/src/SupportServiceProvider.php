@@ -2,6 +2,7 @@
 
 namespace Filament\Support;
 
+use BladeUI\Icons\Factory as BladeIconsFactory;
 use Composer\InstalledVersions;
 use Filament\Commands\CacheComponentsCommand;
 use Filament\Support\Assets\AssetManager;
@@ -21,8 +22,8 @@ use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Icons\IconManager;
-use Filament\Support\Overrides\DataStoreOverride;
-use Filament\Support\Partials\SupportPartials;
+use Filament\Support\Livewire\Partials\DataStoreOverride;
+use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Support\View\Components\Contracts\HasColor;
 use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -130,11 +131,18 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->bind(DataStore::class, DataStoreOverride::class);
+
+        $this->callAfterResolving(BladeIconsFactory::class, function (BladeIconsFactory $factory): void {
+            $factory->add('filament', [
+                'path' => __DIR__ . '/../resources/svg',
+                'prefix' => 'fi',
+            ]);
+        });
     }
 
     public function packageBooted(): void
     {
-        app('livewire')->componentHook(new SupportPartials);
+        app('livewire')->componentHook(new PartialsComponentHook);
 
         FilamentAsset::register([
             Js::make('support', __DIR__ . '/../dist/index.js'),
@@ -156,7 +164,13 @@ class SupportServiceProvider extends PackageServiceProvider
             return preg_replace('/\s*@trim\s*/m', '', $view);
         });
 
-        ComponentAttributeBag::macro('color', function (string | HasColor $component, ?string $color): ComponentAttributeBag {
+        ComponentAttributeBag::macro('color', function (string | HasColor $component, string | array | null $color): ComponentAttributeBag {
+            if (is_array($color)) {
+                return $this
+                    ->class(['fi-color'])
+                    ->style(FilamentColor::getComponentCustomStyles($component, $color));
+            }
+
             return $this->class(FilamentColor::getComponentClasses($component, $color));
         });
 
@@ -268,6 +282,10 @@ class SupportServiceProvider extends PackageServiceProvider
                 'notifications',
                 'support',
                 'tables',
+                'actions',
+                'infolists',
+                'schemas',
+                'widgets',
             ];
 
             AboutCommand::add('Filament', static fn () => [

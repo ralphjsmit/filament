@@ -6,7 +6,6 @@ use Closure;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Enums\ArgumentValue;
 use Filament\Tables\Columns\Summarizers\Summarizer;
-use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
@@ -48,9 +47,9 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
     {
-        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy, $locale): ?string {
+        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy, $locale, $decimalPlaces): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -59,14 +58,15 @@ trait CanFormatState
                 return $state;
             }
 
-            $currency = $summarizer->evaluate($currency) ?? Table::$defaultCurrency;
-            $locale = $summarizer->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+            $currency = $summarizer->evaluate($currency) ?? $summarizer->getTable()->getDefaultCurrency();
+            $locale = $summarizer->evaluate($locale) ?? $summarizer->getTable()->getDefaultNumberLocale() ?? config('app.locale');
+            $decimalPlaces = $summarizer->evaluate($decimalPlaces);
 
             if ($divideBy) {
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $locale);
+            return Number::currency($state, $currency, $locale, $decimalPlaces);
         });
 
         return $this;
@@ -99,7 +99,7 @@ trait CanFormatState
                 );
             }
 
-            $locale = $summarizer->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+            $locale = $summarizer->evaluate($locale) ?? $summarizer->getTable()->getDefaultNumberLocale() ?? config('app.locale');
 
             return Number::format($state, $decimalPlaces, $summarizer->evaluate($maxDecimalPlaces), locale: $locale);
         });

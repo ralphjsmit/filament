@@ -30,6 +30,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
+use function Filament\Support\discover_app_classes;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
@@ -463,10 +464,7 @@ class MakeWidgetCommand extends Command
             return;
         }
 
-        $modelFqns = collect(get_declared_classes())
-            ->filter(fn (string $class): bool => is_subclass_of($class, Model::class) &&
-                (! str((new ReflectionClass($class))->getFileName())->startsWith(base_path('vendor'))))
-            ->all();
+        $modelFqns = discover_app_classes(parentClass: Model::class);
 
         $modelFqn = suggest(
             label: 'What is the model?',
@@ -486,7 +484,7 @@ class MakeWidgetCommand extends Command
         );
 
         $isGenerated = confirm(
-            label: 'Would you like to generate the table columns based on the attributes of the model?',
+            label: 'Should the table columns be generated from the current database columns?',
             default: false,
         );
 

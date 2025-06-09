@@ -9,7 +9,7 @@ import RadioGroupOption from "@components/RadioGroupOption.astro"
 Filament requires the following to run:
 
 - PHP 8.2+
-- Laravel v11.15+
+- Laravel v11.28+
 - Tailwind CSS v4.0+
 
 Installation comes in two flavors, depending on whether you want to build an app using our panel builder or use the components within your app's Blade views:
@@ -85,7 +85,7 @@ composer require
 
 You can install additional packages later in your project without having to repeat these installation steps.
 
-If you only want to use the set of [Blade UI components](../components/blade), you'll need to require `filament/support` at this stage.
+If you only want to use the set of [Blade UI components](../components), you'll need to require `filament/support` at this stage.
 
 <RadioGroup model="laravelProject">
     <RadioGroupOption value="new">
@@ -137,33 +137,51 @@ php artisan filament:install
 
 ### Installing Tailwind CSS
 
-Run the following command to install Tailwind CSS and its Vite plugin, along with the Tailwind Forms and Typography plugins:
+Run the following command to install Tailwind CSS and its Vite plugin, if you don't have those installed already:
 
 ```bash
-npm install tailwindcss @tailwindcss/vite @tailwindcss/forms @tailwindcss/typography --save-dev
+npm install tailwindcss @tailwindcss/vite --save-dev
 ```
 
 ### Configuring styles
 
-Add Tailwind CSS to your `resources/css/app.css` file:
+To configure Filament's styles, you need to import the CSS files for the Filament packages you installed, usually in `resources/css/app.css`.
+
+Depending on which combination of packages you installed, you can import only the necessary CSS files, to keep your app's CSS bundle size small:
 
 ```css
 @import 'tailwindcss';
-@import '../../vendor/filament/support/resources/css/index.css'; /* Required by all Filament components */
-@import '../../vendor/filament/actions/resources/css/index.css'; /* Required by `filament/actions` and `filament/tables` */
-@import '../../vendor/filament/forms/resources/css/index.css'; /* Required by `filament/forms`, `filament/tables` and `filament/actions` */
-@import '../../vendor/filament/infolists/resources/css/index.css'; /* Required by `filament/infolists` and `filament/actions` */
-@import '../../vendor/filament/notifications/resources/css/index.css'; /* Required by `filament/notifications` */
-@import '../../vendor/filament/schemas/resources/css/index.css'; /* Required by `filament/schemas`, `filament/forms`, `filament/infolists`, `filament/tables` and `filament/actions` */
-@import '../../vendor/filament/tables/resources/css/index.css'; /* Required by `filament/tables` */
-@import '../../vendor/filament/widgets/resources/css/index.css'; /* Required by `filament/widgets` */
+
+/* Required by all components */
+@import '../../vendor/filament/support/resources/css/index.css';
+
+/* Required by actions and tables */
+@import '../../vendor/filament/actions/resources/css/index.css';
+
+/* Required by actions, forms and tables */
+@import '../../vendor/filament/forms/resources/css/index.css';
+
+/* Required by actions and infolists */
+@import '../../vendor/filament/infolists/resources/css/index.css';
+
+/* Required by notifications */
+@import '../../vendor/filament/notifications/resources/css/index.css';
+
+/* Required by actions, infolists, forms, schemas and tables */
+@import '../../vendor/filament/schemas/resources/css/index.css';
+
+/* Required by tables */
+@import '../../vendor/filament/tables/resources/css/index.css';
+
+/* Required by widgets */
+@import '../../vendor/filament/widgets/resources/css/index.css';
 
 @variant dark (&:where(.dark, .dark *));
 ```
 
 ### Configure the Vite plugin
 
-Add the `@tailwindcss/vite` plugin to your Vite configuration:
+If it isn't already set up, add the `@tailwindcss/vite` plugin to your Vite configuration (`vite.config,js`):
 
 ```js
 import { defineConfig } from 'vite'
@@ -187,7 +205,7 @@ Compile your new CSS and JavaScript assets using `npm run dev`.
 
 ### Configuring your layout 
 
-If the file doesn't already exist, create a new layout file at `resources/views/components/layouts/app.blade.php` by running the following command:
+If you don't have a Blade layout file yet, create it at `resources/views/components/layouts/app.blade.php` by running the following command:
 
 ```bash
 php artisan livewire:layout
@@ -228,7 +246,11 @@ Add the following code to your new layout file:
 </html>
 ```
 
-Please note the `@livewire('notifications')` line above - this is only required if you have the [Notifications](../notifications) package installed and wish to send flash notifications to your users through Filament.
+The important parts of this are the `@filamentStyles` in the `<head>` of the layout, and the `@filamentScripts` at the end of the `<body>`. Make sure to also include your app's compiled CSS and JavaScript files from Vite!
+
+<Aside variant="info">
+    The `@livewire('notifications')` line is required in the layout only if you have the [Notifications](../notifications) package installed and want to send flash notifications to users through Filament.
+</Aside>
 
 </div>
 

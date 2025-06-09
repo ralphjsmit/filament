@@ -3,6 +3,7 @@
     use Filament\Support\Enums\Width;
     use Filament\Support\Facades\FilamentView;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
+    use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
@@ -86,6 +87,7 @@
                 id: @js($id),
             })"
     @if ($id)
+        data-fi-modal-id="{{ $id }}"
         x-on:{{ $closeEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) close()"
         x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) closeQuietly()"
         x-on:{{ $openEventName }}.window="if (($event.detail.id === @js($id)) && (! isOpen)) open()"
@@ -147,7 +149,7 @@
             {{
                 ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
                     'fi-modal-window',
-                    'fi-modal-window-has-close-button' => $closeButton,
+                    'fi-modal-window-has-close-btn' => $closeButton,
                     'fi-modal-window-has-content' => $hasContent,
                     'fi-modal-window-has-footer' => $hasFooter,
                     'fi-modal-window-has-icon' => $hasIcon,
@@ -185,10 +187,7 @@
                         @if ($hasIcon)
                             <div class="fi-modal-icon-ctn">
                                 <div
-                                    @class([
-                                        'fi-modal-icon-bg',
-                                        ...\Filament\Support\get_component_color_classes(IconComponent::class, $iconColor),
-                                    ])
+                                    {{ (new ComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
                                 >
                                     {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) }}
                                 </div>

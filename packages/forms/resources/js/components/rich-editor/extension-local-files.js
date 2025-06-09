@@ -15,15 +15,19 @@ const dispatchFormEvent = (editorView, name, detail = {}) => {
 
 const LocalFilesPlugin = ({
     editor,
+    get$WireUsing,
     key,
     statePath,
     uploadingMessage,
-    $wire,
 }) => {
     const getFileAttachmentUrl = (fileKey) =>
-        $wire().callSchemaComponentMethod(key, 'saveUploadedFileAttachment', {
-            attachment: fileKey,
-        })
+        get$WireUsing().callSchemaComponentMethod(
+            key,
+            'getUploadedFileAttachmentTemporaryUrl',
+            {
+                attachment: fileKey,
+            },
+        )
 
     return new Plugin({
         key: new PluginKey('localFiles'),
@@ -60,7 +64,7 @@ const LocalFilesPlugin = ({
                             bubbles: true,
                             detail: {
                                 key,
-                                livewireId: $wire().id,
+                                livewireId: get$WireUsing().id,
                             },
                         }),
                     )
@@ -91,7 +95,7 @@ const LocalFilesPlugin = ({
                             ).toString(16),
                     )
 
-                    $wire().upload(
+                    get$WireUsing().upload(
                         `componentFileAttachments.${statePath}.${fileKey}`,
                         file,
                         () => {
@@ -117,7 +121,7 @@ const LocalFilesPlugin = ({
                                             bubbles: true,
                                             detail: {
                                                 key,
-                                                livewireId: $wire().id,
+                                                livewireId: get$WireUsing().id,
                                             },
                                         },
                                     ),
@@ -163,7 +167,7 @@ const LocalFilesPlugin = ({
                             bubbles: true,
                             detail: {
                                 key,
-                                livewireId: $wire().id,
+                                livewireId: get$WireUsing().id,
                             },
                         }),
                     )
@@ -194,7 +198,7 @@ const LocalFilesPlugin = ({
                             ).toString(16),
                     )
 
-                    $wire().upload(
+                    get$WireUsing().upload(
                         `componentFileAttachments.${statePath}.${fileKey}`,
                         file,
                         () => {
@@ -220,7 +224,7 @@ const LocalFilesPlugin = ({
                                             bubbles: true,
                                             detail: {
                                                 key,
-                                                livewireId: $wire().id,
+                                                livewireId: get$WireUsing().id,
                                             },
                                         },
                                     ),
@@ -251,7 +255,7 @@ export default Extension.create({
             key: null,
             statePath: null,
             uploadingMessage: null,
-            $wire: null,
+            get$WireUsing: null,
         }
     },
 

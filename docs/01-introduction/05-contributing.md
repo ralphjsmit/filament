@@ -18,7 +18,7 @@ Please include as much information as possible, particularly the version numbers
 php artisan make:filament-issue
 ```
 
-When creating an issue, we require a "reproduction repository". **Please do not link to your actual project**. Instead, what we need is a _minimal_ reproduction in a fresh project without any unnecessary code. This means it doesn't matter if your real project is private/confidential since we want a link to a separate, isolated reproduction. This allows us to fix the problem much quicker. **Issues will be automatically closed and not reviewed if this is missing, to preserve maintainer time and ensure the process is fair for those who put effort into reporting.** If you believe a reproduction repository is not suitable for the issue, which is a very rare case, please `@danharrin` and explain why. Saying "it's just a simple issue" is not an excuse for not creating a repository! [Need a head start? We have a template Filament project for you.](https://filament-issue.unitedbycode.com)
+When creating an issue, we require a "reproduction repository". **Please do not link to your actual project**. Instead, what we need is a _minimal_ reproduction in a fresh project without any unnecessary code. This means it doesn't matter if your real project is private/confidential since we want a link to a separate, isolated reproduction. This allows us to fix the problem much quicker. **Issues will be automatically closed and not reviewed if this is missing, to preserve maintainer time and ensure the process is fair for those who put effort into reporting.** If you believe a reproduction repository is not suitable for the issue, which is a very rare case, please `@danharrin` and explain why. Saying "it's just a simple issue" is not an excuse for not creating a repository! [Need a head start? We have a template Filament project for you.](https://unitedbycode.com/filament-issue)
 
 Remember, bug reports are created in the hope that others with the same problem will be able to collaborate with you on solving it. Do not expect that the bug report will automatically receive attention or that others will jump to fix it. Creating a bug report serves to help yourself and others start on the path of fixing the problem.
 
@@ -64,25 +64,26 @@ Now, run `composer update`.
 
 Once you've finished making changes, you can commit them and submit a pull request to [the GitHub repository](https://github.com/filamentphp/filament).
 
-## Checking for missing translations
+## Checking for outdated translations
 
-To check for missing translations, you can use the Artisan command `php artisan filament:check-translations` followed by a locale. For example, to check for missing Spanish translations run:
-
-```bash
-php artisan filament:check-translations es
-```
-
-This command will show you which translations are missing for the specified locale. You can then submit a pull request with the missing translations to [the GitHub repository](https://github.com/filamentphp/filament).
-
-If you've published the translations to your application and would like to check those instead of the package translations, use:
+To check for outdated translations, you can use our Translation Tool. Clone the Filament repository, install the dependencies for the commands and then run the command.
 
 ```bash
-php artisan filament:check-translations es --source=app
+# Clone
+git clone git@github.com:filamentphp/filament.git
+
+# Install dependencies
+composer install
+
+# Run the tool  
+./bin/translation-tool.php
 ```
+
+First select "List outdated translations" as the command and then choose the locale you want to check. This command will show you which translations are missing for the specified locale. You can then submit a pull request with the missing translations to [the GitHub repository](https://github.com/filamentphp/filament).
 
 ## Security vulnerabilities
 
-If you discover a security vulnerability within Filament, please email Dan Harrin via [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be promptly addressed. Please see our [version support policy](version-support-policy#overview) to understand which versions are currently under maintenance.
+If you discover a security vulnerability within Filament, please [report it through GitHub](https://github.com/filamentphp/filament/security/advisories). All security vulnerabilities will be promptly addressed. Please see our [version support policy](version-support-policy) to understand which versions are currently under maintenance.
 
 ## Code of Conduct
 

@@ -7,6 +7,7 @@ use Exception;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -20,7 +21,7 @@ abstract class ViewComponent extends Component implements Htmlable
     protected string | Closure | null $defaultView = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<array<string, mixed> | Closure>
      */
     protected array $viewData = [];
 
@@ -30,9 +31,9 @@ abstract class ViewComponent extends Component implements Htmlable
 
     /**
      * @param  view-string | null  $view
-     * @param  array<string, mixed>  $viewData
+     * @param  array<string, mixed> | Closure  $viewData
      */
-    public function view(?string $view, array $viewData = []): static
+    public function view(?string $view, array | Closure $viewData = []): static
     {
         if ($view === null) {
             return $this;
@@ -40,7 +41,7 @@ abstract class ViewComponent extends Component implements Htmlable
 
         $this->view = $view;
 
-        if ($viewData !== []) {
+        if (filled($viewData)) {
             $this->viewData($viewData);
         }
 
@@ -66,14 +67,11 @@ abstract class ViewComponent extends Component implements Htmlable
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed> | Closure  $data
      */
-    public function viewData(array $data): static
+    public function viewData(array | Closure $data): static
     {
-        $this->viewData = [
-            ...$this->viewData,
-            ...$data,
-        ];
+        $this->viewData[] = $data;
 
         return $this;
     }
@@ -107,6 +105,17 @@ abstract class ViewComponent extends Component implements Htmlable
         return $this->evaluate($this->defaultView);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getViewData(): array
+    {
+        return Arr::mapWithKeys(
+            $this->viewData,
+            fn (mixed $data): array => $this->evaluate($data) ?? [],
+        );
+    }
+
     public function toHtml(): string
     {
         if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
@@ -127,6 +136,14 @@ abstract class ViewComponent extends Component implements Htmlable
         return new HtmlString($html);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtraViewData(): array
+    {
+        return [];
+    }
+
     public function render(): View
     {
         return $this->viewInstance ??= view(
@@ -135,7 +152,8 @@ abstract class ViewComponent extends Component implements Htmlable
                 'attributes' => new ComponentAttributeBag,
                 ...$this->extractPublicMethods(),
                 ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
-                ...$this->viewData,
+                ...$this->getExtraViewData(),
+                ...$this->getViewData(),
             ],
         );
     }

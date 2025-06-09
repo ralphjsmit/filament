@@ -1,1 +1,0 @@
-function i(){return{isSticky:!1,init:function(){this.evaluatePageScrollPosition()},evaluatePageScrollPosition:function(){this.isSticky=document.body.scrollHeight>=window.scrollY+window.innerHeight*2}}}export{i as default};

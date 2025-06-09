@@ -1,17 +1,23 @@
 @php
     use Filament\Support\Facades\FilamentView;
     use Filament\Widgets\View\Components\ChartWidgetComponent;
+    use Illuminate\View\ComponentAttributeBag;
 
     $color = $this->getColor();
     $heading = $this->getHeading();
     $description = $this->getDescription();
     $filters = $this->getFilters();
+    $isCollapsible = $this->isCollapsible();
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
-    <x-filament::section :description="$description" :heading="$heading">
+    <x-filament::section
+        :description="$description"
+        :heading="$heading"
+        :collapsible="$isCollapsible"
+    >
         @if ($filters || method_exists($this, 'getFiltersSchema'))
-            <x-slot name="headerEnd">
+            <x-slot name="afterHeader">
                 @if ($filters)
                     <x-filament::input.wrapper
                         inline-prefix
@@ -68,9 +74,7 @@
                             options: @js($this->getOptions()),
                             type: @js($this->getType()),
                         })"
-                @class([
-                    ...\Filament\Support\get_component_color_classes(ChartWidgetComponent::class, $color),
-                ])
+                {{ (new ComponentAttributeBag)->color(ChartWidgetComponent::class, $color) }}
             >
                 <canvas
                     x-ref="canvas"

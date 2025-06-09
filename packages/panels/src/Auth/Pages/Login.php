@@ -414,4 +414,9 @@ class Login extends SimplePage
     {
         return $this->getFormActionsAlignment();
     }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
+    }
 }

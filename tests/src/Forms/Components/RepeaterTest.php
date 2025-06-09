@@ -21,7 +21,7 @@ it('can fill and assert data in a repeater', function (array $data): void {
     try {
         livewire(TestComponentWithRepeater::class)
             ->fillForm($data)
-            ->assertFormSet($data);
+            ->assertSchemaStateSet($data);
     } catch (RootTagMissingFromViewException $exception) {
         // Flaky test
     }
@@ -127,13 +127,13 @@ it('can remove items from a repeater', function (): void {
                 ],
             ],
         ])
-        ->assertFormSet($data)
+        ->assertSchemaStateSet($data)
         ->fillForm([
             'normal' => [
                 Arr::first($data['normal']),
             ],
         ])
-        ->assertFormSet(function (array $data) {
+        ->assertSchemaStateSet(function (array $data) {
             expect($data['normal'])->toHaveCount(1);
 
             return [
@@ -155,7 +155,10 @@ it('loads a relationship', function (): void {
         ->statePath('data')
         ->components([
             (new Repeater('repeater'))
-                ->relationship('posts'),
+                ->relationship('posts')
+                ->schema([
+                    TextInput::make('title'),
+                ]),
         ])
         ->model($user);
 

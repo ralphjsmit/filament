@@ -4,6 +4,7 @@ namespace Filament\Schemas\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
@@ -17,6 +18,7 @@ class Wizard extends Component
 {
     use Concerns\CanBeContained;
     use Concerns\HasExtraAlpineAttributes;
+    use HasLabel;
 
     protected string | Htmlable | null $cancelAction = null;
 
@@ -35,6 +37,8 @@ class Wizard extends Component
     protected int $currentStepIndex = 0;
 
     protected string | Closure | null $alpineSubmitHandler = null;
+
+    protected bool | Closure $isHeaderHidden = false;
 
     /**
      * @var view-string
@@ -284,5 +288,17 @@ class Wizard extends Component
     public function getAlpineSubmitHandler(): ?string
     {
         return $this->evaluate($this->alpineSubmitHandler);
+    }
+
+    public function hiddenHeader(bool | Closure $condition = true): static
+    {
+        $this->isHeaderHidden = $condition;
+
+        return $this;
+    }
+
+    public function isHeaderHidden(): bool
+    {
+        return (bool) $this->evaluate($this->isHeaderHidden);
     }
 }

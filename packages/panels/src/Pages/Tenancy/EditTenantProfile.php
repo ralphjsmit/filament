@@ -23,7 +23,6 @@ use Livewire\Attributes\Locked;
 use Throwable;
 
 use function Filament\authorize;
-use function Filament\Support\is_app_url;
 
 /**
  * @property-read Schema $form
@@ -48,16 +47,16 @@ abstract class EditTenantProfile extends Page
 
     abstract public static function getLabel(): string;
 
-    public static function getRelativeRouteName(): string
+    public static function getRelativeRouteName(Panel $panel): string
     {
         return 'profile';
     }
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(?Panel $panel = null): string
     {
-        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentOrDefaultPanel();
+        $panel ??= Filament::getCurrentOrDefaultPanel();
 
-        return $panel->generateRouteName('tenant.' . static::getRelativeRouteName());
+        return $panel->generateRouteName('tenant.' . static::getRelativeRouteName($panel));
     }
 
     public static function isTenantSubscriptionRequired(Panel $panel): bool
@@ -123,8 +122,6 @@ abstract class EditTenantProfile extends Page
             $this->handleRecordUpdate($this->tenant, $data);
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -137,10 +134,12 @@ abstract class EditTenantProfile extends Page
             throw $exception;
         }
 
+        $this->commitDatabaseTransaction();
+
         $this->getSavedNotification()?->send();
 
         if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 
@@ -164,7 +163,7 @@ abstract class EditTenantProfile extends Page
 
         return Notification::make()
             ->success()
-            ->title($this->getSavedNotificationTitle());
+            ->title($title);
     }
 
     protected function getSavedNotificationTitle(): ?string
@@ -213,7 +212,7 @@ abstract class EditTenantProfile extends Page
         return static::getLabel();
     }
 
-    public static function getSlug(): string
+    public static function getSlug(?Panel $panel = null): string
     {
         return static::$slug ?? 'profile';
     }
@@ -251,5 +250,10 @@ abstract class EditTenantProfile extends Page
     protected function hasFullWidthFormActions(): bool
     {
         return false;
+    }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
     }
 }

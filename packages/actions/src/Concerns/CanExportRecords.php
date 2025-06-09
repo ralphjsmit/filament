@@ -18,7 +18,7 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Split;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -85,7 +85,7 @@ trait CanExportRecords
                 ->inlineLabel()
                 ->schema(function () use ($action): array {
                     return array_map(
-                        fn (ExportColumn $column): Split => Split::make([
+                        fn (ExportColumn $column): Flex => Flex::make([
                             Forms\Components\Checkbox::make('isEnabled')
                                 ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
                                 ->hiddenLabel()
@@ -132,9 +132,9 @@ trait CanExportRecords
                 ]) ?? $query;
             }
 
-            $records = $action instanceof ExportBulkAction ? $action->getSelectedRecords() : null;
+            $records = $action instanceof ExportBulkAction ? $action->getIndividuallyAuthorizedSelectedRecords() : null;
 
-            $totalRows = $records ? $records->count() : $query->count();
+            $totalRows = $records ? $records->count() : $query->toBase()->getCountForPagination();
             $maxRows = $action->getMaxRows() ?? $totalRows;
 
             if ($maxRows < $totalRows) {
@@ -213,7 +213,7 @@ trait CanExportRecords
                     'columnMap' => $columnMap,
                     'options' => $options,
                     'chunkSize' => $action->getChunkSize(),
-                    'records' => $action instanceof ExportBulkAction ? $action->getSelectedRecords()->all() : null,
+                    'records' => $records?->all(),
                 ])])
                     ->allowFailures()
                     ->when(
@@ -262,7 +262,7 @@ trait CanExportRecords
             }
         });
 
-        $this->color('gray');
+        $this->defaultColor('gray');
 
         $this->modalWidth('xl');
 

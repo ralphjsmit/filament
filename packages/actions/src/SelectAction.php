@@ -104,7 +104,7 @@ class SelectAction extends Action implements HasEmbeddedView
         ob_start(); ?>
 
         <div class="fi-ac-select-action">
-            <label for="<?= $id ?>" class="sr-only">
+            <label for="<?= $id ?>" class="fi-sr-only">
                 <?= e($this->getLabel()) ?>
             </label>
 

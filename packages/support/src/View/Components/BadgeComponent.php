@@ -11,14 +11,14 @@ class BadgeComponent implements HasColor, HasDefaultGrayColor
 {
     /**
      * @param  array<int, string>  $color
-     * @return array<string>
+     * @return array<string, int>
      */
-    public function getColorClasses(array $color): array
+    public function getColorMap(array $color): array
     {
         ksort($color);
 
         foreach (array_keys($color) as $shade) {
-            if (Color::isNonTextContrastRatioAccessible($color[50], $color[$shade])) {
+            if (Color::isTextContrastRatioAccessible($color[50], $color[$shade])) {
                 $text = $shade;
 
                 break;
@@ -30,14 +30,14 @@ class BadgeComponent implements HasColor, HasDefaultGrayColor
         krsort($color);
 
         $gray = FilamentColor::getColor('gray');
-        $lightestDarkGrayBg = $gray[500];
+        $lightestDarkGrayBg = $gray[600];
 
         foreach (array_keys($color) as $shade) {
             if ($shade > 500) {
                 continue;
             }
 
-            if (Color::isNonTextContrastRatioAccessible($lightestDarkGrayBg, $color[$shade])) {
+            if (Color::isTextContrastRatioAccessible($lightestDarkGrayBg, $color[$shade])) {
                 $darkText = $shade;
 
                 break;
@@ -47,8 +47,8 @@ class BadgeComponent implements HasColor, HasDefaultGrayColor
         $darkText ??= 200;
 
         return [
-            "fi-text-color-{$text}",
-            "dark:fi-text-color-{$darkText}",
+            'text' => $text,
+            'dark:text' => $darkText,
         ];
     }
 }

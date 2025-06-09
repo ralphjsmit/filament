@@ -8,6 +8,8 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanOpenUrl;
+use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
@@ -23,9 +25,12 @@ class Entry extends Component
     use Concerns\HasExtraEntryWrapperAttributes;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
-    use Concerns\HasName;
     use Concerns\HasTooltip;
     use HasAlignment;
+    use HasLabel {
+        getLabel as getBaseLabel;
+    }
+    use HasName;
     use HasPlaceholder;
 
     protected string $viewIdentifier = 'entry';
@@ -87,15 +92,17 @@ class Entry extends Component
 
     public function getLabel(): string | Htmlable | null
     {
-        $label = parent::getLabel() ?? (string) str($this->getName())
-            ->before('.')
+        if (filled($label = $this->getBaseLabel())) {
+            return $label;
+        }
+
+        $label = (string) str($this->getName())
+            ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
 
-        return (is_string($label) && $this->shouldTranslateLabel) ?
-            __($label) :
-            $label;
+        return $this->shouldTranslateLabel ? __($label) : $label;
     }
 
     public function state(mixed $state): static
@@ -106,9 +113,9 @@ class Entry extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function aboveLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function aboveLabel(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::ABOVE_LABEL_SCHEMA_KEY);
 
@@ -116,9 +123,9 @@ class Entry extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function belowLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function belowLabel(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::BELOW_LABEL_SCHEMA_KEY);
 
@@ -126,9 +133,9 @@ class Entry extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function beforeLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function beforeLabel(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::BEFORE_LABEL_SCHEMA_KEY);
 
@@ -136,9 +143,9 @@ class Entry extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function afterLabel(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function afterLabel(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::AFTER_LABEL_SCHEMA_KEY);
 
@@ -146,9 +153,9 @@ class Entry extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function aboveContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function aboveContent(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::ABOVE_CONTENT_SCHEMA_KEY);
 
@@ -156,9 +163,9 @@ class Entry extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function belowContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function belowContent(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::BELOW_CONTENT_SCHEMA_KEY);
 
@@ -166,9 +173,9 @@ class Entry extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function beforeContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function beforeContent(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::BEFORE_CONTENT_SCHEMA_KEY);
 
@@ -176,9 +183,9 @@ class Entry extends Component
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string> | Schema | Component | Action | ActionGroup | string | Closure | null  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
      */
-    public function afterContent(array | Schema | Component | Action | ActionGroup | string | Closure | null $components): static
+    public function afterContent(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
     {
         $this->childComponents($components, static::AFTER_CONTENT_SCHEMA_KEY);
 
@@ -233,6 +240,7 @@ class Entry extends Component
             ])->toHtml();
         }
 
+        $hasInlineLabel = $this->hasInlineLabel();
         $alignment = $this->getAlignment();
         $label = $this->getLabel();
         $labelSrOnly = $this->isLabelHidden();
@@ -241,51 +249,55 @@ class Entry extends Component
             $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
         }
 
-        $beforeLabelContainer = $this->getChildSchema($this::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
-        $afterLabelContainer = $this->getChildSchema($this::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
-        $beforeContentContainer = $this->getChildSchema($this::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
-        $afterContentContainer = $this->getChildSchema($this::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
+        $aboveLabelSchema = $this->getChildSchema($this::ABOVE_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $belowLabelSchema = $this->getChildSchema($this::BELOW_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $beforeLabelSchema = $this->getChildSchema($this::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $afterLabelSchema = $this->getChildSchema($this::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $beforeContentSchema = $this->getChildSchema($this::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+        $afterContentSchema = $this->getChildSchema($this::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
 
         $attributes = $this->getExtraEntryWrapperAttributesBag()
             ->class([
                 'fi-in-entry',
-                'fi-in-entry-has-inline-label' => $this->hasInlineLabel(),
+                'fi-in-entry-has-inline-label' => $hasInlineLabel,
             ]);
 
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?php if ($label && $labelSrOnly) { ?>
+            <?php if (filled($label) && $labelSrOnly) { ?>
                 <dt class="fi-in-entry-label fi-hidden">
                     <?= e($label) ?>
                 </dt>
             <?php } ?>
 
-            <div class="fi-in-entry-label-col">
-                <?= $this->getChildSchema($this::ABOVE_LABEL_SCHEMA_KEY)?->toHtml() ?>
+            <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema) { ?>
+                <div class="fi-in-entry-label-col">
+                    <?= $aboveLabelSchema?->toHtml() ?>
 
-                <?php if (($label && (! $labelSrOnly)) || $beforeLabelContainer || $afterLabelContainer) { ?>
-                    <div class="fi-in-entry-label-ctn">
-                        <?= $beforeLabelContainer?->toHtml() ?>
+                    <?php if ((filled($label) && (! $labelSrOnly)) || $beforeLabelSchema || $afterLabelSchema) { ?>
+                        <div class="fi-in-entry-label-ctn">
+                            <?= $beforeLabelSchema?->toHtml() ?>
 
-                        <?php if ($label && (! $labelSrOnly)) { ?>
-                            <dt class="fi-in-entry-label">
-                                <?= e($label) ?>
-                            </dt>
-                        <?php } ?>
+                            <?php if (filled($label) && (! $labelSrOnly)) { ?>
+                                <dt class="fi-in-entry-label">
+                                    <?= e($label) ?>
+                                </dt>
+                            <?php } ?>
 
-                        <?= $afterLabelContainer?->toHtml() ?>
-                    </div>
-                <?php } ?>
+                            <?= $afterLabelSchema?->toHtml() ?>
+                        </div>
+                    <?php } ?>
 
-                <?= $this->getChildSchema($this::BELOW_LABEL_SCHEMA_KEY)?->toHtml() ?>
-            </div>
+                    <?= $belowLabelSchema?->toHtml() ?>
+                </div>
+            <?php } ?>
 
             <div class="fi-in-entry-content-col">
                 <?= $this->getChildSchema($this::ABOVE_CONTENT_SCHEMA_KEY)?->toHtml() ?>
 
                 <div class="fi-in-entry-content-ctn">
-                    <?= $beforeContentContainer?->toHtml() ?>
+                    <?= $beforeContentSchema?->toHtml() ?>
 
                     <dd class="<?= Arr::toCssClasses([
                         'fi-in-entry-content',
@@ -294,7 +306,7 @@ class Entry extends Component
                         <?= $html ?>
                     </dd>
 
-                    <?= $afterContentContainer?->toHtml() ?>
+                    <?= $afterContentSchema?->toHtml() ?>
                 </div>
 
                 <?= $this->getChildSchema($this::BELOW_CONTENT_SCHEMA_KEY)?->toHtml() ?>
@@ -302,5 +314,10 @@ class Entry extends Component
         </div>
 
         <?php return ob_get_clean();
+    }
+
+    public function isDehydrated(): bool
+    {
+        return false;
     }
 }

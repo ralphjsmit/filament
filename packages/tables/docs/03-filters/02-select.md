@@ -2,8 +2,9 @@
 title: Select filters
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
-## Overview
+## Introduction
 
 Often, you will want to use a [select field](../../forms/fields/select) instead of a checkbox. This is especially true when you want to filter a column based on a set of pre-defined options that the user can choose from. To do this, you can create a filter using the `SelectFilter` class:
 
@@ -19,6 +20,8 @@ SelectFilter::make('status')
 ```
 
 The `options()` that are passed to the filter are the same as those that are passed to the [select field](../../forms/fields/select).
+
+<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the column used by a select filter
 
@@ -36,9 +39,11 @@ SelectFilter::make('status')
     ->attribute('status_id')
 ```
 
+<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `attribute()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Multi-select filters
 
-These allow the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using. When the user selects multiple options, the table will be filtered to show records that match any of the selected options. You can enable this behavior using the `multiple()` method:
+These allow the user to [select multiple options](../../forms/select#multi-select) to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using. When the user selects multiple options, the table will be filtered to show records that match any of the selected options. You can enable this behavior using the `multiple()` method:
 
 ```php
 use Filament\Tables\Filters\SelectFilter;
@@ -74,6 +79,27 @@ SelectFilter::make('author')
     ->relationship('author', 'name')
     ->searchable()
     ->preload()
+```
+
+### Filtering empty relationships
+
+By default, upon selecting an option, all records that have an empty relationship will be excluded from the results. If you want to introduce an additional "None" option for the user to select, which will include all records that do not have a relationship, you can use the `hasEmptyOption()` argument of the `relationship()` method:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('author')
+    ->relationship('author', 'name', hasEmptyOption: true)
+```
+
+You can rename the "None" option using the `emptyRelationshipOptionLabel()` method:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('author')
+    ->relationship('author', 'name', hasEmptyOption: true)
+    ->emptyRelationshipOptionLabel('No author')
 ```
 
 ### Customizing the select filter relationship query
@@ -141,4 +167,6 @@ SelectFilter::make('status')
     ->multiple()
     ->default(['draft', 'reviewing'])
 ```
+
+<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `default()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
