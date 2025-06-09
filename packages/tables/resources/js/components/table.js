@@ -77,7 +77,7 @@ export default ({
         this.selectRecords(keys)
     },
 
-    toggleSelectRecordsInGroup: async function (group) {
+    async toggleSelectRecordsInGroup(group) {
         this.isLoading = true
 
         if (this.areRecordsSelected(this.getRecordsInGroupOnPage(group))) {
@@ -192,7 +192,7 @@ export default ({
         this.selectRecords([key])
     },
 
-    selectAllRecords: async function () {
+    async selectAllRecords() {
         if (!canTrackDeselectedRecords) {
             this.isLoading = true
 

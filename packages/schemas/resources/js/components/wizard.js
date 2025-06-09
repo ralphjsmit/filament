@@ -16,7 +16,7 @@ export default function wizardSchemaComponent({
             this.autofocusFields()
         },
 
-        requestNextStep: async function () {
+        async requestNextStep() {
             await this.$wire.callSchemaComponentMethod(key, 'nextStep', {
                 currentStepIndex: this.getStepIndex(this.step),
             })
