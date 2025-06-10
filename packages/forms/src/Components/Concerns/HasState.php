@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Contracts\Support\Arrayable;
@@ -189,7 +190,7 @@ trait HasState
             // we need to dehydrate the child component containers while
             // informing them that they are not dehydrated, so that their
             // child components get removed from the state.
-            foreach ($this->getChildComponentContainers() as $container) {
+            foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
                 $container->dehydrateState($state, isDehydrated: false);
             }
 
