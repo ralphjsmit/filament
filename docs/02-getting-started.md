@@ -42,4 +42,4 @@ Custom pages are a blank canvas for you to build whatever you want in a panel. T
 
 Each custom page has a PHP class and a Blade view. The PHP class is technically a [full-page Livewire component](https://livewire.laravel.com/docs/components) (in fact, every page class in a Filament panel is a Livewire component). As such, every page has access to the full power of Livewire to build an interactive server-rendered UI.
 
-To start your journey by creating a custom page, visit the [Custom pages documentation](advanced/custom-pages).
+To start your journey by creating a custom page, visit the [Custom pages documentation](navigation/custom-pages).
