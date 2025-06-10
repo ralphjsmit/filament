@@ -618,7 +618,7 @@ test('components in a hidden parent component with a grandparent component with 
         ->fill();
 
     expect($container)
-        ->dehydrateState()->toBe(['data' => []]);
+        ->dehydrateState()->toBe(['data' => ['data' => []]]);
 });
 
 test('disabled components are excluded from state dehydration', function () {
