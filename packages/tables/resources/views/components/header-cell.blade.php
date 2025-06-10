@@ -29,8 +29,8 @@
             role="button"
             tabindex="0"
             wire:click="sortTable('{{ $name }}')"
-            @keydown.enter="$wire.sortTable('{{ $name }}')"
-            @keydown.space.prevent="$wire.sortTable('{{ $name }}')"
+            x-on:keydown.enter="$wire.sortTable('{{ $name }}')"
+            x-on:keydown.space.prevent="$wire.sortTable('{{ $name }}')"
         @endif
         @class([
             'group flex w-full items-center gap-x-1',
