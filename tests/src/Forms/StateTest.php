@@ -604,7 +604,7 @@ test('components in a hidden parent component with a grandparent component with 
         ->statePath('data')
         ->components([
             (new Component)
-                ->statePath(Str::random())
+                ->statePath('data')
                 ->schema([
                     (new Component)
                         ->schema([
@@ -618,7 +618,7 @@ test('components in a hidden parent component with a grandparent component with 
         ->fill();
 
     expect($container)
-        ->dehydrateState()->toBe([]);
+        ->dehydrateState()->toBe(['data' => []]);
 });
 
 test('disabled components are excluded from state dehydration', function () {
