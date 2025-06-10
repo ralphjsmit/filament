@@ -207,7 +207,7 @@ In v4, the default disk for Filament is set to `local`, and the visibility of fi
 
 Previously, custom theme CSS files contained this:
 
-```cs
+```css
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
 @config 'tailwind.config.js';
