@@ -89,7 +89,7 @@ trait HasState
         return $this;
     }
 
-    public function callAfterStateUpdated(bool $shouldBubbleToParents = true, bool $isBubbling = false): static
+    public function callAfterStateUpdated(bool $shouldBubbleToParents = true): static
     {
         foreach ($this->afterStateUpdated as $callback) {
             $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
@@ -103,8 +103,8 @@ trait HasState
             store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
         }
 
-        if ($shouldBubbleToParents && ($isBubbling || $this->isLive())) {
-            $this->getContainer()->getParentComponent()?->callAfterStateUpdated(isBubbling: true);
+        if ($shouldBubbleToParents) {
+            $this->getContainer()->getParentComponent()?->callAfterStateUpdated();
         }
 
         return $this;
