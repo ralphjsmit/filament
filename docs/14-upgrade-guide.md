@@ -286,9 +286,9 @@ Section::make()
     You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
-    use Filament\Forms\Components\Fieldset;
-    use Filament\Forms\Components\Grid;
-    use Filament\Forms\Components\Section;
+    use Filament\Schemas\Components\Fieldset;
+    use Filament\Schemas\Components\Grid;
+    use Filament\Schemas\Components\Section;
 
     Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
         ->columnSpanFull());
