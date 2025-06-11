@@ -30,11 +30,11 @@
         },
 
         open: function (event) {
-            $refs.panel.open(event)
+            $refs.panel?.open(event)
         },
 
         close: function (event) {
-            $refs.panel.close(event)
+            $refs.panel?.close(event)
         },
     }"
     {{ $attributes->class(['fi-dropdown']) }}
