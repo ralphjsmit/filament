@@ -309,7 +309,7 @@ In v3, the `unique()` method did not ignore the current form's Eloquent record w
 
 In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
 
-If you were previously using `unqiue()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
+If you were previously using `unique()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
 
 <Aside variant="tip">
     You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
