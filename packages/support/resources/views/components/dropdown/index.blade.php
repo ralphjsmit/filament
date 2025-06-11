@@ -22,7 +22,7 @@
         'padding' => $sizePadding,
     ])->filter()->toJson();
 
-    if (is_string($width) && ! ($width instanceof Width)) {
+    if (is_string($width)) {
         $width = Width::tryFrom($width) ?? $width;
     }
 @endphp

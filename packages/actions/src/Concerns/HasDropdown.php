@@ -71,8 +71,8 @@ trait HasDropdown
     {
         $width = $this->evaluate($this->dropdownWidth);
 
-        if (! ($width instanceof Width)) {
-            $width = filled($width) ? (Width::tryFrom($width) ?? $width) : null;
+        if (is_string($width)) {
+            $width = Width::tryFrom($width) ?? $width;
         }
 
         return $width;

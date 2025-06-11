@@ -6,7 +6,7 @@
     $renderHookScopes = $livewire?->getRenderHookScopes();
     $maxContentWidth ??= (filament()->getSimplePageMaxContentWidth() ?? Width::Large);
 
-    if (is_string($maxContentWidth) && ! $maxContentWidth instanceof Width) {
+    if (is_string($maxContentWidth)) {
         $maxContentWidth = Width::tryFrom($maxContentWidth) ?? $maxContentWidth;
     }
 @endphp
