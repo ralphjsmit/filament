@@ -38,7 +38,13 @@ Installation comes in two flavors, depending on whether you want to build an app
 
 ## Installing the panel builder
 
-Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages:
+Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages. Either adjust it manually or via CLI:
+
+```bash
+composer config minimum-stability beta
+```
+
+Your `composer.json` should look like this:
 
 ```json
 {
@@ -53,6 +59,16 @@ composer require filament/filament:"^4.0"
 
 php artisan filament:install --panels
 ```
+
+<Aside variant="warning">
+    When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
+
+    ```bash
+    composer require '"filament/filament:^4.0"'
+
+    php artisan filament:install --panels
+    ```
+</Aside>
 
 This will create and register a new [Laravel service provider](https://laravel.com/docs/providers) called `app/Providers/Filament/AdminPanelProvider.php`.
 
@@ -78,7 +94,13 @@ Open `/admin` in your web browser, sign in, and [start building your app](../get
 
 ## Installing the individual components
 
-Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages:
+Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages. Either adjust it manually or via CLI:
+
+```bash
+composer config minimum-stability beta
+```
+
+Your `composer.json` should look like this:
 
 ```json
 {
@@ -100,6 +122,21 @@ composer require
 ```
 
 You can install additional packages later in your project without having to repeat these installation steps.
+
+<Aside variant="warning">
+    When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
+
+    ```bash
+    composer require
+        '"filament/tables:^4.0"'
+        '"filament/schemas:^4.0"'
+        '"filament/forms:^4.0"'
+        '"filament/infolists:^4.0"'
+        '"filament/actions:^4.0"'
+        '"filament/notifications:^4.0"'
+        '"filament/widgets:^4.0"'
+    ```
+</Aside>
 
 If you only want to use the set of [Blade UI components](../components), you'll need to require `filament/support` at this stage.
 

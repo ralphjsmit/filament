@@ -23,7 +23,13 @@ import Disclosure from "@components/Disclosure.astro"
     The upgrade script is not a replacement for the upgrade guide. It handles many small changes that are not mentioned in the upgrade guide, but it does not handle all breaking changes. You should still read the [manual upgrade steps](#breaking-changes-that-must-be-handled-manually) to see what changes you need to make to your code.
 </Aside>
 
-The first step to upgrade your Filament app is to run the automated upgrade script. Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages:
+The first step to upgrade your Filament app is to run the automated upgrade script. Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages. Either adjust it manually or via CLI:
+
+```bash
+composer config minimum-stability beta
+```
+
+Your `composer.json` should look like this:
 
 ```json
 {
@@ -38,6 +44,16 @@ composer require filament/upgrade:"^4.0" -W --dev
 
 vendor/bin/filament-v4
 ```
+
+<Aside variant="warning">
+    When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
+
+    ```bash
+    composer require '"filament/upgrade:^4.0"' -W --dev
+
+    vendor/bin/filament-v4
+    ```
+</Aside>
 
 <Aside variant="warning">
     If installing the upgrade script fails, make sure that your PHPStan version is at least v2, or your Larastan version is at least v3. The script uses Rector v2, which requires PHPStan v2 or higher.
