@@ -56,12 +56,12 @@ public static function table(Table $table): Table
 Or the `infolist()`:
 
 ```php
-use App\Filament\Resources\Customers\Schemas\CustomerInfoList;
+use App\Filament\Resources\Customers\Schemas\CustomerInfolist;
 use Filament\Schemas\Schema;
 
 public static function infolist(Schema $schema): Schema
 {
-    return CustomerInfoList::configure($schema);
+    return CustomerInfolist::configure($schema);
 }
 ```
 
