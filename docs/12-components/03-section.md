@@ -95,7 +95,7 @@ By default, the size of the section icon is "large". You can change it to be "sm
 
 ## Adding content to the end of the header
 
-You may render additional content at the end of the header, next to the heading and description, using the `headerEnd` slot:
+You may render additional content at the end of the header, next to the heading and description, using the `afterHeader` slot:
 
 ```blade
 <x-filament::section>
@@ -103,7 +103,7 @@ You may render additional content at the end of the header, next to the heading 
         User details
     </x-slot>
 
-    <x-slot name="headerEnd">
+    <x-slot name="afterHeader">
         {{-- Input to select the user's ID --}}
     </x-slot>
 
