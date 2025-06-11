@@ -26,7 +26,7 @@
 <div
     x-data="{
         toggle: function (event) {
-            $refs.panel.toggle(event)
+            $refs.panel?.toggle(event)
         },
 
         open: function (event) {
