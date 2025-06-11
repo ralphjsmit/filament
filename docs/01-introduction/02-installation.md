@@ -38,7 +38,13 @@ Installation comes in two flavors, depending on whether you want to build an app
 
 ## Installing the panel builder
 
-Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages:
+Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages. Either adjust it manually or via CLI:
+
+```bash
+composer config minimum-stability beta
+```
+
+Your `composer.json` should look like this:
 
 ```json
 {
@@ -49,7 +55,7 @@ Since Filament v4 is in beta, you will need to set the `minimum-stability` in yo
 Install the Filament Panel Builder by running the following commands in your Laravel project directory:
 
 ```bash
-composer require filament/filament:"^4.0"
+composer require filament/filament:~4.0
 
 php artisan filament:install --panels
 ```
