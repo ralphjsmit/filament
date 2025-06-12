@@ -1244,7 +1244,9 @@
                     @endif
                 </x-filament-tables::table>
             @elseif ($records === null)
-                <div class="h-32"></div>
+                <div class="h-32 flex items-center justify-center">
+                    <x-filament::loading-indicator class="h-8 w-8" />
+                </div>
             @elseif ($emptyState = $getEmptyState())
                 {{ $emptyState }}
             @else
