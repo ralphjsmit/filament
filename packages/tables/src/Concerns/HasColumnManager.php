@@ -153,6 +153,9 @@ trait HasColumnManager
         return "tables.{$table}_table_configuration_hash";
     }
 
+    /**
+     * @return array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
+     */
     protected function resolveColumnManagerState(): array
     {
         $currentHash = $this->generateTableConfigurationHash();
@@ -186,6 +189,9 @@ trait HasColumnManager
         );
     }
 
+    /**
+     * @return array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
+     */
     protected function loadColumnManagerFromSession(): array
     {
         return session()->get(
