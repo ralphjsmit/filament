@@ -137,6 +137,10 @@
                                     </td>
                                 @endif
 
+                                @php
+                                    $counter = 0
+                                @endphp
+
                                 @foreach ($item->getComponents(withHidden: true) as $component)
                                     @php
                                         throw_unless(
@@ -145,13 +149,21 @@
                                         );
                                     @endphp
 
-                                    @if (count($tableColumns) > $loop->index)
-                                        @if ($component->isVisible())
-                                            <td>
-                                                {{ $component }}
-                                            </td>
+                                    @if (count($tableColumns) > $counter)
+                                        @if ($component instanceof \Filament\Forms\Components\Hidden)
+                                            {{ $component }}
                                         @else
-                                            <td class="fi-hidden"></td>
+                                            @php
+                                                $counter++
+                                            @endphp
+
+                                            @if ($component->isVisible())
+                                                <td>
+                                                    {{ $component }}
+                                                </td>
+                                            @else
+                                                <td class="fi-hidden"></td>
+                                            @endif
                                         @endif
                                     @endif
                                 @endforeach
