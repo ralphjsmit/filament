@@ -50,6 +50,7 @@ export default function fileUploadFormComponent({
     isDownloadable,
     isMultiple,
     isOpenable,
+    isPasteable,
     isPreviewable,
     isReorderable,
     itemPanelAspectRatio,
