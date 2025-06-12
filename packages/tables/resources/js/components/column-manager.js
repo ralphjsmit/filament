@@ -194,7 +194,7 @@ export default function columnManagerComponent({ columns, isLive }) {
             this.isLoading = true
 
             try {
-                await this.$wire.commit()
+                await this.$wire.call('applyColumnManager', this.columns)
 
                 this.error = undefined
             } catch (error) {

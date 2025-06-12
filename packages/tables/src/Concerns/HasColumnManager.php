@@ -6,6 +6,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;
+use Illuminate\Support\Collection;
 
 /**
  * @property-read Schema $toggleTableColumnForm
@@ -15,6 +16,10 @@ trait HasColumnManager
     public const GROUP = 'group';
 
     public const COLUMN = 'column';
+
+    protected ?string $tableConfigurationHashCache = null;
+
+    protected ?string $columnManagerConfigurationHashCache = null;
 
     /**
      * @var array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
@@ -28,15 +33,10 @@ trait HasColumnManager
         }
 
         if (blank($this->columnManager)) {
-            $columnManagerSessionKey = $this->getColumnManagerSessionKey();
-
-            $this->columnManager = session()->get(
-                $columnManagerSessionKey,
-                $this->getDefaultColumnManagerState()
-            );
+            $this->columnManager = $this->resolveColumnManagerState();
         }
 
-        $this->updatedColumnManager();
+        $this->applyColumnManager();
     }
 
     /**
@@ -56,15 +56,31 @@ trait HasColumnManager
     }
 
     /**
-     * @deprecated Use the `updatedColumnManager()` method instead.
+     * @deprecated Use the `applyColumnManager()` method instead.
      */
     public function updatedToggledTableColumns(): void
     {
-        $this->updatedColumnManager();
+        $this->applyColumnManager();
     }
 
-    public function updatedColumnManager(): void
+    /**
+     * @param  array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>|null  $columnManager
+     */
+    public function applyColumnManager(?array $columnManager = null): void
     {
+        if (filled($columnManager)) {
+            $this->columnManager = $columnManager;
+        }
+
+        $storedHash = session()->get($this->getTableConfigurationHashSessionKey());
+
+        if (
+            $storedHash &&
+            $storedHash !== $this->generateColumnManagerConfigurationHash()
+        ) {
+            $this->columnManager = $this->getDefaultColumnManagerState();
+        }
+
         $reorderedColumns = collect($this->columnManager)
             ->map(function (array $item): Column | ColumnGroup | null {
                 if ($item['type'] === self::COLUMN) {
@@ -93,9 +109,7 @@ trait HasColumnManager
 
         $this->getTable()->columns($reorderedColumns);
 
-        session()->put([
-            $this->getColumnManagerSessionKey() => $this->columnManager,
-        ]);
+        $this->persistColumnManager();
     }
 
     public function isTableColumnToggledHidden(string $name): bool
@@ -130,6 +144,83 @@ trait HasColumnManager
         $table = md5($this::class);
 
         return "tables.{$table}_column_manager";
+    }
+
+    public function getTableConfigurationHashSessionKey(): string
+    {
+        $table = md5($this::class);
+
+        return "tables.{$table}_table_configuration_hash";
+    }
+
+    protected function resolveColumnManagerState(): array
+    {
+        $currentHash = $this->generateTableConfigurationHash();
+        $storedHash = session()->get($this->getTableConfigurationHashSessionKey());
+
+        $this->persistTableConfigurationHash($currentHash);
+
+        if (
+            $storedHash &&
+            ($storedHash !== $currentHash)
+        ) {
+            return $this->getDefaultColumnManagerState();
+        }
+
+        return $this->loadColumnManagerFromSession();
+    }
+
+    protected function persistColumnManager(): void
+    {
+        session()->put(
+            $this->getColumnManagerSessionKey(),
+            $this->columnManager
+        );
+    }
+
+    protected function persistTableConfigurationHash(string $hash): void
+    {
+        session()->put(
+            $this->getTableConfigurationHashSessionKey(),
+            $hash,
+        );
+    }
+
+    protected function loadColumnManagerFromSession(): array
+    {
+        return session()->get(
+            $this->getColumnManagerSessionKey(),
+            $this->getDefaultColumnManagerState()
+        );
+    }
+
+    protected function generateTableConfigurationHash(): string
+    {
+        return $this->tableConfigurationHashCache ??= $this->generateHash(
+            collect($this->getTable()->getColumnsLayout())
+                ->map(fn (Component $component): ?array => match (true) {
+                    $component instanceof ColumnGroup => $this->mapColumnGroupForHash($component),
+                    $component instanceof Column => $this->mapColumnForHash($component),
+                    default => null,
+                })
+        );
+    }
+
+    protected function generateColumnManagerConfigurationHash(): string
+    {
+        return $this->columnManagerConfigurationHashCache ??= $this->generateHash(
+            collect($this->columnManager)
+                ->map(fn (array $item): ?array => match (true) {
+                    $item['type'] === self::GROUP => $this->mapColumnGroupArrayForHash($item),
+                    $item['type'] === self::COLUMN => $this->mapColumnArrayForHash($item),
+                    default => null,
+                })
+        );
+    }
+
+    protected function generateHash(Collection $configuration): string
+    {
+        return md5($configuration->filter()->sort()->values()->toJson());
     }
 
     /**
@@ -177,6 +268,43 @@ trait HasColumnManager
     }
 
     /**
+     * @return array{type: string, name: string, label: string, toggleable: bool, columns: array<int, array{type: string, name: string, label: string, toggleable: bool}>}
+     */
+    protected function mapColumnGroupForHash(ColumnGroup $group): array
+    {
+        return [
+            'type' => self::GROUP,
+            'name' => $group->getLabel(),
+            'label' => $group->getLabel(),
+            'toggleable' => true,
+            'columns' => collect($group->getColumns())
+                ->map(fn (Column $column): array => $this->mapColumnForHash($column))
+                ->sort()
+                ->values()
+                ->toArray(),
+        ];
+    }
+
+    /**
+     * @param  array{name: string, label: string, columns?: array<int, array{name: string, label: string, toggleable: bool}>}  $group
+     * @return array{type: string, name: string, label: string, toggleable: bool, columns: array<int, array{type: string, name: string, label: string, toggleable: bool}>}
+     */
+    protected function mapColumnGroupArrayForHash(array $group): array
+    {
+        return [
+            'type' => self::GROUP,
+            'name' => $group['name'],
+            'label' => $group['label'],
+            'toggleable' => true,
+            'columns' => collect($group['columns'] ?? [])
+                ->map(fn (array $column): array => $this->mapColumnArrayForHash($column))
+                ->sort()
+                ->values()
+                ->toArray(),
+        ];
+    }
+
+    /**
      * @return array{type: string, name: string, label: string, toggled: bool, toggleable: bool}
      */
     protected function mapColumn(Column $column): array
@@ -187,6 +315,33 @@ trait HasColumnManager
             'label' => $column->getLabel(),
             'toggled' => ! $column->isToggleable() || ! $column->isToggledHiddenByDefault(),
             'toggleable' => $column->isToggleable(),
+        ];
+    }
+
+    /**
+     * @return array{type: string, name: string, label: string, toggleable: bool}
+     */
+    protected function mapColumnForHash(Column $column): array
+    {
+        return [
+            'type' => self::COLUMN,
+            'name' => $column->getName(),
+            'label' => $column->getLabel(),
+            'toggleable' => $column->isToggleable(),
+        ];
+    }
+
+    /**
+     * @param  array{name: string, label: string, toggleable: bool}  $column
+     * @return array{type: string, name: string, label: string, toggleable: bool}
+     */
+    protected function mapColumnArrayForHash(array $column): array
+    {
+        return [
+            'type' => self::COLUMN,
+            'name' => $column['name'],
+            'label' => $column['label'],
+            'toggleable' => $column['toggleable'],
         ];
     }
 }
