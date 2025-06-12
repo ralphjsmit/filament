@@ -412,15 +412,15 @@ FileUpload::make('attachment')
     ->deletable(false)
 ```
 
-## Allow submission of file from Clipboard paste
+## Preventing pasting files
 
-You can accept submission via the clipboard paste by using `pasteable(true)`:
+You can disable the ability to paste files via the clipboard using the `pasteable(false)` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachment')
-    ->pasteable(true)
+    ->pasteable(false)
 ```
 
 ## Prevent file information fetching

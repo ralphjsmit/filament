@@ -26,13 +26,13 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
      */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
-    protected bool | Closure $isPasteable = false;
-
     protected bool | Closure $isDeletable = true;
 
     protected bool | Closure $isDownloadable = false;
 
     protected bool | Closure $isOpenable = false;
+
+    protected bool | Closure $isPasteable = true;
 
     protected bool | Closure $isPreviewable = true;
 
@@ -244,13 +244,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
-    public function pasteable(bool | Closure $condition = true): static
-    {
-        $this->isPasteable = $condition;
-
-        return $this;
-    }
-
     public function deletable(bool | Closure $condition = true): static
     {
         $this->isDeletable = $condition;
@@ -289,6 +282,13 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function reorderable(bool | Closure $condition = true): static
     {
         $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    public function pasteable(bool | Closure $condition = true): static
+    {
+        $this->isPasteable = $condition;
 
         return $this;
     }
@@ -484,11 +484,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
-    public function isPasteable(): bool
-    {
-        return (bool) $this->evaluate($this->isPasteable);
-    }
-
     public function isDeletable(): bool
     {
         return (bool) $this->evaluate($this->isDeletable);
@@ -502,6 +497,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function isOpenable(): bool
     {
         return (bool) $this->evaluate($this->isOpenable);
+    }
+
+    public function isPasteable(): bool
+    {
+        return (bool) $this->evaluate($this->isPasteable);
     }
 
     public function isPreviewable(): bool
