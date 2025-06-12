@@ -30,7 +30,6 @@ export default function fileUploadFormComponent({
     imageEditorViewportHeight,
     imageEditorViewportWidth,
     deleteUploadedFileUsing,
-    isPasteable,
     isDeletable,
     isDisabled,
     getUploadedFilesUsing,
