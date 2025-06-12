@@ -4,3 +4,4 @@
 /.gitignore export-ignore
 /phpunit.xml.dist export-ignore
 /testbench.yaml export-ignore
+/tests export-ignore
