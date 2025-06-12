@@ -101,7 +101,7 @@ export default function markdownEditorFormComponent({
 
         state,
 
-        init: async function () {
+        async init() {
             if (this.$root._editor) {
                 this.$root._editor.toTextArea()
                 this.$root._editor = null

@@ -98,7 +98,7 @@ export default function fileUploadFormComponent({
 
         editor: {},
 
-        init: async function () {
+        async init() {
             FilePond.setOptions(locales[locale] ?? locales['en'])
 
             this.pond = FilePond.create(this.$refs.input, {
@@ -363,7 +363,7 @@ export default function fileUploadFormComponent({
             )
         },
 
-        getUploadedFiles: async function () {
+        async getUploadedFiles() {
             const uploadedFiles = await getUploadedFilesUsing()
 
             this.fileKeyIndex = uploadedFiles ?? {}
@@ -377,7 +377,7 @@ export default function fileUploadFormComponent({
                 }, {})
         },
 
-        getFiles: async function () {
+        async getFiles() {
             await this.getUploadedFiles()
 
             let files = []

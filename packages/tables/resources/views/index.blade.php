@@ -1275,10 +1275,13 @@
                                         }}
                                     >
                                         @if ($isColumnSortable)
-                                            <button
+                                            <span
                                                 aria-label="{{ trim(strip_tags($columnLabel)) }}"
-                                                type="button"
+                                                role="button"
+                                                tabindex="0"
                                                 wire:click="sortTable('{{ $columnName }}')"
+                                                x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
                                                 wire:loading.attr="disabled"
                                                 class="fi-ta-header-cell-sort-btn"
                                             >
@@ -1291,7 +1294,7 @@
                                                         default => 'tables::header-cell.sort-button',
                                                     })
                                                 }}
-                                            </button>
+                                            </span>
                                         @else
                                             {{ $columnLabel }}
                                         @endif
@@ -1775,7 +1778,7 @@
                                                             @elseif ($columnWrapperTag === 'button')
                                                                 type
                                                                 ="button"
-                                                                wire:click.stop.prevent="{{ $columnWireClickAction }}"
+                                                                wire:click.prevent.stop="{{ $columnWireClickAction }}"
                                                                 wire:loading.attr="disabled"
                                                                 wire:target="{{ $columnWireClickAction }}"
                                                             @endif

@@ -109,7 +109,9 @@ public static function getNavigationBadgeTooltip(): ?string
 You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources) and [custom page](custom-pages):
 
 ```php
-protected static ?string $navigationGroup = 'Settings';
+use UnitEnum;
+
+protected static string | UnitEnum | null $navigationGroup = 'Settings';
 ```
 
 <AutoScreenshot name="panels/navigation/group" alt="Grouped navigation items" version="3.x" />
@@ -121,9 +123,11 @@ All items in the same navigation group will be displayed together under the same
 You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
 
 ```php
+use UnitEnum;
+
 protected static ?string $navigationParentItem = 'Notifications';
 
-protected static ?string $navigationGroup = 'Settings';
+protected static string | UnitEnum | null $navigationGroup = 'Settings';
 ```
 
 You may also use the `getNavigationParentItem()` method to set a dynamic parent item label:

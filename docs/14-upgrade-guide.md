@@ -23,13 +23,37 @@ import Disclosure from "@components/Disclosure.astro"
     The upgrade script is not a replacement for the upgrade guide. It handles many small changes that are not mentioned in the upgrade guide, but it does not handle all breaking changes. You should still read the [manual upgrade steps](#breaking-changes-that-must-be-handled-manually) to see what changes you need to make to your code.
 </Aside>
 
-The first set to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
+The first step to upgrade your Filament app is to run the automated upgrade script. Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages. Either adjust it manually or via CLI:
+
+```bash
+composer config minimum-stability beta
+```
+
+Your `composer.json` should look like this:
+
+```json
+{
+    "minimum-stability": "beta"
+}
+```
+
+This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
 
 ```bash
 composer require filament/upgrade:"^4.0" -W --dev
 
 vendor/bin/filament-v4
 ```
+
+<Aside variant="warning">
+    When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
+
+    ```bash
+    composer require '"filament/upgrade:^4.0"' -W --dev
+
+    vendor/bin/filament-v4
+    ```
+</Aside>
 
 <Aside variant="warning">
     If installing the upgrade script fails, make sure that your PHPStan version is at least v2, or your Larastan version is at least v3. The script uses Rector v2, which requires PHPStan v2 or higher.
@@ -42,37 +66,6 @@ You can now `composer remove filament/upgrade` as you don't need it anymore.
 <Aside variant="info">
     Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 </Aside>
-
-### Cleaning up your code style after upgrading to v4
-
-The automated upgrade script uses [Rector](https://getrector.org) to make changes to your code. Sometimes, the tool may change how your code is formatted or introduce references to classes that are not yet imported.
-
-Filament suggests using [Laravel Pint](https://laravel.com/docs/12.x/pint) or [PHP CS Fixer](https://cs.symfony.com) to clean up your code style after running the upgrade script.
-
-Specifically, the [`fully_qualified_strict_types` rule](https://cs.symfony.com/doc/rules/import/fully_qualified_strict_types.html) and [`global_namespace_import` rule](https://cs.symfony.com/doc/rules/import/global_namespace_import.html) in these tools will fix any references to classes that are not yet imported, which is a common issue after running the upgrade script.
-
-This is the Laravel Pint configuration that Filament uses for its own codebase if you would like a good starting point:
-
-```json
-{
-    "preset": "laravel",
-    "rules": {
-        "blank_line_before_statement": true,
-        "concat_space": {
-            "spacing": "one"
-        },
-        "fully_qualified_strict_types": {
-            "import_symbols": true
-        },
-        "global_namespace_import": true,
-        "method_argument_space": true,
-        "single_trait_insert_per_statement": true,
-        "types_spaces": {
-            "space": "single"
-        }
-    }
-}
-```
 
 ## Publishing the configuration file
 
@@ -230,7 +223,7 @@ In v4, the default disk for Filament is set to `local`, and the visibility of fi
 
 Previously, custom theme CSS files contained this:
 
-```cs
+```css
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
 @config 'tailwind.config.js';
@@ -309,9 +302,9 @@ Section::make()
     You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
-    use Filament\Forms\Components\Fieldset;
-    use Filament\Forms\Components\Grid;
-    use Filament\Forms\Components\Section;
+    use Filament\Schemas\Components\Fieldset;
+    use Filament\Schemas\Components\Grid;
+    use Filament\Schemas\Components\Section;
 
     Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
         ->columnSpanFull());
@@ -332,7 +325,7 @@ In v3, the `unique()` method did not ignore the current form's Eloquent record w
 
 In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
 
-If you were previously using `unqiue()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
+If you were previously using `unique()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
 
 <Aside variant="tip">
     You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:

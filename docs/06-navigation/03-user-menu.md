@@ -75,7 +75,7 @@ You can also conditionally hide a user menu item by using the `visible()` or `hi
 
 ```php
 use App\Models\Payment;
-use Filament\Actions\Action
+use Filament\Actions\Action;
 
 Action::make('payments')
     ->visible(fn (): bool => auth()->user()->can('viewAny', Payment::class))

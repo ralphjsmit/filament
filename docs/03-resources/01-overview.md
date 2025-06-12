@@ -400,7 +400,9 @@ public static function getNavigationSort(): ?int
 You may group navigation items by specifying a `$navigationGroup` property:
 
 ```php
-protected static ?string $navigationGroup = 'Shop';
+use UnitEnum;
+
+protected static string | UnitEnum | null $navigationGroup = 'Shop';
 ```
 
 Alternatively, you may use the `getNavigationGroup()` method to set a dynamic group label:
@@ -417,9 +419,11 @@ public static function getNavigationGroup(): ?string
 You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
 
 ```php
+use UnitEnum;
+
 protected static ?string $navigationParentItem = 'Products';
 
-protected static ?string $navigationGroup = 'Shop';
+protected static string | UnitEnum | null $navigationGroup = 'Shop';
 ```
 
 As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.

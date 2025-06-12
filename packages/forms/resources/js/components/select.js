@@ -39,7 +39,7 @@ export default function selectFormComponent({
 
         state,
 
-        init: async function () {
+        async init() {
             this.select = new Choices(this.$refs.input, {
                 allowHTML: isHtmlAllowed,
                 duplicateItemsAllowed: false,
@@ -165,7 +165,7 @@ export default function selectFormComponent({
             this.select = null
         },
 
-        refreshChoices: async function (config = {}) {
+        async refreshChoices(config = {}) {
             const choices = await this.getChoices(config)
 
             if (!this.select) {
@@ -198,7 +198,7 @@ export default function selectFormComponent({
             this.select.setChoices(choices, 'value', 'label', true)
         },
 
-        getChoices: async function (config = {}) {
+        async getChoices(config = {}) {
             const existingOptions = await this.getExistingOptions(config)
 
             this.isEmpty = existingOptions.length === 0
@@ -208,7 +208,7 @@ export default function selectFormComponent({
             )
         },
 
-        getExistingOptions: async function ({ search, withInitialOptions }) {
+        async getExistingOptions({ search, withInitialOptions }) {
             if (withInitialOptions) {
                 return options
             }
@@ -267,7 +267,7 @@ export default function selectFormComponent({
             return state?.toString()
         },
 
-        getMissingOptions: async function (existingOptions) {
+        async getMissingOptions(existingOptions) {
             let state = this.formatState(this.state)
 
             if ([null, undefined, '', [], {}].includes(state)) {
