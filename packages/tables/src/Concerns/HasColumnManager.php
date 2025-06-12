@@ -56,7 +56,7 @@ trait HasColumnManager
     }
 
     /**
-     * @deprecated Use the `applyColumnManager()` method instead.
+     * @deprecated Use `applyColumnManager()` instead.
      */
     public function updatedToggledTableColumns(): void
     {
@@ -132,7 +132,7 @@ trait HasColumnManager
     }
 
     /**
-     * @deprecated Use the `getColumnManagerSessionKey()` method instead.
+     * @deprecated Use `getColumnManagerSessionKey()` instead.
      */
     protected function getToggledTableColumnsSessionKey(): string
     {
