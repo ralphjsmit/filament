@@ -88,7 +88,7 @@ public function table(Table $table): Table
     return $table
         ->pushColumns([
             // The global created_at and updated_at columns 
-            // will be automatically appended after these
+            // will be automatically appended before these
             TextColumn::make('title'),
             TextColumn::make('slug'),
             IconColumn::make('is_featured')
