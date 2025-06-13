@@ -611,7 +611,7 @@ class ImportAction extends Action
     {
         $fileRules = [
             'extensions:csv,txt',
-            function (string $attribute, mixed $value, Closure $fail): void {
+            fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
                 $csvStream = $this->getUploadedFileStream($value);
 
                 if (! $csvStream) {
