@@ -280,7 +280,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Додај датотеке',
             'blockquote' => 'Цитат',
             'bold' => 'Подебљано',
@@ -294,6 +294,28 @@ return [
             'strike' => 'Прецртано',
             'table' => 'Таблица',
             'undo' => 'Поништи',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Изборник',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Изборник',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -361,37 +383,108 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Пошаљи датотеку',
+
+                'modal' => [
+
+                    'heading' => 'Слање датотеке',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Датотека',
+                                'existing' => 'Замени датотеку',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Алтернативни текст',
+                                'existing' => 'Измена алтернативног текста',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Уметни',
+                        ],
+
+                        'save' => [
+                            'label' => 'Сачувај',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Веза',
-                    'unlink' => 'Уклони везу',
+                'label' => 'Измени',
+
+                'modal' => [
+
+                    'heading' => 'Веза',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'Интернет адреса',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Отвори у новом табу',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Унесите URL',
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'no_merge_tag_search_results_message' => 'Без резултата спојених ознака.',
+
+        'tools' => [
             'attach_files' => 'Додај датотеке',
             'blockquote' => 'Цитат',
             'bold' => 'Подебљано',
             'bullet_list' => 'Листа',
             'code_block' => 'Блок кода',
+            'custom_blocks' => 'Прилагођен блок',
             'h1' => 'Наслов',
             'h2' => 'Заглавље',
             'h3' => 'Поднаслов',
             'italic' => 'Накошено',
             'link' => 'Веза',
+            'merge_tags' => 'Спојене ознаке',
             'ordered_list' => 'Нумерисана листа',
             'redo' => 'Понови',
             'strike' => 'Прецртано',
+            'subscript' => 'Индекс',
+            'superscript' => 'Надскрипт',
             'underline' => 'Подвучено',
             'undo' => 'Поништи',
         ],
@@ -492,22 +585,6 @@ return [
         'boolean' => [
             'true' => 'Да',
             'false' => 'Не',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Назад',
-            ],
-
-            'next_step' => [
-                'label' => 'Напред',
-            ],
-
         ],
 
     ],

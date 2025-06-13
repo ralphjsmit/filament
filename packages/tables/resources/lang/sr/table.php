@@ -146,6 +146,10 @@ return [
 
         'select' => [
             'placeholder' => 'Све',
+
+            'relationship' => [
+                'empty_option_label' => 'Ништа',
+            ],
         ],
 
         'trashed' => [
@@ -228,5 +232,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'запис',
 
 ];

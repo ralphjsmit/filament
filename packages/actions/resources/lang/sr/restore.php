@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Врати изабрано',
+        'label' => 'Поврати изабрано',
 
         'modal' => [
 
-            'heading' => 'Врати изабрано :label',
+            'heading' => 'Поврати изабрано :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Врати',
+                    'label' => 'Поврати',
                 ],
 
             ],
@@ -51,9 +51,20 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Враћено',
+                'title' => 'Повраћено',
             ],
 
+            'restored_partial' => [
+                'title' => 'Повраћено :count од :total',
+                'missing_authorization_failure_message' => 'Немате дозволу да повратите :count.',
+                'missing_processing_failure_message' => ':count не може да се поврати.',
+            ],
+
+            'restored_none' => [
+                'title' => 'Враћење није успело',
+                'missing_authorization_failure_message' => 'Немате дозволу да повратите :count.',
+                'missing_processing_failure_message' => ':count не може да се поврати.',
+            ],
         ],
 
     ],
