@@ -31,11 +31,9 @@
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
-        {{
-            $attributes
+        {{ $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-table-repeater'])
-        }}
+                ->class(['fi-fo-table-repeater']) }}
     >
         @if (count($items))
             <table>
@@ -79,13 +77,11 @@
                 @if (count($items))
                     <tbody
                         x-sortable
-                        {{
-                            (new ComponentAttributeBag)
+                        {{ (new ComponentAttributeBag)
                                 ->merge([
                                     'data-sortable-animation-duration' => $getReorderAnimationDuration(),
                                     'wire:end.stop' => 'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
-                                ], escape: false)
-                        }}
+                                ], escape: false) }}
                     >
                         @foreach ($items as $itemKey => $item)
                             @php
