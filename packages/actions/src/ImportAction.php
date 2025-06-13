@@ -29,7 +29,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\ValidationException;
 use League\Csv\Bom;
 use League\Csv\CharsetConverter;
