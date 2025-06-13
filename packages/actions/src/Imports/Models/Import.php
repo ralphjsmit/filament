@@ -3,6 +3,7 @@
 namespace Filament\Actions\Imports\Models;
 
 use Carbon\CarbonInterface;
+use Exception;
 use Filament\Actions\Imports\Importer;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
