@@ -15,7 +15,7 @@ return [
     ],
 
     'messages' => [
-        'notification_not_received' => 'Још увек нисте рпимили е-пошту?',
+        'notification_not_received' => 'Још увек нисте примили е-пошту?',
         'notification_sent' => 'Послали смо поруку на :email са инструкцијама за верификацију адресе ваше е-поште.',
     ],
 
@@ -27,7 +27,7 @@ return [
 
         'notification_resend_throttled' => [
             'title' => 'Превише поновних слања',
-            'body' => 'Покушајете поново за :seconds s.',
+            'body' => 'Покушајте поново за :seconds s.',
         ],
 
     ],

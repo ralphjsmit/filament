@@ -107,11 +107,11 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Одзначи све',
+                'label' => 'Означи све',
             ],
 
             'select_all' => [
-                'label' => 'Одзначи све',
+                'label' => 'Означи све',
             ],
 
         ],
@@ -484,7 +484,7 @@ return [
             'redo' => 'Понови',
             'strike' => 'Прецртано',
             'subscript' => 'Индекс',
-            'superscript' => 'Надскрипт',
+            'superscript' => 'Степен',
             'underline' => 'Подвучено',
             'undo' => 'Поништи',
         ],

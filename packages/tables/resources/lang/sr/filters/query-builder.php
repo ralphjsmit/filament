@@ -435,7 +435,7 @@ return [
 
                 'summary' => [
                     'direct' => ':attribute исто као :text',
-                    'inverse' => ':attribute разлиито од :text',
+                    'inverse' => ':attribute различито од :text',
                 ],
 
             ],

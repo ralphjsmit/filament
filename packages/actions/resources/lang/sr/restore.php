@@ -61,7 +61,7 @@ return [
             ],
 
             'restored_none' => [
-                'title' => 'Враћење није успело',
+                'title' => 'Враћање није успело',
                 'missing_authorization_failure_message' => 'Немате дозволу да повратите :count.',
                 'missing_processing_failure_message' => ':count не може да се поврати.',
             ],

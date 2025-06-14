@@ -38,7 +38,7 @@ return [
 
         'throttled' => [
             'title' => 'Превише слања',
-            'body' => 'Покушајете поново за :seconds s.',
+            'body' => 'Покушајте поново за :seconds s.',
         ],
 
     ],
