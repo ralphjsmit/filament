@@ -148,7 +148,7 @@ class NavigationItem extends Component
     public function url(string | Closure | null $url, bool | Closure | null $shouldOpenInNewTab = null): static
     {
         if ($shouldOpenInNewTab !== null) {
-            $this->openUrlInNewTab($this->shouldOpenUrlInNewTab() || $shouldOpenInNewTab);
+            $this->openUrlInNewTab($shouldOpenInNewTab);
         }
         $this->url = $url;
 
