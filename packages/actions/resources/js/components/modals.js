@@ -13,6 +13,9 @@ export default ({ livewireId }) => ({
 
     syncActionModals(newActionNestingIndex) {
         if (this.actionNestingIndex === newActionNestingIndex) {
+            // https://github.com/filamentphp/filament/issues/16474
+            (this.actionNestingIndex !== null) && this.$nextTick(() => this.openModal())
+
             return
         }
 
