@@ -19,9 +19,9 @@ trait InteractsWithTable
     use CanSearchRecords;
     use CanSortRecords;
     use CanSummarizeRecords;
-    use CanToggleColumns;
     use HasActions;
     use HasBulkActions;
+    use HasColumnManager;
     use HasColumns;
     use HasContent;
     use HasEmptyState;
@@ -45,21 +45,14 @@ trait InteractsWithTable
     {
         $this->table = $this->table($this->makeTable());
 
-        $this->cacheSchema('toggleTableColumnForm', $this->getTableColumnToggleForm());
-
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm());
 
         $this->cacheMountedActions($this->mountedActions);
 
+        $this->initTableColumnManager();
+
         if (! $this->shouldMountInteractsWithTable) {
             return;
-        }
-
-        if (! count($this->toggledTableColumns ?? [])) {
-            $this->getTableColumnToggleForm()->fill(session()->get(
-                $this->getTableColumnToggleFormStateSessionKey(),
-                $this->getDefaultTableColumnToggleState()
-            ));
         }
 
         $shouldPersistFiltersInSession = $this->getTable()->persistsFiltersInSession();
@@ -193,9 +186,9 @@ trait InteractsWithTable
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
             ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
             ->columns($this->getTableColumns())
-            ->columnToggleFormColumns($this->getTableColumnToggleFormColumns())
-            ->columnToggleFormMaxHeight($this->getTableColumnToggleFormMaxHeight())
-            ->columnToggleFormWidth($this->getTableColumnToggleFormWidth())
+            ->columnManagerColumns($this->getTableColumnToggleFormColumns())
+            ->columnManagerMaxHeight($this->getTableColumnToggleFormMaxHeight())
+            ->columnManagerWidth($this->getTableColumnToggleFormWidth())
             ->content($this->getTableContent())
             ->contentFooter($this->getTableContentFooter())
             ->contentGrid($this->getTableContentGrid())

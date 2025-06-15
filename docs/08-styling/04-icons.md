@@ -224,7 +224,7 @@ FilamentIcon::register([
 - `tables::actions.filter` - Trigger button of the filter action
 - `tables::actions.group` - Trigger button of a group records action
 - `tables::actions.open-bulk-actions` - Trigger button of an open bulk actions action
-- `tables::actions.toggle-columns` - Trigger button of the toggle columns action
+- `tables::actions.column-manager` - Trigger button of the column manager action
 - `tables::columns.collapse-button` - Button to collapse a column
 - `tables::columns.icon-column.false` - Falsy state of an icon column
 - `tables::columns.icon-column.true` - Truthy state of an icon column

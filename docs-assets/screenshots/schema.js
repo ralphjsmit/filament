@@ -2799,8 +2799,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'tables/columns/toggleable': {
-        url: 'tables?table=toggleableColumns',
+    'tables/columns/column-manager': {
+        url: 'tables?table=columnManager',
         selector: 'body',
         viewport: {
             width: 1080,
@@ -2808,7 +2808,21 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-col-toggle button')
+            await page.click('.fi-ta-col-manager-dropdown button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        }
+    },
+    'tables/columns/column-manager-reorderable': {
+        url: 'tables?table=columnManagerReorderable',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.fi-ta-col-manager-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         }

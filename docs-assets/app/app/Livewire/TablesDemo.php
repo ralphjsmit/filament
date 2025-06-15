@@ -252,7 +252,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ]);
     }
 
-    public function toggleableColumns(Table $table): Table
+    public function columnManager(Table $table): Table
     {
         return $this->usersTable($table)
             ->columns([
@@ -266,6 +266,23 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     ->getStateUsing(fn ($record) => filled($record->email_verified_at))
                     ->toggleable(),
             ]);
+    }
+
+    public function columnManagerReorderable(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->toggleable(),
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => filled($record->email_verified_at))
+                    ->toggleable(),
+            ])
+            ->reorderableColumns();
     }
 
     public function columnTooltips(Table $table): Table
