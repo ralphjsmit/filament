@@ -128,7 +128,7 @@
     }
 
     & .fi-section-collapse-btn {
-        @apply -my-1 shrink-0;
+        @apply -my-1.5 shrink-0;
     }
 
     &.fi-collapsible {
@@ -174,7 +174,32 @@
     }
 
     & .fi-section-header-after-ctn {
-        @apply -my-1;
+        & .fi-sc-text,
+        & .fi-link {
+            @apply leading-6;
+        }
+
+        & .fi-btn {
+            &.fi-size-xs {
+                @apply -my-0.5;
+            }
+
+            &.fi-size-sm {
+                @apply -my-1;
+            }
+
+            &.fi-size-md {
+                @apply -my-1.5;
+            }
+
+            &.fi-size-lg {
+                @apply -my-2;
+            }
+
+            &.fi-size-xl {
+                @apply -my-2.5;
+            }
+        }
     }
 
     & .fi-section-header-text-ctn {
