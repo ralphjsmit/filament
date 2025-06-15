@@ -599,4 +599,15 @@ The Norwegian translations have been moved from `no` to `nb`, which appears to b
 The Khmer translations have been moved from `kh` to `km`, which appears to be the more commonly used language code for the language within the Laravel community.
 </Disclosure>
 
+<Disclosure x-show="packages.includes('tables')">
+<span slot="summary">Some deprecated table configuration methods have been removed</span>
+
+Before Filament v3, tables could be configured by overriding methods on the Livewire component class, instead of modifying the `$table` configuration object. This was deprecated in v3, and removed in v4. If you were using any of the following methods, you should remove them from your Livewire component class, and use their corresponding `$table` configuration methods instead:
+
+- `getTableRecordUrlUsing()` should be replaced with `$table->recordUrl()`
+- `getTableRecordClassesUsing()` should be replaced with `$table->recordClasses()`
+- `getTableRecordActionUsing()` should be replaced with `$table->recordAction()`
+- `isTableRecordSelectable()` should be replaced with `$table->checkIfRecordIsSelectableUsing()`
+</Disclosure>
+
 </div>
