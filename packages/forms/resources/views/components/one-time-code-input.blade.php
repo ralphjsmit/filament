@@ -4,13 +4,14 @@
         ->merge($getExtraInputAttributes(), escape: false)
         ->merge($getExtraAlpineAttributes(), escape: false)
         ->merge([
+            'autocomplete' => false,
             'autofocus' => $isAutofocused(),
             'disabled' => $isDisabled(),
             'id' => $getId(),
             'length' => $getLength(),
             'placeholder' => $getPlaceholder(),
             'readonly' => $isReadOnly(),
-            'required' => $isRequired(),
+            'required' => $isRequired() && (! $isConcealed()),
             $applyStateBindingModifiers('wire:model') => $getStatePath(),
         ], escape: false);
 @endphp

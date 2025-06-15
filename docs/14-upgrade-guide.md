@@ -49,7 +49,7 @@ vendor/bin/filament-v4
     When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
 
     ```bash
-    composer require '"filament/upgrade:^4.0"' -W --dev
+    composer require filament/upgrade:"~4.0" -W --dev
 
     vendor/bin/filament-v4
     ```

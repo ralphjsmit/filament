@@ -4,6 +4,7 @@
     $fieldWrapperView = $getFieldWrapperView();
     $extraAttributeBag = $getExtraAttributeBag();
     $hasInlineLabel = $hasInlineLabel();
+    $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
     $rows = $getRows();
     $shouldAutosize = $shouldAutosize();
@@ -47,6 +48,11 @@
                     x-on:resize.window="resize()"
                 @endif
                 x-model="state"
+                @if ($isGrammarlyDisabled())
+                    data-gramm="false"
+                    data-gramm_editor="false"
+                    data-enable-grammarly="false"
+                @endif
                 {{ $getExtraAlpineAttributeBag() }}
                 {{
                     $getExtraInputAttributeBag()
@@ -56,11 +62,11 @@
                             'cols' => $getCols(),
                             'disabled' => $isDisabled,
                             'id' => $getId(),
-                            'maxlength' => $getMaxLength(),
-                            'minlength' => $getMinLength(),
+                            'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
+                            'minlength' => (! $isConcealed) ? $getMinLength() : null,
                             'placeholder' => $getPlaceholder(),
                             'readonly' => $isReadOnly(),
-                            'required' => $isRequired(),
+                            'required' => $isRequired() && (! $isConcealed),
                             'rows' => $rows,
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)

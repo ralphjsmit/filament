@@ -210,7 +210,7 @@ test('title is disabled', function () {
 
 ## Testing other schema components
 
-If you need to check if a particular schema component exists rather than a field, you may use `asserSchemaComponentExists()`.  As components do not have names, this method uses the `key()` provided by the developer:
+If you need to check if a particular schema component exists rather than a field, you may use `assertSchemaComponentExists()`.  As components do not have names, this method uses the `key()` provided by the developer:
 
 ```php
 use Filament\Schemas\Components\Section;
@@ -227,22 +227,22 @@ use function Pest\Livewire\livewire;
 
 test('comments section exists', function () {
     livewire(EditPost::class)
-        ->asserSchemaComponentExists('comments-section');
+        ->assertSchemaComponentExists('comments-section');
 });
 ```
 
-To assert that a schema does not have a given component, pass the component key to `asserSchemaComponentDoesNotExist()`:
+To assert that a schema does not have a given component, pass the component key to `assertSchemaComponentDoesNotExist()`:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('does not have a conditional component', function () {
     livewire(CreatePost::class)
-        ->asserSchemaComponentDoesNotExist('no-such-section');
+        ->assertSchemaComponentDoesNotExist('no-such-section');
 });
 ```
 
-To check if the component exists and passes a given truth test, you can pass a function to the second argument of `asserSchemaComponentExists()`, returning true or false if the component passes the test or not:
+To check if the component exists and passes a given truth test, you can pass a function to the second argument of `assertSchemaComponentExists()`, returning true or false if the component passes the test or not:
 
 ```php
 use Filament\Forms\Components\Component;
@@ -251,7 +251,7 @@ use function Pest\Livewire\livewire;
 
 test('comments section has heading', function () {
     livewire(EditPost::class)
-        ->asserSchemaComponentExists(
+        ->assertSchemaComponentExists(
             'comments-section',
             function (Component $component): bool {
                 return $component->getHeading() === 'Comments';
@@ -270,7 +270,7 @@ use function Pest\Livewire\livewire;
 
 test('comments section is enabled', function () {
     livewire(EditPost::class)
-        ->asserSchemaComponentExists(
+        ->assertSchemaComponentExists(
             'comments-section',
             function (Component $component): bool {
                 Assert::assertTrue(

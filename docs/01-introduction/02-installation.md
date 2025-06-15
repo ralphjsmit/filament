@@ -64,7 +64,7 @@ php artisan filament:install --panels
     When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
 
     ```bash
-    composer require '"filament/filament:^4.0"'
+    composer require filament/filament:"~4.0"
 
     php artisan filament:install --panels
     ```
@@ -128,13 +128,13 @@ You can install additional packages later in your project without having to repe
 
     ```bash
     composer require
-        '"filament/tables:^4.0"'
-        '"filament/schemas:^4.0"'
-        '"filament/forms:^4.0"'
-        '"filament/infolists:^4.0"'
-        '"filament/actions:^4.0"'
-        '"filament/notifications:^4.0"'
-        '"filament/widgets:^4.0"'
+        filament/tables:"~4.0"
+        filament/schemas:"~4.0"
+        filament/forms:"~4.0"
+        filament/infolists:"~4.0"
+        filament/actions:"~4.0"
+        filament/notifications:"~4.0"
+        filament/widgets:"~4.0"
     ```
 </Aside>
 
