@@ -576,6 +576,7 @@ use Filament\Tables\Table;
 
 Table::configureUsing(function (Table $table): void {
     $table
+        ->reorderableColumns()
         ->filtersLayout(FiltersLayout::AboveContentCollapsible)
         ->paginationPageOptions([10, 25, 50]);
 });
