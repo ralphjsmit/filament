@@ -844,6 +844,23 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/columns/column-manager-reorderable" alt="Table with reorderable column manager" version="4.x" />
 
+#### Live column manager
+
+By default, column manager changes (toggling and reordering columns) are deferred and do not affect the table, until the user clicks an "Apply" button. To disable this and make the filters "live" instead, use the `deferColumnManager(false)` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->reorderableColumns()
+        ->deferColumnManager(false);
+}
+
 #### Customizing the column manager dropdown trigger action
 
 To customize the column manager dropdown trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/overview) can be used:
