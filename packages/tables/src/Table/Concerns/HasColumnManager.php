@@ -18,11 +18,11 @@ trait HasColumnManager
     /**
      * @var int | array<string, int | null> | Closure
      */
-    protected int | array | Closure $columnManagerFormColumns = 1;
+    protected int | array | Closure $columnManagerColumns = 1;
 
-    protected string | Closure | null $columnManagerFormMaxHeight = null;
+    protected string | Closure | null $columnManagerMaxHeight = null;
 
-    protected Width | string | Closure | null $columnManagerFormWidth = null;
+    protected Width | string | Closure | null $columnManagerWidth = null;
 
     protected ?Closure $modifyColumnManagerTriggerActionUsing = null;
 
@@ -95,97 +95,97 @@ trait HasColumnManager
     }
 
     /**
-     * @deprecated Use `columnManagerFormColumns()` instead.
+     * @deprecated Use `columnManagerColumns()` instead.
      *
      * @param  int | array<string, int | null> | Closure  $columns
      */
     public function columnToggleFormColumns(int | array | Closure $columns): static
     {
-        return $this->columnManagerFormColumns($columns);
+        return $this->columnManagerColumns($columns);
     }
 
     /**
      * @param  int | array<string, int | null> | Closure  $columns
      */
-    public function columnManagerFormColumns(int | array | Closure $columns): static
+    public function columnManagerColumns(int | array | Closure $columns): static
     {
-        $this->columnManagerFormColumns = $columns;
+        $this->columnManagerColumns = $columns;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `columnManagerFormMaxHeight()` instead.
+     * @deprecated Use `columnManagerMaxHeight()` instead.
      */
     public function columnToggleFormMaxHeight(string | Closure | null $height): static
     {
-        return $this->columnManagerFormMaxHeight($height);
+        return $this->columnManagerMaxHeight($height);
     }
 
-    public function columnManagerFormMaxHeight(string | Closure | null $height): static
+    public function columnManagerMaxHeight(string | Closure | null $height): static
     {
-        $this->columnManagerFormMaxHeight = $height;
+        $this->columnManagerMaxHeight = $height;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `columnManagerFormWidth()` instead.
+     * @deprecated Use `columnManagerWidth()` instead.
      */
     public function columnToggleFormWidth(Width | string | Closure | null $width): static
     {
-        return $this->columnManagerFormWidth($width);
+        return $this->columnManagerWidth($width);
     }
 
-    public function columnManagerFormWidth(Width | string | Closure | null $width): static
+    public function columnManagerWidth(Width | string | Closure | null $width): static
     {
-        $this->columnManagerFormWidth = $width;
+        $this->columnManagerWidth = $width;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `getColumnManagerFormColumns()` instead.
+     * @deprecated Use `getColumnManagerColumns()` instead.
      *
      * @return int | array<string, int | null>
      */
     public function getColumnToggleFormColumns(): int | array
     {
-        return $this->getColumnManagerFormColumns();
+        return $this->getColumnManagerColumns();
     }
 
     /**
      * @return int | array<string, int | null>
      */
-    public function getColumnManagerFormColumns(): int | array
+    public function getColumnManagerColumns(): int | array
     {
-        return $this->evaluate($this->columnManagerFormColumns) ?? 1;
+        return $this->evaluate($this->columnManagerColumns) ?? 1;
     }
 
     /**
-     * @deprecated Use `getColumnManagerFormMaxHeight()` instead.
+     * @deprecated Use `getColumnManagerMaxHeight()` instead.
      */
     public function getColumnToggleFormMaxHeight(): ?string
     {
-        return $this->getColumnManagerFormMaxHeight();
+        return $this->getColumnManagerMaxHeight();
     }
 
-    public function getColumnManagerFormMaxHeight(): ?string
+    public function getColumnManagerMaxHeight(): ?string
     {
-        return $this->evaluate($this->columnManagerFormMaxHeight);
+        return $this->evaluate($this->columnManagerMaxHeight);
     }
 
     /**
-     * @deprecated Use `getColumnManagerFormWidth()` instead.
+     * @deprecated Use `getColumnManagerWidth()` instead.
      */
     public function getColumnToggleFormWidth(): ?string
     {
-        return $this->getColumnManagerFormWidth();
+        return $this->getColumnManagerWidth();
     }
 
-    public function getColumnManagerFormWidth(): Width | string | null
+    public function getColumnManagerWidth(): Width | string | null
     {
-        return $this->evaluate($this->columnManagerFormWidth) ?? match ($this->getColumnManagerFormColumns()) {
+        return $this->evaluate($this->columnManagerWidth) ?? match ($this->getColumnManagerColumns()) {
             2 => Width::TwoExtraLarge,
             3 => Width::FourExtraLarge,
             4 => Width::SixExtraLarge,

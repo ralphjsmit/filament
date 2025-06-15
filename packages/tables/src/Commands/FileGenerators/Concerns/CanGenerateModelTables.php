@@ -174,7 +174,7 @@ trait CanGenerateModelTables
                 'updated_at',
                 'deleted_at',
             ])) {
-                $columnData['isToggleable'] = ['isToggledHiddenByDefault' => true];
+                $columnData['toggleable'] = ['isToggledHiddenByDefault' => true];
             }
 
             $this->importUnlessPartial($columnData['type']);

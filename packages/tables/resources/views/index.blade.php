@@ -472,16 +472,16 @@
 
                             @if ($hasColumnManagerDropdown)
                                 @php
-                                    $columnManagerFormMaxHeight = $getColumnManagerFormMaxHeight();
-                                    $columnManagerFormWidth = $getColumnManagerFormWidth();
-                                    $columnManagerFormColumns = $getColumnManagerFormColumns();
+                                    $columnManagerMaxHeight = $getColumnManagerMaxHeight();
+                                    $columnManagerWidth = $getColumnManagerWidth();
+                                    $columnManagerColumns = $getColumnManagerColumns();
                                 @endphp
 
                                 <x-filament::dropdown
-                                    :max-height="$columnManagerFormMaxHeight"
+                                    :max-height="$columnManagerMaxHeight"
                                     placement="bottom-end"
                                     shift
-                                    :width="$columnManagerFormWidth"
+                                    :width="$columnManagerWidth"
                                     :wire:key="$this->getId() . '.table.column-manager'"
                                     class="fi-ta-col-manager-dropdown"
                                 >
@@ -491,7 +491,7 @@
 
                                     <x-filament-tables::column-manager
                                         :apply-action="$columnManagerApplyAction"
-                                        :columns="$columnManagerFormColumns"
+                                        :columns="$columnManagerColumns"
                                         :has-reorderable-columns="$hasReorderableColumns"
                                         :has-toggleable-columns="$hasToggleableColumns"
                                         :heading-tag="$secondLevelHeadingTag"
