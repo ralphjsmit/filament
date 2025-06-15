@@ -11,8 +11,8 @@ return [
             'below_content' => 'Koristite sigurnosnu aplikaciju za generisanje privremenog koda za verifikaciju prijave.',
 
             'messages' => [
-                'enabled' => 'Uključi',
-                'disabled' => 'Isključi',
+                'enabled' => 'Uključeno',
+                'disabled' => 'Isključeno',
             ],
 
         ],

@@ -11,8 +11,8 @@ return [
             'below_content' => 'Primi privremeni kod na vašu adresu e-pošte da biste verifikovali identitet pri prijavi.',
 
             'messages' => [
-                'enabled' => 'Uključi',
-                'disabled' => 'Isključi',
+                'enabled' => 'Uključeno',
+                'disabled' => 'Isključeno',
             ],
 
         ],
