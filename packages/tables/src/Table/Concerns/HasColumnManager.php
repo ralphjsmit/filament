@@ -13,7 +13,7 @@ trait HasColumnManager
 {
     protected bool | Closure | null $hasColumnManager = null;
 
-    protected bool | Closure $hasReorderableColumns = true;
+    protected bool | Closure $hasReorderableColumns = false;
 
     /**
      * @var int | array<string, int | null> | Closure
