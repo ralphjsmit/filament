@@ -6,7 +6,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;
-use Illuminate\Support\Collection;
 
 /**
  * @property-read Schema $toggleTableColumnForm
@@ -16,10 +15,6 @@ trait HasColumnManager
     public const GROUP = 'group';
 
     public const COLUMN = 'column';
-
-    protected ?string $tableConfigurationHashCache = null;
-
-    protected ?string $columnManagerConfigurationHashCache = null;
 
     /**
      * @var array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
@@ -33,7 +28,7 @@ trait HasColumnManager
         }
 
         if (blank($this->columnManager)) {
-            $this->columnManager = $this->resolveColumnManagerState();
+            $this->columnManager = $this->loadColumnManagerFromSession();
         }
 
         $this->applyColumnManager();
@@ -72,14 +67,7 @@ trait HasColumnManager
             $this->columnManager = $columnManager;
         }
 
-        $storedHash = session()->get($this->getTableConfigurationHashSessionKey());
-
-        if (
-            $storedHash &&
-            $storedHash !== $this->generateColumnManagerConfigurationHash()
-        ) {
-            $this->columnManager = $this->getDefaultColumnManagerState();
-        }
+        $this->syncColumnManagerWithDefaultState();
 
         $reorderedColumns = collect($this->columnManager)
             ->map(function (array $item): Column | ColumnGroup | null {
@@ -146,49 +134,6 @@ trait HasColumnManager
         return "tables.{$table}_column_manager";
     }
 
-    public function getTableConfigurationHashSessionKey(): string
-    {
-        $table = md5($this::class);
-
-        return "tables.{$table}_table_configuration_hash";
-    }
-
-    /**
-     * @return array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
-     */
-    protected function resolveColumnManagerState(): array
-    {
-        $currentHash = $this->generateTableConfigurationHash();
-        $storedHash = session()->get($this->getTableConfigurationHashSessionKey());
-
-        $this->persistTableConfigurationHash($currentHash);
-
-        if (
-            $storedHash &&
-            ($storedHash !== $currentHash)
-        ) {
-            return $this->getDefaultColumnManagerState();
-        }
-
-        return $this->loadColumnManagerFromSession();
-    }
-
-    protected function persistColumnManager(): void
-    {
-        session()->put(
-            $this->getColumnManagerSessionKey(),
-            $this->columnManager
-        );
-    }
-
-    protected function persistTableConfigurationHash(string $hash): void
-    {
-        session()->put(
-            $this->getTableConfigurationHashSessionKey(),
-            $hash,
-        );
-    }
-
     /**
      * @return array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
      */
@@ -200,33 +145,12 @@ trait HasColumnManager
         );
     }
 
-    protected function generateTableConfigurationHash(): string
+    protected function persistColumnManager(): void
     {
-        return $this->tableConfigurationHashCache ??= $this->generateHash(
-            collect($this->getTable()->getColumnsLayout())
-                ->map(fn (Component $component): ?array => match (true) {
-                    $component instanceof ColumnGroup => $this->mapColumnGroupForHash($component),
-                    $component instanceof Column => $this->mapColumnForHash($component),
-                    default => null,
-                })
+        session()->put(
+            $this->getColumnManagerSessionKey(),
+            $this->columnManager
         );
-    }
-
-    protected function generateColumnManagerConfigurationHash(): string
-    {
-        return $this->columnManagerConfigurationHashCache ??= $this->generateHash(
-            collect($this->columnManager)
-                ->map(fn (array $item): ?array => match (true) {
-                    $item['type'] === self::GROUP => $this->mapColumnGroupArrayForHash($item),
-                    $item['type'] === self::COLUMN => $this->mapColumnArrayForHash($item),
-                    default => null,
-                })
-        );
-    }
-
-    protected function generateHash(Collection $configuration): string
-    {
-        return md5($configuration->filter()->sort()->values()->toJson());
     }
 
     /**
@@ -274,43 +198,6 @@ trait HasColumnManager
     }
 
     /**
-     * @return array{type: string, name: string, label: string, toggleable: bool, columns: array<int, array{type: string, name: string, label: string, toggleable: bool}>}
-     */
-    protected function mapColumnGroupForHash(ColumnGroup $group): array
-    {
-        return [
-            'type' => self::GROUP,
-            'name' => $group->getLabel(),
-            'label' => $group->getLabel(),
-            'toggleable' => true,
-            'columns' => collect($group->getColumns())
-                ->map(fn (Column $column): array => $this->mapColumnForHash($column))
-                ->sort()
-                ->values()
-                ->toArray(),
-        ];
-    }
-
-    /**
-     * @param  array{name: string, label: string, columns?: array<int, array{name: string, label: string, toggleable: bool}>}  $group
-     * @return array{type: string, name: string, label: string, toggleable: bool, columns: array<int, array{type: string, name: string, label: string, toggleable: bool}>}
-     */
-    protected function mapColumnGroupArrayForHash(array $group): array
-    {
-        return [
-            'type' => self::GROUP,
-            'name' => $group['name'],
-            'label' => $group['label'],
-            'toggleable' => true,
-            'columns' => collect($group['columns'] ?? [])
-                ->map(fn (array $column): array => $this->mapColumnArrayForHash($column))
-                ->sort()
-                ->values()
-                ->toArray(),
-        ];
-    }
-
-    /**
      * @return array{type: string, name: string, label: string, toggled: bool, toggleable: bool}
      */
     protected function mapColumn(Column $column): array
@@ -324,30 +211,126 @@ trait HasColumnManager
         ];
     }
 
-    /**
-     * @return array{type: string, name: string, label: string, toggleable: bool}
-     */
-    protected function mapColumnForHash(Column $column): array
+    protected function syncColumnManagerWithDefaultState(): void
     {
-        return [
-            'type' => self::COLUMN,
-            'name' => $column->getName(),
-            'label' => $column->getLabel(),
-            'toggleable' => $column->isToggleable(),
-        ];
+        $defaultState = $this->getDefaultColumnManagerState();
+
+        $this->columnManager = collect($this->columnManager)
+            ->map(fn (array $item) => $this->syncExistingItem($item, $defaultState))
+            ->filter()
+            ->values()
+            ->merge($this->getNewItems($defaultState))
+            ->toArray();
     }
 
     /**
-     * @param  array{name: string, label: string, toggleable: bool}  $column
-     * @return array{type: string, name: string, label: string, toggleable: bool}
+     * @param  array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}  $item
+     * @param  array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>  $defaultState
+     * @return array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}|null
      */
-    protected function mapColumnArrayForHash(array $column): array
+    protected function syncExistingItem(array $item, array $defaultState): ?array
     {
-        return [
-            'type' => self::COLUMN,
-            'name' => $column['name'],
-            'label' => $column['label'],
-            'toggleable' => $column['toggleable'],
-        ];
+        $matchingDefault = $this->findMatchingItem($item, $defaultState);
+
+        if ($matchingDefault === null) {
+            return null;
+        }
+
+        $item = $this->applyDefaultState($item, $matchingDefault);
+
+        if ($item['type'] !== self::GROUP || ! isset($item['columns'])) {
+            return $item;
+        }
+
+        $item['columns'] = $this->syncGroupColumns(
+            $item['columns'],
+            $matchingDefault['columns'] ?? []
+        );
+
+        if (empty($item['columns'])) {
+            return null;
+        }
+
+        return $item;
+    }
+
+    /**
+     * @param  array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>  $existingColumns
+     * @param  array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>  $defaultColumns
+     * @return array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>
+     */
+    protected function syncGroupColumns(array $existingColumns, array $defaultColumns): array
+    {
+        $updatedColumns = collect($existingColumns)
+            ->map(function (array $column) use ($defaultColumns): ?array {
+                $matchingDefault = $this->findMatchingItem($column, $defaultColumns);
+
+                if ($matchingDefault === null) {
+                    return null;
+                }
+
+                return $this->applyDefaultState($column, $matchingDefault);
+            })
+            ->filter()
+            ->values();
+
+        $existingNames = $updatedColumns
+            ->pluck('name')
+            ->toArray();
+
+        $newColumnsToAdd = collect($defaultColumns)
+            ->reject(fn (array $column) => in_array($column['name'], $existingNames))
+            ->values();
+
+        return $updatedColumns
+            ->merge($newColumnsToAdd)
+            ->toArray();
+    }
+
+    /**
+     * @param  array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}  $item
+     * @param  array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}  $default
+     * @return array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}
+     */
+    protected function applyDefaultState(array $item, array $default): array
+    {
+        $item['label'] = $default['label'];
+        $item['toggleable'] = $default['toggleable'];
+
+        if (! $item['toggleable']) {
+            $item['toggled'] = true;
+        }
+
+        return $item;
+    }
+
+    /**
+     * @param  array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>  $defaultState
+     * @return array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>
+     */
+    protected function getNewItems(array $defaultState): array
+    {
+        $existingKeys = collect($this->columnManager)
+            ->map(fn (array $item) => $item['type'] . ':' . $item['name'])
+            ->toArray();
+
+        return collect($defaultState)
+            ->reject(fn (array $item) => in_array($item['type'] . ':' . $item['name'], $existingKeys))
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * @param  array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}  $item
+     * @param  array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}>  $items
+     * @return array{type: string, name: string, label: string, toggled: bool, toggleable: bool, columns?: array<int, array{type: string, name: string, label: string, toggled: bool, toggleable: bool}>}|null
+     */
+    protected function findMatchingItem(array $item, array $items): ?array
+    {
+        return collect($items)
+            ->first(
+                fn (array $candidate) => $candidate['type'] === $item['type'] &&
+                $candidate['name'] === $item['name']
+            );
     }
 }
