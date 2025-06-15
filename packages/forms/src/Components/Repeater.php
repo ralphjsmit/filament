@@ -112,6 +112,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
      */
     protected array | Closure | null $tableColumns = null;
 
+    protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -120,6 +122,10 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
         $this->afterStateHydrated(function (Repeater $component): void {
             if (! is_array($component->hydratedDefaultState)) {
+                return;
+            }
+
+            if (! $component->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated) {
                 return;
             }
 
@@ -661,14 +667,38 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             return array_fill(0, $count, $component->isSimple() ? null : []);
         });
 
+        $this->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = false;
+
         return $this;
     }
 
     public function default(mixed $state): static
     {
         parent::default(function (Repeater $component) use ($state) {
-            return $component->hydratedDefaultState = $component->evaluate($state);
+            $state = $component->evaluate($state);
+
+            $simpleField = $component->getSimpleField();
+
+            $items = [];
+
+            foreach ($state ?? [] as $itemData) {
+                if ($simpleField) {
+                    $itemData = [$simpleField->getName() => $itemData];
+                }
+
+                if ($uuid = $component->generateUuid()) {
+                    $items[$uuid] = $itemData;
+                } else {
+                    $items[] = $itemData;
+                }
+            }
+
+            $component->hydratedDefaultState = $items;
+
+            return $items;
         });
+
+        $this->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
 
         return $this;
     }
