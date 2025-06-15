@@ -799,7 +799,9 @@ TextColumn::make('role')
     ->visible(FeatureFlag::active())
 ```
 
-### Toggling column visibility
+### Allowing users to manage columns
+
+#### Toggling column visibility
 
 Users may hide or show columns themselves in the table. To make a column toggleable, use the `toggleable()` method:
 
@@ -812,7 +814,7 @@ TextColumn::make('email')
 
 <AutoScreenshot name="tables/columns/column-manager" alt="Table with column manager" version="4.x" />
 
-#### Making toggleable columns hidden by default
+##### Making toggleable columns hidden by default
 
 By default, toggleable columns are visible. To make them hidden instead:
 
@@ -822,6 +824,25 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('id')
     ->toggleable(isToggledHiddenByDefault: true)
 ```
+
+#### Reordering columns
+
+You may allow columns to be reordered in the table using the `reorderableColumns()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->reorderableColumns();
+}
+```
+
+<AutoScreenshot name="tables/columns/column-manager-reorderable" alt="Table with reorderable column manager" version="4.x" />
 
 #### Customizing the column manager dropdown trigger action
 
