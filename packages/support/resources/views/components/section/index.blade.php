@@ -117,22 +117,10 @@
     >
         @if ($hasContentEl)
             <div class="fi-section-content">
-                @if ($collapsible)
-                    <template x-if="! isCollapsed">
-                        {{ $slot }}
-                    </template>
-                @else
-                    {{ $slot }}
-                @endif
+                {{ $slot }}
             </div>
         @else
-            @if ($collapsible)
-                <template x-if="! isCollapsed">
-                    {{ $slot }}
-                </template>
-            @else
-                {{ $slot }}
-            @endif
+            {{ $slot }}
         @endif
 
         @if (! is_slot_empty($footer))
