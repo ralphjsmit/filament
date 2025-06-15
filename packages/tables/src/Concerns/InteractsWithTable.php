@@ -49,7 +49,7 @@ trait InteractsWithTable
 
         $this->cacheMountedActions($this->mountedActions);
 
-        $this->initializeTableColumnManager();
+        $this->initTableColumnManager();
 
         if (! $this->shouldMountInteractsWithTable) {
             return;

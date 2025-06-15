@@ -19,16 +19,16 @@ trait HasColumnManager
     /**
      * @var array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
      */
-    public array $tableColumnManager = [];
+    public array $tableColumns = [];
 
-    public function initializeTableColumnManager(): void
+    public function initTableColumnManager(): void
     {
         if ($this->getTable()->hasColumnsLayout()) {
             return;
         }
 
-        if (blank($this->tableColumnManager)) {
-            $this->tableColumnManager = $this->loadTableColumnManagerFromSession();
+        if (blank($this->tableColumns)) {
+            $this->tableColumns = $this->loadTableColumnManagerFromSession();
         }
 
         $this->applyTableColumnManager();
@@ -64,12 +64,12 @@ trait HasColumnManager
     public function applyTableColumnManager(?array $state = null): void
     {
         if (filled($state)) {
-            $this->tableColumnManager = $state;
+            $this->tableColumns = $state;
         }
 
         $this->syncTableColumnManagerWithDefaultState();
 
-        $reorderedColumns = collect($this->tableColumnManager)
+        $reorderedColumns = collect($this->tableColumns)
             ->map(function (array $item): Column | ColumnGroup | null {
                 if ($item['type'] === self::TABLE_COLUMN_MANAGER_COLUMN_TYPE) {
                     return $this->getTable()->getColumn($item['name']);
@@ -102,7 +102,7 @@ trait HasColumnManager
 
     public function isTableColumnToggledHidden(string $name): bool
     {
-        foreach ($this->tableColumnManager as $item) {
+        foreach ($this->tableColumns as $item) {
             if ($item['type'] === self::TABLE_COLUMN_MANAGER_COLUMN_TYPE && $item['name'] === $name) {
                 return ! $item['isToggled'];
             }
@@ -131,7 +131,7 @@ trait HasColumnManager
     {
         $table = md5($this::class);
 
-        return "tables.{$table}_column_manager";
+        return "tables.{$table}_columns";
     }
 
     /**
@@ -149,7 +149,7 @@ trait HasColumnManager
     {
         session()->put(
             $this->getTableColumnManagerSessionKey(),
-            $this->tableColumnManager
+            $this->tableColumns
         );
     }
 
@@ -215,7 +215,7 @@ trait HasColumnManager
     {
         $defaultState = $this->getDefaultTableColumnManagerState();
 
-        $this->tableColumnManager = collect($this->tableColumnManager)
+        $this->tableColumns = collect($this->tableColumns)
             ->map(fn (array $item) => $this->syncTableColumnManagerItemWithDefaultState($item, $defaultState))
             ->filter()
             ->values()
@@ -310,7 +310,7 @@ trait HasColumnManager
      */
     protected function getNewTableColumnManagerItems(array $defaultState): array
     {
-        $existingKeys = collect($this->tableColumnManager)
+        $existingKeys = collect($this->tableColumns)
             ->map(fn (array $item) => $item['type'] . ':' . $item['name'])
             ->all();
 

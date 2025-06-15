@@ -16,7 +16,7 @@
 <div class="fi-ta-col-manager">
     <div
         x-data="filamentTableColumnManager({
-                    columns: $wire.entangle('tableColumnManager'),
+                    columns: $wire.entangle('tableColumns'),
                     isLive: {{ $applyAction->isVisible() ? 'false' : 'true' }},
                 })"
         class="fi-ta-col-manager-ctn"
