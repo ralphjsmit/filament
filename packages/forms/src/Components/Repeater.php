@@ -5,14 +5,12 @@ namespace Filament\Forms\Components;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Repeater\StateCasts\RepeaterStateCast;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
-use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
@@ -120,16 +118,35 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
         $this->defaultItems(1);
 
-        $this->afterStateHydrated(function (Repeater $component): void {
-            if (! is_array($component->hydratedDefaultState)) {
+        $this->afterStateHydrated(static function (Repeater $component, ?array $rawState): void {
+            if (
+                is_array($component->hydratedDefaultState) &&
+                $component->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated
+            ) {
+                $component->mergeHydratedDefaultStateWithItemsState();
+            }
+
+            if (is_array($component->hydratedDefaultState)) {
                 return;
             }
 
-            if (! $component->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated) {
-                return;
+            $items = [];
+
+            $simpleField = $component->getSimpleField();
+
+            foreach ($rawState ?? [] as $itemData) {
+                if ($simpleField) {
+                    $itemData = [$simpleField->getName() => $itemData];
+                }
+
+                if ($uuid = $component->generateUuid()) {
+                    $items[$uuid] = $itemData;
+                } else {
+                    $items[] = $itemData;
+                }
             }
 
-            $component->mergeHydratedDefaultStateWithItemsState();
+            $component->rawState($items);
         });
 
         $this->registerActions([
@@ -145,6 +162,17 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             fn (Repeater $component): Action => $component->getMoveUpAction(),
             fn (Repeater $component): Action => $component->getReorderAction(),
         ]);
+
+        $this->mutateDehydratedStateUsing(static function (Repeater $component, ?array $state): array {
+            if ($simpleField = $component->getSimpleField()) {
+                return collect($state ?? [])
+                    ->values()
+                    ->pluck($simpleField->getName())
+                    ->all();
+            }
+
+            return array_values($state ?? []);
+        });
     }
 
     public function getAddAction(): Action
@@ -878,6 +906,14 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
+        $this->afterStateHydrated(function (Repeater $component): void {
+            if (! is_array($component->hydratedDefaultState)) {
+                return;
+            }
+
+            $component->mergeHydratedDefaultStateWithItemsState();
+        });
+
         $this->loadStateFromRelationshipsUsing(static function (Repeater $component): void {
             $component->clearCachedExistingRecords();
 
@@ -904,10 +940,12 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 $existingRecords->forget("record-{$keyToCheckForDeletion}");
             }
 
-            $relationship
-                ->whereKey($recordsToDelete)
-                ->get()
-                ->each(static fn (Model $record) => $record->delete());
+            if (filled($recordsToDelete)) {
+                $relationship
+                    ->whereKey($recordsToDelete)
+                    ->get()
+                    ->each(static fn (Model $record) => $record->delete());
+            }
 
             $itemOrder = 1;
             $orderColumn = $component->getOrderColumn();
@@ -962,7 +1000,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
         $this->dehydrated(false);
 
-        $this->disableItemMovement();
+        $this->reorderable(false);
 
         return $this;
     }
@@ -1324,16 +1362,5 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         }
 
         return 1;
-    }
-
-    /**
-     * @return array<StateCast>
-     */
-    public function getDefaultStateCasts(): array
-    {
-        return [
-            ...parent::getDefaultStateCasts(),
-            app(RepeaterStateCast::class, ['repeater' => $this]),
-        ];
     }
 }
