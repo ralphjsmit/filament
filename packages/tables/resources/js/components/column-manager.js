@@ -1,4 +1,4 @@
-export default function columnManagerComponent({ columns, isLive }) {
+export default function filamentTableColumnManager({ columns, isLive }) {
     return {
         error: undefined,
 
@@ -35,7 +35,7 @@ export default function columnManagerComponent({ columns, isLive }) {
             }
 
             const toggleableChildren = group.columns.filter(
-                (column) => column.toggleable !== false,
+                (column) => column.isToggleable !== false,
             )
 
             if (toggleableChildren.length === 0) {
@@ -43,10 +43,10 @@ export default function columnManagerComponent({ columns, isLive }) {
             }
 
             const toggledChildren = toggleableChildren.filter(
-                (column) => column.toggled,
+                (column) => column.isToggled,
             ).length
             const nonToggleableChildren = group.columns.filter(
-                (column) => column.toggleable === false,
+                (column) => column.isToggleable === false,
             )
 
             if (toggledChildren === 0 && nonToggleableChildren.length > 0) {
@@ -93,38 +93,38 @@ export default function columnManagerComponent({ columns, isLive }) {
             }
 
             const toggleableChildren = group.columns.filter(
-                (column) => column.toggleable !== false,
+                (column) => column.isToggleable !== false,
             )
             const anyChildOn = toggleableChildren.some(
-                (column) => column.toggled,
+                (column) => column.isToggled,
             )
             const newValue = groupedColumns.indeterminate ? true : !anyChildOn
 
             group.columns
-                .filter((column) => column.toggleable !== false)
+                .filter((column) => column.isToggleable !== false)
                 .forEach((column) => {
-                    column.toggled = newValue
+                    column.isToggled = newValue
                 })
 
             this.columns = [...this.columns]
 
             if (this.isLive) {
-                this.applyColumnManager()
+                this.applyTableColumnManager()
             }
         },
 
         toggleColumn(name, groupName = null) {
             const column = this.getColumn(name, groupName)
 
-            if (!column || column.toggleable === false) {
+            if (!column || column.isToggleable === false) {
                 return
             }
 
-            column.toggled = !column.toggled
+            column.isToggled = !column.isToggled
             this.columns = [...this.columns]
 
             if (this.isLive) {
-                this.applyColumnManager()
+                this.applyTableColumnManager()
             }
         },
 
@@ -133,7 +133,7 @@ export default function columnManagerComponent({ columns, isLive }) {
             this.reorderTopLevel(newOrder)
 
             if (this.isLive) {
-                this.applyColumnManager()
+                this.applyTableColumnManager()
             }
         },
 
@@ -164,7 +164,7 @@ export default function columnManagerComponent({ columns, isLive }) {
             this.columns = [...this.columns]
 
             if (this.isLive) {
-                this.applyColumnManager()
+                this.applyTableColumnManager()
             }
         },
 
@@ -190,11 +190,11 @@ export default function columnManagerComponent({ columns, isLive }) {
             this.columns = reordered
         },
 
-        async applyColumnManager() {
+        async applyTableColumnManager() {
             this.isLoading = true
 
             try {
-                await this.$wire.call('applyColumnManager', this.columns)
+                await this.$wire.call('applyTableColumnManager', this.columns)
 
                 this.error = undefined
             } catch (error) {

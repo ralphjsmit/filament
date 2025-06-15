@@ -3,5 +3,5 @@ import columnManager from './components/column-manager.js'
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('filamentTable', table)
-    window.Alpine.data('columnManagerComponent', columnManager)
+    window.Alpine.data('filamentTableColumnManager', columnManager)
 })

@@ -15,8 +15,8 @@
 
 <div class="fi-ta-col-manager">
     <div
-        x-data="columnManagerComponent({
-                    columns: $wire.entangle('columnManager'),
+        x-data="filamentTableColumnManager({
+                    columns: $wire.entangle('tableColumnManager'),
                     isLive: {{ $applyAction->isVisible() ? 'false' : 'true' }},
                 })"
         class="fi-ta-col-manager-ctn"
@@ -104,8 +104,8 @@
                                                         type="checkbox"
                                                         class="fi-checkbox-input fi-valid"
                                                         x-bind:id="'column-' + groupColumn.name.replace('.', '-')"
-                                                        x-bind:checked="(getColumn(groupColumn.name, column.name) || {}).toggled || false"
-                                                        x-bind:disabled="(getColumn(groupColumn.name, column.name) || {}).toggleable === false"
+                                                        x-bind:checked="(getColumn(groupColumn.name, column.name) || {}).isToggled || false"
+                                                        x-bind:disabled="(getColumn(groupColumn.name, column.name) || {}).isToggleable === false"
                                                         x-on:change="toggleColumn(groupColumn.name, column.name)"
                                                     />
                                                 @endif
@@ -139,8 +139,8 @@
                                         type="checkbox"
                                         class="fi-checkbox-input fi-valid"
                                         x-bind:id="'column-' + column.name.replace('.', '-')"
-                                        x-bind:checked="(getColumn(column.name, null) || {}).toggled || false"
-                                        x-bind:disabled="(getColumn(column.name, null) || {}).toggleable === false"
+                                        x-bind:checked="(getColumn(column.name, null) || {}).isToggled || false"
+                                        x-bind:disabled="(getColumn(column.name, null) || {}).isToggleable === false"
                                         x-on:change="toggleColumn(column.name)"
                                     />
                                 @endif

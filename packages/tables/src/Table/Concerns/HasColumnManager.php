@@ -226,11 +226,11 @@ trait HasColumnManager
 
     public function getColumnManagerApplyAction(): Action
     {
-        $action = Action::make('applyColumnManager')
+        $action = Action::make('applyTableColumnManager')
             ->label(__('filament-tables::table.column_manager.actions.apply.label'))
             ->button()
             ->visible($this->hasDeferredColumnManager())
-            ->alpineClickHandler('applyColumnManager')
+            ->alpineClickHandler('applyTableColumnManager')
             ->table($this);
 
         if ($this->modifyColumnManagerApplyActionUsing) {
