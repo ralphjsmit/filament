@@ -28,7 +28,7 @@ trait HasColumnManager
         }
 
         if (blank($this->tableColumns)) {
-            $this->tableColumns = $this->loadTableColumnManagerFromSession();
+            $this->tableColumns = $this->loadTableColumnsFromSession();
         }
 
         $this->applyTableColumnManager();
@@ -97,7 +97,7 @@ trait HasColumnManager
 
         $this->getTable()->columns($reorderedColumns);
 
-        $this->persistTableColumnManager();
+        $this->persistTableColumns();
     }
 
     public function isTableColumnToggledHidden(string $name): bool
@@ -124,10 +124,10 @@ trait HasColumnManager
      */
     protected function getToggledTableColumnsSessionKey(): string
     {
-        return $this->getTableColumnManagerSessionKey();
+        return $this->getTableColumnsSessionKey();
     }
 
-    public function getTableColumnManagerSessionKey(): string
+    public function getTableColumnsSessionKey(): string
     {
         $table = md5($this::class);
 
@@ -137,18 +137,18 @@ trait HasColumnManager
     /**
      * @return array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
      */
-    protected function loadTableColumnManagerFromSession(): array
+    protected function loadTableColumnsFromSession(): array
     {
         return session()->get(
-            $this->getTableColumnManagerSessionKey(),
-            $this->getDefaultTableColumnManagerState()
+            $this->getTableColumnsSessionKey(),
+            $this->getDefaultTableColumnManagerState(),
         );
     }
 
-    protected function persistTableColumnManager(): void
+    protected function persistTableColumns(): void
     {
         session()->put(
-            $this->getTableColumnManagerSessionKey(),
+            $this->getTableColumnsSessionKey(),
             $this->tableColumns
         );
     }
