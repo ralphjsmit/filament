@@ -93,7 +93,7 @@
             @endif
 
             @if (! is_slot_empty($afterHeader))
-                <div class="fi-section-header-after-ctn">
+                <div x-on:click.stop class="fi-section-header-after-ctn">
                     {{ $afterHeader }}
                 </div>
             @endif
