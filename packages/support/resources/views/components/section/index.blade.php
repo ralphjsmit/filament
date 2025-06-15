@@ -92,7 +92,11 @@
                 </div>
             @endif
 
-            {{ $afterHeader }}
+            @if (! is_slot_empty($afterHeader))
+                <div class="fi-section-header-after-ctn">
+                    {{ $afterHeader }}
+                </div>
+            @endif
 
             @if ($collapsible)
                 <x-filament::icon-button

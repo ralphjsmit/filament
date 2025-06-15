@@ -33,7 +33,7 @@
                 @apply px-6 py-4;
             }
 
-            &.fi-section-has-header {
+            &.fi-section-has-header:not(.fi-collapsed) {
                 & .fi-section-content-ctn {
                     @apply border-t border-gray-200 dark:border-white/10;
                 }
@@ -127,6 +127,10 @@
         @apply grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3;
     }
 
+    & .fi-section-collapse-btn {
+        @apply -my-1 shrink-0;
+    }
+
     &.fi-collapsible {
         & .fi-section-header {
             @apply cursor-pointer;
@@ -150,10 +154,10 @@
     }
 
     & .fi-section-header {
-        @apply flex items-center gap-3;
+        @apply flex items-start gap-3;
 
         & > .fi-icon {
-            @apply self-start text-gray-400 dark:text-gray-500;
+            @apply shrink-0 text-gray-400 dark:text-gray-500;
 
             &.fi-color {
                 @apply text-color-500 dark:text-color-400;
@@ -167,6 +171,10 @@
                 @apply mt-0.5;
             }
         }
+    }
+
+    & .fi-section-header-after-ctn {
+        @apply -my-1;
     }
 
     & .fi-section-header-text-ctn {
