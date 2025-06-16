@@ -118,7 +118,7 @@ trait HasCellState
             return $state;
         }
 
-        if (is_array($record)) {
+        if ($this instanceof Column && is_array($record)) {
             return null;
         }
 
