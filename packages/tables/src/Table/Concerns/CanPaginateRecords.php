@@ -20,6 +20,8 @@ trait CanPaginateRecords
 
     protected bool | Closure $hasExtremePaginationLinks = false;
 
+    protected bool $stableSort = false;
+
     public function defaultPaginationPageOption(int | string | Closure | null $option): static
     {
         $this->defaultPaginationPageOption = $option;
@@ -66,6 +68,13 @@ trait CanPaginateRecords
         return $this;
     }
 
+    public function stableSort(?bool $value = true): static
+    {
+        $this->stableSort = $value;
+
+        return $this;
+    }
+
     public function getDefaultPaginationPageOption(): int | string | null
     {
         $option = $this->evaluate($this->defaultPaginationPageOption);
@@ -89,6 +98,11 @@ trait CanPaginateRecords
     public function getPaginationPageOptions(): array
     {
         return $this->evaluate($this->paginationPageOptions) ?? [5, 10, 25, 50, 'all'];
+    }
+
+    public function getStableSort(): bool
+    {
+        return $this->stableSort;
     }
 
     public function isPaginated(): bool
