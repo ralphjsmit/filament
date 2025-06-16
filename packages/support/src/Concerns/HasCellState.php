@@ -118,6 +118,10 @@ trait HasCellState
             return $state;
         }
 
+        if (is_array($record)) {
+            return null;
+        }
+
         if (! $this->hasRelationship($record)) {
             return null;
         }
