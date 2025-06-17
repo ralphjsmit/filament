@@ -46,7 +46,6 @@ it('will prepare data attributes', function (): void {
     ]);
 });
 
-
 it('can handle policy being an object when method does not exist', function (): void {
     Filament::getCurrentOrDefaultPanel()->strictAuthorization();
 
