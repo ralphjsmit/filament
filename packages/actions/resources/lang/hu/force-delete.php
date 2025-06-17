@@ -66,7 +66,6 @@ return [
                 'missing_processing_failure_message' => ':count elem törlése nem sikerült.',
             ],
 
-
         ],
 
     ],
