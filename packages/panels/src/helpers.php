@@ -42,7 +42,7 @@ if (! function_exists('Filament\get_authorization_response')) {
         if (Filament::isAuthorizationStrict()) {
             $policyClass = match (true) {
                 is_string($policy) => $policy,
-                is_object($policy) => get_class($policy),
+                is_object($policy) => $policy::class,
                 default => null,
             };
 
