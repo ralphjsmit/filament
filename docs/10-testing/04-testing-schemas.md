@@ -206,8 +206,6 @@ test('title is disabled', function () {
 
 > For both `assertFormFieldEnabled()` and `assertFormFieldDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldEnabled('title', 'createPostForm')`.
 
-## Testing the 
-
 ## Testing other schema components
 
 If you need to check if a particular schema component exists rather than a field, you may use `assertSchemaComponentExists()`.  As components do not have names, this method uses the `key()` provided by the developer:
