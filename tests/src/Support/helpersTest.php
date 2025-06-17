@@ -1,8 +1,13 @@
 <?php
 
+use Filament\Facades\Filament;
+use Filament\Tests\TestCase;
 use Illuminate\View\ComponentAttributeBag;
 
+use function Filament\get_authorization_response;
 use function Filament\Support\prepare_inherited_attributes;
+
+uses(TestCase::class);
 
 it('will prepare attributes', function (): void {
     $bag = new ComponentAttributeBag([
@@ -39,3 +44,10 @@ it('will prepare data attributes', function (): void {
         'data-foo' => 'bar',
     ]);
 });
+
+
+it('can handle policy being an object when method does not exist', function (): void {
+    Filament::getCurrentOrDefaultPanel()->strictAuthorization();
+
+    get_authorization_response('view-asdf', \Filament\Tests\Fixtures\Models\Ticket::class);
+})->throws(Exception::class, 'Strict authorization mode is enabled, but no [view-asdf()] method was found on [Filament\Tests\Fixtures\Policies\TicketPolicy].');
