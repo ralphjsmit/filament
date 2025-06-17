@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\TestCase;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -49,5 +50,5 @@ it('will prepare data attributes', function (): void {
 it('can handle policy being an object when method does not exist', function (): void {
     Filament::getCurrentOrDefaultPanel()->strictAuthorization();
 
-    get_authorization_response('view-asdf', \Filament\Tests\Fixtures\Models\Ticket::class);
-})->throws(Exception::class, 'Strict authorization mode is enabled, but no [view-asdf()] method was found on [Filament\Tests\Fixtures\Policies\TicketPolicy].');
+    get_authorization_response('edit', Ticket::class);
+})->throws(Exception::class, 'Strict authorization mode is enabled, but no [edit()] method was found on [Filament\Tests\Fixtures\Policies\TicketPolicy].');
