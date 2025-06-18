@@ -72,7 +72,7 @@
             class="fi-main-ctn"
         >
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::CONTENT_BEFORE, scopes: $renderHookScopes) }}
-            
+
             <main
                 @class([
                     'fi-main',
