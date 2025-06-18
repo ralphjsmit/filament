@@ -94,7 +94,7 @@ it('can return a flat array of components', function (): void {
         ->toBe([
             $fieldset,
             $fieldName => $field,
-            Str::slug($sectionHeading) => $section,
+            Str::slug($sectionHeading) . '::section' => $section,
         ]);
 });
 
@@ -115,7 +115,7 @@ it('can return a flat array of components with hidden components', function (): 
         ->toBe([
             $fieldset,
             $fieldName => $field,
-            Str::slug($sectionHeading) => $section,
+            Str::slug($sectionHeading) . '::section' => $section,
         ]);
 });
 
