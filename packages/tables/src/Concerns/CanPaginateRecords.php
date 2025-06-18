@@ -30,11 +30,6 @@ trait CanPaginateRecords
     {
         $perPage = $this->getTableRecordsPerPage();
 
-        if ($this->getTable()->getStableSort()) {
-            // Add orderBy key to ensure stable order results
-            $query->orderBy($query->getModel()->getQualifiedKeyName());
-        }
-
         if (version_compare(App::version(), '11.0', '>=')) {
             $total = $query->toBase()->getCountForPagination();
 
