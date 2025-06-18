@@ -107,7 +107,6 @@ trait CanSortRecords
             ($sortColumn = $this->getTable()->getSortableVisibleColumn($defaultSort))
         ) {
             $sortColumn->applySort($query, $sortDirection);
-            $this->applyDefaultKeySortToTableQuery($query);
         } elseif (is_string($defaultSort)) {
             $query->orderBy($defaultSort, $sortDirection);
         }
