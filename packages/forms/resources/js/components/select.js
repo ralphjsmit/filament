@@ -67,6 +67,14 @@ export default function selectFormComponent({
                     this.state = newState
                 },
             })
+
+            this.$watch('state', (newState) => {
+                if (this.select && this.select.state !== newState) {
+                    this.select.state = newState
+                    this.select.updateSelectedDisplay()
+                    this.select.renderOptions()
+                }
+            })
         },
 
         destroy() {
