@@ -167,7 +167,6 @@ class VanillaSelect {
         this.selectButton.className = 'fi-select-button'
         this.selectButton.type = 'button'
         this.selectButton.setAttribute('aria-expanded', 'false')
-        this.selectButton.setAttribute('aria-labelledby', 'select-label')
 
         // Create the selected value display
         this.selectedDisplay = document.createElement('span')
@@ -184,6 +183,15 @@ class VanillaSelect {
         this.dropdown.setAttribute('role', 'listbox')
         this.dropdown.setAttribute('tabindex', '-1')
         this.dropdown.style.display = 'none'
+
+        // Generate a unique ID for the dropdown
+        this.dropdownId = `fi-select-dropdown-${Math.random().toString(36).substring(2, 11)}`
+        this.dropdown.id = this.dropdownId
+
+        // Set aria-multiselectable for multi-select
+        if (this.isMultiple) {
+            this.dropdown.setAttribute('aria-multiselectable', 'true')
+        }
 
         // Add search input if searchable
         if (this.isSearchable) {
@@ -421,12 +429,26 @@ class VanillaSelect {
             option.classList.add('fi-select-option-disabled')
         }
 
+        // Generate a unique ID for the option
+        const optionId = `fi-select-option-${Math.random().toString(36).substring(2, 11)}`
+        option.id = optionId
+
         option.setAttribute('role', 'option')
         option.setAttribute('data-value', optionValue)
         option.setAttribute('tabindex', '0') // Make the option focusable
 
         if (isDisabled) {
             option.setAttribute('aria-disabled', 'true')
+        }
+
+        // Store the plain text version of the label for aria-label if HTML is allowed
+        if (this.isHtmlAllowed && typeof optionLabel === 'string') {
+            // Create a temporary div to extract text content from HTML
+            const tempDiv = document.createElement('div')
+            tempDiv.innerHTML = optionLabel
+            const plainText =
+                tempDiv.textContent || tempDiv.innerText || optionLabel
+            option.setAttribute('aria-label', plainText)
         }
 
         // Check if this option is selected
@@ -959,7 +981,14 @@ class VanillaSelect {
                 }
                 break
             case 'Enter':
-                // Do nothing for Enter key, allow it to submit the form
+                event.preventDefault()
+                if (this.selectedIndex >= 0) {
+                    const focusedOption =
+                        this.getVisibleOptions()[this.selectedIndex]
+                    if (focusedOption) {
+                        focusedOption.click()
+                    }
+                }
                 break
             case 'Escape':
                 event.preventDefault()
@@ -1184,6 +1213,8 @@ class VanillaSelect {
         ) {
             this.selectedIndex = -1
             this.searchInput.focus()
+            // Clear aria-activedescendant when focus moves to search input
+            this.dropdown.removeAttribute('aria-activedescendant')
             return
         }
 
@@ -1191,6 +1222,15 @@ class VanillaSelect {
         this.selectedIndex = (this.selectedIndex + 1) % options.length
         options[this.selectedIndex].classList.add('fi-select-option-focused')
         options[this.selectedIndex].focus()
+
+        // Set aria-activedescendant to the ID of the focused option
+        if (options[this.selectedIndex].id) {
+            this.dropdown.setAttribute(
+                'aria-activedescendant',
+                options[this.selectedIndex].id,
+            )
+        }
+
         this.scrollOptionIntoView(options[this.selectedIndex])
     }
 
@@ -1213,6 +1253,8 @@ class VanillaSelect {
         ) {
             this.selectedIndex = -1
             this.searchInput.focus()
+            // Clear aria-activedescendant when focus moves to search input
+            this.dropdown.removeAttribute('aria-activedescendant')
             return
         }
 
@@ -1221,6 +1263,15 @@ class VanillaSelect {
             (this.selectedIndex - 1 + options.length) % options.length
         options[this.selectedIndex].classList.add('fi-select-option-focused')
         options[this.selectedIndex].focus()
+
+        // Set aria-activedescendant to the ID of the focused option
+        if (options[this.selectedIndex].id) {
+            this.dropdown.setAttribute(
+                'aria-activedescendant',
+                options[this.selectedIndex].id,
+            )
+        }
+
         this.scrollOptionIntoView(options[this.selectedIndex])
     }
 
