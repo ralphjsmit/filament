@@ -8,11 +8,11 @@
     }
 
     & .fi-select-button {
-        @apply flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-start text-gray-900 shadow-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500;
+        @apply focus:border-primary-500 focus:ring-primary-500 flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-start text-gray-900 shadow-sm outline-none focus:ring-2;
     }
 
     & .fi-select-value {
-        @apply flex items-center w-full truncate;
+        @apply flex w-full items-center truncate;
     }
 
     & .fi-select-dropdown {
@@ -20,23 +20,23 @@
     }
 
     & .fi-select-options-list {
-        @apply list-none p-0 m-0;
+        @apply m-0 list-none p-0;
     }
 
     & .fi-select-option-placeholder {
-        @apply cursor-pointer select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-gray-100;
+        @apply cursor-pointer py-2 pr-9 pl-3 text-gray-900 select-none hover:bg-gray-100;
     }
 
     & .fi-select-option-group {
-        @apply cursor-default select-none py-2 pl-3 pr-9 font-semibold text-gray-900;
+        @apply cursor-default py-2 pr-9 pl-3 font-semibold text-gray-900 select-none;
     }
 
     & .fi-select-option-group-list {
-        @apply list-none p-0 m-0 pl-2;
+        @apply m-0 list-none p-0 pl-2;
     }
 
     & .fi-select-option {
-        @apply select-none py-2 pl-3 pr-9 text-gray-900;
+        @apply py-2 pr-9 pl-3 text-gray-900 select-none;
     }
 
     & .fi-select-option-enabled {
@@ -44,7 +44,7 @@
     }
 
     & .fi-select-option-disabled {
-        @apply opacity-50 cursor-not-allowed;
+        @apply cursor-not-allowed opacity-50;
     }
 
     & .fi-select-option-selected {
@@ -52,7 +52,7 @@
     }
 
     & .fi-select-option-checkmark {
-        @apply absolute inset-y-0 right-0 flex items-center pr-4 text-primary-600;
+        @apply text-primary-600 absolute inset-y-0 right-0 flex items-center pr-4;
     }
 
     & .fi-select-option-checkmark-icon {
@@ -68,7 +68,7 @@
     }
 
     & .fi-select-badge {
-        @apply inline-flex items-center rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700;
+        @apply bg-primary-50 text-primary-700 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium;
     }
 
     & .fi-select-badge-label {
@@ -76,7 +76,7 @@
     }
 
     & .fi-select-badge-remove {
-        @apply -mr-1 ml-0.5 h-4 w-4 rounded-full p-0 text-primary-400 hover:bg-primary-200 hover:text-primary-700 focus:bg-primary-200 focus:text-primary-700 focus:outline-none;
+        @apply text-primary-400 hover:bg-primary-200 hover:text-primary-700 focus:bg-primary-200 focus:text-primary-700 -mr-1 ml-0.5 h-4 w-4 rounded-full p-0 focus:outline-none;
     }
 
     & .fi-select-badge-remove-icon {
@@ -96,22 +96,22 @@
     }
 
     & .fi-select-search-container {
-        @apply sticky top-0 p-2 border-b border-gray-200 bg-white z-10;
+        @apply sticky top-0 z-10 border-b border-gray-200 bg-white p-2;
     }
 
     & .fi-select-search-input {
-        @apply w-full px-3 py-1.5 text-gray-900 bg-transparent border-none shadow-none ring-0 placeholder:text-gray-400 focus:ring-0 focus:outline-none sm:text-sm;
+        @apply w-full border-none bg-transparent px-3 py-1.5 text-gray-900 shadow-none ring-0 placeholder:text-gray-400 focus:ring-0 focus:outline-none sm:text-sm;
     }
 
     & .fi-select-disabled {
-        @apply opacity-70 cursor-not-allowed;
+        @apply cursor-not-allowed opacity-70;
     }
 
     & .fi-select-loading {
-        @apply py-2 px-3 text-gray-500 text-sm italic;
+        @apply px-3 py-2 text-sm text-gray-500 italic;
     }
 
     & .fi-select-no-results {
-        @apply py-2 px-3 text-gray-500 text-sm italic;
+        @apply px-3 py-2 text-sm text-gray-500 italic;
     }
 }
