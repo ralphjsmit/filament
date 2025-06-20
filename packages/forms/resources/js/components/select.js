@@ -177,7 +177,7 @@ class CustomSelect {
         this.selectButton.setAttribute('aria-expanded', 'false')
 
         // Create the selected value display
-        this.selectedDisplay = document.createElement('span')
+        this.selectedDisplay = document.createElement('div')
         this.selectedDisplay.className = 'fi-fo-select-value-ctn'
 
         // Update the selected display based on current state
@@ -600,40 +600,64 @@ class CustomSelect {
     async getLabelsForMultipleSelection() {
         let selectedLabels = this.getSelectedOptionLabels()
 
-        // If we couldn't find all labels and getOptionLabelsUsing is available, fetch missing labels
-        if (
-            selectedLabels.length < this.state.length &&
-            this.getOptionLabelsUsing
-        ) {
+        // If getOptionLabelsUsing is available, fetch labels for missing values
+        if (this.getOptionLabelsUsing && Array.isArray(this.state) && this.state.length > 0) {
             try {
                 // Get the values for which we don't have labels
                 const missingValues = this.state.filter(
-                    (value, index) => !selectedLabels[index],
+                    (value) => !selectedLabels[value]
                 )
 
                 if (missingValues.length > 0) {
-                    // Fetch labels for missing values
-                    const fetchedLabels =
-                        await this.getOptionLabelsUsing(missingValues)
+                    // Fetch labels for missing values - returns array of {label, value} objects
+                    const fetchedOptionsArray = await this.getOptionLabelsUsing()
 
-                    // Create a new array with all labels
-                    return this.state.map((value) => {
-                        // Check if we already have a label for this value
-                        const existingLabel = this.getSelectedOptionLabel(value)
-                        if (existingLabel) {
-                            return existingLabel
+                    // Convert the array of options to a map for easier lookup
+                    const fetchedLabels = {}
+                    for (const option of fetchedOptionsArray) {
+                        if (option && option.value !== undefined && option.label !== undefined) {
+                            fetchedLabels[option.value] = option.label
                         }
+                    }
 
-                        // Otherwise, use the fetched label
-                        return fetchedLabels[value] || value
-                    })
+                    // Create a result array with all labels
+                    const result = []
+
+                    for (const value of this.state) {
+                        // First check if we have a label from options
+                        if (selectedLabels[value]) {
+                            result.push(selectedLabels[value])
+                        }
+                        // Then check if we have a fetched label
+                        else if (fetchedLabels[value]) {
+                            result.push(fetchedLabels[value])
+                        }
+                        // If no label is found, use the value as fallback
+                        else {
+                            result.push(value)
+                        }
+                    }
+
+                    return result
                 }
             } catch (error) {
                 console.error('Error fetching option labels:', error)
             }
         }
 
-        return selectedLabels
+        // Convert the object of labels back to an array in the same order as this.state
+        const result = []
+        if (Array.isArray(this.state)) {
+            for (const value of this.state) {
+                if (selectedLabels[value]) {
+                    result.push(selectedLabels[value])
+                } else {
+                    result.push(value) // Fallback to value if no label found
+                }
+            }
+        }
+
+        return result
     }
 
     // Helper method to add badges for selected options
@@ -715,7 +739,7 @@ class CustomSelect {
         // If label not found and getOptionLabelUsing is available, fetch it
         if (!selectedLabel && this.getOptionLabelUsing) {
             try {
-                selectedLabel = await this.getOptionLabelUsing(this.state)
+                selectedLabel = await this.getOptionLabelUsing()
             } catch (error) {
                 console.error('Error fetching option label:', error)
                 selectedLabel = this.state // Fallback to using the value as the label
@@ -863,9 +887,7 @@ class CustomSelect {
                     if (this.state !== null && this.state !== '') {
                         try {
                             // Get the new label
-                            const newLabel = await this.getOptionLabelUsing(
-                                this.state,
-                            )
+                            const newLabel = await this.getOptionLabelUsing()
 
                             // Update the displayed label
                             const labelContainer =
@@ -1369,10 +1391,10 @@ class CustomSelect {
 
     getSelectedOptionLabels() {
         if (!Array.isArray(this.state) || this.state.length === 0) {
-            return []
+            return {}
         }
 
-        const labels = []
+        const labels = {}
 
         for (const value of this.state) {
             // Search in flat options
@@ -1382,23 +1404,21 @@ class CustomSelect {
                     // Search in option group
                     for (const groupOption of option.options) {
                         if (groupOption.value === value) {
-                            labels.push(groupOption.label)
+                            labels[value] = groupOption.label
                             found = true
                             break
                         }
                     }
                     if (found) break
                 } else if (option.value === value) {
-                    labels.push(option.label)
+                    labels[value] = option.label
                     found = true
                     break
                 }
             }
 
-            // If not found, use the value as fallback
-            if (!found) {
-                labels.push(value)
-            }
+            // If not found, don't add a fallback
+            // This allows the caller to know which labels are missing
         }
 
         return labels
