@@ -548,7 +548,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#javascriptSelect .choices')
+            await page.click('#javascriptSelect .fi-fo-select-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -562,7 +562,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#searchableSelect .choices')
+            await page.click('#searchableSelect .fi-fo-select-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -576,9 +576,12 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#multipleSelect .choices')
-            await page.click('#multipleSelect .choices #choices--formmultipleSelect-item-choice-2')
-            await page.click('#multipleSelect .choices #choices--formmultipleSelect-item-choice-3')
+            await page.click('#multipleSelect .fi-fo-select-btn')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+
+            await page.click('#multipleSelect .fi-fo-select-option')
+            await page.click('#multipleSelect .fi-fo-select-option')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -592,7 +595,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#groupedSelect .choices')
+            await page.click('#groupedSelect .fi-fo-select-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
