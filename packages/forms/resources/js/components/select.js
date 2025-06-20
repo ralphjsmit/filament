@@ -672,6 +672,14 @@ class CustomSelect {
             badge.className =
                 'fi-badge fi-size-md fi-color fi-color-primary fi-text-color-600 dark:fi-text-color-200'
 
+            // Get the value for this badge
+            const value = Array.isArray(this.state) ? this.state[index] : null
+
+            // Add a data attribute to identify this badge by its value
+            if (value !== null) {
+                badge.setAttribute('data-value', value)
+            }
+
             // Create a container for the label text
             const labelContainer = document.createElement('span')
             labelContainer.className = 'fi-badge-label-ctn'
@@ -702,9 +710,6 @@ class CustomSelect {
                         ? label.replace(/<[^>]*>/g, '')
                         : label),
             )
-
-            // Get the value for this badge
-            const value = Array.isArray(this.state) ? this.state[index] : null
 
             removeButton.addEventListener('click', (event) => {
                 event.stopPropagation() // Prevent dropdown from toggling
@@ -1610,9 +1615,31 @@ class CustomSelect {
 
         // If already selected, remove the value
         if (newState.includes(value)) {
-            newState = newState.filter((v) => v !== value)
-            this.state = newState
-            this.updateSelectedDisplay()
+            // Find and remove the badge directly from the DOM
+            const badgeToRemove = this.selectedDisplay.querySelector(`[data-value="${value}"]`)
+            if (badgeToRemove) {
+                // Check if this is the last badge
+                const badgesContainer = badgeToRemove.parentElement
+                if (badgesContainer && badgesContainer.children.length === 1) {
+                    // If this is the last badge, we need to update the display to show the placeholder
+                    newState = newState.filter((v) => v !== value)
+                    this.state = newState
+                    this.updateSelectedDisplay()
+                } else {
+                    // Otherwise, just remove this badge
+                    badgeToRemove.remove()
+
+                    // Update the state
+                    newState = newState.filter((v) => v !== value)
+                    this.state = newState
+                }
+            } else {
+                // If we couldn't find the badge, fall back to full update
+                newState = newState.filter((v) => v !== value)
+                this.state = newState
+                this.updateSelectedDisplay()
+            }
+
             this.renderOptions()
 
             // Reevaluate dropdown position after options are removed
