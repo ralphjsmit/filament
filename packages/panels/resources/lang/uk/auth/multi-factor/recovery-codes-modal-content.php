@@ -4,13 +4,13 @@ return [
 
     'actions' => [
 
-        'Click to',
+        'Натисніть, щоб',
 
         'copy' => [
             'label' => 'скопіювати',
         ],
 
-        'or',
+        'або',
 
         'download' => [
             'label' => 'завантажити',
