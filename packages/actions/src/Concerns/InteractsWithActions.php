@@ -612,7 +612,7 @@ trait InteractsWithActions
 
         return $mountedAction->getSchema(
             $this->makeSchema()
-                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
+                ->model(fn (): Model | array | string | null => $mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(
