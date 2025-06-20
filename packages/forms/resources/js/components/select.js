@@ -207,7 +207,7 @@ class VanillaSelect {
             this.searchContainer.className = 'fi-fo-select-search-ctn'
 
             this.searchInput = document.createElement('input')
-            this.searchInput.className = 'fi-fo-select-search-input'
+            this.searchInput.className = 'fi-input'
             this.searchInput.type = 'text'
             this.searchInput.placeholder = this.searchPrompt
             this.searchInput.setAttribute('aria-label', 'Search')
@@ -1454,7 +1454,7 @@ class VanillaSelect {
 
         // Add loading message
         const loadingItem = document.createElement('li')
-        loadingItem.className = 'fi-fo-select-loading'
+        loadingItem.className = 'fi-fo-select-message'
         loadingItem.textContent = isSearching
             ? this.searchingMessage
             : this.loadingMessage
@@ -1463,7 +1463,7 @@ class VanillaSelect {
 
     hideLoadingState() {
         // Remove loading message
-        const loadingItem = this.optionsList.querySelector('.fi-fo-select-loading')
+        const loadingItem = this.optionsList.querySelector('.fi-fo-select-message')
         if (loadingItem) {
             loadingItem.remove()
         }
@@ -1477,7 +1477,7 @@ class VanillaSelect {
 
         // Add "No results" message
         const noResultsItem = document.createElement('li')
-        noResultsItem.className = 'fi-fo-select-no-results'
+        noResultsItem.className = 'fi-fo-select-message'
         noResultsItem.textContent = this.noSearchResultsMessage
         this.optionsList.appendChild(noResultsItem)
     }
