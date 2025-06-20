@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\RichEditor;
 
 use Filament\Actions\Action;
-use Illuminate\Support\Str;
 
 abstract class RichContentCustomBlock
 {
