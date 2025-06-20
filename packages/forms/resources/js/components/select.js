@@ -34,7 +34,7 @@ export default function selectFormComponent({
         select: null,
 
         init() {
-            this.select = new VanillaSelect({
+            this.select = new CustomSelect({
                 element: this.$refs.select,
                 options: options,
                 placeholder: placeholder,
@@ -86,7 +86,7 @@ export default function selectFormComponent({
     }
 }
 
-class VanillaSelect {
+class CustomSelect {
     constructor({
         element,
         options,
@@ -301,8 +301,6 @@ class VanillaSelect {
         // Render options
         this.renderOptions()
 
-        this.dropdown.appendChild(this.optionsList)
-
         // Append everything to the container
         this.container.appendChild(this.selectButton)
         this.container.appendChild(this.dropdown)
@@ -343,7 +341,8 @@ class VanillaSelect {
         // Set the appropriate class based on whether we have grouped options
         if (hasGroupedOptions) {
             this.optionsList.className = 'fi-fo-select-options-ctn'
-        } else {
+        } else if (optionsCount > 0) {
+            // Only set fi-dropdown-list class if there are options to render
             this.optionsList.className = 'fi-dropdown-list'
         }
 
@@ -400,6 +399,8 @@ class VanillaSelect {
 
                 // Create ungrouped list if it doesn't exist yet and we have grouped options
                 if (!ungroupedList && hasGroupedOptions) {
+                    // Check if there are any ungrouped options to render
+                    // We know there's at least one (the current option), so create the list
                     ungroupedList = document.createElement('ul')
                     ungroupedList.className = 'fi-dropdown-list'
                     this.optionsList.appendChild(ungroupedList)
@@ -415,19 +416,38 @@ class VanillaSelect {
             }
         }
 
-        // If in multiple mode and no options were rendered, hide the dropdown
-        // unless the search input is filled, in which case the user might want to change their search
-        if (
-            this.isMultiple &&
-            totalRenderedCount === 0 &&
-            this.isOpen &&
-            (!this.isSearchable || !this.searchQuery)
-        ) {
-            this.closeDropdown()
+        // If no options were rendered
+        if (totalRenderedCount === 0) {
+            // If there's a search query, show "No results" message
+            if (this.searchQuery) {
+                this.showNoResultsMessage()
+            }
+            // If in multiple mode and no search query, hide the dropdown
+            else if (this.isMultiple && this.isOpen && !this.isSearchable) {
+                this.closeDropdown()
+            }
+
+            // Remove the options list from the DOM if it's already there
+            if (this.optionsList.parentNode === this.dropdown) {
+                this.dropdown.removeChild(this.optionsList)
+            }
+        } else {
+            // Hide any existing messages (like "No results")
+            this.hideLoadingState()
+
+            // Append the options list to the dropdown if it's not already there
+            if (this.optionsList.parentNode !== this.dropdown) {
+                this.dropdown.appendChild(this.optionsList)
+            }
         }
     }
 
     renderOptionGroup(label, options) {
+        // Don't render if there are no options
+        if (options.length === 0) {
+            return
+        }
+
         const optionGroup = document.createElement('li')
         optionGroup.className = 'fi-fo-select-option-group'
 
@@ -1449,37 +1469,45 @@ class VanillaSelect {
     }
 
     showLoadingState(isSearching = false) {
-        // Clear options list
-        this.optionsList.innerHTML = ''
+        // Clear options list if it's in the DOM
+        if (this.optionsList.parentNode === this.dropdown) {
+            this.optionsList.innerHTML = ''
+        }
+
+        // Remove any existing message
+        this.hideLoadingState()
 
         // Add loading message
-        const loadingItem = document.createElement('li')
+        const loadingItem = document.createElement('div')
         loadingItem.className = 'fi-fo-select-message'
         loadingItem.textContent = isSearching
             ? this.searchingMessage
             : this.loadingMessage
-        this.optionsList.appendChild(loadingItem)
+        this.dropdown.appendChild(loadingItem)
     }
 
     hideLoadingState() {
         // Remove loading message
-        const loadingItem = this.optionsList.querySelector('.fi-fo-select-message')
+        const loadingItem = this.dropdown.querySelector('.fi-fo-select-message')
         if (loadingItem) {
             loadingItem.remove()
         }
     }
 
     showNoResultsMessage() {
-        // Clear options list if not already empty
-        if (this.optionsList.children.length > 0) {
+        // Clear options list if it's in the DOM and not already empty
+        if (this.optionsList.parentNode === this.dropdown && this.optionsList.children.length > 0) {
             this.optionsList.innerHTML = ''
         }
 
+        // Remove any existing message
+        this.hideLoadingState()
+
         // Add "No results" message
-        const noResultsItem = document.createElement('li')
+        const noResultsItem = document.createElement('div')
         noResultsItem.className = 'fi-fo-select-message'
         noResultsItem.textContent = this.noSearchResultsMessage
-        this.optionsList.appendChild(noResultsItem)
+        this.dropdown.appendChild(noResultsItem)
     }
 
     filterOptions(query) {
