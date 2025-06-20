@@ -156,6 +156,9 @@
                                     { search },
                                 )
                             },
+                            initialOptionLabel: @js($isMultiple ? null : $getOptionLabel()),
+                            initialOptionLabels: @js($isMultiple ? $getOptionLabelsForJs() : []),
+                            initialState: @js($getState()),
                             isAutofocused: @js($isAutofocused),
                             isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple),
