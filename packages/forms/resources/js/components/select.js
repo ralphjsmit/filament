@@ -1,5 +1,20 @@
 import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 
+// Helper function to check if a value is null, undefined, or an empty string
+function blank(value) {
+    return (
+        value === null ||
+        value === undefined ||
+        value === '' ||
+        (typeof value === 'string' && value.trim() === '')
+    )
+}
+
+// Helper function to check if a value is not null, not undefined, and not an empty string
+function filled(value) {
+    return !blank(value)
+}
+
 export default function selectFormComponent({
     canSelectPlaceholder,
     isHtmlAllowed,
@@ -7,6 +22,9 @@ export default function selectFormComponent({
     getOptionLabelsUsing,
     getOptionsUsing,
     getSearchResultsUsing,
+    initialOptionLabel,
+    initialOptionLabels,
+    initialState,
     isAutofocused,
     isDisabled,
     isMultiple,
@@ -40,6 +58,9 @@ export default function selectFormComponent({
                 placeholder,
                 state: this.state,
                 canSelectPlaceholder,
+                initialOptionLabel,
+                initialOptionLabels,
+                initialState,
                 isHtmlAllowed,
                 isAutofocused,
                 isDisabled,
@@ -93,6 +114,9 @@ class CustomSelect {
         placeholder,
         state,
         canSelectPlaceholder = true,
+        initialOptionLabel = null,
+        initialOptionLabels = null,
+        initialState = null,
         isHtmlAllowed = false,
         isAutofocused = false,
         isDisabled = false,
@@ -124,6 +148,9 @@ class CustomSelect {
         this.placeholder = placeholder
         this.state = state
         this.canSelectPlaceholder = canSelectPlaceholder
+        this.initialOptionLabel = initialOptionLabel
+        this.initialOptionLabels = initialOptionLabels
+        this.initialState = initialState
         this.isHtmlAllowed = isHtmlAllowed
         this.isAutofocused = isAutofocused
         this.isDisabled = isDisabled
@@ -151,6 +178,9 @@ class CustomSelect {
         this.statePath = statePath
         this.onStateChange = onStateChange
 
+        // Central repository for option labels
+        this.labelRepository = {}
+
         this.isOpen = false
         this.selectedIndex = -1
         this.searchQuery = ''
@@ -164,7 +194,30 @@ class CustomSelect {
         }
     }
 
+    // Helper method to populate the label repository from options
+    populateLabelRepositoryFromOptions(options) {
+        if (!options || !Array.isArray(options)) {
+            return
+        }
+
+        for (const option of options) {
+            if (option.options && Array.isArray(option.options)) {
+                // Handle option groups
+                this.populateLabelRepositoryFromOptions(option.options)
+            } else if (
+                option.value !== undefined &&
+                option.label !== undefined
+            ) {
+                // Store the label in the repository
+                this.labelRepository[option.value] = option.label
+            }
+        }
+    }
+
     render() {
+        // Populate the label repository from initial options
+        this.populateLabelRepositoryFromOptions(this.options)
+
         // Create the main container
         this.container = document.createElement('div')
         this.container.className = 'fi-fo-select-ctn'
@@ -177,7 +230,7 @@ class CustomSelect {
         this.selectButton.setAttribute('aria-expanded', 'false')
 
         // Create the selected value display
-        this.selectedDisplay = document.createElement('span')
+        this.selectedDisplay = document.createElement('div')
         this.selectedDisplay.className = 'fi-fo-select-value-ctn'
 
         // Update the selected display based on current state
@@ -577,6 +630,11 @@ class CustomSelect {
 
             // Create and add badges for selected options
             this.addBadgesForSelectedOptions(selectedLabels)
+
+            // Reevaluate dropdown position after badges are added
+            if (this.isOpen) {
+                this.positionDropdown()
+            }
             return
         }
 
@@ -600,40 +658,160 @@ class CustomSelect {
     async getLabelsForMultipleSelection() {
         let selectedLabels = this.getSelectedOptionLabels()
 
-        // If we couldn't find all labels and getOptionLabelsUsing is available, fetch missing labels
+        // Check for values that are not in the repository or options
+        const missingValues = []
+        if (Array.isArray(this.state)) {
+            for (const value of this.state) {
+                // Check if we have the label in the repository
+                if (filled(this.labelRepository[value])) {
+                    continue
+                }
+
+                // Check if we have the label in the options
+                if (filled(selectedLabels[value])) {
+                    // Store the label in the repository
+                    this.labelRepository[value] = selectedLabels[value]
+                    continue
+                }
+
+                // If not found, add to missing values
+                missingValues.push(value)
+            }
+        }
+
+        // If we have missing values and current state matches initialState, use initialOptionLabels
         if (
-            selectedLabels.length < this.state.length &&
-            this.getOptionLabelsUsing
+            missingValues.length > 0 &&
+            filled(this.initialOptionLabels) &&
+            JSON.stringify(this.state) === JSON.stringify(this.initialState)
         ) {
+            // Use initialOptionLabels and store them in the repository
+            if (Array.isArray(this.initialOptionLabels)) {
+                // initialOptionLabels is an array of objects with label and value properties
+                for (const initialOption of this.initialOptionLabels) {
+                    if (
+                        filled(initialOption) &&
+                        initialOption.value !== undefined &&
+                        initialOption.label !== undefined &&
+                        missingValues.includes(initialOption.value)
+                    ) {
+                        // Store the label in the repository
+                        this.labelRepository[initialOption.value] =
+                            initialOption.label
+                    }
+                }
+            }
+        }
+        // If we still have missing values and getOptionLabelsUsing is available, fetch them
+        else if (missingValues.length > 0 && this.getOptionLabelsUsing) {
             try {
-                // Get the values for which we don't have labels
-                const missingValues = this.state.filter(
-                    (value, index) => !selectedLabels[index],
-                )
+                // Fetch labels for missing values - returns array of {label, value} objects
+                const fetchedOptionsArray = await this.getOptionLabelsUsing()
 
-                if (missingValues.length > 0) {
-                    // Fetch labels for missing values
-                    const fetchedLabels =
-                        await this.getOptionLabelsUsing(missingValues)
-
-                    // Create a new array with all labels
-                    return this.state.map((value) => {
-                        // Check if we already have a label for this value
-                        const existingLabel = this.getSelectedOptionLabel(value)
-                        if (existingLabel) {
-                            return existingLabel
-                        }
-
-                        // Otherwise, use the fetched label
-                        return fetchedLabels[value] || value
-                    })
+                // Store fetched labels in the repository
+                for (const option of fetchedOptionsArray) {
+                    if (
+                        filled(option) &&
+                        option.value !== undefined &&
+                        option.label !== undefined
+                    ) {
+                        this.labelRepository[option.value] = option.label
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching option labels:', error)
             }
         }
 
-        return selectedLabels
+        // Create a result array with all labels in the same order as this.state
+        const result = []
+        if (Array.isArray(this.state)) {
+            for (const value of this.state) {
+                // First check if we have a label in the repository
+                if (filled(this.labelRepository[value])) {
+                    result.push(this.labelRepository[value])
+                }
+                // Then check if we have a label from options
+                else if (filled(selectedLabels[value])) {
+                    result.push(selectedLabels[value])
+                }
+                // If no label is found, use the value as fallback
+                else {
+                    result.push(value)
+                }
+            }
+        }
+
+        return result
+    }
+
+    // Helper method to create a badge element
+    createBadgeElement(value, label) {
+        const badge = document.createElement('span')
+        badge.className =
+            'fi-badge fi-size-md fi-color fi-color-primary fi-text-color-600 dark:fi-text-color-200'
+
+        // Add a data attribute to identify this badge by its value
+        if (filled(value)) {
+            badge.setAttribute('data-value', value)
+        }
+
+        // Create a container for the label text
+        const labelContainer = document.createElement('span')
+        labelContainer.className = 'fi-badge-label-ctn'
+
+        // Create an element for the label text
+        const labelElement = document.createElement('span')
+        labelElement.className = 'fi-badge-label'
+
+        if (this.isHtmlAllowed) {
+            labelElement.innerHTML = label
+        } else {
+            labelElement.textContent = label
+        }
+
+        labelContainer.appendChild(labelElement)
+        badge.appendChild(labelContainer)
+
+        // Add a cross button to remove the selection
+        const removeButton = this.createRemoveButton(value, label)
+        badge.appendChild(removeButton)
+
+        return badge
+    }
+
+    // Helper method to create a remove button
+    createRemoveButton(value, label) {
+        const removeButton = document.createElement('button')
+        removeButton.type = 'button'
+        removeButton.className = 'fi-badge-delete-btn'
+        removeButton.innerHTML =
+            '<svg class="fi-icon fi-size-xs" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path></svg>'
+        removeButton.setAttribute(
+            'aria-label',
+            'Remove ' +
+                (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
+        )
+
+        removeButton.addEventListener('click', (event) => {
+            event.stopPropagation() // Prevent dropdown from toggling
+            if (filled(value)) {
+                this.selectOption(value) // This will remove the value since it's already selected
+            }
+        })
+
+        // Add keydown event listener to handle space key
+        removeButton.addEventListener('keydown', (event) => {
+            if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault()
+                event.stopPropagation() // Prevent event from bubbling up to selectButton
+                if (filled(value)) {
+                    this.selectOption(value)
+                }
+            }
+        })
+
+        return removeButton
     }
 
     // Helper method to add badges for selected options
@@ -644,63 +822,8 @@ class CustomSelect {
 
         // Add badges for each selected option
         selectedLabels.forEach((label, index) => {
-            const badge = document.createElement('span')
-            badge.className =
-                'fi-badge fi-size-md fi-color fi-color-primary fi-text-color-600 dark:fi-text-color-200'
-
-            // Create a container for the label text
-            const labelContainer = document.createElement('span')
-            labelContainer.className = 'fi-badge-label-ctn'
-
-            // Create an element for the label text
-            const labelElement = document.createElement('span')
-            labelElement.className = 'fi-badge-label'
-
-            if (this.isHtmlAllowed) {
-                labelElement.innerHTML = label
-            } else {
-                labelElement.textContent = label
-            }
-
-            labelContainer.appendChild(labelElement)
-            badge.appendChild(labelContainer)
-
-            // Add a cross button to remove the selection
-            const removeButton = document.createElement('button')
-            removeButton.type = 'button'
-            removeButton.className = 'fi-badge-delete-btn'
-            removeButton.innerHTML =
-                '<svg class="fi-icon fi-size-xs" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path></svg>'
-            removeButton.setAttribute(
-                'aria-label',
-                'Remove ' +
-                    (this.isHtmlAllowed
-                        ? label.replace(/<[^>]*>/g, '')
-                        : label),
-            )
-
-            // Get the value for this badge
             const value = Array.isArray(this.state) ? this.state[index] : null
-
-            removeButton.addEventListener('click', (event) => {
-                event.stopPropagation() // Prevent dropdown from toggling
-                if (value !== null) {
-                    this.selectOption(value) // This will remove the value since it's already selected
-                }
-            })
-
-            // Add keydown event listener to handle space key
-            removeButton.addEventListener('keydown', (event) => {
-                if (event.key === ' ' || event.key === 'Enter') {
-                    event.preventDefault()
-                    event.stopPropagation() // Prevent event from bubbling up to selectButton
-                    if (value !== null) {
-                        this.selectOption(value)
-                    }
-                }
-            })
-
-            badge.appendChild(removeButton)
+            const badge = this.createBadgeElement(value, label)
             badgesContainer.appendChild(badge)
         })
 
@@ -709,18 +832,41 @@ class CustomSelect {
 
     // Helper method to get label for single selection
     async getLabelForSingleSelection() {
-        // Find the label for the selected value
-        let selectedLabel = this.getSelectedOptionLabel(this.state)
+        // First check if we have the label in the repository
+        let selectedLabel = this.labelRepository[this.state]
 
-        // If label not found and getOptionLabelUsing is available, fetch it
-        if (!selectedLabel && this.getOptionLabelUsing) {
+        // If not in repository, try to find it in the options
+        if (blank(selectedLabel)) {
+            selectedLabel = this.getSelectedOptionLabel(this.state)
+        }
+
+        // If label not found and current state matches initialState, use initialOptionLabel
+        if (
+            blank(selectedLabel) &&
+            filled(this.initialOptionLabel) &&
+            this.state === this.initialState
+        ) {
+            selectedLabel = this.initialOptionLabel
+
+            // Store the label in the repository for future use
+            if (filled(this.state)) {
+                this.labelRepository[this.state] = selectedLabel
+            }
+        }
+        // If label still not found and getOptionLabelUsing is available, fetch it
+        else if (blank(selectedLabel) && this.getOptionLabelUsing) {
             try {
-                selectedLabel = await this.getOptionLabelUsing(this.state)
+                selectedLabel = await this.getOptionLabelUsing()
+
+                // Store the fetched label in the repository
+                if (filled(selectedLabel) && filled(this.state)) {
+                    this.labelRepository[this.state] = selectedLabel
+                }
             } catch (error) {
                 console.error('Error fetching option label:', error)
                 selectedLabel = this.state // Fallback to using the value as the label
             }
-        } else if (!selectedLabel) {
+        } else if (blank(selectedLabel)) {
             // If still no label and no getOptionLabelUsing, use the value as the label
             selectedLabel = this.state
         }
@@ -772,6 +918,12 @@ class CustomSelect {
     }
 
     getSelectedOptionLabel(value) {
+        // First check if we have the label in the repository
+        if (filled(this.labelRepository[value])) {
+            return this.labelRepository[value]
+        }
+
+        // If not in repository, search in options
         let selectedLabel = ''
 
         for (const option of this.options) {
@@ -780,11 +932,15 @@ class CustomSelect {
                 for (const groupOption of option.options) {
                     if (groupOption.value === value) {
                         selectedLabel = groupOption.label
+                        // Store the label in the repository for future use
+                        this.labelRepository[value] = selectedLabel
                         break
                     }
                 }
             } else if (option.value === value) {
                 selectedLabel = option.label
+                // Store the label in the repository for future use
+                this.labelRepository[value] = selectedLabel
                 break
             }
         }
@@ -860,19 +1016,25 @@ class CustomSelect {
                     event.detail.statePath === this.statePath
                 ) {
                     // Refresh the selected option label
-                    if (this.state !== null && this.state !== '') {
+                    if (filled(this.state)) {
                         try {
+                            // Clear the label from the repository so it can be fetched again
+                            delete this.labelRepository[this.state]
+
                             // Get the new label
-                            const newLabel = await this.getOptionLabelUsing(
-                                this.state,
-                            )
+                            const newLabel = await this.getOptionLabelUsing()
+
+                            // Store the new label in the repository
+                            if (filled(newLabel)) {
+                                this.labelRepository[this.state] = newLabel
+                            }
 
                             // Update the displayed label
                             const labelContainer =
                                 this.selectedDisplay.querySelector(
                                     '.fi-fo-select-value-label',
                                 )
-                            if (labelContainer) {
+                            if (filled(labelContainer)) {
                                 if (this.isHtmlAllowed) {
                                     labelContainer.innerHTML = newLabel
                                 } else {
@@ -901,6 +1063,9 @@ class CustomSelect {
 
     // Helper method to update an option's label in the options list
     updateOptionLabelInList(value, newLabel) {
+        // Update the label in the repository
+        this.labelRepository[value] = newLabel
+
         // Find the option in the list
         const options = this.getVisibleOptions()
         for (const option of options) {
@@ -1143,6 +1308,9 @@ class CustomSelect {
                     JSON.stringify(fetchedOptions),
                 )
 
+                // Populate the label repository with the fetched options
+                this.populateLabelRepositoryFromOptions(fetchedOptions)
+
                 // Render options
                 this.renderOptions()
             } catch (error) {
@@ -1369,10 +1537,10 @@ class CustomSelect {
 
     getSelectedOptionLabels() {
         if (!Array.isArray(this.state) || this.state.length === 0) {
-            return []
+            return {}
         }
 
-        const labels = []
+        const labels = {}
 
         for (const value of this.state) {
             // Search in flat options
@@ -1382,23 +1550,21 @@ class CustomSelect {
                     // Search in option group
                     for (const groupOption of option.options) {
                         if (groupOption.value === value) {
-                            labels.push(groupOption.label)
+                            labels[value] = groupOption.label
                             found = true
                             break
                         }
                     }
                     if (found) break
                 } else if (option.value === value) {
-                    labels.push(option.label)
+                    labels[value] = option.label
                     found = true
                     break
                 }
             }
 
-            // If not found, use the value as fallback
-            if (!found) {
-                labels.push(value)
-            }
+            // If not found, don't add a fallback
+            // This allows the caller to know which labels are missing
         }
 
         return labels
@@ -1441,6 +1607,9 @@ class CustomSelect {
 
                 // Update options with search results
                 this.options = results
+
+                // Update the label repository with the search results
+                this.populateLabelRepositoryFromOptions(results)
 
                 // Hide loading state and render options
                 this.hideLoadingState()
@@ -1590,9 +1759,36 @@ class CustomSelect {
 
         // If already selected, remove the value
         if (newState.includes(value)) {
-            newState = newState.filter((v) => v !== value)
-            this.state = newState
-            this.updateSelectedDisplay()
+            // Find and remove the badge directly from the DOM
+            const badgeToRemove = this.selectedDisplay.querySelector(
+                `[data-value="${value}"]`,
+            )
+            if (filled(badgeToRemove)) {
+                // Check if this is the last badge
+                const badgesContainer = badgeToRemove.parentElement
+                if (
+                    filled(badgesContainer) &&
+                    badgesContainer.children.length === 1
+                ) {
+                    // If this is the last badge, we need to update the display to show the placeholder
+                    newState = newState.filter((v) => v !== value)
+                    this.state = newState
+                    this.updateSelectedDisplay()
+                } else {
+                    // Otherwise, just remove this badge
+                    badgeToRemove.remove()
+
+                    // Update the state
+                    newState = newState.filter((v) => v !== value)
+                    this.state = newState
+                }
+            } else {
+                // If we couldn't find the badge, fall back to full update
+                newState = newState.filter((v) => v !== value)
+                this.state = newState
+                this.updateSelectedDisplay()
+            }
+
             this.renderOptions()
 
             // Reevaluate dropdown position after options are removed
@@ -1617,7 +1813,20 @@ class CustomSelect {
         // Add the new value
         newState.push(value)
         this.state = newState
-        this.updateSelectedDisplay()
+
+        // Check if we already have a badges container
+        const existingBadgesContainer = this.selectedDisplay.querySelector(
+            '.fi-fo-select-value-badges-ctn',
+        )
+
+        if (blank(existingBadgesContainer)) {
+            // If no badges container exists, we need to do a full update
+            this.updateSelectedDisplay()
+        } else {
+            // Otherwise, just add a new badge to the existing container
+            this.addSingleBadge(value, existingBadgesContainer)
+        }
+
         this.renderOptions()
 
         // Reevaluate dropdown position after options are added
@@ -1627,6 +1836,55 @@ class CustomSelect {
 
         this.maintainFocusInMultipleMode()
         this.onStateChange(this.state)
+    }
+
+    // Helper method to add a single badge for a value
+    async addSingleBadge(value, badgesContainer) {
+        // First check if we have the label in the repository
+        let label = this.labelRepository[value]
+
+        // If not in repository, try to find it in the options
+        if (blank(label)) {
+            label = this.getSelectedOptionLabel(value)
+
+            // If found in options, store it in the repository
+            if (filled(label)) {
+                this.labelRepository[value] = label
+            }
+        }
+
+        // If label not found and getOptionLabelsUsing is available, fetch it
+        if (blank(label) && this.getOptionLabelsUsing) {
+            try {
+                // Fetch labels for this value - returns array of {label, value} objects
+                const fetchedOptionsArray = await this.getOptionLabelsUsing()
+
+                // Find the matching option
+                for (const option of fetchedOptionsArray) {
+                    if (
+                        filled(option) &&
+                        option.value === value &&
+                        option.label !== undefined
+                    ) {
+                        label = option.label
+                        // Store the fetched label in the repository
+                        this.labelRepository[value] = label
+                        break
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching option label:', error)
+            }
+        }
+
+        // If still no label, use the value as fallback
+        if (blank(label)) {
+            label = value
+        }
+
+        // Create and add the badge
+        const badge = this.createBadgeElement(value, label)
+        badgesContainer.appendChild(badge)
     }
 
     // Helper method to maintain focus in multiple selection mode
