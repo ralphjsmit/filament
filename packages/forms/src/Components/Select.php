@@ -174,6 +174,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $labels = [];
 
             foreach ($values as $value) {
+                if ($value instanceof BackedEnum) {
+                    $value = $value->value;
+                }
+
                 foreach ($options as $groupedOptions) {
                     if (! is_array($groupedOptions)) {
                         continue;
