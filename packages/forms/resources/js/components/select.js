@@ -250,9 +250,7 @@ class CustomSelect {
                         option.classList.remove('fi-selected')
                     })
 
-                    options[this.selectedIndex].classList.add(
-                        'fi-selected',
-                    )
+                    options[this.selectedIndex].classList.add('fi-selected')
                     options[this.selectedIndex].focus()
                 } else if (event.key === 'ArrowDown') {
                     event.preventDefault()
@@ -647,7 +645,8 @@ class CustomSelect {
         // Add badges for each selected option
         selectedLabels.forEach((label, index) => {
             const badge = document.createElement('span')
-            badge.className = 'fi-badge fi-size-md fi-color fi-color-primary fi-text-color-600 dark:fi-text-color-200'
+            badge.className =
+                'fi-badge fi-size-md fi-color fi-color-primary fi-text-color-600 dark:fi-text-color-200'
 
             // Create a container for the label text
             const labelContainer = document.createElement('span')
@@ -1201,9 +1200,7 @@ class CustomSelect {
 
             // Focus the selected option
             if (this.selectedIndex >= 0) {
-                options[this.selectedIndex].classList.add(
-                    'fi-selected',
-                )
+                options[this.selectedIndex].classList.add('fi-selected')
                 options[this.selectedIndex].focus()
             }
         }
@@ -1257,9 +1254,7 @@ class CustomSelect {
 
         // Remove focus from current option
         if (this.selectedIndex >= 0 && this.selectedIndex < options.length) {
-            options[this.selectedIndex].classList.remove(
-                'fi-selected',
-            )
+            options[this.selectedIndex].classList.remove('fi-selected')
         }
 
         // If we're at the last option and search input is available, focus the search input
@@ -1297,9 +1292,7 @@ class CustomSelect {
 
         // Remove focus from current option
         if (this.selectedIndex >= 0 && this.selectedIndex < options.length) {
-            options[this.selectedIndex].classList.remove(
-                'fi-selected',
-            )
+            options[this.selectedIndex].classList.remove('fi-selected')
         }
 
         // If we're at the first option or haven't selected an option yet, focus the search input if available
@@ -1357,13 +1350,17 @@ class CustomSelect {
         } else {
             // Get options from nested ungrouped list when there are groups
             ungroupedOptions = Array.from(
-                this.optionsList.querySelectorAll(':scope > ul.fi-dropdown-list > li[role="option"]'),
+                this.optionsList.querySelectorAll(
+                    ':scope > ul.fi-dropdown-list > li[role="option"]',
+                ),
             )
         }
 
         // Get all option elements that are in option groups
         const groupOptions = Array.from(
-            this.optionsList.querySelectorAll('li.fi-fo-select-option-group > ul > li[role="option"]'),
+            this.optionsList.querySelectorAll(
+                'li.fi-fo-select-option-group > ul > li[role="option"]',
+            ),
         )
 
         // Combine and return all options
@@ -1497,7 +1494,10 @@ class CustomSelect {
 
     showNoResultsMessage() {
         // Clear options list if it's in the DOM and not already empty
-        if (this.optionsList.parentNode === this.dropdown && this.optionsList.children.length > 0) {
+        if (
+            this.optionsList.parentNode === this.dropdown &&
+            this.optionsList.children.length > 0
+        ) {
             this.optionsList.innerHTML = ''
         }
 
