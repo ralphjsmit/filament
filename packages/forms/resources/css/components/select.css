@@ -3,115 +3,88 @@
         @apply hidden;
     }
 
-    & .fi-select-container {
+    & .fi-fo-select-ctn {
         @apply relative;
     }
 
-    & .fi-select-button {
-        @apply focus:border-primary-500 focus:ring-primary-500 flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-start text-gray-900 shadow-sm outline-none focus:ring-2;
+    & .fi-fo-select-btn {
+        @apply flex text-base text-gray-950 sm:text-sm sm:leading-6 dark:text-white w-full rounded-lg ps-3 pe-8 py-1.5 text-start focus:ring-0 focus:outline-none;
+
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+
+        :dir(rtl) & {
+            background-position: left 0.5rem center;
+        }
     }
 
-    & .fi-select-value {
-        @apply flex w-full items-center truncate;
+    & .fi-fo-select-value {
+        @apply flex w-full items-center;
     }
 
-    & .fi-select-dropdown {
-        @apply absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm;
+    & .fi-dropdown-panel {
+        @apply mt-1 max-w-full! max-h-60;
     }
 
-    & .fi-select-options-list {
-        @apply m-0 list-none p-0;
+    & .fi-fo-select-option {
+        @apply select-none;
     }
 
-    & .fi-select-option-placeholder {
-        @apply cursor-pointer py-2 pr-9 pl-3 text-gray-900 select-none hover:bg-gray-100;
-    }
-
-    & .fi-select-option-group {
-        @apply cursor-default py-2 pr-9 pl-3 font-semibold text-gray-900 select-none;
-    }
-
-    & .fi-select-option-group-list {
-        @apply m-0 list-none p-0 pl-2;
-    }
-
-    & .fi-select-option {
-        @apply py-2 pr-9 pl-3 text-gray-900 select-none;
-    }
-
-    & .fi-select-option-enabled {
-        @apply cursor-pointer hover:bg-gray-100;
-    }
-
-    & .fi-select-option-disabled {
-        @apply cursor-not-allowed opacity-50;
-    }
-
-    & .fi-select-option-selected {
-        @apply bg-primary-50 text-primary-900;
-    }
-
-    & .fi-select-option-checkmark {
-        @apply text-primary-600 absolute inset-y-0 right-0 flex items-center pr-4;
-    }
-
-    & .fi-select-option-checkmark-icon {
-        @apply h-5 w-5;
-    }
-
-    & .fi-select-option-focused {
+    & .fi-fo-select-option-focused {
         @apply bg-gray-100;
     }
 
-    & .fi-select-badges {
+    & .fi-fo-select-badges {
         @apply flex flex-wrap gap-1;
     }
 
-    & .fi-select-badge {
+    & .fi-fo-select-badge {
         @apply bg-primary-50 text-primary-700 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium;
     }
 
-    & .fi-select-badge-label {
+    & .fi-fo-select-badge-label {
         @apply mr-1;
     }
 
-    & .fi-select-badge-remove {
+    & .fi-fo-select-badge-remove {
         @apply text-primary-400 hover:bg-primary-200 hover:text-primary-700 focus:bg-primary-200 focus:text-primary-700 -mr-1 ml-0.5 h-4 w-4 rounded-full p-0 focus:outline-none;
     }
 
-    & .fi-select-badge-remove-icon {
+    & .fi-fo-select-badge-remove-icon {
         @apply h-3 w-3;
     }
 
-    & .fi-select-single-label {
+    & .fi-fo-select-single-label {
         @apply mr-auto;
     }
 
-    & .fi-select-single-remove {
+    & .fi-fo-select-single-remove {
         @apply ml-2 h-5 w-5 rounded-full p-0 text-gray-400 hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 focus:outline-none;
     }
 
-    & .fi-select-single-remove-icon {
+    & .fi-fo-select-single-remove-icon {
         @apply h-4 w-4;
     }
 
-    & .fi-select-search-container {
+    & .fi-fo-select-search-ctn {
         @apply sticky top-0 z-10 border-b border-gray-200 bg-white p-2;
     }
 
-    & .fi-select-search-input {
+    & .fi-fo-select-search-input {
         @apply w-full border-none bg-transparent px-3 py-1.5 text-gray-900 shadow-none ring-0 placeholder:text-gray-400 focus:ring-0 focus:outline-none sm:text-sm;
     }
 
-    & .fi-select-disabled {
+    & .fi-disabled {
         @apply cursor-not-allowed opacity-70;
     }
 
-    & .fi-select-loading {
-        @apply px-3 py-2 text-sm text-gray-500 italic;
+    & .fi-fo-select-loading {
+        @apply px-3 py-1.5 text-sm text-gray-500 italic;
     }
 
-    & .fi-select-no-results {
-        @apply px-3 py-2 text-sm text-gray-500 italic;
+    & .fi-fo-select-no-results {
+        @apply px-3 py-1.5 text-sm text-gray-500 italic;
     }
 }
