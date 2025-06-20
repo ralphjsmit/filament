@@ -20,52 +20,24 @@
         }
     }
 
-    & .fi-fo-select-value {
+    & .fi-fo-select-value-ctn {
         @apply flex w-full items-center;
+    }
+
+    & .fi-fo-select-value-badges-ctn {
+        @apply flex flex-wrap gap-1.5;
+    }
+
+    & .fi-fo-select-value-label {
+        @apply flex-1;
+    }
+
+    & .fi-fo-select-value-remove-btn {
+        @apply text-gray-500 hover:text-gray-600 focus-visible:text-gray-600 dark:hover:text-gray-300 dark:focus-visible:text-gray-300 focus-visible:outline-none;
     }
 
     & .fi-dropdown-panel {
         @apply mt-1 max-w-full! max-h-60;
-    }
-
-    & .fi-fo-select-option {
-        @apply select-none;
-    }
-
-    & .fi-fo-select-option-focused {
-        @apply bg-gray-100;
-    }
-
-    & .fi-fo-select-badges {
-        @apply flex flex-wrap gap-1;
-    }
-
-    & .fi-fo-select-badge {
-        @apply bg-primary-50 text-primary-700 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium;
-    }
-
-    & .fi-fo-select-badge-label {
-        @apply mr-1;
-    }
-
-    & .fi-fo-select-badge-remove {
-        @apply text-primary-400 hover:bg-primary-200 hover:text-primary-700 focus:bg-primary-200 focus:text-primary-700 -mr-1 ml-0.5 h-4 w-4 rounded-full p-0 focus:outline-none;
-    }
-
-    & .fi-fo-select-badge-remove-icon {
-        @apply h-3 w-3;
-    }
-
-    & .fi-fo-select-single-label {
-        @apply mr-auto;
-    }
-
-    & .fi-fo-select-single-remove {
-        @apply ml-2 h-5 w-5 rounded-full p-0 text-gray-400 hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700 focus:outline-none;
-    }
-
-    & .fi-fo-select-single-remove-icon {
-        @apply h-4 w-4;
     }
 
     & .fi-fo-select-search-ctn {

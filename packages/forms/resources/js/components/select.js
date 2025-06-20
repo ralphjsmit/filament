@@ -178,7 +178,7 @@ class VanillaSelect {
 
         // Create the selected value display
         this.selectedDisplay = document.createElement('span')
-        this.selectedDisplay.className = 'fi-fo-select-value'
+        this.selectedDisplay.className = 'fi-fo-select-value-ctn'
 
         // Update the selected display based on current state
         this.updateSelectedDisplay()
@@ -187,7 +187,7 @@ class VanillaSelect {
 
         // Create the dropdown
         this.dropdown = document.createElement('div')
-        this.dropdown.className = 'fi-dropdown-panel'
+        this.dropdown.className = 'fi-dropdown-panel fi-scrollable'
         this.dropdown.setAttribute('role', 'listbox')
         this.dropdown.setAttribute('tabindex', '-1')
         this.dropdown.style.display = 'none'
@@ -247,11 +247,11 @@ class VanillaSelect {
 
                     // Remove focus from any previously focused option
                     options.forEach((option) => {
-                        option.classList.remove('fi-fo-select-option-focused')
+                        option.classList.remove('fi-selected')
                     })
 
                     options[this.selectedIndex].classList.add(
-                        'fi-fo-select-option-focused',
+                        'fi-selected',
                     )
                     options[this.selectedIndex].focus()
                 } else if (event.key === 'ArrowDown') {
@@ -396,9 +396,9 @@ class VanillaSelect {
 
     renderOptionGroup(label, options) {
         const optionGroup = document.createElement('li')
-        optionGroup.className = 'fi-dropdown-header'
 
-        const optionGroupLabel = document.createElement('span')
+        const optionGroupLabel = document.createElement('div')
+        optionGroupLabel.className = 'fi-dropdown-header'
         optionGroupLabel.textContent = label
 
         const groupOptionsList = document.createElement('ul')
@@ -409,6 +409,7 @@ class VanillaSelect {
             groupOptionsList.appendChild(optionElement)
         })
 
+        optionGroup.appendChild(optionGroupLabel)
         optionGroup.appendChild(groupOptionsList)
         this.optionsList.appendChild(optionGroup)
     }
@@ -589,31 +590,36 @@ class VanillaSelect {
     addBadgesForSelectedOptions(selectedLabels) {
         // Create a container for the badges
         const badgesContainer = document.createElement('div')
-        badgesContainer.className = 'fi-fo-select-badges'
+        badgesContainer.className = 'fi-fo-select-value-badges-ctn'
 
         // Add badges for each selected option
         selectedLabels.forEach((label, index) => {
             const badge = document.createElement('span')
-            badge.className = 'fi-fo-select-badge'
+            badge.className = 'fi-badge fi-size-md fi-color fi-color-primary fi-text-color-600 dark:fi-text-color-200'
 
             // Create a container for the label text
             const labelContainer = document.createElement('span')
-            labelContainer.className = 'fi-fo-select-badge-label'
+            labelContainer.className = 'fi-badge-label-ctn'
+
+            // Create an element for the label text
+            const labelElement = document.createElement('span')
+            labelElement.className = 'fi-badge-label'
 
             if (this.isHtmlAllowed) {
-                labelContainer.innerHTML = label
+                labelElement.innerHTML = label
             } else {
-                labelContainer.textContent = label
+                labelElement.textContent = label
             }
 
+            labelContainer.appendChild(labelElement)
             badge.appendChild(labelContainer)
 
             // Add a cross button to remove the selection
             const removeButton = document.createElement('button')
             removeButton.type = 'button'
-            removeButton.className = 'fi-fo-select-badge-remove'
+            removeButton.className = 'fi-badge-delete-btn'
             removeButton.innerHTML =
-                '<svg class="fi-fo-select-badge-remove-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>'
+                '<svg class="fi-icon fi-size-xs" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path></svg>'
             removeButton.setAttribute(
                 'aria-label',
                 'Remove ' +
@@ -675,7 +681,7 @@ class VanillaSelect {
     addSingleSelectionDisplay(selectedLabel) {
         // Create a container for the label
         const labelContainer = document.createElement('span')
-        labelContainer.className = 'fi-fo-select-single-label'
+        labelContainer.className = 'fi-fo-select-value-label'
 
         if (this.isHtmlAllowed) {
             labelContainer.innerHTML = selectedLabel
@@ -692,9 +698,9 @@ class VanillaSelect {
 
         const removeButton = document.createElement('button')
         removeButton.type = 'button'
-        removeButton.className = 'fi-fo-select-single-remove'
+        removeButton.className = 'fi-fo-select-value-remove-btn'
         removeButton.innerHTML =
-            '<svg class="fi-fo-select-single-remove-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>'
+            '<svg class="fi-icon fi-size-sm" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>'
         removeButton.setAttribute('aria-label', 'Clear selection')
 
         removeButton.addEventListener('click', (event) => {
@@ -813,7 +819,7 @@ class VanillaSelect {
                             // Update the displayed label
                             const labelContainer =
                                 this.selectedDisplay.querySelector(
-                                    '.fi-fo-select-single-label',
+                                    '.fi-fo-select-value-label',
                                 )
                             if (labelContainer) {
                                 if (this.isHtmlAllowed) {
@@ -1143,7 +1149,7 @@ class VanillaSelect {
             // Focus the selected option
             if (this.selectedIndex >= 0) {
                 options[this.selectedIndex].classList.add(
-                    'fi-fo-select-option-focused',
+                    'fi-selected',
                 )
                 options[this.selectedIndex].focus()
             }
@@ -1188,7 +1194,7 @@ class VanillaSelect {
         // Remove focus from all options
         const options = this.getVisibleOptions()
         options.forEach((option) => {
-            option.classList.remove('fi-fo-select-option-focused')
+            option.classList.remove('fi-selected')
         })
     }
 
@@ -1199,7 +1205,7 @@ class VanillaSelect {
         // Remove focus from current option
         if (this.selectedIndex >= 0 && this.selectedIndex < options.length) {
             options[this.selectedIndex].classList.remove(
-                'fi-fo-select-option-focused',
+                'fi-selected',
             )
         }
 
@@ -1218,7 +1224,7 @@ class VanillaSelect {
 
         // Focus next option (wrap around to the first option if at the end)
         this.selectedIndex = (this.selectedIndex + 1) % options.length
-        options[this.selectedIndex].classList.add('fi-fo-select-option-focused')
+        options[this.selectedIndex].classList.add('fi-selected')
         options[this.selectedIndex].focus()
 
         // Set aria-activedescendant to the ID of the focused option
@@ -1239,7 +1245,7 @@ class VanillaSelect {
         // Remove focus from current option
         if (this.selectedIndex >= 0 && this.selectedIndex < options.length) {
             options[this.selectedIndex].classList.remove(
-                'fi-fo-select-option-focused',
+                'fi-selected',
             )
         }
 
@@ -1259,7 +1265,7 @@ class VanillaSelect {
         // Focus previous option (wrap around to the last option if at the beginning)
         this.selectedIndex =
             (this.selectedIndex - 1 + options.length) % options.length
-        options[this.selectedIndex].classList.add('fi-fo-select-option-focused')
+        options[this.selectedIndex].classList.add('fi-selected')
         options[this.selectedIndex].focus()
 
         // Set aria-activedescendant to the ID of the focused option
@@ -1585,7 +1591,7 @@ class VanillaSelect {
         }
 
         // Focus the selected option
-        options[this.selectedIndex].classList.add('fi-fo-select-option-focused')
+        options[this.selectedIndex].classList.add('fi-selected')
         options[this.selectedIndex].focus()
     }
 
@@ -1629,7 +1635,7 @@ class VanillaSelect {
             // If there's a remove button in single mode, disable it
             if (!this.isMultiple && this.canSelectPlaceholder) {
                 const removeButton = this.container.querySelector(
-                    '.fi-fo-select-single-remove',
+                    '.fi-fo-select-value-remove-btn',
                 )
                 if (removeButton) {
                     removeButton.setAttribute('disabled', 'disabled')
@@ -1662,7 +1668,7 @@ class VanillaSelect {
             // If there's a remove button in single mode, enable it
             if (!this.isMultiple && this.canSelectPlaceholder) {
                 const removeButton = this.container.querySelector(
-                    '.fi-fo-select-single-remove',
+                    '.fi-fo-select-value-remove-btn',
                 )
                 if (removeButton) {
                     removeButton.removeAttribute('disabled')
