@@ -273,11 +273,24 @@ class VanillaSelect {
                     const options = this.getVisibleOptions()
                     if (options.length === 0) return
 
-                    // Set selectedIndex to 0 to ensure we focus the last option
-                    this.selectedIndex = 0
+                    // Set selectedIndex to the last option
+                    this.selectedIndex = options.length - 1
                     // Blur the search input to allow arrow key navigation between options
                     this.searchInput.blur()
-                    this.focusPreviousOption()
+
+                    // Focus the last option directly
+                    options[this.selectedIndex].classList.add('fi-selected')
+                    options[this.selectedIndex].focus()
+
+                    // Set aria-activedescendant to the ID of the focused option
+                    if (options[this.selectedIndex].id) {
+                        this.dropdown.setAttribute(
+                            'aria-activedescendant',
+                            options[this.selectedIndex].id,
+                        )
+                    }
+
+                    this.scrollOptionIntoView(options[this.selectedIndex])
                 }
             })
         }
@@ -1323,13 +1336,13 @@ class VanillaSelect {
         } else {
             // Get options from nested ungrouped list when there are groups
             ungroupedOptions = Array.from(
-                this.optionsList.querySelectorAll('ul.fi-dropdown-list > li[role="option"]'),
+                this.optionsList.querySelectorAll(':scope > ul.fi-dropdown-list > li[role="option"]'),
             )
         }
 
         // Get all option elements that are in option groups
         const groupOptions = Array.from(
-            this.optionsList.querySelectorAll('li > ul > li[role="option"]'),
+            this.optionsList.querySelectorAll('li.fi-fo-select-option-group > ul > li[role="option"]'),
         )
 
         // Combine and return all options
