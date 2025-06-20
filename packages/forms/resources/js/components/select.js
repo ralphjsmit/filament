@@ -1154,17 +1154,18 @@ class CustomSelect {
             }
         }
 
+        // Hide any existing messages (like "No results")
+        this.hideLoadingState()
+
         // If searchable, focus the search input
         if (this.isSearchable && this.searchInput) {
             this.searchInput.value = ''
             this.searchInput.focus()
 
-            // Reset options to original if there was a previous search
-            if (this.searchQuery) {
-                this.searchQuery = ''
-                this.options = JSON.parse(JSON.stringify(this.originalOptions))
-                this.renderOptions()
-            }
+            // Always reset search query and options when reopening
+            this.searchQuery = ''
+            this.options = JSON.parse(JSON.stringify(this.originalOptions))
+            this.renderOptions()
         } else {
             // Focus the first option or the selected option
             this.selectedIndex = -1
