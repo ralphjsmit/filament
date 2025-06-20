@@ -314,6 +314,13 @@ trait InteractsWithActions
     {
         $this->mountedActions = [];
         $this->cachedMountedActions = null;
+
+        foreach ($this->cachedSchemas as $schemaName => $schema) {
+            if (str($schemaName)->startsWith('mountedActionSchema')) {
+                unset($this->cachedSchemas[$schemaName]);
+            }
+        }
+
         $this->mountAction($name, $arguments, $context);
     }
 
