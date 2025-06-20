@@ -284,7 +284,6 @@ class VanillaSelect {
 
         // Create the options list
         this.optionsList = document.createElement('ul')
-        this.optionsList.className = 'fi-dropdown-list'
 
         // Render options
         this.renderOptions()
@@ -314,15 +313,29 @@ class VanillaSelect {
         let optionsToRender = this.options
         let optionsCount = 0
 
+        // Check if we have any grouped options
+        let hasGroupedOptions = false
+
         this.options.forEach((option) => {
             if (option.options && Array.isArray(option.options)) {
                 // Count options in groups
                 optionsCount += option.options.length
+                hasGroupedOptions = true
             } else {
                 // Count regular options
                 optionsCount++
             }
         })
+
+        // Set the appropriate class based on whether we have grouped options
+        if (hasGroupedOptions) {
+            this.optionsList.className = 'fi-fo-select-options-ctn'
+        } else {
+            this.optionsList.className = 'fi-dropdown-list'
+        }
+
+        // Create a list for ungrouped options only if we have grouped options
+        let ungroupedList = hasGroupedOptions ? null : this.optionsList
 
         // Render options with limit in mind
         let renderedCount = 0
@@ -372,11 +385,18 @@ class VanillaSelect {
                     continue
                 }
 
+                // Create ungrouped list if it doesn't exist yet and we have grouped options
+                if (!ungroupedList && hasGroupedOptions) {
+                    ungroupedList = document.createElement('ul')
+                    ungroupedList.className = 'fi-dropdown-list'
+                    this.optionsList.appendChild(ungroupedList)
+                }
+
                 const optionElement = this.createOptionElement(
                     option.value,
                     option,
                 )
-                this.optionsList.appendChild(optionElement)
+                ungroupedList.appendChild(optionElement)
                 renderedCount++
                 totalRenderedCount++
             }
@@ -396,6 +416,7 @@ class VanillaSelect {
 
     renderOptionGroup(label, options) {
         const optionGroup = document.createElement('li')
+        optionGroup.className = 'fi-fo-select-option-group'
 
         const optionGroupLabel = document.createElement('div')
         optionGroupLabel.className = 'fi-dropdown-header'
@@ -434,9 +455,7 @@ class VanillaSelect {
         const option = document.createElement('li')
         option.className = 'fi-dropdown-list-item fi-fo-select-option'
 
-        if (!isDisabled) {
-            option.classList.add('fi-fo-select-option-enabled')
-        } else {
+        if (isDisabled) {
             option.classList.add('fi-disabled')
         }
 
@@ -1293,10 +1312,20 @@ class VanillaSelect {
     }
 
     getVisibleOptions() {
-        // Get all option elements that are not in option groups
-        const directOptions = Array.from(
-            this.optionsList.querySelectorAll('li[role="option"]'),
-        )
+        let ungroupedOptions = []
+
+        // Check if optionsList itself has the fi-dropdown-list class (no grouped options case)
+        if (this.optionsList.classList.contains('fi-dropdown-list')) {
+            // Get direct child options when there are no groups
+            ungroupedOptions = Array.from(
+                this.optionsList.querySelectorAll(':scope > li[role="option"]'),
+            )
+        } else {
+            // Get options from nested ungrouped list when there are groups
+            ungroupedOptions = Array.from(
+                this.optionsList.querySelectorAll('ul.fi-dropdown-list > li[role="option"]'),
+            )
+        }
 
         // Get all option elements that are in option groups
         const groupOptions = Array.from(
@@ -1304,7 +1333,7 @@ class VanillaSelect {
         )
 
         // Combine and return all options
-        return [...directOptions, ...groupOptions]
+        return [...ungroupedOptions, ...groupOptions]
     }
 
     getSelectedOptionLabels() {

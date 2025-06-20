@@ -40,6 +40,14 @@
         @apply mt-1 max-w-full! max-h-60;
     }
 
+    & .fi-fo-select-options-ctn {
+        @apply divide-y divide-gray-100 dark:divide-white/5;
+    }
+
+    & .fi-fo-select-option-group {
+        @apply divide-y divide-gray-100 dark:divide-white/5;
+    }
+
     & .fi-fo-select-search-ctn {
         @apply sticky top-0 z-10 border-b border-gray-200 bg-white p-2;
     }
