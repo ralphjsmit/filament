@@ -11,7 +11,10 @@ abstract class RichContentCustomBlock
 
     public static function getLabel(): string
     {
-        return Str::headline(static::getId());
+        return (string) str(static::getId())
+            ->kebab()
+            ->replace('-', ' ')
+            ->ucwords();
     }
 
     /**
