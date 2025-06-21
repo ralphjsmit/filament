@@ -52,6 +52,7 @@
         "@tiptap/extension-subscript": "3.0.0-beta.14",
         "@tiptap/extension-superscript": "3.0.0-beta.14",
         "@tiptap/extension-text": "3.0.0-beta.14",
+        "@tiptap/extension-text-align": "^3.0.0-beta.14",
         "@tiptap/extension-underline": "3.0.0-beta.14",
         "@tiptap/extensions": "3.0.0-beta.14",
         "@tiptap/pm": "3.0.0-beta.14",

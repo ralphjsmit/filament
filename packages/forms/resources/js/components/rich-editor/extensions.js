@@ -23,6 +23,7 @@ import Strike from '@tiptap/extension-strike'
 import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
 import Text from '@tiptap/extension-text'
+import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 
 import getMergeTagSuggestion from './merge-tag-suggestion.js'
@@ -94,6 +95,11 @@ export default async ({
     Subscript,
     Superscript,
     Text,
+    TextAlign.configure({
+        types: ['heading', 'paragraph'],
+        alignments: ['start', 'center', 'end', 'justify'],
+        defaultAlignment: 'start',
+    }),
     Underline,
     UndoRedo,
     ...(

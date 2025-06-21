@@ -202,6 +202,26 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().redo().run()')
                 ->icon(Heroicon::ArrowUturnRight)
                 ->iconAlias('forms:components.rich-editor.toolbar.redo'),
+            RichEditorTool::make('alignStart')
+                ->label(__('filament-forms::components.rich_editor.tools.align_start'))
+                ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'start\').run()')
+                ->icon('fi-s-align-start')
+                ->iconAlias('forms:components.rich-editor.toolbar.align-start'),
+            RichEditorTool::make('alignCenter')
+                ->label(__('filament-forms::components.rich_editor.tools.align_center'))
+                ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'center\').run()')
+                ->icon('fi-s-align-center')
+                ->iconAlias('forms:components.rich-editor.toolbar.align-center'),
+            RichEditorTool::make('alignEnd')
+                ->label(__('filament-forms::components.rich_editor.tools.align_end'))
+                ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'end\').run()')
+                ->icon('fi-s-align-end')
+                ->iconAlias('forms:components.rich-editor.toolbar.align-end'),
+            RichEditorTool::make('alignJustify')
+                ->label(__('filament-forms::components.rich_editor.tools.align_justify'))
+                ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
+                ->icon('fi-s-align-justify')
+                ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
         ]);
 
         $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
@@ -548,7 +568,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
-            ['h2', 'h3'],
+            ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList', 'horizontalRule', 'highlight', 'lead', 'small'],
             [
                 'attachFiles',
