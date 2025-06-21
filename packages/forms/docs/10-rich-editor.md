@@ -56,7 +56,7 @@ RichEditor::make('content')
     ->toolbarButtons([
         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
         ['h2', 'h3'],
-        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList', 'horizontalRule', 'highlight', 'lead', 'small'],
         ['attachFiles'], // The `customBlocks` and `mergeTags` tools are also added here if those features are used.
         ['undo', 'redo'],
     ])
