@@ -37,7 +37,10 @@
         "@tiptap/extension-code-block": "3.0.0-beta.14",
         "@tiptap/extension-document": "3.0.0-beta.14",
         "@tiptap/extension-dropcursor": "3.0.0-beta.14",
+        "@tiptap/extension-hard-break": "^3.0.0-beta.14",
         "@tiptap/extension-heading": "3.0.0-beta.14",
+        "@tiptap/extension-highlight": "^3.0.0-beta.14",
+        "@tiptap/extension-horizontal-rule": "^3.0.0-beta.14",
         "@tiptap/extension-image": "3.0.0-beta.14",
         "@tiptap/extension-italic": "3.0.0-beta.14",
         "@tiptap/extension-link": "3.0.0-beta.14",
@@ -91,10 +94,5 @@
         "tippy.js": "^6.3.7",
         "uuid-browser": "^3.1.0",
         "vanilla-colorful": "^0.7.2"
-    },
-    "dependencies": {
-        "@tiptap/extension-hard-break": "^3.0.0-beta.14",
-        "@tiptap/extension-highlight": "^3.0.0-beta.14",
-        "@tiptap/extension-horizontal-rule": "^3.0.0-beta.14"
     }
 }
