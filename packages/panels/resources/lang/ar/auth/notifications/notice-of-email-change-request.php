@@ -2,15 +2,13 @@
 
 return [
 
-    'subject' => 'Your email address is being changed',
-
-    'lines' => [
-        'We received a request to change the email address associated with your account. Your password was used to confirm this change.',
-        'Once verified, the new email address on your account will be: :email.',
-        'You can block the change before it is verified by clicking the button below.',
-        'If you did not make this request, please contact us immediately.',
-    ],
-
-    'action' => 'Block Email Change',
+'subject' => 'جارٍ تغيير عنوان بريدك الإلكتروني',
+'lines' => [
+    'تلقينا طلباً لتغيير عنوان البريد الإلكتروني المرتبط بحسابك. تم استخدام كلمة المرور الخاصة بك لتأكيد هذا التغيير.',
+    'بمجرد التحقق، سيصبح عنوان البريد الإلكتروني الجديد في حسابك: :email.',
+    'يمكنك منع التغيير قبل التحقق منه بالنقر على الزر أدناه.',
+    'إذا لم تقم بهذا الطلب، يرجى التواصل معنا فوراً.',
+],
+'action' => 'منع تغيير البريد الإلكتروني',
 
 ];
