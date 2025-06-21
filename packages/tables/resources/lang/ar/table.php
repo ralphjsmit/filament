@@ -243,6 +243,6 @@ return [
 
     ],
 
-    'default_model_label' => 'سجل',
+    'default_model_label' => 'سِجِلّ',
 
 ];
