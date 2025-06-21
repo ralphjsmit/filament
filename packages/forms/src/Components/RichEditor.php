@@ -172,6 +172,26 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->activeJsExpression('isPanelActive(\'mergeTags\')')
                 ->icon('fi-s-merge-tag')
                 ->iconAlias('forms:components.rich-editor.toolbar.merge-tags'),
+            RichEditorTool::make('horizontalRule')
+                ->label(__('filament-forms::components.rich_editor.tools.horizontal_rule'))
+                ->jsHandler('$getEditor()?.chain().focus().setHorizontalRule().run()')
+                ->icon(Heroicon::Minus)
+                ->iconAlias('forms:components.rich-editor.toolbar.horizontal-rule'),
+            RichEditorTool::make('highlight')
+                ->label(__('filament-forms::components.rich_editor.tools.highlight'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHighlight().run()')
+                ->icon('fi-s-highlight')
+                ->iconAlias('forms:components.rich-editor.toolbar.highlight'),
+            RichEditorTool::make('small')
+                ->label(__('filament-forms::components.rich_editor.tools.small'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleSmall().run()')
+                ->icon('fi-s-small')
+                ->iconAlias('forms:components.rich-editor.toolbar.small'),
+            RichEditorTool::make('lead')
+                ->label(__('filament-forms::components.rich_editor.tools.lead'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleLead().run()')
+                ->icon('fi-s-lead')
+                ->iconAlias('forms:components.rich-editor.toolbar.lead'),
             RichEditorTool::make('undo')
                 ->label(__('filament-forms::components.rich_editor.tools.undo'))
                 ->jsHandler('$getEditor()?.chain().focus().undo().run()')
@@ -529,7 +549,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3'],
-            ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+            ['blockquote', 'codeBlock', 'bulletList', 'orderedList', 'horizontalRule', 'highlight', 'lead', 'small'],
             [
                 'attachFiles',
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),

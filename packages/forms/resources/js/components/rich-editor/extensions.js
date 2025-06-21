@@ -1,20 +1,24 @@
-import { UndoRedo } from '@tiptap/extensions'
+import { Dropcursor, Gapcursor, UndoRedo } from '@tiptap/extensions'
 import Blockquote from '@tiptap/extension-blockquote'
 import Bold from '@tiptap/extension-bold'
 import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
 import CustomBlock from './extension-custom-block.js'
 import Document from '@tiptap/extension-document'
-import Dropcursor from '@tiptap/extension-dropcursor'
+import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
+import Highlight from '@tiptap/extension-highlight'
+import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import Italic from '@tiptap/extension-italic'
 import Image from './extension-image.js'
+import Lead from './extension-lead.js'
 import Link from '@tiptap/extension-link'
 import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list'
 import LocalFiles from './extension-local-files.js'
 import MergeTag from './extension-merge-tag.js'
 import Paragraph from '@tiptap/extension-paragraph'
 import Placeholder from '@tiptap/extension-placeholder'
+import Small from './extension-small.js'
 import Strike from '@tiptap/extension-strike'
 import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
@@ -50,9 +54,14 @@ export default async ({
     }),
     Document,
     Dropcursor,
+    Gapcursor,
+    HardBreak,
     Heading,
+    Highlight,
+    HorizontalRule,
     Italic,
     Image,
+    Lead,
     Link.configure({
         autolink: true,
         openOnClick: false,
@@ -80,6 +89,7 @@ export default async ({
     Placeholder.configure({
         placeholder,
     }),
+    Small,
     Strike,
     Subscript,
     Superscript,
