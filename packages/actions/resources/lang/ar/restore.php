@@ -55,15 +55,15 @@ return [
             ],
 
             'restored_partial' => [
-                'title' => 'تمت استعادة :count من :total',
-                'missing_authorization_failure_message' => 'ليس لديك إذن لاستعادة :count.',
-                'missing_processing_failure_message' => ':count لم يتم استعادته.',
+                'title' => 'تمت استعادة :count من أصل :total',
+                'missing_authorization_failure_message' => 'ليس لديك صلاحية لاستعادة :count.',
+                'missing_processing_failure_message' => 'تعذر استعادة :count.',
             ],
 
             'restored_none' => [
-                'title' => 'لم يتم استعادة أي شيء',
-                'missing_authorization_failure_message' => 'ليس لديك إذن لاستعادة :count.',
-                'missing_processing_failure_message' => ':count لم يتم استعادته.',
+                'title' => 'فشل في الاستعادة',
+                'missing_authorization_failure_message' => 'ليس لديك صلاحية لاستعادة :count.',
+                'missing_processing_failure_message' => 'تعذر استعادة :count.',
             ],
 
         ],
