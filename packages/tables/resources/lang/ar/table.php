@@ -157,7 +157,7 @@ return [
             'placeholder' => 'الكل',
 
             'relationship' => [
-                'empty_option_label' => 'None',
+                'empty_option_label' => 'لا يوجد اختيار',
             ],
 
         ],
