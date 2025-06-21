@@ -448,6 +448,9 @@ class Action extends ViewComponent implements Arrayable
         return "mountAction('{$this->getName()}'{$argumentsParameter}{$contextParameter})";
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getContext(): array
     {
         $context = [];
