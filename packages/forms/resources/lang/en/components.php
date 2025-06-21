@@ -472,6 +472,10 @@ return [
         'no_merge_tag_search_results_message' => 'No merge tag results.',
 
         'tools' => [
+            'align_center' => 'Align center',
+            'align_end' => 'Align end',
+            'align_justify' => 'Align justify',
+            'align_start' => 'Align start',
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
