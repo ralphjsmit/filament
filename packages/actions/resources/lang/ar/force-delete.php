@@ -54,17 +54,17 @@ return [
                 'title' => 'تم الحذف',
             ],
 
-            'deleted_partial' => [
-                'title' => 'تم حذف :count من :total',
-                'missing_authorization_failure_message' => 'ليس لديك إذن لحذف :count.',
-                'missing_processing_failure_message' => 'لم يتم حذف :count.',
-            ],
-
-            'deleted_none' => [
-                'title' => 'لم يتم حذف أي شيء',
-                'missing_authorization_failure_message' => 'ليس لديك إذن لحذف :count.',
-                'missing_processing_failure_message' => 'لم يتم حذف أي شيء.',
-            ],
+        'deleted_partial' => [
+            'title' => 'تم حذف :count من أصل :total',
+            'missing_authorization_failure_message' => 'ليس لديك صلاحية لحذف :count.',
+            'missing_processing_failure_message' => 'تعذر حذف :count.',
+        ],
+        
+        'deleted_none' => [
+            'title' => 'فشل في الحذف',
+            'missing_authorization_failure_message' => 'ليس لديك صلاحية لحذف :count.',
+            'missing_processing_failure_message' => 'تعذر حذف :count.',
+        ],
 
         ],
 
