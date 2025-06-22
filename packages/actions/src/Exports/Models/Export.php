@@ -100,10 +100,10 @@ class Export extends Model
         return 'filament_exports' . DIRECTORY_SEPARATOR . $this->getKey();
     }
 
-    public function clearFileDirectory(): void
+    public function deleteFileDirectory(): void
     {
-        $directory = $this->getFileDirectory();
         $disk = $this->getFileDisk();
+        $directory = $this->getFileDirectory();
 
         if ($disk->directoryExists($directory)) {
             $disk->deleteDirectory($directory);
