@@ -249,7 +249,7 @@
                                     <div
                                         class="fi-fo-builder-item-preview-edit-overlay"
                                         role="button"
-                                        x-on:click.stop="{{ '$wire.mountFormComponentAction(\'' . $statePath . '\', \'edit\', { item: \'' . $itemKey . '\' })' }}"
+                                        x-on:click.stop="{{ '$wire.mountAction(\'edit\', { item: \'' . $itemKey . '\' }, { schemaComponent: \'' . $key . '\' })' }}"
                                     ></div>
                                 @endif
                             @else
