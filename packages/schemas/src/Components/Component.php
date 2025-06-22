@@ -31,6 +31,7 @@ use Filament\Schemas\Concerns\HasGap;
 use Filament\Schemas\Concerns\HasStateBindingModifiers;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
+use Filament\Support\Concerns\CanOrderColumns;
 use Filament\Support\Concerns\CanSpanColumns;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Model;
@@ -50,6 +51,7 @@ class Component extends ViewComponent
     use CanGrow;
     use CanPartiallyRender;
     use CanPoll;
+    use CanOrderColumns;
     use CanSpanColumns;
     use Cloneable;
     use HasActions;
