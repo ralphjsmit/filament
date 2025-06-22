@@ -59,7 +59,7 @@
     }}
 >
     @if ($label && $labelSrOnly)
-        <label 
+        <label
             @if ($useDivLabel)
                 :id="$id . '-label'"
             @else
