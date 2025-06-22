@@ -5,6 +5,7 @@ namespace Filament\Navigation;
 use Exception;
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -120,6 +121,11 @@ class NavigationManager
                         $groupEnum instanceof HasLabel,
                         static fn (NavigationGroup $group) => $group
                             ->label($groupEnum->getLabel())
+                    )
+                    ->when(
+                        $groupEnum instanceof HasIcon,
+                        static fn (NavigationGroup $group) => $group
+                            ->icon($groupEnum->getIcon())
                     )
                     ->items($items);
             })
