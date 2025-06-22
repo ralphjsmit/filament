@@ -5,6 +5,7 @@ namespace Filament\Navigation;
 use Exception;
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use UnitEnum;
@@ -61,7 +62,7 @@ class NavigationManager
                 $group = $item->getGroup();
 
                 if ($group instanceof UnitEnum) {
-                    return $group->name;
+                    return $group->name . '::' . $group::class;
                 }
 
                 return $group ?? '';
@@ -86,6 +87,13 @@ class NavigationManager
                     return NavigationGroup::make()->items($items);
                 }
 
+                $groupIndexParts = explode('::', $groupIndex, 2);
+                $groupIndex = $groupIndexParts[0];
+                $groupEnum = null;
+                if ($groupEnumClass = $groupIndexParts[1] ?? null) {
+                    $groupEnum = $groupEnumClass::{$groupIndex};
+                }
+
                 $registeredGroup = $groups
                     ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupIndex) {
                         if ($registeredGroupIndex === $groupIndex) {
@@ -108,6 +116,11 @@ class NavigationManager
                 }
 
                 return NavigationGroup::make($registeredGroup ?? $groupIndex)
+                    ->when(
+                        $groupEnum instanceof HasLabel,
+                        static fn (NavigationGroup $group) => $group
+                            ->label($groupEnum->getLabel())
+                    )
                     ->items($items);
             })
             ->filter(fn (NavigationGroup $group): bool => filled($group->getItems()))
