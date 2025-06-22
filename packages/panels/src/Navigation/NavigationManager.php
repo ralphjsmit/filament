@@ -89,12 +89,7 @@ class NavigationManager
                 }
 
                 // Retrieve the enum instance if UnitEnum was passed as group
-                $groupIndexParts = explode('::', $groupIndex, 2);
-                $groupIndex = $groupIndexParts[0];
-                $groupEnum = null;
-                if ($groupEnumClass = $groupIndexParts[1] ?? null) {
-                    $groupEnum = $groupEnumClass::{$groupIndex};
-                }
+                [$groupIndex, $groupEnum] = $this->getNavigationGroupEnum($groupIndex);
 
                 $registeredGroup = $groups
                     ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupIndex) {
@@ -137,12 +132,7 @@ class NavigationManager
                 }
 
                 // Retrieve the enum instance if UnitEnum was passed as group
-                $groupIndexParts = explode('::', $groupIndex, 2);
-                $groupIndex = $groupIndexParts[0];
-                $groupEnum = null;
-                if ($groupEnumClass = $groupIndexParts[1] ?? null) {
-                    $groupEnum = $groupEnumClass::{$groupIndex};
-                }
+                [$groupIndex, $groupEnum] = $this->getNavigationGroupEnum($groupIndex);
 
                 $registeredGroups = $this->getNavigationGroups();
 
@@ -241,5 +231,28 @@ class NavigationManager
     public function getNavigationItems(): array
     {
         return $this->navigationItems;
+    }
+
+    /**
+     * @return array{0: string, 1: null | UnitEnum}
+     */
+    private function getNavigationGroupEnum(string $group): array
+    {
+        $parts = explode('::', $group, 2);
+        $group = $parts[0];
+        $enum = null;
+
+        /** @var class-string<UnitEnum> $class */
+        if ($class = $parts[1] ?? null) {
+            foreach ($class::cases() as $case) {
+                if ($case->name === $group) {
+                    $enum = $case;
+
+                    break;
+                }
+            }
+        }
+
+        return [$group, $enum];
     }
 }
