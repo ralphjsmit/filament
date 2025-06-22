@@ -21,6 +21,7 @@
     'labelSuffix' => null,
     'required' => null,
     'statePath' => null,
+    'useDivLabel' => false,
 ])
 
 @php
@@ -47,8 +48,6 @@
     );
 
     $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
-
-    $isFileUploadComponent = $field instanceof \Filament\Forms\Components\FileUpload;
 @endphp
 
 <div
@@ -61,7 +60,7 @@
 >
     @if ($label && $labelSrOnly)
         <label 
-            @if ($isFileUploadComponent)
+            @if ($useDivLabel)
                 :id="$id . '-label'"
             @else
                 :for="$id"
@@ -93,27 +92,17 @@
                 ])
             >
                 @if ($label && (! $labelSrOnly))
-                    @if (!$isFileUploadComponent)
-                        <x-filament-forms::field-wrapper.label
-                            :for="$id"
-                            :disabled="$isDisabled"
-                            :prefix="$labelPrefix"
-                            :required="$required"
-                            :suffix="$labelSuffix"
-                        >
-                            {{ $label }}
-                        </x-filament-forms::field-wrapper.label>
-                    @else
-                        <x-filament-forms::field-wrapper.file-upload-label
-                            :id="$id . '-label'"
-                            :disabled="$isDisabled"
-                            :prefix="$labelPrefix"
-                            :required="$required"
-                            :suffix="$labelSuffix"
-                        >
-                            {{ $label }}
-                        </x-filament-forms::field-wrapper.file-upload-label>
-                    @endif
+                    <x-filament-forms::field-wrapper.label
+                        :for="$useDivLabel ? null : $id"
+                        :id="$useDivLabel ? ($id . '-label') : null"
+                        :use-div-label="$useDivLabel"
+                        :disabled="$isDisabled"
+                        :prefix="$labelPrefix"
+                        :required="$required"
+                        :suffix="$labelSuffix"
+                    >
+                        {{ $label }}
+                    </x-filament-forms::field-wrapper.label>
                 @elseif ($labelPrefix)
                     {{ $labelPrefix }}
                 @elseif ($labelSuffix)
