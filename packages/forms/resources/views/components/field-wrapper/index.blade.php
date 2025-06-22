@@ -47,6 +47,8 @@
     );
 
     $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
+
+    $isFileUploadComponent = $field instanceof \Filament\Forms\Components\FileUpload;
 @endphp
 
 <div
@@ -58,7 +60,14 @@
     }}
 >
     @if ($label && $labelSrOnly)
-        <label for="{{ $id }}" class="sr-only">
+        <label 
+            @if ($isFileUploadComponent)
+                :id="$id . '-label'"
+            @else
+                :for="$id"
+            @endif
+            class="sr-only"
+        >
             {{ $label }}
         </label>
     @endif
@@ -84,15 +93,27 @@
                 ])
             >
                 @if ($label && (! $labelSrOnly))
-                    <x-filament-forms::field-wrapper.label
-                        :for="$id"
-                        :disabled="$isDisabled"
-                        :prefix="$labelPrefix"
-                        :required="$required"
-                        :suffix="$labelSuffix"
-                    >
-                        {{ $label }}
-                    </x-filament-forms::field-wrapper.label>
+                    @if (!$isFileUploadComponent)
+                        <x-filament-forms::field-wrapper.label
+                            :for="$id"
+                            :disabled="$isDisabled"
+                            :prefix="$labelPrefix"
+                            :required="$required"
+                            :suffix="$labelSuffix"
+                        >
+                            {{ $label }}
+                        </x-filament-forms::field-wrapper.label>
+                    @else
+                        <x-filament-forms::field-wrapper.file-upload-label
+                            :id="$id . '-label'"
+                            :disabled="$isDisabled"
+                            :prefix="$labelPrefix"
+                            :required="$required"
+                            :suffix="$labelSuffix"
+                        >
+                            {{ $label }}
+                        </x-filament-forms::field-wrapper.file-upload-label>
+                    @endif
                 @elseif ($labelPrefix)
                     {{ $labelPrefix }}
                 @elseif ($labelSuffix)
