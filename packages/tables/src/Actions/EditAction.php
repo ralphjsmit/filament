@@ -48,7 +48,7 @@ class EditAction extends Action
 
             if ($relationship instanceof BelongsToMany) {
                 $pivot = $record->getRelationValue($relationship->getPivotAccessor());
-                
+
                 $pivotColumns = $relationship->getPivotColumns();
 
                 if ($translatableContentDriver) {
