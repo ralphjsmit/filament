@@ -88,6 +88,7 @@ class NavigationManager
                     return NavigationGroup::make()->items($items);
                 }
 
+                // Retrieve the enum instance if UnitEnum was passed as group
                 $groupIndexParts = explode('::', $groupIndex, 2);
                 $groupIndex = $groupIndexParts[0];
                 $groupEnum = null;
@@ -135,6 +136,14 @@ class NavigationManager
                     return -1;
                 }
 
+                // Retrieve the enum instance if UnitEnum was passed as group
+                $groupIndexParts = explode('::', $groupIndex, 2);
+                $groupIndex = $groupIndexParts[0];
+                $groupEnum = null;
+                if ($groupEnumClass = $groupIndexParts[1] ?? null) {
+                    $groupEnum = $groupEnumClass::{$groupIndex};
+                }
+
                 $registeredGroups = $this->getNavigationGroups();
 
                 $groupsToSearch = $registeredGroups;
@@ -150,6 +159,11 @@ class NavigationManager
                     $groupIndex,
                     $groupsToSearch,
                 );
+
+                // Sort by order of definition in the enum class
+                if ($groupEnum) {
+                    $sort = array_search($groupEnum, $groupEnum::cases());
+                }
 
                 if ($sort === false) {
                     return count($registeredGroups);
