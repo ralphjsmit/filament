@@ -449,7 +449,7 @@ class Action extends ViewComponent implements Arrayable
     }
 
     /**
-     * @return array<string, string|true>
+     * @return array<string, mixed>
      */
     public function getContext(): array
     {
