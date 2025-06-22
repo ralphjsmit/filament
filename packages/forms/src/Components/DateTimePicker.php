@@ -593,13 +593,13 @@ class DateTimePicker extends Field implements HasAffixActions
             return parent::getKey($isAbsolute);
         }
 
-        $dynamicValues = [
+        $values = [
             'minDate' => $this->getMinDate(),
             'maxDate' => $this->getMaxDate(),
             'disabledDates' => $this->getDisabledDates(),
         ];
 
-        $this->key = substr(md5(serialize($dynamicValues)), 0, 8);
+        $this->key = substr(md5(serialize($values)), 0, 8);
 
         return parent::getKey($isAbsolute);
     }
