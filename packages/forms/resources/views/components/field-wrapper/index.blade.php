@@ -60,7 +60,7 @@
     }}
 >
     @if ($label && $labelSrOnly)
-        <label 
+        <label
             @if ($isFileUploadComponent)
                 :id="$id . '-label'"
             @else
@@ -93,7 +93,7 @@
                 ])
             >
                 @if ($label && (! $labelSrOnly))
-                    @if (!$isFileUploadComponent)
+                    @if (! $isFileUploadComponent)
                         <x-filament-forms::field-wrapper.label
                             :for="$id"
                             :disabled="$isDisabled"
