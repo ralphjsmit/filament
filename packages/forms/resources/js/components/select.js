@@ -1274,10 +1274,13 @@ class CustomSelect {
     }
 
     async openDropdown() {
-        // Make dropdown visible but with position fixed and opacity 0 for measurement
+        // Make dropdown visible but with position fixed (or absolute in modals) and opacity 0 for measurement
         this.dropdown.style.display = 'block'
         this.dropdown.style.opacity = '0'
-        this.dropdown.style.position = 'fixed'
+
+        // Check if the select is inside a modal
+        const isInModal = this.selectButton.closest('.fi-modal') !== null
+        this.dropdown.style.position = isInModal ? 'absolute' : 'fixed'
         // Set width immediately to match the select button
         this.dropdown.style.width = `${this.selectButton.offsetWidth}px`
         this.selectButton.setAttribute('aria-expanded', 'true')
@@ -1398,10 +1401,13 @@ class CustomSelect {
             middleware.push(flip()) // Flip to top if not enough space at bottom
         }
 
+        // Check if the select is inside a modal
+        const isInModal = this.selectButton.closest('.fi-modal') !== null
+
         computePosition(this.selectButton, this.dropdown, {
             placement: placement,
             middleware: middleware,
-            strategy: 'fixed',
+            strategy: isInModal ? 'absolute' : 'fixed',
         }).then(({ x, y }) => {
             Object.assign(this.dropdown.style, {
                 left: `${x}px`,
