@@ -25,6 +25,9 @@
     }
 
     $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
+
+    $pageTableSummaryQuery = $hasPageSummary ? $this->getPageTableSummaryQuery() : null;
+    $allTableSummaryQuery = $this->getAllTableSummaryQuery();
 @endphp
 
 @if ($hasPageSummary)
@@ -54,7 +57,7 @@
                         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
                     }
 
-                    $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();
+                    $hasColumnHeaderLabel = (! $placeholderColumns) || ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery)) || $column->hasSummary($allTableSummaryQuery);
                 @endphp
 
                 <x-filament-tables::summary.header-cell
@@ -94,8 +97,7 @@
     </x-filament-tables::row>
 
     @php
-        $query = $this->getPageTableSummaryQuery();
-        $selectedState = $this->getTableSummarySelectedState($query)[0] ?? [];
+        $selectedState = $this->getTableSummarySelectedState($pageTableSummaryQuery)[0] ?? [];
     @endphp
 
     <x-filament-tables::summary.row
@@ -105,7 +107,7 @@
         :extra-heading-column="$extraHeadingColumn"
         :heading="__('filament-tables::table.summary.subheadings.page', ['label' => $pluralModelLabel])"
         :placeholder-columns="$placeholderColumns"
-        :query="$query"
+        :query="$pageTableSummaryQuery"
         :record-checkbox-position="$recordCheckboxPosition"
         :selected-state="$selectedState"
         :selection-enabled="$selectionEnabled"
@@ -113,8 +115,7 @@
 @endif
 
 @php
-    $query = $this->getAllTableSummaryQuery();
-    $selectedState = $this->getTableSummarySelectedState($query)[0] ?? [];
+    $selectedState = $this->getTableSummarySelectedState($allTableSummaryQuery)[0] ?? [];
 @endphp
 
 <x-filament-tables::summary.row
@@ -125,7 +126,7 @@
     :groups-only="$groupsOnly"
     :heading="__(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
     :placeholder-columns="$placeholderColumns"
-    :query="$query"
+    :query="$allTableSummaryQuery"
     :record-checkbox-position="$recordCheckboxPosition"
     :selected-state="$selectedState"
     :selection-enabled="$selectionEnabled"
