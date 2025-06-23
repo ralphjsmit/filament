@@ -55,14 +55,21 @@ use Filament\Forms\Components\RichEditor;
 RichEditor::make('content')
     ->toolbarButtons([
         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
-        ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'], // The `alignJustify` tool is also available.
-        ['blockquote', 'codeBlock', 'bulletList', 'orderedList', 'horizontalRule', 'highlight', 'lead', 'small'],
+        ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
         ['attachFiles'], // The `customBlocks` and `mergeTags` tools are also added here if those features are used.
         ['undo', 'redo'],
     ])
 ```
 
 Each nested array in the main array represents a group of buttons in the toolbar.
+
+Additional tools available in the toolbar include:
+* `alignJustify` - Justifies the text.
+* `highlight` - Highlights the selected text.
+* `horizontalRule` - Inserts a horizontal rule.
+* `lead` - Applies a "lead" class around the text, which is typically used for the first paragraph of an article.
+* `small` - Applies the "small" tag to the text, which is typically used for small print or disclaimers.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

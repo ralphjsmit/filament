@@ -569,7 +569,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
-            ['blockquote', 'codeBlock', 'bulletList', 'orderedList', 'horizontalRule', 'highlight', 'lead', 'small'],
+            ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'attachFiles',
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),

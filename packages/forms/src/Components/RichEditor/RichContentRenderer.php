@@ -19,6 +19,7 @@ use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 use Tiptap\Core\Extension;
 use Tiptap\Editor;
+use Tiptap\Extensions\TextAlign;
 use Tiptap\Marks\Bold;
 use Tiptap\Marks\Code;
 use Tiptap\Marks\Highlight;
@@ -259,7 +260,11 @@ class RichContentRenderer implements Htmlable
             app(Subscript::class),
             app(Superscript::class),
             app(Text::class),
-            app(TextAlignExtension::class),
+            app(TextAlign::class, [
+                'types' => ['heading', 'paragraph'],
+                'alignments' => ['start', 'center', 'end', 'justify'],
+                'defaultAlignment' => 'start',
+            ]),
             app(Underline::class),
             ...array_reduce(
                 $this->getPlugins(),
