@@ -47,7 +47,11 @@
         @endif
 
         @foreach ($columns as $column)
-            @if ($placeholderColumns || $column->hasSummary())
+            @php
+                $columnHasSummary = ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery)) || $column->hasSummary($allTableSummaryQuery);
+            @endphp
+
+            @if ($placeholderColumns || $columnHasSummary)
                 @php
                     $alignment = $column->getAlignment() ?? Alignment::Start;
 
@@ -55,7 +59,7 @@
                         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
                     }
 
-                    $hasColumnHeaderLabel = (! $placeholderColumns) || ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery)) || $column->hasSummary($allTableSummaryQuery);
+                    $hasColumnHeaderLabel = (! $placeholderColumns) || $columnHasSummary;
                 @endphp
 
                 <td
