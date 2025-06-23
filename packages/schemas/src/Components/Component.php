@@ -49,9 +49,9 @@ class Component extends ViewComponent
     use CanBeLiberatedFromContainerGrid;
     use CanBeRepeated;
     use CanGrow;
+    use CanOrderColumns;
     use CanPartiallyRender;
     use CanPoll;
-    use CanOrderColumns;
     use CanSpanColumns;
     use Cloneable;
     use HasActions;
