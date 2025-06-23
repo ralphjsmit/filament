@@ -108,7 +108,7 @@
             $attributes
                 ->merge([
                     'id' => $getId(),
-                    'aria-labelledby' => $getId() . '-label',
+                    'aria-labelledby' => "{$getId()}-label",
                     'role' => 'group',
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
@@ -139,7 +139,7 @@
                             'disabled' => $isDisabled,
                             'multiple' => $isMultiple(),
                             'type' => 'file',
-                            'aria-labelledby' => $getId() . '-label',
+                            'aria-labelledby' => "{$getId()}-label",
                         ], escape: false)
                 }}
             />
