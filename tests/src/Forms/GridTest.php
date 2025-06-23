@@ -108,3 +108,59 @@ test('can set component column span at `default` breakpoint', function (): void 
     expect($component)
         ->getColumnSpan('default')->toBe($defaultSpan);
 });
+
+test('can get component column order at all breakpoints', function (): void {
+    $component = (new Component)
+        ->container(Schema::make(Livewire::make()))
+        ->columnOrder([
+            'default' => $defaultOrder = rand(1, 12),
+            'sm' => $orderAtSm = rand(1, 12),
+            'md' => $orderAtMd = rand(1, 12),
+            'lg' => $orderAtLg = rand(1, 12),
+            'xl' => $orderAtXl = rand(1, 12),
+            '2xl' => $orderAt2xl = rand(1, 12),
+        ]);
+
+    expect($component)
+        ->getcolumnOrder()
+        ->toHaveKey('default', $defaultOrder)
+        ->toHaveKey('sm', $orderAtSm)
+        ->toHaveKey('md', $orderAtMd)
+        ->toHaveKey('lg', $orderAtLg)
+        ->toHaveKey('xl', $orderAtXl)
+        ->toHaveKey('2xl', $orderAt2xl);
+});
+
+test('can get component column order at one breakpoint', function (): void {
+    $component = (new Component)
+        ->container(Schema::make(Livewire::make()))
+        ->columnOrder([
+            '2xl' => $orderAt2xl = rand(1, 12),
+        ]);
+
+    expect($component)
+        ->getcolumnOrder('2xl')->toBe($orderAt2xl);
+});
+
+test('can set component column order at `default` breakpoint', function (): void {
+    $component = (new Component)
+        ->container(Schema::make(Livewire::make()))
+        ->columnOrder($defaultOrder = rand(1, 12));
+
+    expect($component)
+        ->getcolumnOrder('default')->toBe($defaultOrder);
+});
+
+test('can get component column order with null default values', function (): void {
+    $component = (new Component)
+        ->container(Schema::make(Livewire::make()));
+
+    expect($component)
+        ->getcolumnOrder()
+        ->toHaveKey('default', null)
+        ->toHaveKey('sm', null)
+        ->toHaveKey('md', null)
+        ->toHaveKey('lg', null)
+        ->toHaveKey('xl', null)
+        ->toHaveKey('2xl', null);
+});
