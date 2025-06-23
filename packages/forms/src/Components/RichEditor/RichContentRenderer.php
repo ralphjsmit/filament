@@ -11,6 +11,7 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\TextAlignExtension;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,7 +19,6 @@ use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 use Tiptap\Core\Extension;
 use Tiptap\Editor;
-use Tiptap\Extensions\TextAlign;
 use Tiptap\Marks\Bold;
 use Tiptap\Marks\Code;
 use Tiptap\Marks\Highlight;
@@ -259,11 +259,7 @@ class RichContentRenderer implements Htmlable
             app(Subscript::class),
             app(Superscript::class),
             app(Text::class),
-            new TextAlign([
-                'types' => ['heading', 'paragraph'],
-                'alignments' => ['start', 'center', 'end', 'justify'],
-                'defaultAlignment' => 'start',
-            ]),
+            app(TextAlignExtension::class),
             app(Underline::class),
             ...array_reduce(
                 $this->getPlugins(),
