@@ -129,8 +129,14 @@ class SupportServiceProvider extends PackageServiceProvider
                 return $request;
             },
         );
-
-        $this->app->bind(DataStore::class, DataStoreOverride::class);
+	    
+	    $this->app->bind(DataStore::class, DataStoreOverride::class);
+	    
+	    // As the `LivewireServiceProvider` has already booted the base-`DataStore` mechanism, we
+	    // will forget the base-mechanism instance, and trigger a manual mechanism re-register.
+	    $this->app->forgetInstance(DataStore::class);
+	    
+	    app(DataStoreOverride::class)->register();
 
         $this->callAfterResolving(BladeIconsFactory::class, function (BladeIconsFactory $factory): void {
             $factory->add('filament', [
