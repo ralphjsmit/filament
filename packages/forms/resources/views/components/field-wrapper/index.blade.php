@@ -21,7 +21,7 @@
     'labelSuffix' => null,
     'required' => null,
     'statePath' => null,
-    'useDivLabel' => false,
+    'renderAsDiv' => false,
 ])
 
 @php
@@ -60,7 +60,7 @@
 >
     @if ($label && $labelSrOnly)
         <label 
-            @if ($useDivLabel)
+            @if ($renderAsDiv)
                 :id="$id . '-label'"
             @else
                 :for="$id"
@@ -93,9 +93,9 @@
             >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
-                        :for="$useDivLabel ? null : $id"
-                        :id="$useDivLabel ? ($id . '-label') : null"
-                        :use-div-label="$useDivLabel"
+                        :for="$renderAsDiv ? null : $id"
+                        :id="$renderAsDiv ? ($id . '-label') : null"
+                        :render-as-div="$renderAsDiv"
                         :disabled="$isDisabled"
                         :prefix="$labelPrefix"
                         :required="$required"
