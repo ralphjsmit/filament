@@ -7,12 +7,12 @@ use Closure;
 trait CanOrderColumns
 {
     /**
-     * @var array<int, int | Closure | null> | null
+     * @var array<string| int, int | Closure | null> | null
      */
     protected ?array $columnOrder = null;
 
     /**
-     * @param  array<int, int | Closure | null> | int | Closure | null  $order
+     * @param  array<string, int | Closure | null> | int | Closure | null  $order
      */
     public function columnOrder(array | int | Closure | null $order): static
     {
@@ -37,9 +37,9 @@ trait CanOrderColumns
     }
 
     /**
-     * @return array<int, int | Closure | null> | int | null
+     * @return array<string, int | Closure | null> | int | null
      */
-    public function getcolumnOrder(int | null $breakpoint = null): array | int | null
+    public function getcolumnOrder(int | string | null $breakpoint = null): array | int | null
     {
         $order = $this->columnOrder ?? [
             'default' => null,
