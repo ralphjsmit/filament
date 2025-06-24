@@ -78,6 +78,39 @@
     & .tiptap {
         @apply h-full;
 
+        table {
+            @apply m-0 w-full table-fixed border-collapse overflow-hidden first:mt-0;
+
+            td,
+            th {
+                @apply relative min-w-[1em] border border-gray-300 px-2 py-2 align-top;
+
+                > * {
+                    @apply mb-0;
+                }
+            }
+
+            th {
+                @apply bg-gray-100 text-left font-bold;
+            }
+
+            .selectedCell {
+                @apply after:pointer-events-none after:absolute after:top-0 after:right-0 after:bottom-0 after:left-0 after:z-2 after:bg-gray-200 after:content-[''];
+            }
+
+            .column-resize-handle {
+                @apply pointer-events-none absolute top-0 right-0 bottom-0 m-0 w-1 bg-purple-600;
+            }
+        }
+
+        .tableWrapper {
+            @apply overflow-x-auto;
+        }
+
+        &.resize-cursor {
+            @apply cursor-col-resize cursor-ew-resize;
+        }
+
         &:focus {
             @apply outline-none;
 

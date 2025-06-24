@@ -18,10 +18,14 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Strike from '@tiptap/extension-strike'
 import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
+import { TableKit } from '@tiptap/extension-table'
 import Text from '@tiptap/extension-text'
 import Underline from '@tiptap/extension-underline'
 
 import getMergeTagSuggestion from './merge-tag-suggestion.js'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
+import TableCell from '@tiptap/extension-table-cell'
 
 export default async ({
     customExtensionUrls,
@@ -83,6 +87,14 @@ export default async ({
     Strike,
     Subscript,
     Superscript,
+
+    TableKit.configure({
+        resizable: true,
+        table: {
+            resizable: true,
+        },
+    }),
+
     Text,
     Underline,
     UndoRedo,

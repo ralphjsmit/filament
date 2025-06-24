@@ -154,6 +154,19 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleOrderedList().run()')
                 ->icon(Heroicon::NumberedList)
                 ->iconAlias('forms:components.rich-editor.toolbar.ordered-list'),
+
+            RichEditorTool::make('table')
+                ->label(__('filament-forms::components.rich_editor.tools.table'))
+                ->jsHandler('$getEditor()?.commands.insertTable({ rows: 2, cols: 3, withHeaderRow: true })')
+                ->icon('fi-s-table')
+                ->iconAlias('forms:components.rich-editor.toolbar.table'),
+
+            RichEditorTool::make('tableRemove')
+                ->label(__('filament-forms::components.rich_editor.tools.table_remove'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteTable().run()')
+                ->icon('fi-s-table-remove')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_remove'),
+
             RichEditorTool::make('attachFiles')
                 ->label(__('filament-forms::components.rich_editor.tools.attach_files'))
                 ->action(arguments: '{ alt: $getEditor().getAttributes(\'image\')?.alt, id: $getEditor().getAttributes(\'image\')?.id, src: $getEditor().getAttributes(\'image\')?.src }')
@@ -529,6 +542,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3'],
+            ['table', 'tableRemove'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'attachFiles',

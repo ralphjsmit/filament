@@ -32,6 +32,10 @@ use Tiptap\Nodes\Heading;
 use Tiptap\Nodes\ListItem;
 use Tiptap\Nodes\OrderedList;
 use Tiptap\Nodes\Paragraph;
+use Tiptap\Nodes\Table;
+use Tiptap\Nodes\TableCell;
+use Tiptap\Nodes\TableHeader;
+use Tiptap\Nodes\TableRow;
 use Tiptap\Nodes\Text;
 
 class RichContentRenderer implements Htmlable
@@ -247,6 +251,10 @@ class RichContentRenderer implements Htmlable
             app(Strike::class),
             app(Subscript::class),
             app(Superscript::class),
+            app(Table::class),
+            app(TableRow::class),
+            app(TableCell::class),
+            app(TableHeader::class),
             app(Text::class),
             app(Underline::class),
             ...array_reduce(

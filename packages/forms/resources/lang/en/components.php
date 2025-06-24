@@ -297,6 +297,7 @@ return [
             'redo' => 'Redo',
             'strike' => 'Strikethrough',
             'table' => 'Table',
+
             'undo' => 'Undo',
         ],
 
@@ -489,6 +490,8 @@ return [
             'strike' => 'Strikethrough',
             'subscript' => 'Subscript',
             'superscript' => 'Superscript',
+            'table' => 'Table',
+            'table_remove' => 'Remove table',
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],
