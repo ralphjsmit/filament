@@ -57,12 +57,26 @@ RichEditor::make('content')
         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
         ['h2', 'h3'],
         ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['table', 'tableRemove', 'tableColumnAddBefore', 'tableColumnDelete', 'tableColumnAddAfter', 'tableRowAddBefore', 'tableRowDelete', 'tableRowAddAfter', 'tableCellMerge', 'tableCellSplit', 'tableHeaderToggle'],
         ['attachFiles'], // The `customBlocks` and `mergeTags` tools are also added here if those features are used.
         ['undo', 'redo'],
     ])
 ```
 
 Each nested array in the main array represents a group of buttons in the toolbar.
+
+Additional tools available in the toolbar include:
+* `table` - Creates a table in the editor with a default size of 3 columns, 2 rows and a header row.
+* `tableRemove` - Removes the table.
+* `tableColumnAddBefore` - Adds a new column to the left of the current column.
+* `tableColumnDelete` - Deletes the current column.
+* `tableColumnAddAfter` - Adds a new column to the right of the current column.
+* `tableRowAddBefore` - Adds a new row above the current row.
+* `tableRowDelete` - Deletes the current row.
+* `tableRowAddAfter` - Adds a new row below the current row.
+* `tableCellMerge` - Merges the selected cells into one cell.
+* `tableCellSplit` - Splits the selected cell into multiple cells.
+* `tableHeaderToggle` - Toggles the header row of the table.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
