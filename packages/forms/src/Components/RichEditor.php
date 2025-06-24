@@ -584,12 +584,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3'],
-            ['table', 'tableRemove', 'tableColumnAddBefore', 'tableColumnDelete', 'tableColumnAddAfter', 'tableRowAddBefore', 'tableRowDelete', 'tableRowAddAfter', 'tableCellMerge', 'tableCellSplit', 'tableHeaderToggle'],
-            ['bulletList', 'orderedList'],
-            ['attachFiles', 'customBlocks', 'mergeTags'],
-            ['tableColumnAddBefore', 'tableColumnAddAfter', 'tableRowAddBefore', 'tableRowAddAfter'],
-            ['h1', 'blockquote', 'codeBlock'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+            ['table', 'tableRemove', 'tableColumnAddBefore', 'tableColumnDelete', 'tableColumnAddAfter', 'tableRowAddBefore', 'tableRowDelete', 'tableRowAddAfter', 'tableCellMerge', 'tableCellSplit', 'tableHeaderToggle'],
             [
                 'attachFiles',
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
