@@ -111,6 +111,7 @@
     @endif
     x-data="filamentTable({
                 canSelectMultipleRecords: @js($canSelectMultipleRecords),
+                maxSelectableRecords: @js($getMaxSelectableRecords()),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 $wire,
@@ -655,7 +656,15 @@
                                     <input
                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                         type="checkbox"
-                                        @disabled($isSelectionDisabled)
+                                        @if ($isSelectionDisabled)
+                                            disabled
+                                        @else
+                                            x-bind:disabled="
+                                                const recordsOnPage = getRecordsOnPage()
+
+                                                return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
+                                            "
+                                        @endif
                                         x-bind:checked="
                                             const recordsOnPage = getRecordsOnPage()
 
@@ -858,7 +867,15 @@
                                             <input
                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                 type="checkbox"
-                                                @disabled($isSelectionDisabled)
+                                                @if ($isSelectionDisabled)
+                                                    disabled
+                                                @else
+                                                    x-bind:disabled="
+                                                        const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+
+                                                        return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
+                                                    "
+                                                @endif
                                                 x-bind:checked="
                                                     const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
 
@@ -954,7 +971,11 @@
                                         <input
                                             aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                             type="checkbox"
-                                            @disabled($isSelectionDisabled)
+                                            @if ($isSelectionDisabled)
+                                                disabled
+                                            @else
+                                                x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
+                                            @endif
                                             value="{{ $recordKey }}"
                                             x-on:click="toggleSelectedRecord(@js($recordKey))"
                                             x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
@@ -1200,7 +1221,15 @@
                                                     <input
                                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                         type="checkbox"
-                                                        @disabled($isSelectionDisabled)
+                                                        @if ($isSelectionDisabled)
+                                                            disabled
+                                                        @else
+                                                            x-bind:disabled="
+                                                                const recordsOnPage = getRecordsOnPage()
+
+                                                                return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
+                                                            "
+                                                        @endif
                                                         x-bind:checked="
                                                             const recordsOnPage = getRecordsOnPage()
 
@@ -1323,7 +1352,15 @@
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                     type="checkbox"
-                                                    @disabled($isSelectionDisabled)
+                                                    @if ($isSelectionDisabled)
+                                                        disabled
+                                                    @else
+                                                        x-bind:disabled="
+                                                            const recordsOnPage = getRecordsOnPage()
+
+                                                            return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
+                                                        "
+                                                    @endif
                                                     x-bind:checked="
                                                         const recordsOnPage = getRecordsOnPage()
 
@@ -1523,7 +1560,15 @@
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"
-                                                                    @disabled($isSelectionDisabled)
+                                                                    @if ($isSelectionDisabled)
+                                                                        disabled
+                                                                    @else
+                                                                        x-bind:disabled="
+                                                                            const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+
+                                                                            return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
+                                                                        "
+                                                                    @endif
                                                                     x-bind:checked="
                                                                         const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
 
@@ -1602,7 +1647,15 @@
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"
-                                                                    @disabled($isSelectionDisabled)
+                                                                    @if ($isSelectionDisabled)
+                                                                        disabled
+                                                                    @else
+                                                                        x-bind:disabled="
+                                                                            const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+
+                                                                            return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
+                                                                        "
+                                                                    @endif
                                                                     x-bind:checked="
                                                                         const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
 
@@ -1689,7 +1742,11 @@
                                                             <input
                                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                 type="checkbox"
-                                                                @disabled($isSelectionDisabled)
+                                                                @if ($isSelectionDisabled)
+                                                                    disabled
+                                                                @else
+                                                                    x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
+                                                                @endif
                                                                 value="{{ $recordKey }}"
                                                                 x-on:click="toggleSelectedRecord(@js($recordKey))"
                                                                 x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
@@ -1817,7 +1874,11 @@
                                                             <input
                                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                 type="checkbox"
-                                                                @disabled($isSelectionDisabled)
+                                                                @if ($isSelectionDisabled)
+                                                                    disabled
+                                                                @else
+                                                                    x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
+                                                                @endif
                                                                 value="{{ $recordKey }}"
                                                                 x-on:click="toggleSelectedRecord(@js($recordKey))"
                                                                 x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"

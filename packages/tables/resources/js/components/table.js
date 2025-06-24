@@ -1,5 +1,6 @@
 export default ({
     canSelectMultipleRecords,
+    maxSelectableRecords,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
     $wire,
@@ -232,6 +233,28 @@ export default ({
         return keys.every((key) => this.isRecordSelected(key))
     },
 
+    areRecordsToggleable(keys) {
+        if (maxSelectableRecords === null) {
+            return true
+        }
+
+        if (!canSelectMultipleRecords) {
+            return true
+        }
+
+        const selectedRecords = keys.filter((key) => this.isRecordSelected(key))
+
+        if (selectedRecords.length === keys.length) {
+            return true
+        }
+
+        return (
+            this.getSelectedRecordsCount() +
+                (keys.length - selectedRecords.length) <=
+            maxSelectableRecords
+        )
+    },
+
     toggleCollapseGroup(group) {
         if (this.isGroupCollapsed(group)) {
             this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
@@ -294,12 +317,17 @@ export default ({
             let values = []
 
             for (let i = range[0]; i <= range[1]; i++) {
-                checkboxes[i].checked = checkbox.checked
-
                 values.push(checkboxes[i].value)
             }
 
             if (checkbox.checked) {
+                if (!this.areRecordsToggleable(values)) {
+                    checkbox.checked = false
+                    this.deselectRecords([checkbox.value])
+
+                    return
+                }
+
                 this.selectRecords(values)
             } else {
                 this.deselectRecords(values)

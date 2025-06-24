@@ -25,6 +25,8 @@ trait HasBulkActions
 
     protected bool | Closure $canSelectMultipleRecords = true;
 
+    protected int | Closure | null $maxSelectableRecords = null;
+
     protected bool | Closure $isSelectionDisabled = false;
 
     /**
@@ -172,9 +174,21 @@ trait HasBulkActions
         return $this;
     }
 
+    public function maxSelectableRecords(int | Closure | null $count = null): static
+    {
+        $this->maxSelectableRecords = $count;
+
+        return $this;
+    }
+
     public function canSelectMultipleRecords(): bool
     {
         return (bool) $this->evaluate($this->canSelectMultipleRecords);
+    }
+
+    public function getMaxSelectableRecords(): ?int
+    {
+        return $this->evaluate($this->maxSelectableRecords);
     }
 
     public function disabledSelection(bool | Closure $condition = true): static
