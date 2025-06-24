@@ -27,7 +27,7 @@ return [
                         'notifications' => [
 
                             'resent' => [
-                                'title' => 'Новий код надіслано'',
+                                'title' => 'Новий код надіслано',
                             ],
 
                         ],
