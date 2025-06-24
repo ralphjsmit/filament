@@ -154,19 +154,61 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleOrderedList().run()')
                 ->icon(Heroicon::NumberedList)
                 ->iconAlias('forms:components.rich-editor.toolbar.ordered-list'),
-
             RichEditorTool::make('table')
                 ->label(__('filament-forms::components.rich_editor.tools.table'))
                 ->jsHandler('$getEditor()?.commands.insertTable({ rows: 2, cols: 3, withHeaderRow: true })')
                 ->icon('fi-s-table')
                 ->iconAlias('forms:components.rich-editor.toolbar.table'),
-
             RichEditorTool::make('tableRemove')
                 ->label(__('filament-forms::components.rich_editor.tools.table_remove'))
                 ->jsHandler('$getEditor()?.chain().focus().deleteTable().run()')
                 ->icon('fi-s-table-remove')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_remove'),
-
+            RichEditorTool::make('tableColumnAddBefore')
+                ->label(__('filament-forms::components.rich_editor.tools.table_column_add_before'))
+                ->jsHandler('$getEditor()?.chain().focus().addColumnBefore().run()')
+                ->icon('fi-s-table-column-add-before')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_column_add_before'),
+            RichEditorTool::make('tableColumnAddAfter')
+                ->label(__('filament-forms::components.rich_editor.tools.table_column_add_after'))
+                ->jsHandler('$getEditor()?.chain().focus().addColumnAfter().run()')
+                ->icon('fi-s-table-column-add-after')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_column_add_after'),
+            RichEditorTool::make('tableColumnDelete')
+                ->label(__('filament-forms::components.rich_editor.tools.table_column_delete'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteColumn().run()')
+                ->icon('fi-s-table-column-delete')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_column_delete'),
+            RichEditorTool::make('tableRowAddBefore')
+                ->label(__('filament-forms::components.rich_editor.tools.table_row_add_before'))
+                ->jsHandler('$getEditor()?.chain().focus().addRowBefore().run()')
+                ->icon('fi-s-table-row-add-before')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_row_add_before'),
+            RichEditorTool::make('tableRowAddAfter')
+                ->label(__('filament-forms::components.rich_editor.tools.table_row_add_after'))
+                ->jsHandler('$getEditor()?.chain().focus().addRowAfter().run()')
+                ->icon('fi-s-table-row-add-after')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_row_add_after'),
+            RichEditorTool::make('tableRowDelete')
+                ->label(__('filament-forms::components.rich_editor.tools.table_row_delete'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteRow().run()')
+                ->icon('fi-s-table-row-delete')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_row_delete'),
+            RichEditorTool::make('tableCellMerge')
+                ->label(__('filament-forms::components.rich_editor.tools.table_cell_merge'))
+                ->jsHandler('$getEditor()?.chain().focus().mergeCells().run()')
+                ->icon('fi-s-table-cell-merge')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_cell_merge'),
+            RichEditorTool::make('tableCellSplit')
+                ->label(__('filament-forms::components.rich_editor.tools.table_cell_split'))
+                ->jsHandler('$getEditor()?.chain().focus().splitCell().run()')
+                ->icon('fi-s-table-cell-split')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_cell_split'),
+            RichEditorTool::make('tableHeaderToggle')
+                ->label(__('filament-forms::components.rich_editor.tools.table_header_toggle'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeaderRow().run()')
+                ->icon('fi-s-table-header-toggle')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_header_toggle'),
             RichEditorTool::make('attachFiles')
                 ->label(__('filament-forms::components.rich_editor.tools.attach_files'))
                 ->action(arguments: '{ alt: $getEditor().getAttributes(\'image\')?.alt, id: $getEditor().getAttributes(\'image\')?.id, src: $getEditor().getAttributes(\'image\')?.src }')
@@ -542,7 +584,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3'],
-            ['table', 'tableRemove'],
+            ['table', 'tableRemove', 'tableColumnAddBefore', 'tableColumnDelete', 'tableColumnAddAfter', 'tableRowAddBefore', 'tableRowDelete', 'tableRowAddAfter', 'tableCellMerge', 'tableCellSplit', 'tableHeaderToggle'],
+            ['bulletList', 'orderedList'],
+            ['attachFiles', 'customBlocks', 'mergeTags'],
+            ['tableColumnAddBefore', 'tableColumnAddAfter', 'tableRowAddBefore', 'tableRowAddAfter'],
+            ['h1', 'blockquote', 'codeBlock'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'attachFiles',
