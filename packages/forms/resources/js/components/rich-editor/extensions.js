@@ -89,7 +89,6 @@ export default async ({
     Superscript,
 
     TableKit.configure({
-        resizable: true,
         table: {
             resizable: true,
         },
