@@ -91,15 +91,15 @@
             }
 
             th {
-                @apply bg-gray-100 dark:bg-gray-800 dark:text-white text-left font-bold;
+                @apply bg-gray-100 text-left font-bold dark:bg-gray-800 dark:text-white;
             }
 
             .selectedCell {
-                @apply after:pointer-events-none after:absolute after:top-0 after:right-0 after:bottom-0 after:left-0 after:z-2 after:bg-gray-200/80 after:dark:bg-gray-800/80 after:content-[''];
+                @apply after:pointer-events-none after:absolute after:top-0 after:right-0 after:bottom-0 after:left-0 after:z-2 after:bg-gray-200/80 after:content-[''] after:dark:bg-gray-800/80;
             }
 
             .column-resize-handle {
-                @apply pointer-events-none absolute top-0 right-0 bottom-0 !m-0 w-1 bg-primary-600;
+                @apply bg-primary-600 pointer-events-none absolute top-0 right-0 bottom-0 !m-0 w-1;
             }
         }
 
