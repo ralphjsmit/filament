@@ -43,6 +43,10 @@ trait CanExportRecords
 
     protected int | Closure $chunkSize = 100;
 
+    protected int | Closure $columns = 1;
+
+    protected bool | Closure $inlineLabel = true;
+
     protected int | Closure | null $maxRows = null;
 
     protected string | Closure | null $csvDelimiter = null;
@@ -81,8 +85,8 @@ trait CanExportRecords
 
         $this->form(fn (ExportAction | ExportBulkAction $action): array => [
             ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
-                ->columns(1)
-                ->inlineLabel()
+                ->columns($this->getColumns())
+                ->inlineLabel($this->getInlineLabel())
                 ->schema(function () use ($action): array {
                     return array_map(
                         fn (ExportColumn $column): Flex => Flex::make([
@@ -279,6 +283,30 @@ trait CanExportRecords
     public static function getDefaultName(): ?string
     {
         return 'export';
+    }
+
+    public function columns(int | Closure $columns): static
+    {
+        $this->columns = $columns;
+
+        return $this;
+    }
+
+    public function getColumns(): int
+    {
+        return $this->evaluate($this->columns);
+    }
+
+    public function inlineLabel(bool | Closure $condition = true): static
+    {
+        $this->inlineLabel = $condition;
+
+        return $this;
+    }
+
+    public function getInlineLabel(): bool
+    {
+        return $this->evaluate($this->inlineLabel);
     }
 
     /**
