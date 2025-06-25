@@ -49,7 +49,7 @@ There are 3 tasks when adding a table to a Livewire component class:
 namespace App\Livewire;
 
 use App\Models\Shop\Product;
-use Filament\Schemas\Concerns\InteractsWithSchemas;  
+use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;

@@ -38,15 +38,15 @@ Route::get('posts/{post}/manage', ManagePost::class);
 You must use the `InteractsWithActions` and `InteractsWithSchemas` traits, and implement the `HasActions` and `HasSchemas` interfaces on your Livewire component class:
 
 ```php
-use Filament\Actions\Concerns\InteractsWithActions;  
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Schemas\Concerns\InteractsWithSchemas;  
+use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Livewire\Component;
 
 class ManagePost extends Component implements HasActions, HasSchemas
 {
-    use InteractsWithActions;  
+    use InteractsWithActions;
     use InteractsWithSchemas;
 
     // ...
@@ -60,15 +60,15 @@ Add a method that returns your action. The method must share the exact same name
 ```php
 use App\Models\Post;
 use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;  
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Schemas\Concerns\InteractsWithSchemas;  
+use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Livewire\Component;
 
 class ManagePost extends Component implements HasActions, HasSchemas
 {
-    use InteractsWithActions;  
+    use InteractsWithActions;
     use InteractsWithSchemas;
 
     public Post $post;
