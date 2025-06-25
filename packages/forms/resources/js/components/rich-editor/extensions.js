@@ -23,9 +23,6 @@ import Text from '@tiptap/extension-text'
 import Underline from '@tiptap/extension-underline'
 
 import getMergeTagSuggestion from './merge-tag-suggestion.js'
-import TableHeader from '@tiptap/extension-table-header'
-import TableRow from '@tiptap/extension-table-row'
-import TableCell from '@tiptap/extension-table-cell'
 
 export default async ({
     customExtensionUrls,

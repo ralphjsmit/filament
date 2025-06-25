@@ -111,6 +111,30 @@ trait InteractsWithToolbarButtons
     }
 
     /**
+     * @return array<array{ref: string, isActiveCondition: array<string>, buttons: array<string>}>
+     */
+    public function getBubbleMenus(): array
+    {
+        $bubbleMenus = [];
+
+        foreach ($this->getToolbarButtons() as $group) {
+            foreach ($group as $name => $buttons) {
+                if (! is_string($name) || ! is_array($buttons)) {
+                    continue;
+                }
+
+                $bubbleMenus[] = [
+                    'ref' => 'bubbleMenu' . str($name)->slug()->ucfirst(),
+                    'isActiveCondition' => [$name],
+                    'buttons' => $buttons,
+                ];
+            }
+        }
+
+        return $bubbleMenus;
+    }
+
+    /**
      * @return array<string | array<string>>
      */
     public function getDefaultToolbarButtons(): array

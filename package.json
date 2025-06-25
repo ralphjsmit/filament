@@ -33,6 +33,7 @@
         "@tiptap/core": "3.0.0-beta.14",
         "@tiptap/extension-blockquote": "3.0.0-beta.14",
         "@tiptap/extension-bold": "3.0.0-beta.14",
+        "@tiptap/extension-bubble-menu": "3.0.0-beta.14",
         "@tiptap/extension-code": "3.0.0-beta.14",
         "@tiptap/extension-code-block": "3.0.0-beta.14",
         "@tiptap/extension-document": "3.0.0-beta.14",

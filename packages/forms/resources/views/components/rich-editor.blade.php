@@ -12,6 +12,7 @@
     $statePath = $getStatePath();
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
+    $bubbleMenus = $getBubbleMenus();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -25,7 +26,7 @@
     >
         <div
             @if (FilamentView::hasSpaMode())
-                {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
+                {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)" {{-- format-ignore-end --}}
             @else
                 x-load
             @endif
@@ -47,6 +48,7 @@
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         statePath: @js($statePath),
                         uploadingFileMessage: @js($getUploadingFileMessage()),
+                        bubbleMenus: @js($bubbleMenus),
                     })"
             x-bind:class="{
                 'fi-fo-rich-editor-uploading-file': isUploadingFile,
@@ -56,9 +58,13 @@
         >
             @if ((! $isDisabled) && filled($toolbarButtons))
                 <div class="fi-fo-rich-editor-toolbar">
-                    @foreach ($toolbarButtons as $buttonGroup)
+                    @foreach ($toolbarButtons as $button => $buttonGroup)
                         <div class="fi-fo-rich-editor-toolbar-group">
-                            @foreach ($buttonGroup as $button)
+                            @foreach ($buttonGroup as $key => $button)
+                                @php
+                                    $button = is_string($key) && is_array($button) ? $key : $button;
+                                @endphp
+
                                 {{ $tools[$button] ?? throw new Exception("Toolbar button [{$button}] cannot be found.") }}
                             @endforeach
                         </div>
@@ -67,10 +73,19 @@
             @endif
 
             <div class="fi-fo-rich-editor-main">
-                <div
-                    class="fi-fo-rich-editor-content fi-prose"
-                    x-ref="editor"
-                ></div>
+                <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
+                    @foreach ($bubbleMenus as $bubbleMenu)
+                        <div
+                            x-ref="{{ $bubbleMenu['ref'] }}"
+                            class="bubble-menu fi-not-prose"
+                            style="visibility: hidden; position: absolute"
+                        >
+                            @foreach ($bubbleMenu['buttons'] as $button)
+                                {{ $tools[$button] }}
+                            @endforeach
+                        </div>
+                    @endforeach
+                </div>
 
                 @if (! $isDisabled)
                     <div

@@ -1,6 +1,7 @@
 import { Editor } from '@tiptap/core'
 import getExtensions from './rich-editor/extensions'
 import { Selection } from '@tiptap/pm/state'
+import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
 
 export default function richEditorFormComponent({
     activePanel,
@@ -19,6 +20,7 @@ export default function richEditorFormComponent({
     state,
     statePath,
     uploadingFileMessage,
+    bubbleMenus,
 }) {
     let editor
 
@@ -67,8 +69,38 @@ export default function richEditorFormComponent({
                     statePath,
                     uploadingFileMessage,
                     $wire: this.$wire,
+                    bubbleMenus,
                 }),
                 content: this.state,
+            })
+
+            bubbleMenus.forEach((menuConfig) => {
+                const element = this.$refs[menuConfig.ref]
+
+                if (!element) {
+                    console.warn(
+                        `BubbleMenu element "${menuConfig.ref}" not found.`,
+                    )
+                    return
+                }
+
+                const types = menuConfig.isActiveCondition || []
+
+                const shouldShow = ({ editor }) =>
+                    types.some((type) => editor.isActive(type))
+
+                editor.registerPlugin(
+                    BubbleMenuPlugin({
+                        editor,
+                        element,
+                        pluginKey: `bubbleMenu-${menuConfig.ref}`,
+                        shouldShow: shouldShow,
+                        options: {
+                            placement: 'top',
+                            offset: 10,
+                        },
+                    }),
+                )
             })
 
             editor.on('create', () => {
