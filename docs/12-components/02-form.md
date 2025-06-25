@@ -3,6 +3,15 @@ title: Rendering a form in a Blade view
 ---
 import Aside from "@components/Aside.astro"
 
+<Aside variant="warning">
+    Before proceeding, make sure `filament/forms` is installed in your project. You can check by running:
+
+    ```bash
+    composer show filament/forms
+    ```
+    If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
+</Aside>
+
 ## Setting up the Livewire component
 
 First, generate a new Livewire component:
@@ -27,6 +36,10 @@ Route::get('posts/create', CreatePost::class);
 ```
 
 ## Adding the form
+
+<Aside variant="warning">
+    Before proceeding, please ensure that the **Forms package** is installed in your project. Consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
+</Aside>
 
 There are 5 main tasks when adding a form to a Livewire component class. Each one is essential:
 
@@ -116,6 +129,21 @@ public function create(): void
     Post::create($this->form->getState());
 }
 ```
+
+<Aside variant="info">
+    `filament/forms` also includes the following packages:
+
+    - `filament/actions`
+    - `filament/infolists`
+    - `filament/notifications`
+    - `filament/schemas`
+    - `filament/support`
+    
+    These packages allow you to use their components within Livewire components.
+    For example, if your form uses [Actions](../actions), remember to implement the `HasActions` interface and use the `InteractsWithActions` trait on your Livewire component class.
+    
+    If you are using any other [Filament components](overview#package-components) in your form, make sure to install and integrate the corresponding package as well.
+</Aside>
 
 ## Initializing the form with data
 
