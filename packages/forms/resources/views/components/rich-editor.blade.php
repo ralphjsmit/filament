@@ -12,7 +12,7 @@
     $statePath = $getStatePath();
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
-    $bubbleMenus = $getBubbleMenus();
+    $floatingToolbars = $getFloatingToolbars();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -48,7 +48,7 @@
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         statePath: @js($statePath),
                         uploadingFileMessage: @js($getUploadingFileMessage()),
-                        bubbleMenus: @js($bubbleMenus),
+                        floatingToolbars: @js($floatingToolbars),
                     })"
             x-bind:class="{
                 'fi-fo-rich-editor-uploading-file': isUploadingFile,
@@ -60,11 +60,7 @@
                 <div class="fi-fo-rich-editor-toolbar">
                     @foreach ($toolbarButtons as $button => $buttonGroup)
                         <div class="fi-fo-rich-editor-toolbar-group">
-                            @foreach ($buttonGroup as $key => $button)
-                                @php
-                                    $button = is_string($key) && is_array($button) ? $key : $button;
-                                @endphp
-
+                            @foreach ($buttonGroup as $button)
                                 {{ $tools[$button] ?? throw new Exception("Toolbar button [{$button}] cannot be found.") }}
                             @endforeach
                         </div>
@@ -74,13 +70,13 @@
 
             <div class="fi-fo-rich-editor-main">
                 <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
-                    @foreach ($bubbleMenus as $bubbleMenu)
+                    @foreach ($floatingToolbars as $nodeName => $buttons)
                         <div
-                            x-ref="{{ $bubbleMenu['ref'] }}"
+                            x-ref="toolbar{{ $nodeName }}"
                             class="bubble-menu fi-not-prose"
                             style="visibility: hidden; position: absolute"
                         >
-                            @foreach ($bubbleMenu['buttons'] as $button)
+                            @foreach ($buttons as $button)
                                 {{ $tools[$button] }}
                             @endforeach
                         </div>

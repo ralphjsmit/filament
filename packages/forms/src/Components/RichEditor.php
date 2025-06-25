@@ -577,7 +577,23 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<int, array<int|string, string|array<string>>>
+     * @return array<string | array<string>>
+     */
+    public function getDefaultFloatingToolbars(): array
+    {
+        return [
+            'table' => [
+                'tableRemove',
+                'tableColumnAddBefore', 'tableColumnDelete', 'tableColumnAddAfter',
+                'tableRowAddBefore', 'tableRowDelete', 'tableRowAddAfter',
+                'tableCellMerge', 'tableCellSplit',
+                'tableHeaderToggle',
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string | array<string>>
      */
     public function getDefaultToolbarButtons(): array
     {
@@ -585,18 +601,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
-            ['table' => [
-                'tableRemove',
-                'tableColumnAddBefore',
-                'tableColumnDelete',
-                'tableColumnAddAfter',
-                'tableRowAddBefore',
-                'tableRowDelete',
-                'tableRowAddAfter',
-                'tableCellMerge',
-                'tableCellSplit',
-                'tableHeaderToggle',
-            ]],
+            ['table'],
             [
                 'attachFiles',
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),

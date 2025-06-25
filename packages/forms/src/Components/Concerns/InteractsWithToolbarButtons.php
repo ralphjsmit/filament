@@ -12,6 +12,11 @@ trait InteractsWithToolbarButtons
      */
     protected array | Closure | null $toolbarButtons = null;
 
+    /**
+     * @var array<string | array<string>> | Closure | null
+     */
+    protected array | Closure | null $floatingToolbars = null;
+
     public function disableAllToolbarButtons(bool $condition = true): static
     {
         if ($condition) {
@@ -68,6 +73,24 @@ trait InteractsWithToolbarButtons
     }
 
     /**
+     * @param  array<string | array<string>> | Closure | null  $toolbars
+     */
+    public function floatingToolbars(array | Closure | null $toolbars): static
+    {
+        $this->floatingToolbars = $toolbars;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, array<int|string, list<string>|string>>
+     */
+    public function getFloatingToolbars(): array
+    {
+        return $this->evaluate($this->floatingToolbars ?? $this->getDefaultFloatingToolbars());
+    }
+
+    /**
      * @param  array<string | array<string>> | Closure | null  $buttons
      */
     public function toolbarButtons(array | Closure | null $buttons): static
@@ -108,30 +131,6 @@ trait InteractsWithToolbarButtons
         }
 
         return $toolbar;
-    }
-
-    /**
-     * @return array<array{ref: string, isActiveCondition: array<string>, buttons: array<string>}>
-     */
-    public function getBubbleMenus(): array
-    {
-        $bubbleMenus = [];
-
-        foreach ($this->getToolbarButtons() as $group) {
-            foreach ($group as $name => $buttons) {
-                if (! is_string($name) || ! is_array($buttons)) {
-                    continue;
-                }
-
-                $bubbleMenus[] = [
-                    'ref' => 'bubbleMenu' . str($name)->slug()->ucfirst(),
-                    'isActiveCondition' => [$name],
-                    'buttons' => $buttons,
-                ];
-            }
-        }
-
-        return $bubbleMenus;
     }
 
     /**

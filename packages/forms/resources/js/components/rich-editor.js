@@ -20,7 +20,7 @@ export default function richEditorFormComponent({
     state,
     statePath,
     uploadingFileMessage,
-    bubbleMenus,
+    floatingToolbars,
 }) {
     let editor
 
@@ -69,32 +69,26 @@ export default function richEditorFormComponent({
                     statePath,
                     uploadingFileMessage,
                     $wire: this.$wire,
-                    bubbleMenus,
+                    floatingToolbars,
                 }),
                 content: this.state,
             })
 
-            bubbleMenus.forEach((menuConfig) => {
-                const element = this.$refs[menuConfig.ref]
+            Object.entries(floatingToolbars).forEach(([key, buttons]) => {
+                const refName = `toolbar${key}`
+                const element = this.$refs[refName]
 
                 if (!element) {
-                    console.warn(
-                        `BubbleMenu element "${menuConfig.ref}" not found.`,
-                    )
+                    console.warn(`Floating Toolbar element "${key}" not found.`)
                     return
                 }
-
-                const types = menuConfig.isActiveCondition || []
-
-                const shouldShow = ({ editor }) =>
-                    types.some((type) => editor.isActive(type))
 
                 editor.registerPlugin(
                     BubbleMenuPlugin({
                         editor,
                         element,
-                        pluginKey: `bubbleMenu-${menuConfig.ref}`,
-                        shouldShow: shouldShow,
+                        pluginKey: refName,
+                        shouldShow: ({ editor }) => editor.isActive(key),
                         options: {
                             placement: 'top',
                             offset: 10,
