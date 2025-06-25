@@ -577,7 +577,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<string | array<string>>
+     * @return array<int, array<int|string, string|array<string>>>
      */
     public function getDefaultToolbarButtons(): array
     {

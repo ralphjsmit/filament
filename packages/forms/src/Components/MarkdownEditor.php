@@ -22,7 +22,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
     protected string $view = 'filament-forms::components.markdown-editor';
 
     /**
-     * @return array<string | array<string>>
+     * @return array<int, array<int|string, string|array<string>>>
      */
     public function getDefaultToolbarButtons(): array
     {
