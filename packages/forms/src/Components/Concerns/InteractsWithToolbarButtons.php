@@ -87,7 +87,7 @@ trait InteractsWithToolbarButtons
      */
     public function getFloatingToolbars(): array
     {
-        return $this->evaluate($this->floatingToolbars ?? $this->getDefaultFloatingToolbars());
+        return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
     }
 
     /**
