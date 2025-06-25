@@ -57,7 +57,7 @@ RichEditor::make('content')
         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
         ['h2', 'h3'],
         ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
-        ['table', 'tableRemove', 'tableColumnAddBefore', 'tableColumnDelete', 'tableColumnAddAfter', 'tableRowAddBefore', 'tableRowDelete', 'tableRowAddAfter', 'tableCellMerge', 'tableCellSplit', 'tableHeaderToggle'],
+        ['table'],
         ['attachFiles'], // The `customBlocks` and `mergeTags` tools are also added here if those features are used.
         ['undo', 'redo'],
     ])
@@ -66,7 +66,7 @@ RichEditor::make('content')
 Each nested array in the main array represents a group of buttons in the toolbar.
 
 Additional tools available in the toolbar include:
-* `table` - Creates a table in the editor with a default size of 3 columns, 2 rows and a header row.
+* `table` - Creates a table in the editor with a default layout of 3 columns and 3 rows, with the first row configured as a header row.
 * `tableRemove` - Removes the table.
 * `tableColumnAddBefore` - Adds a new column to the left of the current column.
 * `tableColumnDelete` - Deletes the current column.
@@ -77,6 +77,35 @@ Additional tools available in the toolbar include:
 * `tableCellMerge` - Merges the selected cells into one cell.
 * `tableCellSplit` - Splits the selected cell into multiple cells.
 * `tableHeaderToggle` - Toggles the header row of the table.
+
+If your toolbar is too ful, you can use the 'floatingToolbars()' method to customize the buttons that appear when the cursor is inside a specific node, rather than showing all buttons in the main toolbar.
+
+# Customizing floating toolbars
+
+You can customize the floating toolbars that appear when your cursor is placed inside a specific node by using the `floatingToolbarButtons()` method.
+
+In the example below, the floating toolbar appears when the cursor is inside a paragraph node. It shows bold, italic, and similar buttons. When the cursor is in a heading node, it displays heading-related buttons, and when inside a table cell, it shows table-specific controls.
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->floatingToolbars([
+        'heading' => [
+            'h1', 'h2', 'h3',
+        ],
+        'paragraph' => [
+            'bold', 'italic', 'underline', 'strike', 'subscript', 'superscript',
+        ],
+        'table' => [
+            'tableRemove',
+            'tableColumnAddBefore', 'tableColumnDelete', 'tableColumnAddAfter',
+            'tableRowAddBefore', 'tableRowDelete', 'tableRowAddAfter',
+            'tableCellMerge', 'tableCellSplit',
+            'tableHeaderToggle',
+        ]
+    ])
+```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
