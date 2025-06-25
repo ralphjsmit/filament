@@ -12,11 +12,6 @@ trait InteractsWithToolbarButtons
      */
     protected array | Closure | null $toolbarButtons = null;
 
-    /**
-     * @var array<string | array<string>> | Closure | null
-     */
-    protected array | Closure | null $floatingToolbars = null;
-
     public function disableAllToolbarButtons(bool $condition = true): static
     {
         if ($condition) {
@@ -70,24 +65,6 @@ trait InteractsWithToolbarButtons
         ];
 
         return $this;
-    }
-
-    /**
-     * @param  array<string | array<string>> | Closure | null  $toolbars
-     */
-    public function floatingToolbars(array | Closure | null $toolbars): static
-    {
-        $this->floatingToolbars = $toolbars;
-
-        return $this;
-    }
-
-    /**
-     * @return array<int, array<int|string, list<string>|string>>
-     */
-    public function getFloatingToolbars(): array
-    {
-        return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
     }
 
     /**

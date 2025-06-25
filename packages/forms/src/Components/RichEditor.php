@@ -76,6 +76,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected array $cachedCustomBlocks;
 
+    /**
+     * @var array<string | array<string>> | Closure | null
+     */
+    protected array | Closure | null $floatingToolbars = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -741,5 +746,23 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getCustomBlock(string $id): ?string
     {
         return $this->getCachedCustomBlocks()[$id] ?? null;
+    }
+
+    /**
+     * @param  array<string | array<string>> | Closure | null  $toolbars
+     */
+    public function floatingToolbars(array | Closure | null $toolbars): static
+    {
+        $this->floatingToolbars = $toolbars;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, array<int|string, list<string>|string>>
+     */
+    public function getFloatingToolbars(): array
+    {
+        return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
     }
 }
