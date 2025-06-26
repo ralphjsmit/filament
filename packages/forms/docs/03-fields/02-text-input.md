@@ -213,7 +213,7 @@ TextInput::make('amount')
 
 ## Trimming whitespace
 
-You can automatically trim whitespace from the beginning and end of the input value using the `trim()` method, similar to Laravel's `TrimStrings` middleware:
+You can automatically trim whitespace from the beginning and end of the input value using the `trim()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -222,7 +222,7 @@ TextInput::make('name')
     ->trim()
 ```
 
-You may want to enable trimming globally for all text inputs. You can do this in a service provider using the `configureUsing()` method:
+You may want to enable trimming globally for all text inputs, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;

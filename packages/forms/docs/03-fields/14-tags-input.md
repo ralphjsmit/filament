@@ -109,7 +109,7 @@ TagsInput::make('tags')
 
 ## Trimming whitespace
 
-You can automatically trim whitespace from the beginning and end of each tag using the `trim()` method, similar to Laravel's `TrimStrings` middleware:
+You can automatically trim whitespace from the beginning and end of each tag using the `trim()` method:
 
 ```php
 use Filament\Forms\Components\TagsInput;
@@ -118,7 +118,7 @@ TagsInput::make('tags')
     ->trim()
 ```
 
-You may want to enable trimming globally for all tags inputs. You can do this in a service provider using the `configureUsing()` method:
+You may want to enable trimming globally for all tags inputs, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
 
 ```php
 use Filament\Forms\Components\TagsInput;
