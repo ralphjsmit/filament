@@ -49,6 +49,8 @@ There are 3 tasks when adding a table to a Livewire component class:
 namespace App\Livewire;
 
 use App\Models\Shop\Product;
+use Filament\Actions\Concerns\InteractsWithActions;  
+use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables\Columns\TextColumn;
@@ -58,10 +60,11 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class ListProducts extends Component implements HasSchemas, HasTable
+class ListProducts extends Component implements HasActions, HasSchemas, HasTable
 {
-    use InteractsWithTable;
+    use InteractsWithActions;
     use InteractsWithSchemas;
+    use InteractsWithTable;
     
     public function table(Table $table): Table
     {
