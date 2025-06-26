@@ -122,7 +122,7 @@ test('can get component column order at all breakpoints', function (): void {
         ]);
 
     expect($component)
-        ->getcolumnOrder()
+        ->getColumnOrder()
         ->toHaveKey('default', $defaultOrder)
         ->toHaveKey('sm', $orderAtSm)
         ->toHaveKey('md', $orderAtMd)
@@ -139,7 +139,7 @@ test('can get component column order at one breakpoint', function (): void {
         ]);
 
     expect($component)
-        ->getcolumnOrder('2xl')->toBe($orderAt2xl);
+        ->getColumnOrder('2xl')->toBe($orderAt2xl);
 });
 
 test('can set component column order at `default` breakpoint', function (): void {
@@ -148,7 +148,7 @@ test('can set component column order at `default` breakpoint', function (): void
         ->columnOrder($defaultOrder = rand(1, 12));
 
     expect($component)
-        ->getcolumnOrder('default')->toBe($defaultOrder);
+        ->getColumnOrder('default')->toBe($defaultOrder);
 });
 
 test('can get component column order with null default values', function (): void {
@@ -156,7 +156,7 @@ test('can get component column order with null default values', function (): voi
         ->container(Schema::make(Livewire::make()));
 
     expect($component)
-        ->getcolumnOrder()
+        ->getColumnOrder()
         ->toHaveKey('default', null)
         ->toHaveKey('sm', null)
         ->toHaveKey('md', null)
