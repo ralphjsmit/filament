@@ -112,18 +112,17 @@ class NavigationManager
                     return $registeredGroup->items($items);
                 }
 
-                return NavigationGroup::make($registeredGroup ?? $groupIndex)
-                    ->when(
-                        $groupEnum instanceof HasLabel,
-                        static fn (NavigationGroup $group) => $group
-                            ->label($groupEnum->getLabel())
-                    )
-                    ->when(
-                        $groupEnum instanceof HasIcon,
-                        static fn (NavigationGroup $group) => $group
-                            ->icon($groupEnum->getIcon())
-                    )
-                    ->items($items);
+                $group = NavigationGroup::make($registeredGroup ?? $groupIndex);
+
+                if ($groupEnum instanceof HasLabel) {
+                    $group->label($groupEnum->getLabel());
+                }
+
+                if ($groupEnum instanceof HasIcon) {
+                    $group->icon($groupEnum->getIcon());
+                }
+
+                return $group->items($items);
             })
             ->filter(fn (NavigationGroup $group): bool => filled($group->getItems()))
             ->sortBy(function (NavigationGroup $group, ?string $groupIndex): int {
@@ -243,7 +242,9 @@ class NavigationManager
         $enum = null;
 
         /** @var class-string<UnitEnum> $class */
-        if ($class = $parts[1] ?? null) {
+        $class = $parts[1] ?? null;
+
+        if ($class) {
             foreach ($class::cases() as $case) {
                 if ($case->name === $group) {
                     $enum = $case;
