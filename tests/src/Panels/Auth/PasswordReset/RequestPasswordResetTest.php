@@ -47,7 +47,7 @@ it('can request password reset', function (): void {
             FilamentNotification::make()
                 ->success()
                 ->title(__('passwords.sent'))
-                ->body(__('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent.body'))
+                ->body(__('filament-panels::auth/pages/password-reset/request-password-reset.notifications.sent.body'))
         );
 
     Notification::assertSentTo($userToResetPassword, ResetPassword::class);
@@ -105,7 +105,7 @@ it('cannot request password reset without panel access', function (): void {
             FilamentNotification::make()
                 ->success()
                 ->title(__('passwords.sent'))
-                ->body(__('filament-panels::pages/auth/password-reset/request-password-reset.notifications.sent.body'))
+                ->body(__('filament-panels::auth/pages/password-reset/request-password-reset.notifications.sent.body'))
         );
 
     Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
