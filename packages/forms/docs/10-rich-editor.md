@@ -47,7 +47,7 @@ class Post extends Model
 
 ## Customizing the toolbar buttons
 
-You may set the toolbar buttons for the editor using the `toolbarButtons()` method. The options shown here are the defaults. In addition to these, `'h1'` is also available:
+You may set the toolbar buttons for the editor using the `toolbarButtons()` method. The options shown here are the defaults:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -55,7 +55,7 @@ use Filament\Forms\Components\RichEditor;
 RichEditor::make('content')
     ->toolbarButtons([
         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
-        ['h2', 'h3'],
+        ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
         ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
         ['attachFiles'], // The `customBlocks` and `mergeTags` tools are also added here if those features are used.
         ['undo', 'redo'],
@@ -63,6 +63,15 @@ RichEditor::make('content')
 ```
 
 Each nested array in the main array represents a group of buttons in the toolbar.
+
+Additional tools available in the toolbar include:
+
+- `h1` - Applies the "h1" tag to the text.
+- `alignJustify` - Justifies the text.
+- `highlight` - Highlights the selected text with a `<mark>` tag around it.
+- `horizontalRule` - Inserts a horizontal rule.
+- `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
+- `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
