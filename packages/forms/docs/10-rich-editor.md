@@ -303,7 +303,7 @@ class HeroBlock extends RichContentCustomBlock
      * @param  array<string, mixed>  $config
      * @param  array<string, mixed>  $data
      */
-    public function toHtml(array $config, array $data): string
+    public static function toHtml(array $config, array $data): string
     {
         return view('blocks.hero', [
             'heading' => $config['heading'],
