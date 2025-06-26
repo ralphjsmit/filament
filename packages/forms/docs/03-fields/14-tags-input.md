@@ -107,6 +107,17 @@ TagsInput::make('tags')
     ->color('danger')
 ```
 
+## Trimming whitespace
+
+You can automatically trim whitespace from the beginning and end of each tag using the `trim()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->trim()
+```
+
 ## Tags validation
 
 You may add validation rules for each tag by passing an array of rules to the `nestedRecursiveRules()` method:

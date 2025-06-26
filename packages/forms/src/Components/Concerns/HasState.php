@@ -52,6 +52,8 @@ trait HasState
      */
     protected array $cachedStripCharacters;
 
+    protected bool | Closure $isTrimmed = false;
+
     public function afterStateHydrated(?Closure $callback): static
     {
         $this->afterStateHydrated = $callback;
@@ -292,7 +294,13 @@ trait HasState
 
     public function mutateDehydratedState(mixed $state): mixed
     {
-        $state = $this->stripCharactersFromState($state);
+        if (is_array($state)) {
+            $state = array_map($this->stripCharactersFromState(...), $state);
+            $state = array_map($this->trimState(...), $state);
+        } else {
+            $state = $this->stripCharactersFromState($state);
+            $state = $this->trimState($state);
+        }
 
         if (! $this->mutateDehydratedStateUsing) {
             return $state;
@@ -306,7 +314,13 @@ trait HasState
 
     public function mutateStateForValidation(mixed $state): mixed
     {
-        $state = $this->stripCharactersFromState($state);
+        if (is_array($state)) {
+            $state = array_map($this->stripCharactersFromState(...), $state);
+            $state = array_map($this->trimState(...), $state);
+        } else {
+            $state = $this->stripCharactersFromState($state);
+            $state = $this->trimState($state);
+        }
 
         if (! $this->mutateStateForValidationUsing) {
             return $state;
@@ -333,14 +347,27 @@ trait HasState
         return str_replace($stripCharacters, '', $state);
     }
 
+    protected function trimState(mixed $state): mixed
+    {
+        if (! is_string($state)) {
+            return $state;
+        }
+
+        if (! $this->isTrimmed()) {
+            return $state;
+        }
+
+        return trim($state);
+    }
+
     public function mutatesDehydratedState(): bool
     {
-        return ($this->mutateDehydratedStateUsing instanceof Closure) || $this->hasStripCharacters();
+        return ($this->mutateDehydratedStateUsing instanceof Closure) || $this->hasStripCharacters() || $this->isTrimmed();
     }
 
     public function mutatesStateForValidation(): bool
     {
-        return ($this->mutateStateForValidationUsing instanceof Closure) || $this->hasStripCharacters();
+        return ($this->mutateStateForValidationUsing instanceof Closure) || $this->hasStripCharacters() || $this->isTrimmed();
     }
 
     public function hasStripCharacters(): bool
@@ -521,11 +548,23 @@ trait HasState
         return $this;
     }
 
+    public function trim(bool | Closure $condition = true): static
+    {
+        $this->isTrimmed = $condition;
+
+        return $this;
+    }
+
     /**
      * @return array<string>
      */
     public function getStripCharacters(): array
     {
         return $this->cachedStripCharacters ??= Arr::wrap($this->evaluate($this->stripCharacters));
+    }
+
+    public function isTrimmed(): bool
+    {
+        return (bool) $this->evaluate($this->isTrimmed);
     }
 }

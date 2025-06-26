@@ -211,6 +211,17 @@ TextInput::make('amount')
     ->numeric()
 ```
 
+## Trimming whitespace
+
+You can automatically trim whitespace from the beginning and end of the input value using the `trim()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->trim()
+```
+
 ## Making the field read-only
 
 Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readOnly()` method:
