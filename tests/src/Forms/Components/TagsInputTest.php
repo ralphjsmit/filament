@@ -10,7 +10,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can trim whitespace from TagsInput array values', function ($input, $expected) {
+it('can trim whitespace from TagsInput array values', function (mixed $input, mixed $expected) {
     livewire(TestComponentWithTagsInputTrim::class)
         ->fillForm(['tags' => $input])
         ->call('save')
@@ -24,7 +24,7 @@ it('can trim whitespace from TagsInput array values', function ($input, $expecte
 ]);
 
 
-it('can strip characters from TagsInput array values', function ($input, $expected) {
+it('can strip characters from TagsInput array values', function (mixed $input, mixed $expected) {
     livewire(TestComponentWithTagsInputStripCharacters::class)
         ->fillForm(['tags' => $input])
         ->call('save')
