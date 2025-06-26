@@ -62,11 +62,7 @@ class NavigationManager
             ->groupBy(function (NavigationItem $item): string {
                 $group = $item->getGroup();
 
-                if ($group instanceof UnitEnum) {
-                    return $group::class . '::' . $group->name;
-                }
-
-                return $group ?? '';
+                return serialize($group);
             })
             ->map(function (Collection $items, string $groupIndex) use ($groups): NavigationGroup {
                 $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
@@ -84,20 +80,26 @@ class NavigationManager
 
                 $items = $items->filter(fn (NavigationItem $item): bool => (filled($item->getChildItems()) || filled($item->getUrl())));
 
-                if (blank($groupIndex)) {
+                $groupName = unserialize($groupIndex);
+
+                if (blank($groupName)) {
                     return NavigationGroup::make()->items($items);
                 }
 
-                $groupEnum = $this->parseNavigationGroupEnum($groupIndex);
-                $groupIndex = $groupEnum->name ?? $groupIndex;
+                $groupEnum = null;
+
+                if ($groupName instanceof UnitEnum) {
+                    $groupEnum = $groupName;
+                    $groupName = $groupEnum->name;
+                }
 
                 $registeredGroup = $groups
-                    ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupIndex) {
-                        if ($registeredGroupIndex === $groupIndex) {
+                    ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupName) {
+                        if ($registeredGroupIndex === $groupName) {
                             return true;
                         }
 
-                        if ($registeredGroup === $groupIndex) {
+                        if ($registeredGroup === $groupName) {
                             return true;
                         }
 
@@ -105,14 +107,14 @@ class NavigationManager
                             return false;
                         }
 
-                        return $registeredGroup->getLabel() === $groupIndex;
+                        return $registeredGroup->getLabel() === $groupName;
                     });
 
                 if ($registeredGroup instanceof NavigationGroup) {
                     return $registeredGroup->items($items);
                 }
 
-                $group = NavigationGroup::make($registeredGroup ?? $groupIndex);
+                $group = NavigationGroup::make($registeredGroup ?? $groupName);
 
                 if ($groupEnum instanceof HasLabel) {
                     $group->label($groupEnum->getLabel());
@@ -130,8 +132,13 @@ class NavigationManager
                     return -1;
                 }
 
-                $groupEnum = $this->parseNavigationGroupEnum($groupIndex);
-                $groupIndex = $groupEnum->name ?? $groupIndex;
+                $groupName = unserialize($groupIndex);
+                $groupEnum = null;
+
+                if ($groupName instanceof UnitEnum) {
+                    $groupEnum = $groupName;
+                    $groupName = $groupEnum->name;
+                }
 
                 $registeredGroups = $this->getNavigationGroups();
 
@@ -145,7 +152,7 @@ class NavigationManager
                 }
 
                 $sort = array_search(
-                    $groupIndex,
+                    $groupName,
                     $groupsToSearch,
                 );
 
@@ -230,32 +237,5 @@ class NavigationManager
     public function getNavigationItems(): array
     {
         return $this->navigationItems;
-    }
-
-    protected function parseNavigationGroupEnum(string $group): ?UnitEnum
-    {
-        $parts = explode('::', $group, limit: 2);
-
-        $enum = $parts[0];
-
-        if (blank($enum)) {
-            return null;
-        }
-
-        if (! enum_exists($enum)) {
-            return null;
-        }
-
-        if (blank($parts[1] ?? null)) {
-            return null;
-        }
-
-        foreach ($enum::cases() as $case) {
-            if ($case->name === $parts[1]) {
-                return $case;
-            }
-        }
-
-        return null;
     }
 }
