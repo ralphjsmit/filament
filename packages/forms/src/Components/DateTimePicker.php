@@ -586,21 +586,4 @@ class DateTimePicker extends Field implements HasAffixActions
 
         return 'datetime-local';
     }
-
-    public function getKey(bool $isAbsolute = true): ?string
-    {
-        if ($this->isNative() || $this->key !== null) {
-            return parent::getKey($isAbsolute);
-        }
-
-        $values = [
-            'minDate' => $this->getMinDate(),
-            'maxDate' => $this->getMaxDate(),
-            'disabledDates' => $this->getDisabledDates(),
-        ];
-
-        $this->key = substr(md5(serialize($values)), 0, 8);
-
-        return parent::getKey($isAbsolute);
-    }
 }

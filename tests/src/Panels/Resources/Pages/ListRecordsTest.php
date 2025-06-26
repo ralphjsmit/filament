@@ -82,7 +82,7 @@ it('can sort posts by author', function (): void {
         ->assertCanSeeTableRecords($posts->sortByDesc('author.name'), inOrder: true);
 });
 
-it('can sort posts with default sort key', function () {
+it('can sort posts with default sort key', function (): void {
 
     $faker = fake()->unique();
     $posts = Post::factory()->count(10)->state(function () use ($faker) {
