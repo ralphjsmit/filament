@@ -25,6 +25,7 @@
     $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
+    $state = $getState();
 @endphp
 
 <x-dynamic-component
@@ -156,7 +157,11 @@
                                     { search },
                                 )
                             },
+                            initialOptionLabel: @js((blank($state) || $isMultiple) ? null : $getOptionLabel()),
+                            initialOptionLabels: @js((filled($state) && $isMultiple) ? $getOptionLabelsForJs() : []),
+                            initialState: @js($state),
                             isAutofocused: @js($isAutofocused),
+                            isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple),
                             isSearchable: @js($isSearchable),
                             livewireId: @js($this->getId()),
@@ -185,17 +190,7 @@
                         ->merge($getExtraAlpineAttributes(), escape: false)
                 }}
             >
-                <select
-                    x-ref="input"
-                    {{
-                        $extraInputAttributeBag
-                            ->merge([
-                                'disabled' => $isDisabled,
-                                'id' => $id,
-                                'multiple' => $isMultiple,
-                            ], escape: false)
-                    }}
-                ></select>
+                <div x-ref="select"></div>
             </div>
         @endif
     </x-filament::input.wrapper>

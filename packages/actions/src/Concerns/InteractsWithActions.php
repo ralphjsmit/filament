@@ -51,6 +51,12 @@ trait InteractsWithActions
     public $defaultActionArguments = null;
 
     /**
+     * @var mixed
+     */
+    #[Url(as: 'actionContext')]
+    public $defaultActionContext = null;
+
+    /**
      * @var array<string, Action>
      */
     protected array $cachedActions = [];
@@ -314,6 +320,13 @@ trait InteractsWithActions
     {
         $this->mountedActions = [];
         $this->cachedMountedActions = null;
+
+        foreach ($this->cachedSchemas as $schemaName => $schema) {
+            if (str($schemaName)->startsWith('mountedActionSchema')) {
+                unset($this->cachedSchemas[$schemaName]);
+            }
+        }
+
         $this->mountAction($name, $arguments, $context);
     }
 
@@ -605,7 +618,7 @@ trait InteractsWithActions
 
         return $mountedAction->getSchema(
             $this->makeSchema()
-                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
+                ->model(fn (): Model | array | string | null => $mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(
@@ -674,6 +687,7 @@ trait InteractsWithActions
             // actually set to `'null'` strings and remain in the URL.
             $this->defaultAction = [];
             $this->defaultActionArguments = [];
+            $this->defaultActionContext = [];
 
             return;
         }
