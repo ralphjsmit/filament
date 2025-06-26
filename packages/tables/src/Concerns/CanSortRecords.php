@@ -104,7 +104,7 @@ trait CanSortRecords
             $query = $defaultSort;
         }
 
-        if (filled($query->getQuery()->orders) && ! $this->getTable()->hasDefaultKeySort()) {
+        if (filled($query->getQuery()->orders) && (! $this->getTable()->hasDefaultKeySort())) {
             return $query;
         }
 

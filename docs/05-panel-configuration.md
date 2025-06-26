@@ -412,7 +412,7 @@ public function panel(Panel $panel): Panel
 
 ## Configuring error notifications
 
-When Laravel's debug mode is disabled, Filament will replace Livewire's full-screen error modals with neater flash notifications. You can disable this behaviour using the `errorNotifications(false)` method:
+When Laravel's debug mode is disabled, Filament will replace Livewire's full-screen error modals with neater flash notifications. You can disable this behavior using the `errorNotifications(false)` method:
 
 ```php
 use Filament\Panel;
