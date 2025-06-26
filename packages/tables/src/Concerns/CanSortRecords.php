@@ -132,7 +132,7 @@ trait CanSortRecords
 
         $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
 
-        foreach ($query->toBase()->orders ?? [] as $order) { /** @phpstan-ignore */
+        foreach ($query->toBase()->orders ?? [] as $order) { /** @phpstan-ignore nullCoalesce.property */
             if (($order['column'] ?? null) === $qualifiedKeyName) {
                 return $query;
             }
