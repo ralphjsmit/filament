@@ -1,6 +1,16 @@
 ---
 title: Rendering an infolist in a Blade view
 ---
+import Aside from "@components/Aside.astro"
+
+<Aside variant="warning">
+    Before proceeding, make sure `filament/infolists` is installed in your project. You can check by running:
+
+    ```bash
+    composer show filament/infolists
+    ```
+    If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
+</Aside>
 
 ## Setting up the Livewire component
 
@@ -62,6 +72,20 @@ Finally, render the infolist in the Livewire component's view:
 ```blade
 {{ $this->productInfolist }}
 ```
+
+<Aside variant="info">
+    `filament/infolists` also includes the following packages:
+
+    - `filament/actions`
+    - `filament/schemas`
+    - `filament/support`
+    
+    These packages allow you to use their components within Livewire components.
+    For example, if your infolist uses [Actions](../actions), remember to implement the `HasActions` interface and use the `InteractsWithActions` trait on your Livewire component class.
+    
+    If you are using any other [Filament components](overview#package-components) in your infolist, make sure to install and integrate the corresponding package as well.
+
+</Aside>
 
 ## Passing data to the infolist
 
