@@ -76,8 +76,6 @@ Finally, render the schema in the Livewire component's view:
     `filament/schemas` also includes the following packages:
 
     - `filament/actions`
-    - `filament/forms`
-    - `filament/infolists`
     - `filament/support`
     
     These packages allow you to use their components within Livewire components.

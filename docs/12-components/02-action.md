@@ -109,7 +109,6 @@ You also need `<x-filament-actions::modals />` which injects the HTML required t
     - `filament/forms`
     - `filament/infolists`
     - `filament/notifications`
-    - `filament/schemas`
     - `filament/support`
     
     These packages allow you to use their components within Livewire components.

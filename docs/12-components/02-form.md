@@ -134,8 +134,6 @@ public function create(): void
     `filament/forms` also includes the following packages:
 
     - `filament/actions`
-    - `filament/infolists`
-    - `filament/notifications`
     - `filament/schemas`
     - `filament/support`
     

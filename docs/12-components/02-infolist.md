@@ -77,8 +77,6 @@ Finally, render the infolist in the Livewire component's view:
     `filament/infolists` also includes the following packages:
 
     - `filament/actions`
-    - `filament/forms`
-    - `filament/notifications`
     - `filament/schemas`
     - `filament/support`
     

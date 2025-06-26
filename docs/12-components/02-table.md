@@ -104,9 +104,6 @@ Visit your Livewire component in the browser, and you should see the table.
     
     - `filament/actions`
     - `filament/forms`
-    - `filament/infolists`
-    - `filament/notifications`
-    - `filament/schemas`
     - `filament/support`
     
     These packages allow you to use their components within Livewire components.
