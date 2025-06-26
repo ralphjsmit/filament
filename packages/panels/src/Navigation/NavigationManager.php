@@ -63,7 +63,7 @@ class NavigationManager
                 $group = $item->getGroup();
 
                 if ($group instanceof UnitEnum) {
-                    return $group->name . '::' . $group::class;
+                    return $group::class . '::' . $group->name;
                 }
 
                 return $group ?? '';
@@ -88,8 +88,8 @@ class NavigationManager
                     return NavigationGroup::make()->items($items);
                 }
 
-                // Retrieve the enum instance if UnitEnum was passed as group
-                [$groupIndex, $groupEnum] = $this->getNavigationGroupEnum($groupIndex);
+                $groupEnum = $this->parseNavigationGroupEnum($groupIndex);
+                $groupIndex = $groupEnum->name ?? $groupIndex;
 
                 $registeredGroup = $groups
                     ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupIndex) {
@@ -130,8 +130,8 @@ class NavigationManager
                     return -1;
                 }
 
-                // Retrieve the enum instance if UnitEnum was passed as group
-                [$groupIndex, $groupEnum] = $this->getNavigationGroupEnum($groupIndex);
+                $groupEnum = $this->parseNavigationGroupEnum($groupIndex);
+                $groupIndex = $groupEnum->name ?? $groupIndex;
 
                 $registeredGroups = $this->getNavigationGroups();
 
@@ -149,9 +149,9 @@ class NavigationManager
                     $groupsToSearch,
                 );
 
-                // Sort by order of definition in the enum class
                 if ($groupEnum) {
-                    $sort = array_search($groupEnum, $groupEnum::cases());
+                    $enumCaseSort = array_search($groupEnum, $groupEnum::cases());
+                    $sort = ($enumCaseSort !== false) ? $enumCaseSort : $sort;
                 }
 
                 if ($sort === false) {
@@ -232,28 +232,30 @@ class NavigationManager
         return $this->navigationItems;
     }
 
-    /**
-     * @return array{0: string, 1: null | UnitEnum}
-     */
-    private function getNavigationGroupEnum(string $group): array
+    protected function parseNavigationGroupEnum(string $group): ?UnitEnum
     {
-        $parts = explode('::', $group, 2);
-        $group = $parts[0];
-        $enum = null;
+        $parts = explode('::', $group, limit: 2);
 
-        /** @var class-string<UnitEnum> $class */
-        $class = $parts[1] ?? null;
+        $enum = $parts[0];
 
-        if ($class) {
-            foreach ($class::cases() as $case) {
-                if ($case->name === $group) {
-                    $enum = $case;
+        if (blank($enum)) {
+            return null;
+        }
 
-                    break;
-                }
+        if (! enum_exists($enum)) {
+            return null;
+        }
+
+        if (blank($parts[1] ?? null)) {
+            return null;
+        }
+
+        foreach ($enum::cases() as $case) {
+            if ($case->name === $parts[1]) {
+                return $case;
             }
         }
 
-        return [$group, $enum];
+        return null;
     }
 }
