@@ -112,7 +112,7 @@ Visit your Livewire component in the browser, and you should see the table.
     These packages allow you to use their components within Livewire components.
     For example, if your table uses [Actions](action#setting-up-the-livewire-component), remember to implement the `HasActions` interface and include the `InteractsWithActions` trait.
     
-    If you are using any other [Filament components](overview#package-components) in your table, make sure to install and integrate the corresponding package as well. 
+    If you are using any other [Filament components](overview#package-components) in your table, make sure to install and integrate the corresponding package as well.
 </Aside>
 
 ## Building a table for an Eloquent relationship
