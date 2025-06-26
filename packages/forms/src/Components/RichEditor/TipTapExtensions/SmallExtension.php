@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\RichEditor\TipTapExtensions;
 
 use Tiptap\Core\Mark;
-use Tiptap\Utils\HTML;
 
 class SmallExtension extends Mark
 {

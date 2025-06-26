@@ -11,7 +11,6 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
-use Filament\Forms\Components\RichEditor\TipTapExtensions\TextAlignExtension;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -261,9 +260,11 @@ class RichContentRenderer implements Htmlable
             app(Superscript::class),
             app(Text::class),
             app(TextAlign::class, [
-                'types' => ['heading', 'paragraph'],
-                'alignments' => ['start', 'center', 'end', 'justify'],
-                'defaultAlignment' => 'start',
+                'options' => [
+                    'types' => ['heading', 'paragraph'],
+                    'alignments' => ['start', 'center', 'end', 'justify'],
+                    'defaultAlignment' => 'start',
+                ],
             ]),
             app(Underline::class),
             ...array_reduce(

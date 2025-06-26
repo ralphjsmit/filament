@@ -25,14 +25,20 @@ export default Node.create({
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['div', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0]
+        return [
+            'div',
+            mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+            0,
+        ]
     },
 
     addCommands() {
         return {
-            toggleLead: () => ({ commands }) => {
-                return commands.toggleWrap(this.name)
-            },
+            toggleLead:
+                () =>
+                ({ commands }) => {
+                    return commands.toggleWrap(this.name)
+                },
         }
     },
 })

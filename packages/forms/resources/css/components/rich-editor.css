@@ -101,14 +101,6 @@
                 }
             }
         }
-
-        hr {
-            @apply !my-4;
-        }
-
-        .lead {
-            @apply text-base;
-        }
     }
 
     & img.fi-loading {
