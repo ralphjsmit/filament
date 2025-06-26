@@ -16,11 +16,11 @@ it('can trim whitespace from TagsInput array values', function ($input, $expecte
         ->call('save')
         ->assertSet('data.tags', $expected);
 })->with([
-    'array with spaces' => [['  tag1  ', '  tag2  ', 'tag3'], ['tag1', 'tag2', 'tag3']],
-    'regular array' => [['tag1', 'tag2', 'tag3'], ['tag1', 'tag2', 'tag3']],
-    'null' => [null, null],
-    'empty array' => [[], []],
-    'mixed types' => [['  tag1  ', 123, '  tag2  '], ['tag1', 123, 'tag2']],
+    [['  tag1  ', '  tag2  ', 'tag3'], ['tag1', 'tag2', 'tag3']],
+    [['tag1', 'tag2', 'tag3'], ['tag1', 'tag2', 'tag3']],
+    [null, null],
+    [[], []],
+    [['  tag1  ', 123, '  tag2  '], ['tag1', 123, 'tag2']],
 ]);
 
 
@@ -30,10 +30,10 @@ it('can strip characters from TagsInput array values', function ($input, $expect
         ->call('save')
         ->assertSet('data.tags', $expected);
 })->with([
-    'array with characters to strip' => [['tag,1', 'tag.2', 'tag3'], ['tag1', 'tag2', 'tag3']],
-    'regular array' => [['tag1', 'tag2', 'tag3'], ['tag1', 'tag2', 'tag3']],
-    'null' => [null, null],
-    'empty array' => [[], []],
+    [['tag,1', 'tag.2', 'tag3'], ['tag1', 'tag2', 'tag3']],
+    [['tag1', 'tag2', 'tag3'], ['tag1', 'tag2', 'tag3']],
+    [null, null],
+    [[], []],
 ]);
 
 

@@ -16,11 +16,11 @@ it('can trim whitespace from TextInput', function ($input, $expected) {
         ->call('save')
         ->assertSet('data.name', $expected);
 })->with([
-    'string with spaces' => ['  test value  ', 'test value'],
-    'regular string' => ['test value', 'test value'],
-    'null' => [null, null],
-    'empty string' => ['', ''],
-    'integer' => [123, 123],
+    ['  test value  ', 'test value'],
+    ['test value', 'test value'],
+    [null, null],
+    ['', ''],
+    [123, 123],
 ]);
 
 class TestComponentWithTextInputTrim extends Livewire
