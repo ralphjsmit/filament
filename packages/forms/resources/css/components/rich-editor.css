@@ -101,6 +101,42 @@
                 }
             }
         }
+
+        [data-type="details"] {
+            @apply flex gap-1 my-6 border border-dashed border-gray-950/30 rounded-md p-2 dark:border-white/20;
+
+            > div:first-of-type {
+                @apply !mt-0;
+            }
+
+            summary {
+                @apply font-bold list-none;
+            }
+
+            > button {
+                @apply flex items-center justify-center bg-transparent rounded-sm text-xs size-5 leading-none p-0 mt-px hover:bg-gray-300 dark:hover:bg-gray-500;
+
+                &::before {
+                    content: '\25B6';
+                }
+            }
+
+            &.is-open > button::before {
+                transform: rotate(90deg);
+            }
+
+            > div {
+                @apply flex flex-col gap-4 w-full;
+
+                > [data-type='detailsContent'] {
+                    @apply !mt-0;
+
+                    & > :last-child {
+                        @apply mb-2;
+                    }
+                }
+            }
+        }
     }
 
     & img.fi-loading {

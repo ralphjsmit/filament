@@ -482,6 +482,7 @@ return [
             'bullet_list' => 'Bullet list',
             'code_block' => 'Code block',
             'custom_blocks' => 'Blocks',
+            'details' => 'Details',
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',

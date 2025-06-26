@@ -222,6 +222,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
                 ->icon('fi-s-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
+            RichEditorTool::make('details')
+                ->label(__('filament-forms::components.rich_editor.tools.details'))
+                ->jsHandler('$getEditor()?.chain().focus().setDetails().run()')
+                ->icon('fi-s-details')
+                ->iconAlias('forms:components.rich-editor.toolbar.details'),
         ]);
 
         $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {

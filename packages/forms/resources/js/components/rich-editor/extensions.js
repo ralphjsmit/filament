@@ -4,6 +4,7 @@ import Bold from '@tiptap/extension-bold'
 import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
 import CustomBlock from './extension-custom-block.js'
+import { Details, DetailsSummary, DetailsContent } from '@tiptap/extension-details'
 import Document from '@tiptap/extension-document'
 import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
@@ -53,6 +54,9 @@ export default async ({
         editCustomBlockUsing,
         insertCustomBlockUsing,
     }),
+    Details,
+    DetailsSummary,
+    DetailsContent,
     Document,
     Dropcursor,
     Gapcursor,
