@@ -40,7 +40,7 @@ Textarea::make('description')
 
 ## Trimming whitespace
 
-You can automatically trim whitespace from the beginning and end of the textarea value using the `trim()` method:
+You can automatically trim whitespace from the beginning and end of the textarea value using the `trim()` method, similar to Laravel's `TrimStrings` middleware:
 
 ```php
 use Filament\Forms\Components\Textarea;
