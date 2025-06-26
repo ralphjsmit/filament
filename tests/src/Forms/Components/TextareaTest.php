@@ -16,11 +16,11 @@ it('can trim whitespace from Textarea', function ($input, $expected) {
         ->call('save')
         ->assertSet('data.description', $expected);
 })->with([
-    'string with spaces' => ["  multiline\ntext content  ", "multiline\ntext content"],
-    'regular string' => ['test content', 'test content'],
-    'null' => [null, null],
-    'empty string' => ['', ''],
-    'integer' => [123, 123],
+    ["  multiline\ntext content  ", "multiline\ntext content"],
+    ['test content', 'test content'],
+    [null, null],
+    ['', ''],
+    [123, 123],
 ]);
 
 class TestComponentWithTextareaTrim extends Livewire
