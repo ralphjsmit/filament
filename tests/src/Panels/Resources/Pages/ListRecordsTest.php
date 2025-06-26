@@ -82,6 +82,23 @@ it('can sort posts by author', function (): void {
         ->assertCanSeeTableRecords($posts->sortByDesc('author.name'), inOrder: true);
 });
 
+it('can sort posts with default sort key', function () {
+
+    $faker = fake()->unique();
+    $posts = Post::factory()->count(10)->state(function () use ($faker) {
+        return [
+            'id' => $faker->randomDigit(),
+            'title' => 'Lorem Ipsum',
+        ];
+    })->create();
+
+    livewire(ListPosts::class)
+        ->sortTable('title')
+        ->assertCanSeeTableRecords($posts->sortBy([['title', 'asc'], ['id', 'asc']]), inOrder: true)
+        ->sortTable('title', 'desc')
+        ->assertCanSeeTableRecords($posts->sortBy([['title', 'desc'], ['id', 'asc']]), inOrder: true);
+});
+
 it('can search posts by title', function (): void {
     $posts = Post::factory()->count(10)->create();
 

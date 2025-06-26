@@ -91,7 +91,7 @@ The `toHtml()` method returns a string. If you would like to output HTML in a Bl
 {{ \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) }}
 ```
 
-If you have configured the [file attachments behaviour](#uploading-images-to-the-editor) of the editor to change the disk or visibility of the uploaded files, you must also pass these settings to the renderer to ensure that the correct URLs are generated:
+If you have configured the [file attachments behavior](#uploading-images-to-the-editor) of the editor to change the disk or visibility of the uploaded files, you must also pass these settings to the renderer to ensure that the correct URLs are generated:
 
 ```php
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
