@@ -20,6 +20,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
@@ -271,7 +272,12 @@ trait CanExportRecords
 
         $this->defaultColor('gray');
 
-        $this->modalWidth('xl');
+        $this->modalWidth(fn () => match ($this->getColumns()) {
+            2 => Width::TwoExtraLarge->value,
+            3 => Width::ThreeExtraLarge->value,
+            4 => Width::FourExtraLarge->value,
+            default => Width::ExtraLarge,
+        });
 
         $this->successNotificationTitle(__('filament-actions::export.notifications.started.title'));
 
@@ -306,6 +312,10 @@ trait CanExportRecords
 
     public function getInlineLabel(): bool
     {
+        if ($this->getColumns() > 1) {
+            return false;
+        }
+
         return $this->evaluate($this->inlineLabel);
     }
 
