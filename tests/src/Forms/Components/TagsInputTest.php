@@ -23,7 +23,6 @@ it('can trim whitespace from TagsInput array values', function (mixed $input, mi
     [['  tag1  ', 123, '  tag2  '], ['tag1', 123, 'tag2']],
 ]);
 
-
 it('can strip characters from TagsInput array values', function (mixed $input, mixed $expected) {
     livewire(TestComponentWithTagsInputStripCharacters::class)
         ->fillForm(['tags' => $input])
@@ -35,7 +34,6 @@ it('can strip characters from TagsInput array values', function (mixed $input, m
     [null, null],
     [[], []],
 ]);
-
 
 class TestComponentWithTagsInputTrim extends Livewire
 {
@@ -86,4 +84,3 @@ class TestComponentWithTagsInputStripCharacters extends Livewire
         return view('forms.fixtures.form');
     }
 }
-
