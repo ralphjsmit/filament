@@ -118,6 +118,16 @@ TagsInput::make('tags')
     ->trim()
 ```
 
+You may want to enable trimming globally for all tags inputs. You can do this in a service provider using the `configureUsing()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::configureUsing(function (TagsInput $component): void {
+    $component->trim();
+});
+```
+
 ## Tags validation
 
 You may add validation rules for each tag by passing an array of rules to the `nestedRecursiveRules()` method:

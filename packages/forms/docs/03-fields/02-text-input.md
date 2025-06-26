@@ -222,6 +222,16 @@ TextInput::make('name')
     ->trim()
 ```
 
+You may want to enable trimming globally for all text inputs. You can do this in a service provider using the `configureUsing()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::configureUsing(function (TextInput $component): void {
+    $component->trim();
+});
+```
+
 ## Making the field read-only
 
 Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readOnly()` method:
