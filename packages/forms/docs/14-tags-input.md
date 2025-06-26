@@ -132,7 +132,7 @@ TagsInput::make('tags')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-You may want to enable trimming globally for all tags inputs. You can do this in a service provider using the `configureUsing()` method:
+You may want to enable trimming globally for all tags inputs, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
 
 ```php
 use Filament\Forms\Components\TagsInput;

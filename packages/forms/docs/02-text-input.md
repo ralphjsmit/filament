@@ -261,7 +261,7 @@ TextInput::make('amount')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `stripCharacters()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-You may want to enable trimming globally for all text inputs. You can do this in a service provider using the `configureUsing()` method:
+You may want to enable trimming globally for all text inputs, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
