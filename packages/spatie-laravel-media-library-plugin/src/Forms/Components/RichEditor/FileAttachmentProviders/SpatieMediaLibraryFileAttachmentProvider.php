@@ -66,7 +66,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         return $this->media = $media;
     }
 
-    public function getFileAttachmentUrl(mixed $file, ?Closure $allowedFileAttachmentsFromOtherRecords = null): ?string
+    public function getFileAttachmentUrl(mixed $file): ?string
     {
         $media = $this->getMedia();
 

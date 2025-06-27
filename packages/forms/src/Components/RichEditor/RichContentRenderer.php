@@ -118,6 +118,12 @@ class RichContentRenderer implements Htmlable
 
     public function getFileAttachmentUrl(mixed $file): ?string
     {
+        $fileAttachmentProvider = $this->getFileAttachmentProvider();
+
+        if ($fileAttachmentProvider) {
+            return $fileAttachmentProvider->getFileAttachmentUrl($file);
+        }
+
         $disk = $this->fileAttachmentsDiskName ?? config('filament.default_filesystem_disk');
         $visibility = $this->fileAttachmentsVisibility ?? ($disk === 'public' ? 'public' : 'private');
 
