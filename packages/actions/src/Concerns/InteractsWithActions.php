@@ -605,7 +605,7 @@ trait InteractsWithActions
 
     protected function getMountedActionSchema(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Schema
     {
-        $actionNestingIndex ??= array_key_last($this->mountedActions);
+        $actionNestingIndex ??= $mountedAction?->getNestingIndex() ?? array_key_last($this->mountedActions);
 
         $mountedAction ??= $this->getMountedAction($actionNestingIndex);
 
