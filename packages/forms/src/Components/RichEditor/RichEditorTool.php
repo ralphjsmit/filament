@@ -164,6 +164,12 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
                 'tabindex' => -1,
                 'type' => 'button',
                 'x-on:click' => $this->getJsHandler(),
+                'x-tooltip' => filled($this->getLabel())
+                    ? '{
+                            content: ' . Js::from($this->getLabel()) . ',
+                            theme: $store.theme,
+                        }'
+                    : null,
             ], escape: false)
             ->class(['fi-fo-rich-editor-tool']);
 
@@ -174,10 +180,6 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         <button
             x-bind:class="{
                 'fi-active': editorUpdatedAt && <?php if ($activeJsExpression) { ?> <?= $activeJsExpression ?> <?php } else { ?> $getEditor()?.isActive(<?= Js::from($this->getActiveKey())->toHtml() ?>, <?= Js::from($this->getActiveOptions())->toHtml() ?>) <?php } ?>,
-            }"
-            x-tooltip="{
-                content: <?= Js::from($this->getLabel())->toHtml() ?>,
-                placement: 'top',
             }"
             <?= $attributes->toHtml() ?>
         >
