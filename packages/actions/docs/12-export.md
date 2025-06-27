@@ -80,7 +80,7 @@ The ["exporter" class needs to be created](#creating-an-exporter) to tell Filame
 
 ## Customizing the column selection form layout
 
-When the column mapping feature is enabled (which is the default), users will see a form that allows them to select which columns to export and customize their labels. You can control the layout of this form using the `columns()` and `inlineLabel()` methods.
+When the column mapping feature is enabled (which is the default), users will see a form that allows them to select which columns to export and customize their labels. You can control the layout of this form using the `columns()` method.
 
 ### Setting the number of columns
 
@@ -92,25 +92,10 @@ use Filament\Actions\ExportAction;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
-    ->columns(2)
+    ->columns(3)
 ```
 
 This will display the column selection checkboxes and label inputs in a 2-column layout, making better use of available space when you have many exportable columns.
-
-### Controlling inline labels
-
-By default, the column selection form displays labels inline with the form controls. You can disable this behavior using the `inlineLabel()` method:
-
-```php
-use App\Filament\Exports\ProductExporter;
-use Filament\Actions\ExportAction;
-
-ExportAction::make()
-    ->exporter(ProductExporter::class)
-    ->inlineLabel(false)
-```
-
-When inline labels are disabled, the labels will be displayed above the form controls instead of next to them.
 
 ## Creating an exporter
 
