@@ -25,6 +25,8 @@
     $activeFiltersCount = $getActiveFiltersCount();
     $isSelectionDisabled = $isSelectionDisabled();
     $canSelectMultipleRecords = $canSelectMultipleRecords();
+    $maxSelectableRecords = $canSelectMultipleRecords ? $getMaxSelectableRecords() : 1;
+    $canSelectMultipleRecords = $canSelectMultipleRecords && $maxSelectableRecords !== 1;
     $columns = $getVisibleColumns();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $columnsLayout = $getColumnsLayout();
@@ -111,7 +113,7 @@
     @endif
     x-data="filamentTable({
                 canSelectMultipleRecords: @js($canSelectMultipleRecords),
-                maxSelectableRecords: @js($getMaxSelectableRecords()),
+                maxSelectableRecords: @js($maxSelectableRecords),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 $wire,

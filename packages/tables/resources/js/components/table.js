@@ -238,10 +238,6 @@ export default ({
             return true
         }
 
-        if (!canSelectMultipleRecords) {
-            return true
-        }
-
         const selectedRecords = keys.filter((key) => this.isRecordSelected(key))
 
         if (selectedRecords.length === keys.length) {
