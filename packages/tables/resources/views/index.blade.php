@@ -562,7 +562,7 @@
                                 color="primary"
                                 tag="button"
                                 x-on:click="selectAllRecords"
-                                :x-show="$selectsCurrentPageOnly ? '! areRecordsSelected(recordsOnPage = getRecordsOnPage()) && areRecordsToggleable(recordsOnPage)' : $allSelectableRecordsCount . ' !== getSelectedRecordsCount()'"
+                                :x-show="'canSelectAllRecords(' . \Illuminate\Support\Js::from($selectsCurrentPageOnly) . ')'"
                                 {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
                                 :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
                             >

@@ -213,6 +213,36 @@ export default ({
         this.updatedSelectedRecords()
     },
 
+    canSelectAllRecords(selectsCurrentPageOnly) {
+        if (selectsCurrentPageOnly) {
+            const recordsOnPage = this.getRecordsOnPage()
+
+            return (
+                !this.areRecordsSelected(recordsOnPage) &&
+                this.areRecordsToggleable(recordsOnPage)
+            )
+        }
+
+        const allSelectableRecordsCount = parseInt(
+            this.$refs.allSelectableRecordsCount?.value,
+        )
+
+        if (!allSelectableRecordsCount) {
+            return false
+        }
+
+        const selectedRecordsCount = this.getSelectedRecordsCount()
+
+        if (allSelectableRecordsCount === selectedRecordsCount) {
+            return false
+        }
+
+        return (
+            maxSelectableRecords === null ||
+            allSelectableRecordsCount <= maxSelectableRecords
+        )
+    },
+
     deselectAllRecords() {
         this.isTrackingDeselectedRecords = false
         this.selectedRecords = new Set()
