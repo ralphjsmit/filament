@@ -3,10 +3,10 @@
     'prefix' => null,
     'required' => false,
     'suffix' => null,
-    'renderAsDiv' => false,
+    'tag' => 'label',
 ])
 
-<{{ $renderAsDiv ? 'div' : 'label' }}
+<{{ $tag }}
     {{ $attributes->class(['fi-fo-field-wrp-label inline-flex items-center gap-x-3']) }}
 >
     {{ $prefix }}
@@ -18,4 +18,4 @@
     </span>
 
     {{ $suffix }}
-</{{ $renderAsDiv ? 'div' : 'label' }}>
+</{{ $tag }}>

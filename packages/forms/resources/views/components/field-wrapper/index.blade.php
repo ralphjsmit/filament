@@ -19,9 +19,9 @@
     'labelPrefix' => null,
     'labelSrOnly' => null,
     'labelSuffix' => null,
+    'labelTag' => 'label',
     'required' => null,
     'statePath' => null,
-    'renderAsDiv' => false,
 ])
 
 @php
@@ -60,10 +60,10 @@
 >
     @if ($label && $labelSrOnly)
         <label
-            @if ($renderAsDiv)
-                :id="$id . '-label'"
-            @else
+            @if ($labelTag === 'label')
                 :for="$id"
+            @else
+                :id="$id . '-label'"
             @endif
             class="sr-only"
         >
@@ -93,9 +93,9 @@
             >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
-                        :for="$renderAsDiv ? null : $id"
-                        :id="$renderAsDiv ? ($id . '-label') : null"
-                        :render-as-div="$renderAsDiv"
+                        :for="$labelTag === 'div' ? null : $id"
+                        :id="$labelTag === 'div' ? $id . '-label' : null"
+                        :tag="$labelTag"
                         :disabled="$isDisabled"
                         :prefix="$labelPrefix"
                         :required="$required"
