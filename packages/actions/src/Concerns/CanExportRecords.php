@@ -44,7 +44,7 @@ trait CanExportRecords
 
     protected int | Closure $chunkSize = 100;
 
-    protected int | Closure $columns = 1;
+    protected int | Closure $columnMappingColumns = 1;
 
     protected int | Closure | null $maxRows = null;
 
@@ -84,7 +84,7 @@ trait CanExportRecords
 
         $this->schema(fn (ExportAction | ExportBulkAction $action): array => [
             ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
-                ->columns(match ($columns = $action->getColumns()) {
+                ->columns(match ($columns = $action->getColumnMappingColumns()) {
                     1 => 1,
                     2 => [
                         'sm' => 2,
@@ -284,7 +284,7 @@ trait CanExportRecords
 
         $this->defaultColor('gray');
 
-        $this->modalWidth(static fn (ExportAction | ExportBulkAction $action): Width => match ($action->getColumns()) {
+        $this->modalWidth(static fn (ExportAction | ExportBulkAction $action): Width => match ($action->getColumnMappingColumns()) {
             1 => Width::Medium,
             2 => Width::ThreeExtraLarge,
             3 => Width::FiveExtraLarge,
@@ -303,16 +303,16 @@ trait CanExportRecords
         return 'export';
     }
 
-    public function columns(int | Closure $columns): static
+    public function columnMappingColumns(int | Closure $columns): static
     {
-        $this->columns = $columns;
+        $this->columnMappingColumns = $columns;
 
         return $this;
     }
 
-    public function getColumns(): int
+    public function getColumnMappingColumns(): int
     {
-        return $this->evaluate($this->columns);
+        return $this->evaluate($this->columnMappingColumns);
     }
 
     /**

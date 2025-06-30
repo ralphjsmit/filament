@@ -78,25 +78,6 @@ public function table(Table $table): Table
 
 The ["exporter" class needs to be created](#creating-an-exporter) to tell Filament how to export each row.
 
-## Customizing the column selection form layout
-
-When the column mapping feature is enabled (which is the default), users will see a form that allows them to select which columns to export and customize their labels. You can control the layout of this form using the `columns()` method.
-
-### Setting the number of columns
-
-By default, the column selection form displays in a single column layout. You can change this using the `columns()` method:
-
-```php
-use App\Filament\Exports\ProductExporter;
-use Filament\Actions\ExportAction;
-
-ExportAction::make()
-    ->exporter(ProductExporter::class)
-    ->columns(3)
-```
-
-This will display the column selection checkboxes and label inputs in a 2-column layout, making better use of available space when you have many exportable columns.
-
 ## Creating an exporter
 
 To create an exporter class for a model, you may use the `make:filament-exporter` command, passing the name of a model:
@@ -154,6 +135,21 @@ use Filament\Actions\Exports\ExportColumn;
 ExportColumn::make('description')
     ->enabledByDefault(false)
 ```
+
+### Configuring the column selection form layout
+
+By default, the column selection form uses a single column layout. You can change this using the `columnMappingColumns()` method, passing the number of columns you would like to use for the layout on large screens:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->columnMappingColumns(3)
+```
+
+This will display the column selection checkboxes and label inputs in a 3-column layout, making better use of available space when you have many exportable columns. Note that while there will be three columns in the layout on large screens, the layout will still be responsive and there will be fewer columns displayed on smaller screens.
 
 ### Disabling column selection
 
