@@ -27,7 +27,7 @@
         @apply min-h-full w-full flex-1 px-5 py-3;
 
         & .bubble-menu {
-            @apply relative -mt-1 flex flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-500 dark:bg-gray-800;
+            @apply invisible absolute z-[20] -mt-1 flex flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-500 dark:bg-gray-800;
 
             & button {
                 @apply flex h-8 w-8 items-center justify-center rounded-lg text-gray-700 hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;

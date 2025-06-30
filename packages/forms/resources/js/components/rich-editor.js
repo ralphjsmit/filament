@@ -88,10 +88,11 @@ export default function richEditorFormComponent({
                         editor,
                         element,
                         pluginKey: refName,
-                        shouldShow: ({ editor }) => editor.isActive(key),
+                        shouldShow: ({ editor }) =>
+                            editor.isFocused && editor.isActive(key),
                         options: {
-                            placement: 'top',
-                            offset: 10,
+                            placement: 'bottom',
+                            offset: 15,
                         },
                     }),
                 )

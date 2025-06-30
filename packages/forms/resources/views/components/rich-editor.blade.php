@@ -74,7 +74,6 @@
                         <div
                             x-ref="toolbar{{ $nodeName }}"
                             class="bubble-menu fi-not-prose"
-                            style="visibility: hidden; position: absolute"
                         >
                             @foreach ($buttons as $button)
                                 {{ $tools[$button] }}
