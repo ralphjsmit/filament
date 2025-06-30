@@ -124,7 +124,24 @@
 
             @if ($hasError)
                 @php
-                    $errorMessage ??= $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
+                    if ($field?->shouldShowAllValidationMessages() && $errors->has($statePath)) {
+                        $allErrors = $errors->get($statePath);
+                        if (count($allErrors) > 1) {
+                            $errorMessage = '<ul class="fi-fo-field-wrp-error-list">';
+
+                            foreach ($allErrors as $error) {
+                                $errorMessage .= '<li>' . e($error) . '</li>';
+                            }
+
+                            $errorMessage .= '</ul>';
+
+                            $htmlErrorMessage = true;
+                        } else {
+                            $errorMessage ??= $errors->first($statePath);
+                        }
+                    } else {
+                        $errorMessage ??= $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
+                    }
                 @endphp
 
                 {{ $aboveErrorMessageSchema }}
