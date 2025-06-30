@@ -82,9 +82,24 @@ trait CanExportRecords
 
         $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? Heroicon::ArrowDownTray);
 
-        $this->form(fn (ExportAction | ExportBulkAction $action): array => [
+        $this->schema(fn (ExportAction | ExportBulkAction $action): array => [
             ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
-                ->columns($this->getColumns())
+                ->columns(match ($columns = $action->getColumns()) {
+                    1 => 1,
+                    2 => [
+                        'sm' => 2,
+                        'lg' => 2,
+                    ],
+                    3 => [
+                        'sm' => 2,
+                        'lg' => 3,
+                    ],
+                    default => [
+                        'sm' => 2,
+                        'md' => 3,
+                        'lg' => $columns,
+                    ],
+                })
                 ->schema(function () use ($action): array {
                     return array_map(
                         fn (ExportColumn $column): Flex => Flex::make([
@@ -269,11 +284,11 @@ trait CanExportRecords
 
         $this->defaultColor('gray');
 
-        $this->modalWidth(fn () => match ($this->getColumns()) {
-            2 => Width::TwoExtraLarge->value,
-            3 => Width::ThreeExtraLarge->value,
-            4 => Width::FourExtraLarge->value,
-            default => Width::ExtraLarge,
+        $this->modalWidth(static fn (ExportAction | ExportBulkAction $action): Width => match ($action->getColumns()) {
+            1 => Width::Medium,
+            2 => Width::ThreeExtraLarge,
+            3 => Width::FiveExtraLarge,
+            default => Width::SevenExtraLarge,
         });
 
         $this->successNotificationTitle(__('filament-actions::export.notifications.started.title'));
