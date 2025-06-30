@@ -126,8 +126,8 @@ class Schema extends ViewComponent implements HasEmbeddedView
     public static function center(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
     {
         return static::make()
-                     ->components($components)
-                     ->alignCenter();
+            ->components($components)
+            ->alignCenter();
     }
 
     /**
