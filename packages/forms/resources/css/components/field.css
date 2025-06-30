@@ -69,4 +69,12 @@
     & .fi-fo-field-wrp-error-message {
         @apply text-danger-600 dark:text-danger-400 text-sm;
     }
+
+    & .fi-fo-field-wrp-error-list {
+        @apply list-disc list-inside space-y-0.5;
+
+        & li {
+            @apply text-danger-600 dark:text-danger-400 text-sm;
+        }
+    }
 }
