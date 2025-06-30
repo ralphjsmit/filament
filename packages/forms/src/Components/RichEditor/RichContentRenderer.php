@@ -269,9 +269,9 @@ class RichContentRenderer implements Htmlable
             app(Subscript::class),
             app(Superscript::class),
             app(Table::class),
-            app(TableRow::class),
             app(TableCell::class),
             app(TableHeader::class),
+            app(TableRow::class),
             app(Text::class),
             app(TextAlign::class, [
                 'options' => [
