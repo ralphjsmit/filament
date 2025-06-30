@@ -246,6 +246,17 @@ CreateAction::make()
 
 ## Creating another record
 
+### Change create another label
+
+If you'd like to change the "create another" label, you can use the `createAnotherLabel()` method:
+
+```php
+use Filament\Actions\CreateAction;
+
+CreateAction::make()
+    ->createAnotherLabel('Custom create another label')
+```
+
 ### Disabling create another
 
 If you'd like to remove the "create another" button from the modal, you can use the `createAnother(false)` method:

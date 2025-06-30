@@ -113,6 +113,17 @@ protected function getCreatedNotification(): ?Notification
 
 ## Creating another record
 
+### Change create another label
+
+If you'd like to change the "create another" label, you can use the `createAnotherLabel()` method:
+
+```php
+use Filament\Actions\CreateAction;
+
+CreateAction::make()
+    ->createAnotherLabel('Custom create another label')
+```
+
 ### Disabling create another
 
 To disable the "create and create another" feature, define the `$canCreateAnother` property as `false` on the Create page class:
