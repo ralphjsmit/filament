@@ -41,6 +41,10 @@ use Tiptap\Nodes\HorizontalRule;
 use Tiptap\Nodes\ListItem;
 use Tiptap\Nodes\OrderedList;
 use Tiptap\Nodes\Paragraph;
+use Tiptap\Nodes\Table;
+use Tiptap\Nodes\TableCell;
+use Tiptap\Nodes\TableHeader;
+use Tiptap\Nodes\TableRow;
 use Tiptap\Nodes\Text;
 
 class RichContentRenderer implements Htmlable
@@ -121,6 +125,12 @@ class RichContentRenderer implements Htmlable
 
     public function getFileAttachmentUrl(mixed $file): ?string
     {
+        $fileAttachmentProvider = $this->getFileAttachmentProvider();
+
+        if ($fileAttachmentProvider) {
+            return $fileAttachmentProvider->getFileAttachmentUrl($file);
+        }
+
         $disk = $this->fileAttachmentsDiskName ?? config('filament.default_filesystem_disk');
         $visibility = $this->fileAttachmentsVisibility ?? ($disk === 'public' ? 'public' : 'private');
 
@@ -264,6 +274,10 @@ class RichContentRenderer implements Htmlable
             app(Strike::class),
             app(Subscript::class),
             app(Superscript::class),
+            app(Table::class),
+            app(TableCell::class),
+            app(TableHeader::class),
+            app(TableRow::class),
             app(Text::class),
             app(TextAlign::class, [
                 'options' => [
