@@ -126,6 +126,7 @@
                 @php
                     if ($field?->shouldShowAllValidationMessages() && $errors->has($statePath)) {
                         $allErrors = $errors->get($statePath);
+
                         if (count($allErrors) > 1) {
                             $errorMessage = '<ul class="fi-fo-field-wrp-error-list">';
 
