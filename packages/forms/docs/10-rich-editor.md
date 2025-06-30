@@ -47,7 +47,7 @@ class Post extends Model
 
 ## Customizing the toolbar buttons
 
-You may set the toolbar buttons for the editor using the `toolbarButtons()` method. The options shown here are the defaults. In addition to these, `'h1'` is also available:
+You may set the toolbar buttons for the editor using the `toolbarButtons()` method. The options shown here are the defaults:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -55,7 +55,7 @@ use Filament\Forms\Components\RichEditor;
 RichEditor::make('content')
     ->toolbarButtons([
         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
-        ['h2', 'h3'],
+        ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
         ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
         ['table'],
         ['attachFiles'], // The `customBlocks` and `mergeTags` tools are also added here if those features are used.
@@ -66,19 +66,28 @@ RichEditor::make('content')
 Each nested array in the main array represents a group of buttons in the toolbar.
 
 Additional tools available in the toolbar include:
-* `table` - Creates a table in the editor with a default layout of 3 columns and 3 rows, with the first row configured as a header row.
-* `tableRemove` - Removes the table.
-* `tableColumnAddBefore` - Adds a new column to the left of the current column.
-* `tableColumnDelete` - Deletes the current column.
-* `tableColumnAddAfter` - Adds a new column to the right of the current column.
-* `tableRowAddBefore` - Adds a new row above the current row.
-* `tableRowDelete` - Deletes the current row.
-* `tableRowAddAfter` - Adds a new row below the current row.
-* `tableCellMerge` - Merges the selected cells into one cell.
-* `tableCellSplit` - Splits the selected cell into multiple cells.
-* `tableHeaderToggle` - Toggles the header row of the table.
 
-If your toolbar is too ful, you can use the 'floatingToolbars()' method to customize the buttons that appear when the cursor is inside a specific node, rather than showing all buttons in the main toolbar.
+- `h1` - Applies the "h1" tag to the text.
+- `alignJustify` - Justifies the text.
+- `highlight` - Highlights the selected text with a `<mark>` tag around it.
+- `horizontalRule` - Inserts a horizontal rule.
+- `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
+- `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
+- `table` - Creates a table in the editor with a default layout of 3 columns and 3 rows, with the first row configured as a header row.
+- `tableRemove` - Removes the table.
+- `tableColumnAddBefore` - Adds a new column to the left of the current column.
+- `tableColumnDelete` - Deletes the current column.
+- `tableColumnAddAfter` - Adds a new column to the right of the current column.
+- `tableRowAddBefore` - Adds a new row above the current row.
+- `tableRowDelete` - Deletes the current row.
+- `tableRowAddAfter` - Adds a new row below the current row.
+- `tableCellMerge` - Merges the selected cells into one cell.
+- `tableCellSplit` - Splits the selected cell into multiple cells.
+- `tableHeaderToggle` - Toggles the header row of the table.
+
+If your toolbar is too full, you can use the 'floatingToolbars()' method to customize the buttons that appear when the cursor is inside a specific node, rather than showing all buttons in the main toolbar.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 # Customizing floating toolbars
 
@@ -107,8 +116,6 @@ RichEditor::make('content')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
 ## Rendering rich content
 
 If you're [storing content as JSON](#storing-content-as-json) instead of HTML, or your content requires processing to inject [private image URLs](#using-private-images-in-the-editor) or similar, you'll need to use the `RichContentRenderer` tool in Filament to output HTML:
@@ -125,7 +132,7 @@ The `toHtml()` method returns a string. If you would like to output HTML in a Bl
 {{ \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) }}
 ```
 
-If you have configured the [file attachments behaviour](#uploading-images-to-the-editor) of the editor to change the disk or visibility of the uploaded files, you must also pass these settings to the renderer to ensure that the correct URLs are generated:
+If you have configured the [file attachments behavior](#uploading-images-to-the-editor) of the editor to change the disk or visibility of the uploaded files, you must also pass these settings to the renderer to ensure that the correct URLs are generated:
 
 ```php
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
@@ -339,7 +346,7 @@ class HeroBlock extends RichContentCustomBlock
      * @param  array<string, mixed>  $config
      * @param  array<string, mixed>  $data
      */
-    public function toHtml(array $config, array $data): string
+    public static function toHtml(array $config, array $data): string
     {
         return view('blocks.hero', [
             'heading' => $config['heading'],

@@ -1,6 +1,16 @@
 ---
 title: Rendering a table in a Blade view
 ---
+import Aside from "@components/Aside.astro"
+
+<Aside variant="warning">
+    Before proceeding, make sure `filament/tables` is installed in your project. You can check by running:
+
+    ```bash
+    composer show filament/tables
+    ```
+    If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
+</Aside>
 
 ## Setting up the Livewire component
 
@@ -29,7 +39,7 @@ Route::get('products', ListProducts::class);
 
 There are 3 tasks when adding a table to a Livewire component class:
 
-1) Implement the `HasTable` and `HasForms` interfaces, and use the `InteractsWithTable` and `InteractsWithForms` traits.
+1) Implement the `HasTable` and `HasSchemas` interfaces, and use the `InteractsWithTable` and `InteractsWithSchemas` traits.
 2) Add a `table()` method, which is where you configure the table. [Add the table's columns, filters, and actions](getting-started#columns).
 3) Make sure to define the base query that will be used to fetch rows in the table. For example, if you're listing products from your `Product` model, you will want to return `Product::query()`.
 
@@ -39,8 +49,10 @@ There are 3 tasks when adding a table to a Livewire component class:
 namespace App\Livewire;
 
 use App\Models\Shop\Product;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Actions\Concerns\InteractsWithActions;  
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -48,10 +60,11 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class ListProducts extends Component implements HasForms, HasTable
+class ListProducts extends Component implements HasActions, HasSchemas, HasTable
 {
+    use InteractsWithActions;
+    use InteractsWithSchemas;
     use InteractsWithTable;
-    use InteractsWithForms;
     
     public function table(Table $table): Table
     {
@@ -87,6 +100,20 @@ Finally, in your Livewire component's view, render the table:
 ```
 
 Visit your Livewire component in the browser, and you should see the table.
+
+<Aside variant="info">
+
+    `filament/tables` also includes the following packages:
+    
+    - `filament/actions`
+    - `filament/forms`
+    - `filament/support`
+    
+    These packages allow you to use their components within Livewire components.
+    For example, if your table uses [Actions](action#setting-up-the-livewire-component), remember to implement the `HasActions` interface and include the `InteractsWithActions` trait.
+    
+    If you are using any other [Filament components](overview#package-components) in your table, make sure to install and integrate the corresponding package as well.
+</Aside>
 
 ## Building a table for an Eloquent relationship
 

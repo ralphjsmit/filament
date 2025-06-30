@@ -123,6 +123,16 @@ class Schema extends ViewComponent implements HasEmbeddedView
     /**
      * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure  $components
      */
+    public static function center(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
+    {
+        return static::make()
+            ->components($components)
+            ->alignCenter();
+    }
+
+    /**
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure  $components
+     */
     public static function between(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
     {
         return static::make()
@@ -219,7 +229,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                     $attributes = (new ComponentAttributeBag)
                         ->when(
                             ! $isInline,
-                            fn (ComponentAttributeBag $attributes) => $attributes->gridColumn($schemaComponent->getColumnSpan(), $schemaComponent->getColumnStart(), ! $isSchemaComponentVisible),
+                            fn (ComponentAttributeBag $attributes) => $attributes->gridColumn($schemaComponent->getColumnSpan(), $schemaComponent->getColumnStart(), $schemaComponent->getColumnOrder(), ! $isSchemaComponentVisible),
                         )
                         ->merge([
                             'wire:key' => $schemaComponent->getLivewireKey(),
