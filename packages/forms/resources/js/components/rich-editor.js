@@ -74,12 +74,12 @@ export default function richEditorFormComponent({
                 content: this.state,
             })
 
-            Object.entries(floatingToolbars).forEach(([key, buttons]) => {
-                const refName = `toolbar${key}`
-                const element = this.$refs[refName]
+            Object.keys(floatingToolbars).forEach((key) => {
+                const element = this.$refs[`floatingToolbar::${key}`]
 
                 if (!element) {
-                    console.warn(`Floating Toolbar element "${key}" not found.`)
+                    console.warn(`Floating toolbar [${key}] not found.`)
+
                     return
                 }
 
@@ -87,7 +87,7 @@ export default function richEditorFormComponent({
                     BubbleMenuPlugin({
                         editor,
                         element,
-                        pluginKey: refName,
+                        pluginKey: `floatingToolbar::${key}`,
                         shouldShow: ({ editor }) =>
                             editor.isFocused && editor.isActive(key),
                         options: {

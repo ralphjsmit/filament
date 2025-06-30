@@ -72,8 +72,8 @@
                 <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
                     @foreach ($floatingToolbars as $nodeName => $buttons)
                         <div
-                            x-ref="toolbar{{ $nodeName }}"
-                            class="bubble-menu fi-not-prose"
+                            x-ref="floatingToolbar::{{ $nodeName }}"
+                            class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
                         >
                             @foreach ($buttons as $button)
                                 {{ $tools[$button] }}

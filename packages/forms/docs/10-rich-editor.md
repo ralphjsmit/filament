@@ -57,8 +57,7 @@ RichEditor::make('content')
         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
         ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
         ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
-        ['table'],
-        ['attachFiles'], // The `customBlocks` and `mergeTags` tools are also added here if those features are used.
+        ['table', 'attachFiles'], // The `customBlocks` and `mergeTags` tools are also added here if those features are used.
         ['undo', 'redo'],
     ])
 ```
@@ -73,7 +72,7 @@ Additional tools available in the toolbar include:
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
 - `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
-- `table` - Creates a table in the editor with a default layout of 3 columns and 3 rows, with the first row configured as a header row.
+- `table` - Creates a table in the editor with a default layout of 3 columns and 2 rows, with the first row configured as a header row.
 - `tableRemove` - Removes the table.
 - `tableColumnAddBefore` - Adds a new column to the left of the current column.
 - `tableColumnDelete` - Deletes the current column.
@@ -112,7 +111,7 @@ RichEditor::make('content')
             'tableRowAddBefore', 'tableRowDelete', 'tableRowAddAfter',
             'tableCellMerge', 'tableCellSplit',
             'tableHeaderToggle',
-        ]
+        ],
     ])
 ```
 
