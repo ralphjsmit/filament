@@ -71,7 +71,7 @@
     }
 
     & .fi-fo-field-wrp-error-list {
-        @apply list-disc list-inside space-y-0.5;
+        @apply list-inside list-disc space-y-0.5;
 
         & li {
             @apply text-danger-600 dark:text-danger-400 text-sm;
