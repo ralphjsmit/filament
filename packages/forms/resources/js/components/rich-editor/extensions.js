@@ -95,13 +95,11 @@ export default async ({
     Strike,
     Subscript,
     Superscript,
-
     TableKit.configure({
         table: {
             resizable: true,
         },
     }),
-
     Text,
     TextAlign.configure({
         types: ['heading', 'paragraph'],

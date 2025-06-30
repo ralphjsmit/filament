@@ -8,11 +8,7 @@
     }
 
     & .fi-fo-rich-editor-floating-toolbar {
-        @apply invisible absolute z-[20] -mt-1 flex flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-500 dark:bg-gray-800;
-
-        & button {
-            @apply flex h-8 w-8 items-center justify-center rounded-lg text-gray-700 hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
-        }
+        @apply invisible absolute z-[20] -mt-1 flex flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-600 dark:bg-gray-800;
     }
 
     & .fi-fo-rich-editor-toolbar-group {
@@ -86,12 +82,36 @@
     & .tiptap {
         @apply h-full;
 
+        &:focus {
+            @apply outline-none;
+
+            & .ProseMirror-selectednode {
+                &div[data-type='customBlock'],
+                &img {
+                    @apply ring-primary-600 dark:ring-primary-500 ring-2;
+                }
+            }
+        }
+
+        & p.is-editor-empty:first-child {
+            &::before {
+                @apply pointer-events-none float-start h-0 text-gray-400;
+                content: attr(data-placeholder);
+            }
+
+            @variant dark {
+                &::before {
+                    @apply text-gray-500;
+                }
+            }
+        }
+
         table {
             @apply m-0 w-full table-fixed border-collapse overflow-hidden first:mt-0;
 
             td,
             th {
-                @apply relative min-w-[1em] border border-gray-300 !px-2 py-2 align-top;
+                @apply relative min-w-[1em] border border-gray-300 !px-2 py-2 align-top dark:border-gray-600;
 
                 > * {
                     @apply mb-0;
@@ -117,30 +137,6 @@
 
         &.resize-cursor {
             @apply cursor-col-resize cursor-ew-resize;
-        }
-
-        &:focus {
-            @apply outline-none;
-
-            & .ProseMirror-selectednode {
-                &div[data-type='customBlock'],
-                &img {
-                    @apply ring-primary-600 dark:ring-primary-500 ring-2;
-                }
-            }
-        }
-
-        & p.is-editor-empty:first-child {
-            &::before {
-                @apply pointer-events-none float-start h-0 text-gray-400;
-                content: attr(data-placeholder);
-            }
-
-            @variant dark {
-                &::before {
-                    @apply text-gray-500;
-                }
-            }
         }
     }
 

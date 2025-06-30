@@ -78,7 +78,7 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @return array<int, array<int|string, list<string>|string>>
+     * @return array<array<string>>
      */
     public function getToolbarButtons(): array
     {
