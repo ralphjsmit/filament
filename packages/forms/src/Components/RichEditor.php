@@ -164,56 +164,56 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.commands.insertTable({ rows: 2, cols: 3, withHeaderRow: true })')
                 ->icon('fi-s-table')
                 ->iconAlias('forms:components.rich-editor.toolbar.table'),
-            RichEditorTool::make('tableRemove')
-                ->label(__('filament-forms::components.rich_editor.tools.table_remove'))
-                ->jsHandler('$getEditor()?.chain().focus().deleteTable().run()')
-                ->icon('fi-s-table-remove')
-                ->iconAlias('forms:components.rich-editor.toolbar.table_remove'),
-            RichEditorTool::make('tableColumnAddBefore')
+            RichEditorTool::make('tableAddColumnBefore')
                 ->label(__('filament-forms::components.rich_editor.tools.table_add_column_before'))
                 ->jsHandler('$getEditor()?.chain().focus().addColumnBefore().run()')
-                ->icon('fi-s-table-column-add-before')
+                ->icon('fi-s-table-add-column-before')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_add_column_before'),
-            RichEditorTool::make('tableColumnAddAfter')
+            RichEditorTool::make('tableAddColumnAfter')
                 ->label(__('filament-forms::components.rich_editor.tools.table_add_column_after'))
                 ->jsHandler('$getEditor()?.chain().focus().addColumnAfter().run()')
-                ->icon('fi-s-table-column-add-after')
+                ->icon('fi-s-table-add-column-after')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_add_column_after'),
-            RichEditorTool::make('tableColumnDelete')
+            RichEditorTool::make('tableDeleteColumn')
                 ->label(__('filament-forms::components.rich_editor.tools.table_delete_column'))
                 ->jsHandler('$getEditor()?.chain().focus().deleteColumn().run()')
-                ->icon('fi-s-table-column-delete')
+                ->icon('fi-s-table-delete-column')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_delete_column'),
-            RichEditorTool::make('tableRowAddBefore')
+            RichEditorTool::make('tableAddRowBefore')
                 ->label(__('filament-forms::components.rich_editor.tools.table_add_row_before'))
                 ->jsHandler('$getEditor()?.chain().focus().addRowBefore().run()')
-                ->icon('fi-s-table-row-add-before')
+                ->icon('fi-s-table-add-row-before')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_add_row_before'),
-            RichEditorTool::make('tableRowAddAfter')
+            RichEditorTool::make('tableAddRowAfter')
                 ->label(__('filament-forms::components.rich_editor.tools.table_add_row_after'))
                 ->jsHandler('$getEditor()?.chain().focus().addRowAfter().run()')
-                ->icon('fi-s-table-row-add-after')
+                ->icon('fi-s-table-add-row-after')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_add_row_after'),
-            RichEditorTool::make('tableRowDelete')
+            RichEditorTool::make('tableDeleteRow')
                 ->label(__('filament-forms::components.rich_editor.tools.table_delete_row'))
                 ->jsHandler('$getEditor()?.chain().focus().deleteRow().run()')
-                ->icon('fi-s-table-row-delete')
+                ->icon('fi-s-table-delete-row')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_delete_row'),
-            RichEditorTool::make('tableCellMerge')
+            RichEditorTool::make('tableMergeCells')
                 ->label(__('filament-forms::components.rich_editor.tools.table_merge_cells'))
                 ->jsHandler('$getEditor()?.chain().focus().mergeCells().run()')
-                ->icon('fi-s-table-cell-merge')
+                ->icon('fi-s-table-merge-cells')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_merge_cells'),
-            RichEditorTool::make('tableCellSplit')
+            RichEditorTool::make('tableSplitCell')
                 ->label(__('filament-forms::components.rich_editor.tools.table_split_cell'))
                 ->jsHandler('$getEditor()?.chain().focus().splitCell().run()')
-                ->icon('fi-s-table-cell-split')
+                ->icon('fi-s-table-split-cell')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_split_cell'),
-            RichEditorTool::make('tableHeaderToggle')
-                ->label(__('filament-forms::components.rich_editor.tools.table_toggle_header'))
+            RichEditorTool::make('tableToggleHeaderRow')
+                ->label(__('filament-forms::components.rich_editor.tools.table_toggle_header_row'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeaderRow().run()')
-                ->icon('fi-s-table-header-toggle')
-                ->iconAlias('forms:components.rich-editor.toolbar.table_toggle_header'),
+                ->icon('fi-s-table-toggle-header-row')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_toggle_header_row'),
+            RichEditorTool::make('tableDelete')
+                ->label(__('filament-forms::components.rich_editor.tools.table_delete'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteTable().run()')
+                ->icon('fi-s-table-delete')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_delete'),
             RichEditorTool::make('attachFiles')
                 ->label(__('filament-forms::components.rich_editor.tools.attach_files'))
                 ->action(arguments: '{ alt: $getEditor().getAttributes(\'image\')?.alt, id: $getEditor().getAttributes(\'image\')?.id, src: $getEditor().getAttributes(\'image\')?.src }')
@@ -628,11 +628,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return [
             'table' => [
-                'tableRemove',
-                'tableColumnAddBefore', 'tableColumnAddAfter', 'tableColumnDelete',
-                'tableRowAddBefore', 'tableRowAddAfter', 'tableRowDelete',
-                'tableCellMerge', 'tableCellSplit',
-                'tableHeaderToggle',
+                'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
+                'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
+                'tableMergeCells', 'tableSplitCell',
+                'tableToggleHeaderRow',
+                'tableDelete',
             ],
         ];
     }
