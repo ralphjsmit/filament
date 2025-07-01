@@ -854,7 +854,6 @@ trait HasState
         return $this->cachedStripCharacters ??= Arr::wrap($this->evaluate($this->stripCharacters));
     }
 	
-	
 	public function trim(bool | Closure $condition = true): static
 	{
 		$this->isTrimmed = $condition;
