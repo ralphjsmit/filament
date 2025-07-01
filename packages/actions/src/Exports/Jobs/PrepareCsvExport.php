@@ -76,7 +76,7 @@ class PrepareCsvExport implements ShouldQueue
 
                     return ($order['column'] ?? null) === $qualifiedKeyName;
                 })
-                ->unique(function (array $order) {
+                ->unique(function (array $order): string {
                     if (($order['type'] ?? null) === 'Raw') {
                         return 'raw:' . ($order['sql'] ?? '');
                     }
@@ -105,7 +105,7 @@ class PrepareCsvExport implements ShouldQueue
             foreach ($originalOrders as $order) {
                 if (($order['type'] ?? null) === 'Raw') {
                     $query->orderByRaw($order['sql']);
-                } elseif (! blank($order['column'] ?? null) && ! blank($order['direction'] ?? null)) {
+                } elseif (filled($order['column'] ?? null) && filled($order['direction'] ?? null)) {
                     $query->orderBy($order['column'], $order['direction']);
                 }
             }
