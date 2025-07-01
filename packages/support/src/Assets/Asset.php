@@ -3,6 +3,7 @@
 namespace Filament\Support\Assets;
 
 use Composer\InstalledVersions;
+use Filament\Support\Facades\FilamentAsset;
 use Throwable;
 
 abstract class Asset
@@ -62,6 +63,13 @@ abstract class Asset
 
     public function getVersion(): string
     {
+        if (
+            ($this->getPackage() === 'app') &&
+            filled($appVersion = FilamentAsset::getAppVersion())
+        ) {
+            return $appVersion;
+        }
+
         try {
             return InstalledVersions::getVersion($this->getPackage());
         } catch (Throwable $exception) {
