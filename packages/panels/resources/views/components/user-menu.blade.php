@@ -23,7 +23,7 @@
 
 <div class="fi-user-menu-ctn">
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_BEFORE) }}
-    
+
     <x-filament::dropdown
         placement="bottom-end"
         teleport
@@ -41,29 +41,32 @@
                 <x-filament-panels::avatar.user :user="$user" />
             </button>
         </x-slot>
-    
+
         @if ($hasProfileHeader)
             @php
                 $item = $itemsBeforeThemeSwitcher['profile'];
                 $itemColor = $item->getColor();
                 $itemIcon = $item->getIcon();
-    
+
                 unset($itemsBeforeThemeSwitcher['profile']);
             @endphp
-    
-            <x-filament::dropdown.header :color="$itemColor" :icon="$itemIcon">
+
+            <x-filament::dropdown.header
+                :color="$itemColor"
+                :icon="$itemIcon"
+            >
                 {{ $item->getLabel() }}
             </x-filament::dropdown.header>
         @endif
-    
+
         @if ($itemsBeforeThemeSwitcher->isNotEmpty())
             <x-filament::dropdown.list>
                 @foreach ($itemsBeforeThemeSwitcher as $key => $item)
                     @if ($key === 'profile')
                         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
-    
+
                         {{ $item }}
-    
+
                         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
                     @else
                         {{ $item }}
@@ -71,21 +74,21 @@
                 @endforeach
             </x-filament::dropdown.list>
         @endif
-    
+
         @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
             <x-filament::dropdown.list>
                 <x-filament-panels::theme-switcher />
             </x-filament::dropdown.list>
         @endif
-    
+
         @if ($itemsAfterThemeSwitcher->isNotEmpty())
             <x-filament::dropdown.list>
                 @foreach ($itemsAfterThemeSwitcher as $key => $item)
                     @if ($key === 'profile')
                         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
-    
+
                         {{ $item }}
-    
+
                         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
                     @else
                         {{ $item }}
@@ -94,6 +97,6 @@
             </x-filament::dropdown.list>
         @endif
     </x-filament::dropdown>
-    
+
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_AFTER) }}
 </div>
