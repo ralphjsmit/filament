@@ -80,6 +80,7 @@
                             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                         })"
+                wire:ignore
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{
                     $attributes
