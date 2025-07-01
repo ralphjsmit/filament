@@ -9,7 +9,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can trim whitespace from Textarea', function (mixed $input, mixed $expected) {
+it('can trim whitespace from Textarea', function (mixed $input, mixed $expected): void {
     livewire(TestComponentWithTextareaTrim::class)
         ->fillForm(['description' => $input])
         ->call('save')
