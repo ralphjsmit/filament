@@ -49,6 +49,10 @@ class PanelsRenderHook
     const LAYOUT_END = 'panels::layout.end';
 
     const LAYOUT_START = 'panels::layout.start';
+	
+	const LOGO_BEFORE = 'panels::logo.before';
+	
+	const LOGO_AFTER = 'panels::logo.after';
 
     const PAGE_END = 'panels::page.end';
 

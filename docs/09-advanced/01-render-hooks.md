@@ -65,6 +65,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::HEAD_START` - After `<head>`
 - `PanelsRenderHook::LAYOUT_END` - End of the layout container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::LAYOUT_START` - Start of the layout container, also [can be scoped](#scoping-render-hooks) to the page class
+- `PanelsRenderHook::LOGO_AFTER` - After the logo in the topbar or sidebar
+- `PanelsRenderHook::LOGO_BEFORE` - Before the logo in the topbar or sidebar
 - `PanelsRenderHook::PAGE_END` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER` - After the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_FOOTER_WIDGETS_BEFORE` - Before the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
