@@ -282,6 +282,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
                 ->icon('fi-s-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
+            RichEditorTool::make('clearFormatting')
+                ->label(__('filament-forms::components.rich_editor.tools.clear_formatting'))
+                ->jsHandler('$getEditor()?.chain().focus().clearNodes().unsetAllMarks().run()')
+                ->icon('fi-s-clear-formatting')
+                ->iconAlias('forms:components.rich-editor.toolbar.clear_formatting'),
         ]);
 
         $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
@@ -652,6 +657,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
             ],
+            ['clearFormatting'],
             ['undo', 'redo'],
         ];
     }
