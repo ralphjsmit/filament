@@ -1,10 +1,9 @@
 <?php
 
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Form;
-use Filament\Tests\Forms\Fixtures\Livewire;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
-use Illuminate\Contracts\View\View;
 
 use function Filament\Tests\livewire;
 
@@ -27,7 +26,7 @@ class TestComponentWithTextareaTrim extends Livewire
 {
     public $data = [];
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -40,10 +39,5 @@ class TestComponentWithTextareaTrim extends Livewire
     public function save(): void
     {
         $this->data = $this->form->getState();
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }
