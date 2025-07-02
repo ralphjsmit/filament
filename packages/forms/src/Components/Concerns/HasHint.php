@@ -33,48 +33,48 @@ trait HasHint
     {
         $this->afterLabel(function (Field | Placeholder $component): array {
             $components = [];
-	        
-	        if ($component->hasHint()) {
-		        $components[] = Text::make(static function (Text $component) {
-			        /** @var self $parentComponent */
-			        $parentComponent = $component->getContainer()->getParentComponent();
-			        
-			        return $parentComponent->getHint();
-		        })
-			        ->color(static function (Text $component) {
-				        /** @var self $parentComponent */
-				        $parentComponent = $component->getContainer()->getParentComponent();
-				        
-				        return $parentComponent->getHintColor();
-			        })
-			        ->visible(static function (Text $component) {
-				        /** @var self $parentComponent */
-				        $parentComponent = $component->getContainer()->getParentComponent();
-				        
-				        return filled($parentComponent->hasHint());
-			        });
-	        }
-	        
-	        if ($component->hasHintIcon()) {
-		        $components[] = Icon::make(static function (Text $component) {
-			        /** @var self $parentComponent */
-			        $parentComponent = $component->getContainer()->getParentComponent();
-			        
-			        return$parentComponent->getHintIcon();
-		        })
-			        ->tooltip(static function (Text $component) {
-				        /** @var self $parentComponent */
-				        $parentComponent = $component->getContainer()->getParentComponent();
-				        
-				        return $parentComponent->getHintIconTooltip();
-			        })
-			        ->visible(static function (Text $component) {
-				        /** @var self $parentComponent */
-				        $parentComponent = $component->getContainer()->getParentComponent();
-				        
-				        return filled($parentComponent->getHintIcon());
-			        });
-	        }
+
+            if ($component->hasHint()) {
+                $components[] = Text::make(static function (Text $component) {
+                    /** @var self $parentComponent */
+                    $parentComponent = $component->getContainer()->getParentComponent();
+
+                    return $parentComponent->getHint();
+                })
+                    ->color(static function (Text $component) {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return $parentComponent->getHintColor();
+                    })
+                    ->visible(static function (Text $component) {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return filled($parentComponent->hasHint());
+                    });
+            }
+
+            if ($component->hasHintIcon()) {
+                $components[] = Icon::make(static function (Text $component) {
+                    /** @var self $parentComponent */
+                    $parentComponent = $component->getContainer()->getParentComponent();
+
+                    return $parentComponent->getHintIcon();
+                })
+                    ->tooltip(static function (Text $component) {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return $parentComponent->getHintIconTooltip();
+                    })
+                    ->visible(static function (Text $component) {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return filled($parentComponent->getHintIcon());
+                    });
+            }
 
             return [
                 ...$components,
