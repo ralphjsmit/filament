@@ -7,6 +7,5 @@
 			{{ $getExtraAttributeBag() }}
 	>
 		{{ $getChildComponentContainer() }}
-		{{-- Interact with the `state` property in Alpine.js --}}
 	</div>
 </x-dynamic-component>

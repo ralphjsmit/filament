@@ -35,15 +35,15 @@ trait HasHint
             $components = [];
 
             if ($component->hasHint()) {
-                $components[] = Text::make(fn (Text $component) => $component->getContainer()->getParentComponent()->getHint())
-                    ->color(fn (Text $component) => $component->getContainer()->getParentComponent()->getHintColor())
-                    ->visible(fn (Text $component) => filled($component->getContainer()->getParentComponent()->hasHint()));
+                $components[] = Text::make(static fn (Text $component) => $component->getContainer()->getParentComponent()->getHint())
+                    ->color(static fn (Text $component) => $component->getContainer()->getParentComponent()->getHintColor())
+                    ->visible(static fn (Text $component) => filled($component->getContainer()->getParentComponent()->hasHint()));
             }
 
             if ($component->hasHintIcon()) {
-                $components[] = Icon::make(fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIcon())
-                    ->tooltip(fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIconTooltip())
-                    ->visible(fn (Text $component) => filled($component->getContainer()->getParentComponent()->getHintIcon()));
+                $components[] = Icon::make(static fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIcon())
+                    ->tooltip(static fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIconTooltip())
+                    ->visible(static fn (Text $component) => filled($component->getContainer()->getParentComponent()->getHintIcon()));
             }
 
             return [
