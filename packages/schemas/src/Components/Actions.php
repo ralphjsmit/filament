@@ -33,9 +33,9 @@ class Actions extends Component
     const BELOW_CONTENT_SCHEMA_KEY = 'below_content';
 
     /**
-     * @param  array<Action | ActionGroup>|Closure  $actions
+     * @param  array<Action | ActionGroup>  $actions
      */
-    final public function __construct(array|Closure $actions)
+    final public function __construct(array $actions)
     {
         $this->actions($actions);
     }
@@ -43,7 +43,7 @@ class Actions extends Component
     /**
      * @param  array<Action | ActionGroup>  $actions
      */
-    public static function make(array|Closure $actions): static
+    public static function make(array $actions): static
     {
         $static = app(static::class, ['actions' => $actions]);
         $static->configure();
@@ -52,9 +52,9 @@ class Actions extends Component
     }
 
     /**
-     * @param  array<Action | ActionGroup>|Closure  $actions
+     * @param  array<Action | ActionGroup>  $actions
      */
-    public function actions(array|Closure $actions): static
+    public function actions(array $actions): static
     {
         $this->components($actions);
 
