@@ -9,7 +9,6 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,7 +22,7 @@ class CreateAction extends Action
 
     protected bool | Closure $canCreateAnother = true;
 
-    protected string | Htmlable | Closure | null $createAnotherLabel = null;
+    protected ?Closure $modifyCreateAnotherActionUsing = null;
 
     protected ?Closure $preserveFormDataWhenCreatingAnotherUsing = null;
 
@@ -45,10 +44,7 @@ class CreateAction extends Action
         $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
 
         $this->extraModalFooterActions(function (): array {
-            return $this->canCreateAnother() ? [
-                $this->makeModalSubmitAction('createAnother', arguments: ['another' => true])
-                    ->label($this->getCreateAnotherLabel()),
-            ] : [];
+            return $this->canCreateAnother() ? [$this->getCreateAnotherAction()] : [];
         });
 
         $this->successNotificationTitle(__('filament-actions::create.single.notifications.created.title'));
@@ -175,16 +171,19 @@ class CreateAction extends Action
         return (bool) $this->evaluate($this->canCreateAnother);
     }
 
-    public function createAnotherLabel(string | Htmlable | Closure | null $label): static
+    public function createAnotherAction(Closure $createAnotherUsing): static
     {
-        $this->createAnotherLabel = $label;
+        $this->modifyCreateAnotherActionUsing = $createAnotherUsing;
 
         return $this;
     }
 
-    public function getCreateAnotherLabel(): string
+    public function getCreateAnotherAction(): Action
     {
-        return $this->evaluate($this->createAnotherLabel) ?? __('filament-actions::create.single.modal.actions.create_another.label');
+        $action = $this->makeModalSubmitAction('createAnother', arguments: ['another' => true])
+            ->label(__('filament-actions::create.single.modal.actions.create_another.label'));
+
+        return $this->evaluate($this->modifyCreateAnotherActionUsing, ['action' => $action]) ?? $action;
     }
 
     public function shouldClearRecordAfter(): bool
