@@ -24,7 +24,7 @@ class TestFieldWithChildComponentSchema extends Field
         parent::setUp();
 
         $this
-            ->afterStateHydrated(function (self $component, mixed $state) {
+            ->afterStateHydrated(function (self $component, mixed $state): void {
                 if (! $state) {
                     $state = ['partA' => 'defaultA', 'partB' => 'defaultB'];
                 }
