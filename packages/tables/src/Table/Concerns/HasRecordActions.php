@@ -24,6 +24,8 @@ trait HasRecordActions
 
     protected RecordActionsPosition | Closure | null $recordActionsPosition = null;
 
+    protected ?Closure $configureUngroupedRecordActionsUsing = null;
+
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
@@ -59,6 +61,10 @@ trait HasRecordActions
             } elseif ($action instanceof Action) {
                 $action->defaultSize(Size::Small);
                 $action->defaultView($action::LINK_VIEW);
+
+                if ($this->configureUngroupedRecordActionsUsing) {
+                    $this->evaluate($this->configureUngroupedRecordActionsUsing, ['action' => $action]);
+                }
 
                 $this->cacheAction($action);
             } else {
@@ -229,5 +235,12 @@ trait HasRecordActions
         }
 
         return $flatActions;
+    }
+
+    public function configureUngroupedRecordActionsUsing(Closure $closure): static
+    {
+        $this->configureUngroupedRecordActionsUsing = $closure;
+
+        return $this;
     }
 }
