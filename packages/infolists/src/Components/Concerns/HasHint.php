@@ -35,31 +35,43 @@ trait HasHint
 
             if ($component->hasHint()) {
                 $components[] = Text::make(static function (Text $component) {
-                    /** @phpstan-ignore-next-line */
-                    return $component->getContainer()->getParentComponent()->getHint();
+					/** @var self $parentComponent */
+                    $parentComponent = $component->getContainer()->getParentComponent();
+					
+					return $parentComponent->getHint();
                 })
                     ->color(static function (Text $component) {
-                        /** @phpstan-ignore-next-line */
-                        return $component->getContainer()->getParentComponent()->getHintColor();
+	                    /** @var self $parentComponent */
+	                    $parentComponent = $component->getContainer()->getParentComponent();
+						
+                        return $parentComponent->getHintColor();
                     })
                     ->visible(static function (Text $component) {
-                        /** @phpstan-ignore-next-line */
-                        return filled($component->getContainer()->getParentComponent()->hasHint());
+	                    /** @var self $parentComponent */
+	                    $parentComponent = $component->getContainer()->getParentComponent();
+						
+                        return filled($parentComponent->hasHint());
                     });
             }
 
             if ($component->hasHintIcon()) {
                 $components[] = Icon::make(static function (Text $component) {
-                    /** @phpstan-ignore-next-line */
-                    return $component->getContainer()->getParentComponent()->getHintIcon();
+	                /** @var self $parentComponent */
+	                $parentComponent = $component->getContainer()->getParentComponent();
+					
+                    return$parentComponent->getHintIcon();
                 })
                     ->tooltip(static function (Text $component) {
-                        /** @phpstan-ignore-next-line */
-                        return $component->getContainer()->getParentComponent()->getHintIconTooltip();
+	                    /** @var self $parentComponent */
+	                    $parentComponent = $component->getContainer()->getParentComponent();
+						
+                        return $parentComponent->getHintIconTooltip();
                     })
                     ->visible(static function (Text $component) {
-                        /** @phpstan-ignore-next-line */
-                        return filled($component->getContainer()->getParentComponent()->getHintIcon());
+	                    /** @var self $parentComponent */
+	                    $parentComponent = $component->getContainer()->getParentComponent();
+						
+                        return filled($parentComponent->getHintIcon());
                     });
             }
 
