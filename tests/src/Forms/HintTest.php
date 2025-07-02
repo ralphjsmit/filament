@@ -52,7 +52,7 @@ class TestFieldWithChildComponentSchema extends Field
                 TextInput::make('partB'),
             ])
             ->hint(function (array $state) {
-                // Must be an array as the `afterStateHydrated()` ensures it is always an array.
+                // Must be an array as the `afterStateHydrated()` ensures it is always an array, whilst it is filled as string.
                 return "{$state['partA']} / {$state['partB']}";
             });
     }
