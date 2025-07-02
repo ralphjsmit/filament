@@ -33,19 +33,17 @@ trait HasHint
         $this->afterLabel(function (Entry $component): array {
             $components = [];
 
-            $hint = $component->getHint();
-
-            if (filled($hint)) {
-                $components[] = Text::make($hint)
-                    ->color($component->getHintColor());
-            }
-
-            $hintIcon = $component->getHintIcon();
-
-            if (filled($hintIcon)) {
-                $components[] = Icon::make($hintIcon)
-                    ->tooltip($component->getHintIconTooltip());
-            }
+	        if ($component->hasHint()) {
+		        $components[] = Text::make(fn (Text $component) => $component->getContainer()->getParentComponent()->getHint())
+			        ->color(fn (Text $component) => $component->getContainer()->getParentComponent()->getHintColor())
+			        ->visible(fn (Text $component) => filled($component->getContainer()->getParentComponent()->hasHint()));
+	        }
+	        
+	        if ($component->hasHintIcon()) {
+		        $components[] = Icon::make(fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIcon())
+			        ->tooltip(fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIconTooltip())
+			        ->visible(fn (Text $component) => filled($component->getContainer()->getParentComponent()->getHintIcon()));
+	        }
 
             return [
                 ...$components,
@@ -105,6 +103,11 @@ trait HasHint
 
         return $this;
     }
+	
+	public function hasHint(): bool
+	{
+		return filled($this->hint);
+	}
 
     public function getHint(): string | Htmlable | null
     {
@@ -118,6 +121,11 @@ trait HasHint
     {
         return $this->evaluate($this->hintColor);
     }
+	
+	public function hasHintIcon(): bool
+	{
+		return filled($this->hintIcon);
+	}
 
     public function getHintIcon(): string | BackedEnum | null
     {

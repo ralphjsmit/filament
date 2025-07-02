@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -26,7 +27,6 @@ class TestFieldWithChildComponentSchema extends Field
 
         $this
             ->afterStateHydrated(function (self $component, mixed $state) {
-				dump("Hydrating state", $state);
                 if (! $state) {
                     $state = ['partA' => 'defaultA', 'partB' => 'defaultB'];
                 }

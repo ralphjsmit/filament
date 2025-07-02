@@ -33,21 +33,17 @@ trait HasHint
     {
         $this->afterLabel(function (Field | Placeholder $component): array {
             $components = [];
-            if ($component instanceof \TestFieldWithChildComponentSchema) {
-                ray()->backtrace();
-                dump('Getting hint');
-            }
 
             if ($component->hasHint()) {
-                $components[] = Text::make(fn () => $component->getHint())
-                    ->color(fn () => $component->getHintColor())
-                    ->visible(fn () => filled($component->hasHint()));
+                $components[] = Text::make(fn (Text $component) => $component->getContainer()->getParentComponent()->getHint())
+                    ->color(fn (Text $component) => $component->getContainer()->getParentComponent()->getHintColor())
+                    ->visible(fn (Text $component) => filled($component->getContainer()->getParentComponent()->hasHint()));
             }
 
             if ($component->hasHintIcon()) {
-                $components[] = Icon::make(fn () => $component->getHintIcon())
-                    ->tooltip(fn () => $component->getHintIconTooltip())
-                    ->visible(fn () => filled($component->getHintIcon()));
+                $components[] = Icon::make(fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIcon())
+                    ->tooltip(fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIconTooltip())
+                    ->visible(fn (Text $component) => filled($component->getContainer()->getParentComponent()->getHintIcon()));
             }
 
             return [
