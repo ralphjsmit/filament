@@ -35,42 +35,42 @@ trait HasHint
 
             if ($component->hasHint()) {
                 $components[] = Text::make(static function (Text $component) {
-					/** @var self $parentComponent */
+                    /** @var self $parentComponent */
                     $parentComponent = $component->getContainer()->getParentComponent();
-					
-					return $parentComponent->getHint();
+
+                    return $parentComponent->getHint();
                 })
                     ->color(static function (Text $component) {
-	                    /** @var self $parentComponent */
-	                    $parentComponent = $component->getContainer()->getParentComponent();
-						
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
                         return $parentComponent->getHintColor();
                     })
                     ->visible(static function (Text $component) {
-	                    /** @var self $parentComponent */
-	                    $parentComponent = $component->getContainer()->getParentComponent();
-						
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
                         return filled($parentComponent->hasHint());
                     });
             }
 
             if ($component->hasHintIcon()) {
                 $components[] = Icon::make(static function (Text $component) {
-	                /** @var self $parentComponent */
-	                $parentComponent = $component->getContainer()->getParentComponent();
-					
-                    return$parentComponent->getHintIcon();
+                    /** @var self $parentComponent */
+                    $parentComponent = $component->getContainer()->getParentComponent();
+
+                    return $parentComponent->getHintIcon();
                 })
                     ->tooltip(static function (Text $component) {
-	                    /** @var self $parentComponent */
-	                    $parentComponent = $component->getContainer()->getParentComponent();
-						
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
                         return $parentComponent->getHintIconTooltip();
                     })
                     ->visible(static function (Text $component) {
-	                    /** @var self $parentComponent */
-	                    $parentComponent = $component->getContainer()->getParentComponent();
-						
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
                         return filled($parentComponent->getHintIcon());
                     });
             }
