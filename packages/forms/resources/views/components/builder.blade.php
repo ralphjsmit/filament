@@ -1,6 +1,7 @@
 @php
     use Filament\Actions\Action;
     use Filament\Support\Enums\Alignment;
+    use Illuminate\View\ComponentAttributeBag;
 
     $fieldWrapperView = $getFieldWrapperView();
     $items = $getItems();
@@ -119,7 +120,12 @@
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand="isCollapsed = false"
                         x-sortable-item="{{ $itemKey }}"
-                        class="fi-fo-builder-item"
+                        {{
+                            \Filament\Support\prepare_inherited_attributes(
+                                new ComponentAttributeBag($item->getParentComponent()->getExtraAttributes())
+                            )
+                                ->class(['fi-fo-builder-item'])
+                        }}
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
                         @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
