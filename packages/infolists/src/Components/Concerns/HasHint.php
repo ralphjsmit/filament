@@ -55,19 +55,19 @@ trait HasHint
             }
 
             if ($component->hasHintIcon()) {
-                $components[] = Icon::make(static function (Text $component) {
+                $components[] = Icon::make(static function (Icon $component) {
                     /** @var self $parentComponent */
                     $parentComponent = $component->getContainer()->getParentComponent();
 
                     return $parentComponent->getHintIcon();
                 })
-                    ->tooltip(static function (Text $component) {
+                    ->tooltip(static function (Icon $component) {
                         /** @var self $parentComponent */
                         $parentComponent = $component->getContainer()->getParentComponent();
 
                         return $parentComponent->getHintIconTooltip();
                     })
-                    ->visible(static function (Text $component) {
+                    ->visible(static function (Icon $component) {
                         /** @var self $parentComponent */
                         $parentComponent = $component->getContainer()->getParentComponent();
 

@@ -71,7 +71,8 @@ class TestComponentWithFormWithTestFieldHint extends Livewire
     {
         return $form
             ->components([
-                TestFieldWithChildComponentSchema::make('schema'),
+                TestFieldWithChildComponentSchema::make('schema')
+                    ->hintIcon(fn (array $state) => 'heroicon-o-information-circle'),
             ])
             ->statePath('data');
     }
