@@ -33,19 +33,21 @@ trait HasHint
     {
         $this->afterLabel(function (Field | Placeholder $component): array {
             $components = [];
-
-            $hint = $component->getHint();
-
-            if (filled($hint)) {
-                $components[] = Text::make($hint)
-                    ->color($component->getHintColor());
+            if ($component instanceof \TestFieldWithChildComponentSchema) {
+                ray()->backtrace();
+                dump('Getting hint');
             }
 
-            $hintIcon = $component->getHintIcon();
+            if ($component->hasHint()) {
+                $components[] = Text::make(fn () => $component->getHint())
+                    ->color(fn () => $component->getHintColor())
+                    ->visible(fn () => filled($component->hasHint()));
+            }
 
-            if (filled($hintIcon)) {
-                $components[] = Icon::make($hintIcon)
-                    ->tooltip($component->getHintIconTooltip());
+            if ($component->hasHintIcon()) {
+                $components[] = Icon::make(fn () => $component->getHintIcon())
+                    ->tooltip(fn () => $component->getHintIconTooltip())
+                    ->visible(fn () => filled($component->getHintIcon()));
             }
 
             return [
@@ -107,6 +109,11 @@ trait HasHint
         return $this;
     }
 
+    public function hasHint(): bool
+    {
+        return filled($this->hint);
+    }
+
     public function getHint(): string | Htmlable | null
     {
         return $this->evaluate($this->hint);
@@ -118,6 +125,11 @@ trait HasHint
     public function getHintColor(): string | array | null
     {
         return $this->evaluate($this->hintColor);
+    }
+
+    public function hasHintIcon(): bool
+    {
+        return filled($this->hintIcon);
     }
 
     public function getHintIcon(): string | BackedEnum | null
