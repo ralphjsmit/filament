@@ -33,17 +33,35 @@ trait HasHint
         $this->afterLabel(function (Entry $component): array {
             $components = [];
 
-	        if ($component->hasHint()) {
-		        $components[] = Text::make(static fn (Text $component) => $component->getContainer()->getParentComponent()->getHint())
-			        ->color(static fn (Text $component) => $component->getContainer()->getParentComponent()->getHintColor())
-			        ->visible(static fn (Text $component) => filled($component->getContainer()->getParentComponent()->hasHint()));
-	        }
-	        
-	        if ($component->hasHintIcon()) {
-		        $components[] = Icon::make(static fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIcon())
-			        ->tooltip(static fn (Text $component) => $component->getContainer()->getParentComponent()->getHintIconTooltip())
-			        ->visible(static fn (Text $component) => filled($component->getContainer()->getParentComponent()->getHintIcon()));
-	        }
+            if ($component->hasHint()) {
+                $components[] = Text::make(static function (Text $component) {
+                    /** @phpstan-ignore-next-line */
+                    return $component->getContainer()->getParentComponent()->getHint();
+                })
+                    ->color(static function (Text $component) {
+                        /** @phpstan-ignore-next-line */
+                        return $component->getContainer()->getParentComponent()->getHintColor();
+                    })
+                    ->visible(static function (Text $component) {
+                        /** @phpstan-ignore-next-line */
+                        return filled($component->getContainer()->getParentComponent()->hasHint());
+                    });
+            }
+
+            if ($component->hasHintIcon()) {
+                $components[] = Icon::make(static function (Text $component) {
+                    /** @phpstan-ignore-next-line */
+                    return $component->getContainer()->getParentComponent()->getHintIcon();
+                })
+                    ->tooltip(static function (Text $component) {
+                        /** @phpstan-ignore-next-line */
+                        return $component->getContainer()->getParentComponent()->getHintIconTooltip();
+                    })
+                    ->visible(static function (Text $component) {
+                        /** @phpstan-ignore-next-line */
+                        return filled($component->getContainer()->getParentComponent()->getHintIcon());
+                    });
+            }
 
             return [
                 ...$components,
@@ -103,11 +121,11 @@ trait HasHint
 
         return $this;
     }
-	
-	public function hasHint(): bool
-	{
-		return filled($this->hint);
-	}
+
+    public function hasHint(): bool
+    {
+        return filled($this->hint);
+    }
 
     public function getHint(): string | Htmlable | null
     {
@@ -121,11 +139,11 @@ trait HasHint
     {
         return $this->evaluate($this->hintColor);
     }
-	
-	public function hasHintIcon(): bool
-	{
-		return filled($this->hintIcon);
-	}
+
+    public function hasHintIcon(): bool
+    {
+        return filled($this->hintIcon);
+    }
 
     public function getHintIcon(): string | BackedEnum | null
     {
