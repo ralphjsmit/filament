@@ -285,7 +285,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('details')
                 ->label(__('filament-forms::components.rich_editor.tools.details'))
                 ->jsHandler('$getEditor()?.chain().focus().setDetails().run()')
-                ->icon('fi-s-details')
+                ->icon('fi-o-details')
                 ->iconAlias('forms:components.rich-editor.toolbar.details'),
             RichEditorTool::make('clearFormatting')
                 ->label(__('filament-forms::components.rich_editor.tools.clear_formatting'))
@@ -658,6 +658,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'table',
+                'details',
                 'attachFiles',
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
