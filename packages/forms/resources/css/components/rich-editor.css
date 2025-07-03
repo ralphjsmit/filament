@@ -130,7 +130,7 @@
             }
 
             > div {
-                @apply flex flex-col gap-4 w-full;
+                @apply flex flex-col gap-2 w-full;
 
                 > [data-type='detailsContent'] {
                     @apply !mt-0;
