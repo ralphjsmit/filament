@@ -20,6 +20,7 @@ class FormsServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-forms')
             ->hasCommands([
+                Commands\MakeCustomBlockCommand::class,
                 Commands\MakeFieldCommand::class,
                 Commands\MakeFormCommand::class,
                 Commands\MakeLivewireFormCommand::class,

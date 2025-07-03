@@ -1,0 +1,200 @@
+<?php
+
+namespace Filament\Forms\Commands;
+
+use Filament\Forms\Commands\FileGenerators\CustomBlockClassGenerator;
+use Filament\Support\Commands\Concerns\CanAskForComponentLocation;
+use Filament\Support\Commands\Concerns\CanAskForViewLocation;
+use Filament\Support\Commands\Concerns\CanManipulateFiles;
+use Filament\Support\Commands\Exceptions\FailureCommandOutput;
+use Illuminate\Console\Command;
+use Illuminate\Support\Str;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+
+use function Laravel\Prompts\text;
+
+#[AsCommand(name: 'make:filament-custom-block', aliases: [
+    'filament:rich-editor-custom-block',
+    'filament:custom-block',
+    'forms:rich-editor-custom-block',
+    'forms:make-custom-block',
+    'make:rich-editor-custom-block',
+    'make:custom-block',
+])]
+class MakeCustomBlockCommand extends Command
+{
+    use CanAskForComponentLocation;
+    use CanAskForViewLocation;
+    use CanManipulateFiles;
+
+    protected $description = 'Create a new rich editor custom block class and view';
+
+    protected $name = 'make:filament-custom-block';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:rich-editor-custom-block',
+        'filament:custom-block',
+        'forms:rich-editor-custom-block',
+        'forms:make-custom-block',
+        'make:rich-editor-custom-block',
+        'make:custom-block',
+    ];
+
+    protected string $fqnEnd;
+
+    protected string $fqn;
+
+    protected string $path;
+
+    protected string $view;
+
+    protected string $previewView;
+
+    protected string $viewPath;
+
+    protected string $previewViewPath;
+
+    /**
+     * @return array<InputArgument>
+     */
+    protected function getArguments(): array
+    {
+        return [
+            new InputArgument(
+                name: 'name',
+                mode: InputArgument::OPTIONAL,
+                description: 'The name of the custom block to generate, optionally prefixed with directories',
+            ),
+        ];
+    }
+
+    /**
+     * @return array<InputOption>
+     */
+    protected function getOptions(): array
+    {
+        return [
+            new InputOption(
+                name: 'force',
+                shortcut: 'F',
+                mode: InputOption::VALUE_NONE,
+                description: 'Overwrite the contents of the files if they already exist',
+            ),
+        ];
+    }
+
+    public function handle(): int
+    {
+        try {
+            $this->configureFqnEnd();
+
+            $this->configureLocation();
+
+            $this->createCustomBlock();
+            $this->createView();
+            $this->createPreviewView();
+        } catch (FailureCommandOutput) {
+            return static::FAILURE;
+        }
+
+        $this->components->info("Filament rich editor custom block [{$this->fqn}] created successfully.");
+
+        return static::SUCCESS;
+    }
+
+    protected function configureFqnEnd(): void
+    {
+        $this->fqnEnd = (string) str($this->argument('name') ?? text(
+            label: 'What is the custom block name?',
+            placeholder: 'HeroBlock',
+            required: true,
+        ))
+            ->trim('/')
+            ->trim('\\')
+            ->trim(' ')
+            ->studly()
+            ->replace('/', '\\');
+    }
+
+    protected function configureLocation(): void
+    {
+        [
+            $namespace,
+            $path,
+            $viewNamespace,
+        ] = $this->askForComponentLocation(
+            path: 'Forms/Components/RichEditor/CustomBlocks',
+            question: 'Where would you like to create the custom block?',
+        );
+
+        $this->fqn = "{$namespace}\\{$this->fqnEnd}";
+        $this->path = (string) str("{$path}\\{$this->fqnEnd}.php")
+            ->replace('\\', '/')
+            ->replace('//', '/');
+
+        [
+            $this->view,
+            $this->viewPath,
+        ] = $this->askForViewLocation(
+            str($this->fqn)
+                ->afterLast('\\Forms\\Components\\RichEditor\\CustomBlocks\\')
+                ->prepend('Filament\\Forms\\Components\\RichEditor\\CustomBlocks\\')
+                ->replace('\\', '/')
+                ->explode('/')
+                ->map(Str::kebab(...))
+                ->implode('.'),
+            defaultNamespace: $viewNamespace,
+        );
+
+        $this->previewView = Str::beforeLast($this->view, '.') . '.' . 'preview' . '.' . Str::afterLast($this->view, '.');
+        $this->previewViewPath = Str::beforeLast($this->viewPath, '/') . '/' . 'preview' . '/' . Str::afterLast($this->viewPath, '/');
+    }
+
+    protected function createCustomBlock(): void
+    {
+        if (! $this->option('force') && $this->checkForCollision($this->path)) {
+            throw new FailureCommandOutput;
+        }
+
+        $this->writeFile($this->path, app(CustomBlockClassGenerator::class, [
+            'fqn' => $this->fqn,
+            'view' => $this->view,
+            'previewView' => $this->previewView,
+        ]));
+    }
+
+    protected function createView(): void
+    {
+        if (blank($this->view)) {
+            return;
+        }
+
+        if (! $this->option('force') && $this->checkForCollision($this->viewPath)) {
+            throw new FailureCommandOutput;
+        }
+
+        $this->copyStubToApp('CustomBlockView', $this->viewPath, [
+            'viewPath' => $this->viewPath,
+        ]);
+    }
+
+    protected function createPreviewView(): void
+    {
+        if (blank($this->previewViewPath)) {
+            return;
+        }
+
+        if (! $this->option('force') && $this->checkForCollision($this->previewViewPath)) {
+            throw new FailureCommandOutput;
+        }
+
+        $this->copyStubToApp('CustomBlockPreviewView', $this->previewViewPath, [
+            'viewPath' => $this->previewViewPath,
+        ]);
+    }
+}
