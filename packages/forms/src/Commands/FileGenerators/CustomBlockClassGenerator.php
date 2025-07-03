@@ -129,7 +129,7 @@ class CustomBlockClassGenerator extends ClassGenerator
             ->setReturnType('string')
             ->setBody(
                 <<<'PHP'
-                return "block preview label";
+                return 'block preview label';
                 PHP,
             );
         $method->addParameter('config')
