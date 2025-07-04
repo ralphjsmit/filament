@@ -59,16 +59,16 @@
     }}
 >
     @if ($label && $labelSrOnly)
-        <label
+        <{{ $labelTag }}
             @if ($labelTag === 'label')
-                :for="$id"
+                for="{{ $id }}"
             @else
-                :id="$id . '-label'"
+                id="{{ $id }}-label"
             @endif
             class="sr-only"
         >
             {{ $label }}
-        </label>
+        </{{ $labelTag }}>
     @endif
 
     <div
