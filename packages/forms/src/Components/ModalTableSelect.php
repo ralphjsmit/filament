@@ -191,7 +191,7 @@ class ModalTableSelect extends Field
     }
 
     /**
-     * @return array<string>
+     * @return array<string | Htmlable>
      */
     public function getOptionLabels(bool $withDefaults = true): array
     {
