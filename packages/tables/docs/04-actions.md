@@ -82,9 +82,9 @@ public function table(Table $table): Table
 }
 ```
 
-### Global settings
+### Global record action settings
 
-To customize the default configuration used for ungrouped record actions, you can call the function `configureUngroupedRecordActionsUsing()` inside the static `configureUsing()` method of `Filament\Tables\Table` from the `boot()` method of a service provider.
+To customize the default configuration used for ungrouped record actions, you can use `configureUngroupedRecordActionsUsing()` from a [`Table::configureUsing()` function](overview#global-settings) in the `boot()` method of a service provider:
 
 ```php
 use Filament\Actions\Action;

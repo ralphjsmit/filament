@@ -237,9 +237,9 @@ trait HasRecordActions
         return $flatActions;
     }
 
-    public function configureUngroupedRecordActionsUsing(Closure $closure): static
+    public function configureUngroupedRecordActionsUsing(?Closure $callback = null): static
     {
-        $this->configureUngroupedRecordActionsUsing = $closure;
+        $this->configureUngroupedRecordActionsUsing = $callback;
 
         return $this;
     }
