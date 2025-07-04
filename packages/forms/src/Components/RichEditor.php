@@ -658,7 +658,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'table',
-                'details',
                 'attachFiles',
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
