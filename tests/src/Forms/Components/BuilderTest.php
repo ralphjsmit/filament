@@ -5,6 +5,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
+
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
@@ -37,8 +38,8 @@ class TestComponentWithBuilder extends Livewire
                     ->blocks([
                         Builder\Block::make('one')
                             ->schema([
-                                TextInput::make('foo')
-                            ])
+                                TextInput::make('foo'),
+                            ]),
                     ]),
             ])
             ->statePath('data');
