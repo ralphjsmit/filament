@@ -248,7 +248,7 @@ CreateAction::make()
 
 ### Modify create another action
 
-If you'd like to modify the "create another" action, you can use the `createAnotherAction()` method:
+If you'd like to modify the "create another" action, you may use the `createAnotherAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](overview) can be used:
 
 ```php
 use Filament\Actions\CreateAction;

@@ -113,7 +113,7 @@ protected function getCreatedNotification(): ?Notification
 
 ## Creating another record
 
-### Modify create another action
+### Modifying the create another action
 
 If you'd like to modify the "create another" action, you can use the `createAnotherAction()` method:
 

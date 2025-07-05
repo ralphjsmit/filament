@@ -171,9 +171,9 @@ class CreateAction extends Action
         return (bool) $this->evaluate($this->canCreateAnother);
     }
 
-    public function createAnotherAction(Closure $createAnotherUsing): static
+    public function createAnotherAction(Closure $callback): static
     {
-        $this->modifyCreateAnotherActionUsing = $createAnotherUsing;
+        $this->modifyCreateAnotherActionUsing = $callback;
 
         return $this;
     }
