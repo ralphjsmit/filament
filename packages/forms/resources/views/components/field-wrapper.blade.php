@@ -81,7 +81,7 @@
                 {{ $beforeLabelSchema }}
 
                 @if ((filled($label) && (! $labelSrOnly)) || $labelPrefix || $labelSuffix)
-                    <label class="fi-fo-field-label">
+                    <label for="{{ $id }}" class="fi-fo-field-label">
                         {{ $labelPrefix }}
 
                         @if (filled($label) && (! $labelSrOnly))
