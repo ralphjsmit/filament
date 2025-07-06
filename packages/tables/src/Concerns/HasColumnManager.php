@@ -79,8 +79,8 @@ trait HasColumnManager
         }
 
         $hasReorderableColumns && session()->get($this->getHasReorderedTableColumnsSessionKey())
-             ? $this->syncReorderableColumnsFromDefaultColumnState()
-             : $this->syncStaticColumnsFromTableColumnState();
+            ? $this->syncReorderableColumnsFromDefaultColumnState()
+            : $this->syncStaticColumnsFromTableColumnState();
 
         $this->persistTableColumns();
     }
@@ -89,7 +89,12 @@ trait HasColumnManager
     {
         $this->tableColumns = $this->getDefaultColumnState();
 
-        $this->applyTableColumnManager();
+        if ($this->getTable()->hasReorderableColumns()) {
+            $this->updateTableColumns();
+            $this->persistHasReorderedColumns();
+        }
+
+        $this->persistTableColumns();
     }
 
     public function isTableColumnToggledHidden(string $name): bool
@@ -229,6 +234,11 @@ trait HasColumnManager
             ->merge($this->getNewDefaultColumnStateItems($defaultColumnState))
             ->all();
 
+        $this->updateTableColumns();
+    }
+
+    protected function updateTableColumns(): void
+    {
         $reorderedColumns = collect($this->tableColumns)
             ->map(function (array $item): Column | ColumnGroup | null {
                 if ($item['type'] === self::TABLE_COLUMN_MANAGER_COLUMN_TYPE) {
