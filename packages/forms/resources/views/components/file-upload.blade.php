@@ -2,6 +2,7 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Facades\FilamentView;
 
+    $id = $getId();
     $imageCropAspectRatio = $getImageCropAspectRatio();
     $imageResizeTargetHeight = $getImageResizeTargetHeight();
     $imageResizeTargetWidth = $getImageResizeTargetWidth();
@@ -21,8 +22,7 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
-    :label-sr-only="$isLabelHidden()"
-    :label-tag="'div'"
+    label-tag="div"
 >
     <div
         @if (FilamentView::hasSpaMode())
@@ -107,8 +107,8 @@
         {{
             $attributes
                 ->merge([
-                    'id' => $getId(),
-                    'aria-labelledby' => "{$getId()}-label",
+                    'aria-labelledby' => "{$id}-label",
+                    'id' => $id,
                     'role' => 'group',
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
@@ -136,10 +136,10 @@
                 {{
                     $getExtraInputAttributeBag()
                         ->merge([
+                            'aria-labelledby' => "{$id}-label",
                             'disabled' => $isDisabled,
                             'multiple' => $isMultiple(),
                             'type' => 'file',
-                            'aria-labelledby' => "{$getId()}-label",
                         ], escape: false)
                 }}
             />

@@ -93,8 +93,8 @@
             >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
-                        :for="$labelTag === 'label' ? $id : null"
-                        :id="$labelTag === 'label' ? null : $id . '-label'"
+                        :for="($labelTag === 'label') ? $id : null"
+                        :id="($labelTag === 'label') ? null : ($id . '-label')"
                         :tag="$labelTag"
                         :disabled="$isDisabled"
                         :prefix="$labelPrefix"
