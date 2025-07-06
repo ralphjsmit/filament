@@ -4,7 +4,7 @@
 
     $fieldWrapperView = $getFieldWrapperView();
 
-    $allErrors = null;
+    $errorMessages = null;
     $errorMessage = null;
 
     foreach ($getChildComponentContainer()->getComponents() as $childComponent) {
@@ -20,7 +20,7 @@
 
         if ($errors->has($statePath)) {
             if ($childComponent->shouldShowAllValidationMessages()) {
-                $allErrors = $errors->get($statePath);
+                $errorMessages = $errors->get($statePath);
             } else {
                 $errorMessage = $errors->first($statePath);
             }
@@ -45,9 +45,9 @@
 
 <x-dynamic-component
     :component="$fieldWrapperView"
-    :all-errors="$allErrors"
-    :html-error-message="$areHtmlValidationMessagesAllowed ?? false"
     :error-message="$errorMessage"
+    :error-messages="$errorMessages"
+    :are-html-error-messages-allowed="$areHtmlValidationMessagesAllowed ?? false"
     :field="$schemaComponent"
 >
     <div
