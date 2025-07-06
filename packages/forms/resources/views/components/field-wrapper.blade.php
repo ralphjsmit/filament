@@ -138,8 +138,8 @@
                         data-validation-error
                         class="fi-fo-field-wrp-error-list"
                     >
-                        @foreach ($allErrors as $error)
-                            <li>{{ $error }}</li>
+                        @foreach ($allErrors as $errorMessage)
+                            <li>{{ $errorMessage }}</li>
                         @endforeach
                     </ul>
                 @elseif ($htmlErrorMessage ?? $field?->areHtmlValidationMessagesAllowed())
