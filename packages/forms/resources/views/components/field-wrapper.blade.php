@@ -3,8 +3,9 @@
 @endphp
 
 @props([
-    'htmlErrorMessage' => null,
+    'areHtmlErrorMessagesAllowed' => null,
     'errorMessage' => null,
+    'errorMessages' => null,
     'field' => null,
     'hasErrors' => true,
     'hasInlineLabel' => null,
@@ -22,6 +23,10 @@
 ])
 
 @php
+    use Illuminate\Support\Arr;
+
+    $shouldShowAllValidationMessages = false;
+
     if ($field) {
         $hasInlineLabel ??= $field->hasInlineLabel();
         $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
@@ -31,6 +36,8 @@
         $labelSrOnly ??= $field->isLabelHidden();
         $required ??= $field->isMarkedAsRequired();
         $statePath ??= $field->getStatePath();
+        $areHtmlErrorMessagesAllowed ??= $field->areHtmlValidationMessagesAllowed();
+        $shouldShowAllValidationMessages = $field->shouldShowAllValidationMessages();
     }
 
     $aboveLabelSchema = $field?->getChildSchema($field::ABOVE_LABEL_SCHEMA_KEY)?->toHtmlString();
@@ -44,7 +51,20 @@
     $aboveErrorMessageSchema = $field?->getChildSchema($field::ABOVE_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
     $belowErrorMessageSchema = $field?->getChildSchema($field::BELOW_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
 
-    $hasError = $hasErrors && (filled($errorMessage) || (filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))));
+    $hasError = $hasErrors && (filled($errorMessage) || filled($errorMessages) || (filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))));
+
+    if ($hasError && filled($statePath) && blank($errorMessage) && blank($errorMessages)) {
+        if ($shouldShowAllValidationMessages) {
+            $errorMessages = $errors->has($statePath) ? $errors->get($statePath) : ($hasNestedRecursiveValidationRules ? $errors->get("{$statePath}.*") : []);
+
+            if (count($errorMessages) === 1) {
+                $errorMessage = Arr::first($errorMessages);
+                $errorMessages = [];
+            }
+        } else {
+            $errorMessage = $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
+        }
+    }
 @endphp
 
 <div
@@ -138,13 +158,24 @@
             {{ $belowContentSchema }}
 
             @if ($hasError)
-                @php
-                    $errorMessage ??= $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
-                @endphp
-
                 {{ $aboveErrorMessageSchema }}
 
-                @if ($htmlErrorMessage ?? $field?->areHtmlValidationMessagesAllowed())
+                @if (filled($errorMessages))
+                    <ul
+                        data-validation-error
+                        class="fi-fo-field-wrp-error-list"
+                    >
+                        @foreach ($errorMessages as $errorMessage)
+                            <li class="fi-fo-field-wrp-error-message">
+                                @if ($areHtmlErrorMessagesAllowed)
+                                    {!! $errorMessage !!}
+                                @else
+                                    {{ $errorMessage }}
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                @elseif ($areHtmlErrorMessagesAllowed)
                     <div
                         data-validation-error
                         class="fi-fo-field-wrp-error-message"
