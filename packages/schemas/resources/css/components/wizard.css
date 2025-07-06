@@ -2,7 +2,7 @@
     @apply flex flex-col;
 
     & .fi-sc-wizard-header {
-        @apply grid  divide-gray-200 md:grid-flow-col md:divide-y-0 md:overflow-x-auto dark:divide-white/5;
+        @apply grid divide-gray-200 md:grid-flow-col md:divide-y-0 md:overflow-x-auto dark:divide-white/5;
 
         & .fi-sc-wizard-header-step {
             @apply relative flex;
@@ -152,7 +152,7 @@
     }
 
     &.fi-contained {
-        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply shadow-xs rounded-xl bg-white ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
         & .fi-sc-wizard-header {
             @apply border-b border-gray-200 dark:border-white/10;
@@ -171,7 +171,7 @@
 
     &:not(.fi-contained) {
         & .fi-sc-wizard-header {
-            @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+            @apply shadow-xs rounded-xl bg-white ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
         }
 
         & .fi-sc-wizard-footer {
