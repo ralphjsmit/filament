@@ -16,6 +16,7 @@
     'labelPrefix' => null,
     'labelSrOnly' => null,
     'labelSuffix' => null,
+    'labelTag' => 'label',
     'required' => null,
     'statePath' => null,
 ])
@@ -58,9 +59,16 @@
     }}
 >
     @if (filled($label) && $labelSrOnly)
-        <label for="{{ $id }}" class="fi-fo-field-label fi-sr-only">
+        <{{ $labelTag }}
+            @if ($labelTag === 'label')
+                for="{{ $id }}"
+            @else
+                id="{{ $id }}-label"
+            @endif
+            class="fi-fo-field-label fi-sr-only"
+        >
             {{ $label }}
-        </label>
+        </{{ $labelTag }}>
     @endif
 
     @if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema || $labelPrefix || $labelSuffix)
@@ -81,7 +89,14 @@
                 {{ $beforeLabelSchema }}
 
                 @if ((filled($label) && (! $labelSrOnly)) || $labelPrefix || $labelSuffix)
-                    <label for="{{ $id }}" class="fi-fo-field-label">
+                    <{{ $labelTag }}
+                        @if ($labelTag === 'label')
+                            for="{{ $id }}"
+                        @else
+                            id="{{ $id }}-label"
+                        @endif
+                        class="fi-fo-field-label"
+                    >
                         {{ $labelPrefix }}
 
                         @if (filled($label) && (! $labelSrOnly))
@@ -92,7 +107,7 @@
                         @endif
 
                         {{ $labelSuffix }}
-                    </label>
+                    </{{ $labelTag }}>
                 @endif
 
                 {{ $afterLabelSchema }}
