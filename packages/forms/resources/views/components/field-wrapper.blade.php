@@ -126,7 +126,7 @@
             @if ($hasError)
                 @php
                     if ($allErrors === null) {
-                        if ($field?->shouldShowAllValidationMessages() && $errors->has($statePath)) {
+                        if ($field instanceof \Filament\Forms\Components\Field && $field->shouldShowAllValidationMessages() && $errors->has($statePath)) {
                             $allErrors = $errors->get($statePath);
                         } else {
                             $errorMessage ??= $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
