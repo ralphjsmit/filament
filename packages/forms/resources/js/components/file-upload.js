@@ -790,6 +790,7 @@ import sk from 'filepond/locale/sk-sk'
 import sv from 'filepond/locale/sv_se'
 import tr from 'filepond/locale/tr-tr'
 import uk from 'filepond/locale/uk-ua'
+import ur from 'filepond/locale/ur-ur'
 import vi from 'filepond/locale/vi-vi'
 import zh_CN from 'filepond/locale/zh-cn'
 import zh_TW from 'filepond/locale/zh-tw'
@@ -830,6 +831,7 @@ const locales = {
     sv,
     tr,
     uk,
+    ur,
     vi,
     zh_CN,
     zh_TW,
