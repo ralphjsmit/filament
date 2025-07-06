@@ -126,20 +126,6 @@
                 @php
                     if ($field?->shouldShowAllValidationMessages() && $errors->has($statePath)) {
                         $allErrors = $errors->get($statePath);
-
-                        if (count($allErrors) > 1) {
-                            $errorMessage = '<ul class="fi-fo-field-wrp-error-list">';
-
-                            foreach ($allErrors as $error) {
-                                $errorMessage .= '<li>' . e($error) . '</li>';
-                            }
-
-                            $errorMessage .= '</ul>';
-
-                            $htmlErrorMessage = true;
-                        } else {
-                            $errorMessage ??= $errors->first($statePath);
-                        }
                     } else {
                         $errorMessage ??= $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
                     }
@@ -147,7 +133,16 @@
 
                 {{ $aboveErrorMessageSchema }}
 
-                @if ($htmlErrorMessage ?? $field?->areHtmlValidationMessagesAllowed())
+                @if (isset($allErrors) && count($allErrors) > 1)
+                    <ul
+                        data-validation-error
+                        class="fi-fo-field-wrp-error-list"
+                    >
+                        @foreach ($allErrors as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                @elseif ($htmlErrorMessage ?? $field?->areHtmlValidationMessagesAllowed())
                     <div
                         data-validation-error
                         class="fi-fo-field-wrp-error-message"
