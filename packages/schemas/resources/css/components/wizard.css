@@ -2,7 +2,7 @@
     @apply flex flex-col;
 
     & .fi-sc-wizard-header {
-        @apply grid divide-gray-200 md:grid-flow-col md:divide-y-0 md:overflow-x-auto dark:divide-white/5;
+        @apply grid md:grid-flow-col md:overflow-x-auto;
 
         & .fi-sc-wizard-header-step {
             @apply relative flex;
