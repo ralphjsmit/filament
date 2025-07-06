@@ -262,8 +262,8 @@ trait HasBulkActions
                 $query = $table->getQuery()->whereKey($this->selectedTableRecords);
             }
 
-            if ($maxSelectableRecords !== null && $query->count() > $maxSelectableRecords) {
-                throw new Exception("The total count of selected records [{$query->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
+            if ($maxSelectableRecords !== null) {
+                $query->limit($maxSelectableRecords);
             }
 
             if (! $chunkSize) {
@@ -296,8 +296,8 @@ trait HasBulkActions
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords);
         }
 
-        if ($maxSelectableRecords !== null && $relationship->count() > $maxSelectableRecords) {
-            throw new Exception("The total count of selected records [{$relationship->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
+        if ($maxSelectableRecords !== null) {
+            $relationship->limit($maxSelectableRecords);
         }
 
         if ($shouldFetchSelectedRecords) {
