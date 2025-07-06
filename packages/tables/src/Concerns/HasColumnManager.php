@@ -85,6 +85,13 @@ trait HasColumnManager
         $this->persistTableColumns();
     }
 
+    public function resetTableColumnManager(): void
+    {
+        $this->tableColumns = $this->getDefaultColumnState();
+
+        $this->applyTableColumnManager();
+    }
+
     public function isTableColumnToggledHidden(string $name): bool
     {
         foreach ($this->tableColumns as $item) {
