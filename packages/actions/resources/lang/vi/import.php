@@ -52,7 +52,7 @@ return [
             'actions' => [
 
                 'download_failed_rows_csv' => [
-                    'label' => 'Download information about the failed row|Download information about the failed rows',
+                    'label' => 'Tải xuống thông tin về hàng bị lỗi|Tải xuống thông tin về những hàng bị lỗi',
                 ],
 
             ],
