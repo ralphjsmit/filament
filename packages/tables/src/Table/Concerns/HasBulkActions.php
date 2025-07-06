@@ -188,6 +188,10 @@ trait HasBulkActions
 
     public function getMaxSelectableRecords(): ?int
     {
+        if (! $this->canSelectMultipleRecords()) {
+            return 1;
+        }
+
         return $this->evaluate($this->maxSelectableRecords);
     }
 

@@ -24,9 +24,8 @@
 
     $activeFiltersCount = $getActiveFiltersCount();
     $isSelectionDisabled = $isSelectionDisabled();
-    $canSelectMultipleRecords = $canSelectMultipleRecords();
-    $maxSelectableRecords = $canSelectMultipleRecords ? $getMaxSelectableRecords() : 1;
-    $canSelectMultipleRecords = $canSelectMultipleRecords && $maxSelectableRecords !== 1;
+    $maxSelectableRecords = $getMaxSelectableRecords();
+    $canSelectMultipleRecords = $canSelectMultipleRecords() && ($maxSelectableRecords !== 1);
     $columns = $getVisibleColumns();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $columnsLayout = $getColumnsLayout();
