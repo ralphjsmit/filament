@@ -152,7 +152,7 @@
     }
 
     &.fi-contained {
-        @apply shadow-xs rounded-xl bg-white ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
         & .fi-sc-wizard-header {
             @apply border-b border-gray-200 dark:border-white/10;
@@ -171,7 +171,7 @@
 
     &:not(.fi-contained) {
         & .fi-sc-wizard-header {
-            @apply shadow-xs rounded-xl bg-white ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+            @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
         }
 
         & .fi-sc-wizard-footer {
