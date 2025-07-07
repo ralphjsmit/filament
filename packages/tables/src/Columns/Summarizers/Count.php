@@ -69,8 +69,10 @@ class Count extends Summarizer
             return [];
         }
 
+        $column = $this->getQuery()->getGrammar()->wrap($column);
+
         return [
-            $this->getSelectAlias() => "count({$this->getQuery()->getGrammar()->wrap($column)})",
+            $this->getSelectAlias() => "count({$column})",
         ];
     }
 
