@@ -1,6 +1,5 @@
 <?php
 
-use Filament\Tables\Commands\MakeColumnCommand;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 

@@ -1,10 +1,8 @@
 <?php
 
 use Filament\Tests\TestCase;
-use Filament\Widgets\Commands\MakeWidgetCommand;
 use Illuminate\Support\Arr;
 
-use function PHPUnit\Framework\assertFileDoesNotExist;
 use function PHPUnit\Framework\assertFileExists;
 
 uses(TestCase::class);
