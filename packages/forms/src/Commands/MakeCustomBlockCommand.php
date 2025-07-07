@@ -178,9 +178,7 @@ class MakeCustomBlockCommand extends Command
             throw new FailureCommandOutput;
         }
 
-        $this->copyStubToApp('CustomBlockView', $this->viewPath, [
-            'viewPath' => $this->viewPath,
-        ]);
+        $this->copyStubToApp('CustomBlockView', $this->viewPath);
     }
 
     protected function createPreviewView(): void
@@ -193,8 +191,6 @@ class MakeCustomBlockCommand extends Command
             throw new FailureCommandOutput;
         }
 
-        $this->copyStubToApp('CustomBlockPreviewView', $this->previewViewPath, [
-            'viewPath' => $this->previewViewPath,
-        ]);
+        $this->copyStubToApp('CustomBlockPreviewView', $this->previewViewPath);
     }
 }

@@ -47,19 +47,20 @@ class CustomBlockClassGenerator extends ClassGenerator
         $this->addGetLabelMethodToClass($class);
         $this->addConfigureEditorActionMethodToClass($class);
         $this->addToPreviewHtmlMethodToClass($class);
-        $this->addGetPreviewLabelMethodToClass($class);
         $this->addToHtmlMethodToClass($class);
     }
 
     protected function addGetIdMethodToClass(ClassType $class): void
     {
+        $id = str($this->getBasename())->kebab()->lower();
+
         $method = $class->addMethod('getId')
             ->setPublic()
             ->setStatic()
             ->setReturnType('string')
             ->setBody(
-                <<<'PHP'
-                return 'block id';
+                <<<PHP
+                return '{$id}';
                 PHP,
             );
 
@@ -68,13 +69,15 @@ class CustomBlockClassGenerator extends ClassGenerator
 
     protected function addGetLabelMethodToClass(ClassType $class): void
     {
+        $label = str($this->getBasename())->kebab()->replace('-', ' ')->ucwords();
+
         $method = $class->addMethod('getLabel')
             ->setPublic()
             ->setStatic()
             ->setReturnType('string')
             ->setBody(
-                <<<'PHP'
-                return 'block label';
+                <<<PHP
+                return '{$label}';
                 PHP,
             );
 
@@ -113,23 +116,6 @@ class CustomBlockClassGenerator extends ClassGenerator
                 return view('{$this->previewView}', [
                     //
                 ])->render();
-                PHP,
-            );
-        $method->addParameter('config')
-            ->setType('array');
-
-        $this->configureConfigureMethod($method);
-    }
-
-    protected function addGetPreviewLabelMethodToClass(ClassType $class): void
-    {
-        $method = $class->addMethod('getPreviewLabel')
-            ->setPublic()
-            ->setStatic()
-            ->setReturnType('string')
-            ->setBody(
-                <<<'PHP'
-                return 'block preview label';
                 PHP,
             );
         $method->addParameter('config')
