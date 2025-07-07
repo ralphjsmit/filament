@@ -115,10 +115,10 @@
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 $wire,
             })"
-    @class([
+    {{ $attributes->merge($getExtraAttributes())->class([
         'fi-ta',
         'fi-loading' => $records === null,
-    ])
+    ]) }}
 >
     <input
         type="hidden"
