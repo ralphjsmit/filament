@@ -176,8 +176,10 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDateTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoDateDisplayFormat();
+
         $this->tooltip(static function (TextEntry $component, mixed $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -191,7 +193,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDateTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoDateTimeDisplayFormat();
 
@@ -200,7 +202,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoTimeDisplayFormat();
 
@@ -355,6 +357,10 @@ trait CanFormatState
         ]);
 
         if ($isHtml) {
+            if ($this->isMarkdown()) {
+                $state = Str::markdown($state, $this->getCommonMarkOptions(), $this->getCommonMarkExtensions());
+            }
+
             $state = Str::sanitizeHtml($state);
         }
 
@@ -373,10 +379,6 @@ trait CanFormatState
 
         if ($wordLimit = $this->getWordLimit()) {
             $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
-        }
-
-        if ($isHtml && $this->isMarkdown()) {
-            $state = Str::markdown($state, $this->getCommonMarkOptions(), $this->getCommonMarkExtensions());
         }
 
         $prefix = $this->getPrefix();

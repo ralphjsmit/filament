@@ -47,8 +47,8 @@ If you want to start a component in a grid at a specific column, you can use the
 - `columnStart(['md' => 2, 'xl' => 4])` will make the component start at column 2 on medium devices, and at column 4 on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
 
 ```php
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\TextEntry;
 
 Grid::make()
     ->columns([
@@ -71,6 +71,64 @@ In this example, the grid has 3 columns on small devices, 6 columns on extra lar
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columnStart()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Grid column ordering
+
+If you want to control the visual order of components in a grid without changing their position in the markup, you can use the `columnOrder()` method. This method accepts an integer, a closure, or an array of breakpoints and order values:
+
+- `columnOrder(2)` will set the component's order to 2 on all breakpoints.
+- `columnOrder(['md' => 2, 'xl' => 4])` will set the component's order to 2 on medium devices, and to 4 on extra large devices. The default breakpoint for smaller devices uses the default order, unless you use a `default` array key.
+- `columnOrder(fn () => 1)` will dynamically calculate the order using a closure.
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->columns(3)
+    ->schema([
+        TextInput::make('first')
+            ->columnOrder(3), // This will appear last
+        TextInput::make('second')
+            ->columnOrder(1), // This will appear first
+        TextInput::make('third')
+            ->columnOrder(2), // This will appear second
+    ])
+```
+
+You can also use responsive ordering to change the visual order of components based on the screen size:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->columns([
+        'sm' => 2,
+        'lg' => 3,
+    ])
+    ->schema([
+        TextInput::make('title')
+            ->columnOrder([
+                'default' => 1,
+                'lg' => 3,
+            ]),
+        TextInput::make('description')
+            ->columnOrder([
+                'default' => 2,
+                'lg' => 1,
+            ]),
+        TextInput::make('category')
+            ->columnOrder([
+                'default' => 3,
+                'lg' => 2,
+            ]),
+    ])
+```
+
+In this example, on small screens the order will be: title, description, category. On large screens, the order will be: description, category, title.
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columnOrder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### An example of a responsive grid layout
 
 In this example, we have a schema with a [section](sections) layout component. Since all layout components support the `columns()` method, we can use it to create a responsive grid layout within the section itself.
@@ -78,6 +136,8 @@ In this example, we have a schema with a [section](sections) layout component. S
 We pass an array to `columns()` as we want to specify different numbers of columns for different breakpoints. On devices smaller than the `sm` [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview), we want to have 1 column, which is default. On devices larger than the `sm` breakpoint, we want to have 3 columns. On devices larger than the `xl` breakpoint, we want to have 6 columns. On devices larger than the `2xl` breakpoint, we want to have 8 columns.
 
 Inside the section, we have a [text input](../forms/text-input). Since text inputs are form fields and all components have a `columnSpan()` method, we can use it to specify how many columns the text input should fill. On devices smaller than the `sm` breakpoint, we want the text input to fill 1 column, which is default. On devices larger than the `sm` breakpoint, we want the text input to fill 2 columns. On devices larger than the `xl` breakpoint, we want the text input to fill 3 columns. On devices larger than the `2xl` breakpoint, we want the text input to fill 4 columns.
+
+Additionally, we're using the `columnOrder()` method to control the visual order of components in the grid based on screen size. This allows us to change the display order without altering the markup structure.
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -92,13 +152,29 @@ Section::make()
     ->schema([
         TextInput::make('name')
             ->columnSpan([
+                'default' => 1,
                 'sm' => 2,
                 'xl' => 3,
                 '2xl' => 4,
+            ])
+            ->columnOrder([
+                'default' => 2,
+                'xl' => 1,
+            ]),
+        TextInput::make('email')
+            ->columnSpan([
+                'default' => 1,
+                'xl' => 2,
+            ])
+            ->columnOrder([
+                'default' => 1,
+                'xl' => 2,
             ]),
         // ...
     ])
 ```
+
+In this example, on screens smaller than the `xl` breakpoint, the email field will appear first followed by the name field. On screens larger than the `xl` breakpoint, the order is reversed with the name field appearing first followed by the email field.
 
 ## Basic layout components
 
@@ -228,11 +304,11 @@ Grid::make()
     ])
 ```
 
-You can also use container breakpoints in the `columnSpan()` and `columnStart()` methods:
+You can also use container breakpoints in the `columnSpan()`, `columnStart()`, and `columnOrder()` methods:
 
 ```php
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\TextInput;
 
 Grid::make()
     ->gridContainer()
@@ -245,10 +321,25 @@ Grid::make()
             ->columnSpan([
                 '@md' => 2,
                 '@xl' => 3,
+            ])
+            ->columnOrder([
+                'default' => 2,
+                '@xl' => 1,
+            ]),
+        TextInput::make('email')
+            ->columnSpan([
+                'default' => 1,
+                '@xl' => 1,
+            ])
+            ->columnOrder([
+                'default' => 1,
+                '@xl' => 2,
             ]),
         // ...
     ])
 ```
+
+In this example, when the container width is smaller than the `@xl` breakpoint (576px), the email field will appear first followed by the name field. When the container width is at least 576px, the order is reversed with the name field appearing first followed by the email field.
 
 ### Supporting container queries on older browsers
 
@@ -272,7 +363,44 @@ Grid::make()
     ])
 ```
 
-You can also use `!@` fallback breakpoints in the `columnSpan()` and `columnStart()` methods.
+You can also use `!@` fallback breakpoints in the `columnSpan()`, `columnStart()`, and `columnOrder()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->gridContainer()
+    ->columns([
+        '@md' => 3,
+        '@xl' => 4,
+        '!@md' => 2,
+        '!@xl' => 3,
+    ])
+    ->schema([
+        TextInput::make('name')
+            ->columnSpan([
+                '@md' => 2,
+                '@xl' => 3,
+                '!@md' => 2,
+                '!@xl' => 2,
+            ])
+            ->columnOrder([
+                'default' => 2,
+                '@xl' => 1,
+                '!@xl' => 1,
+            ]),
+        TextInput::make('email')
+            ->columnOrder([
+                'default' => 1,
+                '@xl' => 2,
+                '!@xl' => 2,
+            ]),
+        // ...
+    ])
+```
+
+In this example, the fallback breakpoints ensure that even in browsers that don't support container queries, the layout will still respond to viewport size changes, with the name field appearing first and the email field second on larger screens.
 
 ## Adding extra HTML attributes to a layout component
 

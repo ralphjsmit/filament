@@ -6,9 +6,14 @@ use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\CustomBlockExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsContentExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsSummaryExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -16,8 +21,10 @@ use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 use Tiptap\Core\Extension;
 use Tiptap\Editor;
+use Tiptap\Extensions\TextAlign;
 use Tiptap\Marks\Bold;
 use Tiptap\Marks\Code;
+use Tiptap\Marks\Highlight;
 use Tiptap\Marks\Italic;
 use Tiptap\Marks\Link;
 use Tiptap\Marks\Strike;
@@ -28,10 +35,16 @@ use Tiptap\Nodes\Blockquote;
 use Tiptap\Nodes\BulletList;
 use Tiptap\Nodes\CodeBlock;
 use Tiptap\Nodes\Document;
+use Tiptap\Nodes\HardBreak;
 use Tiptap\Nodes\Heading;
+use Tiptap\Nodes\HorizontalRule;
 use Tiptap\Nodes\ListItem;
 use Tiptap\Nodes\OrderedList;
 use Tiptap\Nodes\Paragraph;
+use Tiptap\Nodes\Table;
+use Tiptap\Nodes\TableCell;
+use Tiptap\Nodes\TableHeader;
+use Tiptap\Nodes\TableRow;
 use Tiptap\Nodes\Text;
 
 class RichContentRenderer implements Htmlable
@@ -112,6 +125,12 @@ class RichContentRenderer implements Htmlable
 
     public function getFileAttachmentUrl(mixed $file): ?string
     {
+        $fileAttachmentProvider = $this->getFileAttachmentProvider();
+
+        if ($fileAttachmentProvider) {
+            return $fileAttachmentProvider->getFileAttachmentUrl($file);
+        }
+
         $disk = $this->fileAttachmentsDiskName ?? config('filament.default_filesystem_disk');
         $visibility = $this->fileAttachmentsVisibility ?? ($disk === 'public' ? 'public' : 'private');
 
@@ -234,20 +253,39 @@ class RichContentRenderer implements Htmlable
             app(Code::class),
             app(CodeBlock::class),
             app(CustomBlockExtension::class),
+            app(DetailsContentExtension::class),
+            app(DetailsExtension::class),
+            app(DetailsSummaryExtension::class),
             app(Document::class),
+            app(HardBreak::class),
             app(Heading::class),
+            app(Highlight::class),
+            app(HorizontalRule::class),
             app(Italic::class),
             app(ImageExtension::class),
+            app(LeadExtension::class),
             app(Link::class),
             app(ListItem::class),
             app(MergeTagExtension::class),
             app(OrderedList::class),
             app(Paragraph::class),
             app(RenderedCustomBlockExtension::class),
+            app(SmallExtension::class),
             app(Strike::class),
             app(Subscript::class),
             app(Superscript::class),
+            app(Table::class),
+            app(TableCell::class),
+            app(TableHeader::class),
+            app(TableRow::class),
             app(Text::class),
+            app(TextAlign::class, [
+                'options' => [
+                    'types' => ['heading', 'paragraph'],
+                    'alignments' => ['start', 'center', 'end', 'justify'],
+                    'defaultAlignment' => 'start',
+                ],
+            ]),
             app(Underline::class),
             ...array_reduce(
                 $this->getPlugins(),

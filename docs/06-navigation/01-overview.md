@@ -231,6 +231,79 @@ NavigationGroup::make()
 
 The `extraSidebarAttributes()` will be applied to navigation group elements contained in the sidebar, and the `extraTopbarAttributes()` will only be applied to topbar navigation group dropdowns when using [top navigation](#using-top-navigation).
 
+### Registering navigation groups with an enum
+
+You can use an enum class to register navigation groups, which allows you to control their labels, icons, and order in a single place, without needing to register them in the [configuration](../panel-configuration).
+
+To do this, you can create an enum class with cases for each group:
+
+```php
+enum NavigationGroup
+{
+    case Shop;
+    
+    case Blog;
+    
+    case Settings;
+}
+```
+
+To order that the cases are defined in will control the order of the navigation groups.
+
+To use an enum navigation group for a resource or custom page, you can set the `$navigationGroup` property to the enum case:
+
+```php
+protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Shop;
+```
+
+You can also implement the `HasLabel` interface on the enum class, to define a custom label for each group:
+
+```php
+use Filament\Support\Contracts\HasLabel;
+
+enum NavigationGroup implements HasLabel
+{
+    case Shop;
+    
+    case Blog;
+    
+    case Settings;
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Shop => __('navigation-groups.shop'),
+            self::Blog => __('navigation-groups.blog'),
+            self::Settings => __('navigation-groups.settings'),
+        };
+    }
+}
+```
+
+You can also implement the `HasIcon` interface on the enum class, to define a custom icon for each group:
+
+```php
+use Filament\Support\Contracts\HasIcon;
+
+enum NavigationGroup implements HasIcon
+{
+    case Shop;
+    
+    case Blog;
+    
+    case Settings;
+
+    public function getIcon(): ?string
+    {
+        return match ($this) {
+            self::Shop => 'heroicon-o-shopping-cart',
+            self::Blog => 'heroicon-o-pencil',
+            self::Settings => 'heroicon-o-cog-6-tooth',
+        };
+    }
+}
+```
+
 ## Collapsible sidebar on desktop
 
 To make the sidebar collapsible on desktop as well as mobile, you can use the [configuration](../panel-configuration):

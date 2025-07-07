@@ -65,7 +65,7 @@ Make sure your `routes/web.php` file doesn't already define the `''` or `'/'` ro
 
 ## Render hooks
 
-[Render hooks](../advanced/render-hooks) allow you to render Blade content at various points in the framework views. You can [register global render hooks](../support/render-hooks#registering-render-hooks) in a service provider or middleware, but it also allows you to register render hooks that are specific to a panel. To do that, you can use the `renderHook()` method on the panel configuration object. Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:
+[Render hooks](advanced/render-hooks) allow you to render Blade content at various points in the framework views. You can [register global render hooks](advanced/render-hooks#registering-render-hooks) in a service provider or middleware, but it also allows you to register render hooks that are specific to a panel. To do that, you can use the `renderHook()` method on the panel configuration object. Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:
 
 ```php
 use Filament\Panel;
@@ -83,7 +83,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-A full list of available render hooks can be found [here](../advanced/render-hooks#available-render-hooks).
+A full list of available render hooks can be found [here](advanced/render-hooks#available-render-hooks).
 
 ## Setting a domain
 
@@ -412,7 +412,7 @@ public function panel(Panel $panel): Panel
 
 ## Configuring error notifications
 
-When Laravel's debug mode is disabled, Filament will replace Livewire's full-screen error modals with neater flash notifications. You can disable this behaviour using the `errorNotifications(false)` method:
+When Laravel's debug mode is disabled, Filament will replace Livewire's full-screen error modals with neater flash notifications. You can disable this behavior using the `errorNotifications(false)` method:
 
 ```php
 use Filament\Panel;

@@ -1,43 +1,53 @@
 ---
 title: Rendering an action in a Livewire component
 ---
+import Aside from "@components/Aside.astro"
+
+<Aside variant="warning">
+    Before proceeding, make sure `filament/actions` is installed in your project. You can check by running:
+
+    ```bash
+    composer show filament/actions
+    ```
+    If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
+</Aside>
 
 ## Setting up the Livewire component
 
 First, generate a new Livewire component:
 
 ```bash
-php artisan make:livewire ManageProduct
+php artisan make:livewire ManagePost
 ```
 
 Then, render your Livewire component on the page:
 
 ```blade
-@livewire('manage-product')
+@livewire('manage-post')
 ```
 
 Alternatively, you can use a full-page Livewire component:
 
 ```php
-use App\Livewire\ManageProduct;
+use App\Livewire\ManagePost;
 use Illuminate\Support\Facades\Route;
 
-Route::get('products/{product}/manage', ManageProduct::class);
+Route::get('posts/{post}/manage', ManagePost::class);
 ```
 
-You must use the `InteractsWithActions` and `InteractsWithForms` traits, and implement the `HasActions` and `HasForms` interfaces on your Livewire component class:
+You must use the `InteractsWithActions` and `InteractsWithSchemas` traits, and implement the `HasActions` and `HasSchemas` interfaces on your Livewire component class:
 
 ```php
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Livewire\Component;
 
-class ManagePost extends Component implements HasForms, HasActions
+class ManagePost extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
-    use InteractsWithForms;
+    use InteractsWithSchemas;
 
     // ...
 }
@@ -52,20 +62,21 @@ use App\Models\Post;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Livewire\Component;
 
-class ManagePost extends Component implements HasForms, HasActions
+class ManagePost extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
-    use InteractsWithForms;
+    use InteractsWithSchemas;
 
     public Post $post;
 
     public function deleteAction(): Action
     {
         return Action::make('delete')
+            ->color('danger')
             ->requiresConfirmation()
             ->action(fn () => $this->post->delete());
     }
@@ -92,6 +103,20 @@ Finally, you need to render the action in your view. To do this, you can use `{{
 
 You also need `<x-filament-actions::modals />` which injects the HTML required to render action modals. This only needs to be included within the Livewire component once, regardless of how many actions you have for that component.
 
+<Aside variant="info">
+    `filament/actions` also includes the following packages:
+    
+    - `filament/forms`
+    - `filament/infolists`
+    - `filament/notifications`
+    - `filament/support`
+    
+    These packages allow you to use their components within Livewire components.
+    For example, if your action uses [Notifications](notifications), remember to include `@livewire('notifications')` in your layout and add `@import '../../vendor/filament/notifications/resources/css/index.css'` to your CSS file.
+    
+    If you are using any other [Filament components](overview#package-components) in your action, make sure to install and integrate the corresponding package as well.
+</Aside>
+
 ## Passing action arguments
 
 Sometimes, you may wish to pass arguments to your action. For example, if you're rendering the same action multiple times in the same view, but each time for a different model, you could pass the model ID as an argument, and then retrieve it later. To do this, you can invoke the action in your view and pass in the arguments as an array:
@@ -117,6 +142,7 @@ use Filament\Actions\Action;
 public function deleteAction(): Action
 {
     return Action::make('delete')
+        ->color('danger')
         ->requiresConfirmation()
         ->action(function (array $arguments) {
             $post = Post::find($arguments['post']);

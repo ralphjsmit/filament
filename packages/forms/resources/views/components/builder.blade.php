@@ -81,7 +81,7 @@
             <ul
                 x-sortable
                 data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
-                wire:end.stop="mountAction('reorder', { items: $event.target.sortable.toArray() }, { schemaComponent: '{{ $key }}' })'"
+                wire:end.stop="mountAction('reorder', { items: $event.target.sortable.toArray() }, { schemaComponent: '{{ $key }}' })"
                 class="fi-fo-builder-items"
             >
                 @php
@@ -110,6 +110,7 @@
                     @endphp
 
                     <li
+                        wire:ignore.self
                         wire:key="{{ $item->getLivewireKey() }}.item"
                         x-data="{
                             isCollapsed: @js($isCollapsed($item)),
@@ -118,7 +119,10 @@
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand="isCollapsed = false"
                         x-sortable-item="{{ $itemKey }}"
-                        class="fi-fo-builder-item"
+                        {{
+                            $item->getParentComponent()->getExtraAttributeBag()
+                                ->class(['fi-fo-builder-item'])
+                        }}
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
                         @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
@@ -248,7 +252,7 @@
                                     <div
                                         class="fi-fo-builder-item-preview-edit-overlay"
                                         role="button"
-                                        x-on:click.stop="{{ '$wire.mountFormComponentAction(\'' . $statePath . '\', \'edit\', { item: \'' . $itemKey . '\' })' }}"
+                                        x-on:click.stop="{{ '$wire.mountAction(\'edit\', { item: \'' . $itemKey . '\' }, { schemaComponent: \'' . $key . '\' })' }}"
                                     ></div>
                                 @endif
                             @else

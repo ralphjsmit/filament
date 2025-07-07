@@ -373,7 +373,7 @@ Be aware when using `all` as it will cause performance issues when dealing with 
 
 Last year, the Filament team decided to hand over maintenance of the Spatie Translatable Plugin to the team at [Lara Zeus](https://larazeus.com), who are trusted developers of many Filament plugins. They have maintained a fork of the plugin ever since.
 
-The official Spatie Translatable Plugin will not recieve v4 support, and is now deprecated. You can use the [Lara Zeus Translatable Plugin](https://github.com/lara-zeus/spatie-translatable) as a direct replacement. The plugin is compatible with the same version of Spatie Translatable as the official plugin, and has been tested with Filament v4. It also fixes some long-standing bugs in the official plugin.
+The official Spatie Translatable Plugin will not receive v4 support, and is now deprecated. You can use the [Lara Zeus Translatable Plugin](https://github.com/lara-zeus/spatie-translatable) as a direct replacement. The plugin is compatible with the same version of Spatie Translatable as the official plugin, and has been tested with Filament v4. It also fixes some long-standing bugs in the official plugin.
 
 The [automated upgrade script](#running-the-automated-upgrade-script) suggests commands that uninstall the official plugin and install the Lara Zeus plugin, and replaces any references in your code to the official plugin with the Lara Zeus plugin.
 </Disclosure>
@@ -565,6 +565,35 @@ Ideally, you should avoid overriding the `make()` method altogether as there are
 <span slot="summary">Authenticating the user inside the import and export jobs</span>
 
 In v3, the `Illuminate\Auth\Events\Login` event was fired from the import and export jobs, to set the current user. This is no longer the case in v4: the user is authenticated, but that event is not fired, to avoid running any listeners that should only run for actual user logins.
+</Disclosure>
+
+<Disclosure x-show="packages.includes('tables')">
+<span slot="summary">Tables now have default primary key sorting</span>
+
+Filament v4 introduces a new default behavior for tables: they will now automatically have a primary key sort applied to their queries to ensure that records are always returned in a consistent order.
+
+If your table doesn't have a primary key, or you want to disable this behavior, you can do so by using the `defaultKeySort(false)` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->defaultKeySort(false);
+}
+```
+
+<Aside variant="tip">
+    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+
+    ```php
+    use Filament\Tables\Table;
+
+    Table::configureUsing(fn (Table $table) => $table
+        ->defaultKeySort(false));
+    ```
+</Aside>
 </Disclosure>
 
 <Disclosure x-show="packages.includes('panels')">
