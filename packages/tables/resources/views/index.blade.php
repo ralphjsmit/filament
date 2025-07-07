@@ -116,7 +116,7 @@
                 $wire,
             })"
     {{
-        $attributes->merge($getExtraAttributes())->class([
+        $getExtraAttributeBag()->class([
             'fi-ta',
             'fi-loading' => $records === null,
         ])
