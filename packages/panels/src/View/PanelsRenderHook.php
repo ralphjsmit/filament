@@ -50,10 +50,6 @@ class PanelsRenderHook
 
     const LAYOUT_START = 'panels::layout.start';
 
-    const LOGO_BEFORE = 'panels::logo.before';
-
-    const LOGO_AFTER = 'panels::logo.after';
-
     const PAGE_END = 'panels::page.end';
 
     const PAGE_FOOTER_WIDGETS_AFTER = 'panels::page.footer-widgets.after';
@@ -115,6 +111,10 @@ class PanelsRenderHook
     const SCRIPTS_BEFORE = 'panels::scripts.before';
 
     const SIDEBAR_FOOTER = 'panels::sidebar.footer';
+	
+	const SIDEBAR_LOGO_AFTER = 'panels::sidebar.logo.after';
+	
+	const SIDEBAR_LOGO_BEFORE = 'panels::sidebar.logo.before';
 
     const SIDEBAR_NAV_END = 'panels::sidebar.nav.end';
 
@@ -141,6 +141,10 @@ class PanelsRenderHook
     const TOPBAR_BEFORE = 'panels::topbar.before';
 
     const TOPBAR_END = 'panels::topbar.end';
+	
+	const TOPBAR_LOGO_AFTER = 'panels::topbar.logo.after';
+	
+	const TOPBAR_LOGO_BEFORE = 'panels::topbar.logo.before';
 
     const TOPBAR_START = 'panels::topbar.start';
 
