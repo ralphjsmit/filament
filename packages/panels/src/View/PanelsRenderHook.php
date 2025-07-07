@@ -111,10 +111,10 @@ class PanelsRenderHook
     const SCRIPTS_BEFORE = 'panels::scripts.before';
 
     const SIDEBAR_FOOTER = 'panels::sidebar.footer';
-	
-	const SIDEBAR_LOGO_AFTER = 'panels::sidebar.logo.after';
-	
-	const SIDEBAR_LOGO_BEFORE = 'panels::sidebar.logo.before';
+
+    const SIDEBAR_LOGO_AFTER = 'panels::sidebar.logo.after';
+
+    const SIDEBAR_LOGO_BEFORE = 'panels::sidebar.logo.before';
 
     const SIDEBAR_NAV_END = 'panels::sidebar.nav.end';
 
@@ -141,10 +141,10 @@ class PanelsRenderHook
     const TOPBAR_BEFORE = 'panels::topbar.before';
 
     const TOPBAR_END = 'panels::topbar.end';
-	
-	const TOPBAR_LOGO_AFTER = 'panels::topbar.logo.after';
-	
-	const TOPBAR_LOGO_BEFORE = 'panels::topbar.logo.before';
+
+    const TOPBAR_LOGO_AFTER = 'panels::topbar.logo.after';
+
+    const TOPBAR_LOGO_BEFORE = 'panels::topbar.logo.before';
 
     const TOPBAR_START = 'panels::topbar.start';
 
