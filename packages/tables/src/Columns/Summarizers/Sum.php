@@ -27,7 +27,7 @@ class Sum extends Summarizer
     public function getSelectStatements(string $column): array
     {
         return [
-            $this->getSelectAlias() => "sum({$column})",
+            $this->getSelectAlias() => "sum({$this->getQuery()->getGrammar()->wrap($column)})",
         ];
     }
 

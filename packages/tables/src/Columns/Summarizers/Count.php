@@ -70,7 +70,7 @@ class Count extends Summarizer
         }
 
         return [
-            $this->getSelectAlias() => "count({$column})",
+            $this->getSelectAlias() => "count({$this->getQuery()->getGrammar()->wrap($column)})",
         ];
     }
 

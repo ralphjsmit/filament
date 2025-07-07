@@ -46,9 +46,7 @@ trait CanSummarizeRecords
             /** @var Connection $queryConnection */
             $queryConnection = $query->getConnection();
 
-            $qualifiedAttribute = $query->getGrammar()->wrap(
-                $queryConnection->getTablePrefix() . $query->getModel()->qualifyColumn($column->getName())
-            );
+            $qualifiedAttribute = $queryConnection->getTablePrefix() . $query->getModel()->qualifyColumn($column->getName());
 
             foreach ($summarizers as $summarizer) {
                 if ($summarizer->hasQueryModification()) {
