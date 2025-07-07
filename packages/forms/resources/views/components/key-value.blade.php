@@ -32,7 +32,7 @@
     >
         <div
             @if (FilamentView::hasSpaMode())
-                {{-- format-ignore-start --}}x-load="eager || event (x-modal-opened)"{{-- format-ignore-end --}}
+                {{-- format-ignore-start --}}x-load="eager"{{-- format-ignore-end --}}
             @else
                 x-load
             @endif
