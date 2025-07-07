@@ -24,7 +24,7 @@ trait HasColumnManager
     /**
      * @var ?array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
      */
-    public ?array $cachedDefaultTableColumnState = null;
+    protected ?array $cachedDefaultTableColumnState = null;
 
     public function initTableColumnManager(): void
     {
