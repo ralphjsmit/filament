@@ -166,8 +166,13 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
         $column = match ($driverName) {
             'pgsql' => (
                 str($column)->contains('->')
-                    ? str($column)
-                        ->beforeLast('->')
+                    ? str(
+                        str($column)
+                            ->beforeLast('->')
+                            ->explode('.')
+                            ->map(fn (string $part) => str($part)->wrap('"'))
+                            ->implode('.')
+                    )
                         ->append('->>')
                         ->append("'")
                         ->append(str($column)->afterLast('->'))
