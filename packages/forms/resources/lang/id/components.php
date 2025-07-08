@@ -475,7 +475,7 @@ return [
             'align_center' => 'Rata tengah',
             'align_end' => 'Rata akhir',
             'align_justify' => 'Rata penuh',
-            'align_start' => 'Align awal',
+            'align_start' => 'Rata awal',
             'attach_files' => 'Lampirkan berkas',
             'blockquote' => 'Kutipan',
             'bold' => 'Tebal',

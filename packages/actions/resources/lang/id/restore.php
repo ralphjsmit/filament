@@ -61,7 +61,7 @@ return [
             ],
 
             'restored_none' => [
-                'title' => 'Failed to restore',
+                'title' => 'Gagal memulihkan',
                 'missing_authorization_failure_message' => 'Anda tidak punya akses untuk memulihkan :count.',
                 'missing_processing_failure_message' => ':count tidak dapat dipulihkan.',
             ],
