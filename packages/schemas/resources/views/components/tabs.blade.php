@@ -1,6 +1,5 @@
 @php
     use Filament\Schemas\Components\Tabs\Tab;
-    use Filament\Support\Facades\FilamentView;
 
     $activeTab = $getActiveTab();
     $isContained = $isContained();

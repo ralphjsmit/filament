@@ -1,6 +1,5 @@
 @php
     use Filament\Support\Enums\Alignment;
-    use Filament\Support\Facades\FilamentView;
 
     $fieldWrapperView = $getFieldWrapperView();
     $imageCropAspectRatio = $getImageCropAspectRatio();

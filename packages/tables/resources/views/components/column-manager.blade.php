@@ -9,7 +9,6 @@
 
 @php
     use Filament\Support\Enums\GridDirection;
-    use Filament\Support\Facades\FilamentView;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 

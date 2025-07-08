@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $isContained = $isContained();
     $key = $getKey();
     $previousAction = $getAction('previous');

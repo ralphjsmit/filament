@@ -1,6 +1,5 @@
 @php
     use Filament\Support\Enums\GridDirection;
-    use Filament\Support\Facades\FilamentView;
 
     $fieldWrapperView = $getFieldWrapperView();
     $extraInputAttributeBag = $getExtraInputAttributeBag();
