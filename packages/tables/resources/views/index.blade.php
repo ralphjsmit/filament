@@ -115,10 +115,12 @@
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 $wire,
             })"
-    @class([
-        'fi-ta',
-        'fi-loading' => $records === null,
-    ])
+    {{
+        $getExtraAttributeBag()->class([
+            'fi-ta',
+            'fi-loading' => $records === null,
+        ])
+    }}
 >
     <input
         type="hidden"
