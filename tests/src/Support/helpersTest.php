@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
