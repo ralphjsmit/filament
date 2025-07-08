@@ -2,6 +2,7 @@
     use Filament\Support\Enums\Alignment;
 
     $fieldWrapperView = $getFieldWrapperView();
+    $id = $getId();
     $imageCropAspectRatio = $getImageCropAspectRatio();
     $imageResizeTargetHeight = $getImageResizeTargetHeight();
     $imageResizeTargetWidth = $getImageResizeTargetWidth();
@@ -23,7 +24,7 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :label-sr-only="$isLabelHidden()"
+    label-tag="div"
 >
     <div
         x-load
@@ -119,7 +120,9 @@
         {{
             $attributes
                 ->merge([
-                    'id' => $getId(),
+                    'aria-labelledby' => "{$id}-label",
+                    'id' => $id,
+                    'role' => 'group',
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
@@ -136,6 +139,7 @@
                 {{
                     $getExtraInputAttributeBag()
                         ->merge([
+                            'aria-labelledby' => "{$id}-label",
                             'disabled' => $isDisabled,
                             'multiple' => $isMultiple,
                             'type' => 'file',

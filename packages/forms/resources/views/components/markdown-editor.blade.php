@@ -1,4 +1,5 @@
 @php
+    $id = $getId();
     $fieldWrapperView = $getFieldWrapperView();
     $extraAttributeBag = $getExtraAttributeBag();
     $key = $getKey();
@@ -7,7 +8,7 @@
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     @if ($isDisabled())
-        <div class="fi-fo-markdown-editor fi-disabled fi-prose">
+        <div id="{{ $id }}" class="fi-fo-markdown-editor fi-disabled fi-prose">
             {!! str($getState())->sanitizeHtml()->markdown($getCommonMarkOptions(), $getCommonMarkExtensions()) !!}
         </div>
     @else
@@ -19,6 +20,9 @@
             "
         >
             <div
+                aria-labelledby="{{ $id }}-label"
+                id="{{ $id }}"
+                role="group"
                 {{-- prettier-ignore-start --}}x-load="visible || event (x-modal-opened)"
                 {{-- prettier-ignore-end --}}
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
