@@ -164,10 +164,19 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
         $driverName = $databaseConnection->getDriverName();
 
         $column = match ($driverName) {
-            'pgsql' => (string) str($column)
-                ->explode('.')
-                ->map(fn (string $part) => str($part)->wrap('"'))
-                ->implode('.') . '::text',
+            'pgsql' => (
+                str($column)->contains('->')
+                    ? str($column)
+                        ->beforeLast('->')
+                        ->append('->>')
+                        ->append("'")
+                        ->append(str($column)->afterLast('->'))
+                        ->append("'")
+                    : str($column)
+                        ->explode('.')
+                        ->map(fn (string $part) => str($part)->wrap('"'))
+                        ->implode('.')
+            ) . '::text',
             default => $column,
         };
 
