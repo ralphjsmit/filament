@@ -182,8 +182,6 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
             default => $column,
         };
 
-        echo $column;
-
         $column = match ($driverName) {
             'pgsql' => "{$column}::text",
             default => $column,
