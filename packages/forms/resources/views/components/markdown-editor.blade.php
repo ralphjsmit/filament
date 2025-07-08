@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $id = $getId();
     $fieldWrapperView = $getFieldWrapperView();
     $extraAttributeBag = $getExtraAttributeBag();
