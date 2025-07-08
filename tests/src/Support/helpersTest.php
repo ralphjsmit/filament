@@ -87,5 +87,24 @@ it('will generate json search column expression for pgsql', function () {
     $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 
     expect($expression->getValue($grammar))
-        ->toBe("lower(data->>'name'::text)");
+        ->toBe("lower(\"data\"->>'name'::text)");
 });
+
+it('will generate column expression for pgsql with colons in the name', function (string $column, string $text) {
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($expression->getValue($grammar))
+        ->toBe($text);
+})
+    ->with([
+        ['blog:posts.title', 'lower("blog:posts"."title"::text)'],
+        ['blog:posts:comments.author.name', 'lower("blog:posts:comments"."author"."name"::text)'],
+    ]);
