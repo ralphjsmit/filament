@@ -82,11 +82,7 @@
             />
         @else
             <div
-                @if (FilamentView::hasSpaMode())
-                    {{-- format-ignore-start --}}x-load="eager"{{-- format-ignore-end --}}
-                @else
-                    x-load
-                @endif
+                x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
                 x-data="dateTimePickerFormComponent({
                             displayFormat:

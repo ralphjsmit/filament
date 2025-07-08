@@ -17,11 +17,7 @@
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
-        @if (FilamentView::hasSpaMode())
-            {{-- format-ignore-start --}}x-load="eager"{{-- format-ignore-end --}}
-        @else
-            x-load
-        @endif
+        x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('checkbox-list', 'filament/forms') }}"
         x-data="checkboxListFormComponent({
                     livewireId: @js($this->getId()),

@@ -12,11 +12,7 @@
 
 @if (blank($livewireProperty))
     <div
-        @if (FilamentView::hasSpaMode())
-            {{-- format-ignore-start --}}x-load="eager"{{-- format-ignore-end --}}
-        @else
-            x-load
-        @endif
+        x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tabs', 'filament/schemas') }}"
         x-data="tabsSchemaComponent({
             activeTab: @js($activeTab),

@@ -31,11 +31,7 @@
         "
     >
         <div
-            @if (FilamentView::hasSpaMode())
-                {{-- format-ignore-start --}}x-load="eager"{{-- format-ignore-end --}}
-            @else
-                x-load
-            @endif
+            x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms') }}"
             wire:ignore
             x-data="keyValueFormComponent({
