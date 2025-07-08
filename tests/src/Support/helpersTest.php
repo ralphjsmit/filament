@@ -8,8 +8,8 @@ use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\View\ComponentAttributeBag;
 
-use function Filament\Support\generate_search_column_expression;
 use function Filament\get_authorization_response;
+use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
@@ -56,7 +56,7 @@ it('can handle policy being an object when method does not exist', function (): 
     get_authorization_response('edit', Ticket::class);
 })->throws(Exception::class, 'Strict authorization mode is enabled, but no [edit()] method was found on [Filament\Tests\Fixtures\Policies\TicketPolicy].');
 
-it('will generate json search column expression for mysql', function () {
+it('will generate json search column expression for mysql', function (): void {
     $column = 'data->name';
     $isSearchForcedCaseInsensitive = true;
 
@@ -74,7 +74,7 @@ it('will generate json search column expression for mysql', function () {
         ->toBe("lower(json_extract(`data`, '$.\"name\"'))");
 });
 
-it('will generate json search column expression for pgsql', function () {
+it('will generate json search column expression for pgsql', function (): void {
     $column = 'data->name';
     $isSearchForcedCaseInsensitive = true;
 
@@ -90,7 +90,7 @@ it('will generate json search column expression for pgsql', function () {
         ->toBe("lower(\"data\"->>'name'::text)");
 });
 
-it('will generate column expression for pgsql with colons in the name', function (string $column, string $text) {
+it('will generate column expression for pgsql with colons in the name', function (string $column, string $text): void {
     $isSearchForcedCaseInsensitive = true;
 
     $databaseConnection = Mockery::mock(Connection::class);
