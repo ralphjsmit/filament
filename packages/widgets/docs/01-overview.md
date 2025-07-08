@@ -109,7 +109,7 @@ Firstly, you must [replace the original Dashboard page](#customizing-the-dashboa
 Now, in your new `app/Filament/Pages/Dashboard.php` file, you may override the `getColumns()` method to return a number of grid columns to use:
 
 ```php
-public function getColumns(): int | string | array
+public function getColumns(): int | array
 {
     return 2;
 }
