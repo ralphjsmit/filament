@@ -50,6 +50,14 @@ class PanelsRenderHook
 
     const LAYOUT_START = 'panels::layout.start';
 
+    const PAGE_CONTENT_AFTER = 'panels::page.content.after';
+
+    const PAGE_CONTENT_BEFORE = 'panels::page.content.before';
+
+    const PAGE_CONTENT_END = 'panels::page.content.end';
+
+    const PAGE_CONTENT_START = 'panels::page.content.start';
+
     const PAGE_END = 'panels::page.end';
 
     const PAGE_FOOTER_WIDGETS_AFTER = 'panels::page.footer-widgets.after';

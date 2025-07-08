@@ -89,11 +89,19 @@
             @endif
 
             <div class="fi-page-content">
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_CONTENT_START, scopes: $this->getRenderHookScopes()) }}
+
                 {{ $this->headerWidgets }}
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_CONTENT_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
                 {{ $slot }}
 
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_CONTENT_AFTER, scopes: $this->getRenderHookScopes()) }}
+
                 {{ $this->footerWidgets }}
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_CONTENT_END, scopes: $this->getRenderHookScopes()) }}
             </div>
 
             @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
