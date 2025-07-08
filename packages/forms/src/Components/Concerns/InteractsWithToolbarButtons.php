@@ -92,6 +92,8 @@ trait InteractsWithToolbarButtons
 
             if (! is_array($buttonGroup)) {
                 $newButtonGroup[] = $buttonGroup;
+
+                continue;
             }
 
             if (filled($newButtonGroup)) {
@@ -103,6 +105,10 @@ trait InteractsWithToolbarButtons
             }
 
             $toolbar[] = $buttonGroup;
+        }
+
+        if (filled($newButtonGroup)) {
+            $toolbar[] = $newButtonGroup;
         }
 
         return $toolbar;
