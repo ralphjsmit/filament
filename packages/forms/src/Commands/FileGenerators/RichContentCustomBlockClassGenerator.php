@@ -5,10 +5,11 @@ namespace Filament\Forms\Commands\FileGenerators;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Illuminate\Support\Stringable;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 
-class CustomBlockClassGenerator extends ClassGenerator
+class RichContentCustomBlockClassGenerator extends ClassGenerator
 {
     final public function __construct(
         protected string $fqn,
@@ -27,6 +28,7 @@ class CustomBlockClassGenerator extends ClassGenerator
     public function getImports(): array
     {
         return [
+            Action::class,
             $this->getExtends(),
         ];
     }
@@ -52,7 +54,10 @@ class CustomBlockClassGenerator extends ClassGenerator
 
     protected function addGetIdMethodToClass(ClassType $class): void
     {
-        $id = str($this->getBasename())->kebab()->lower();
+        $id = (string) str($this->getBasename())
+            ->whenEndsWith('Block', fn (Stringable $stringable) => $stringable->beforeLast('Block'))
+            ->snake()
+            ->lower();
 
         $method = $class->addMethod('getId')
             ->setPublic()
@@ -64,12 +69,18 @@ class CustomBlockClassGenerator extends ClassGenerator
                 PHP,
             );
 
-        $this->configureConfigureMethod($method);
+        $this->configureGetIdMethod($method);
     }
+
+    protected function configureGetIdMethod(Method $method): void {}
 
     protected function addGetLabelMethodToClass(ClassType $class): void
     {
-        $label = str($this->getBasename())->kebab()->replace('-', ' ')->ucwords();
+        $label = (string) str($this->getBasename())
+            ->whenEndsWith('Block', fn (Stringable $stringable) => $stringable->beforeLast('Block'))
+            ->kebab()
+            ->replace('-', ' ')
+            ->ucfirst();
 
         $method = $class->addMethod('getLabel')
             ->setPublic()
@@ -81,19 +92,25 @@ class CustomBlockClassGenerator extends ClassGenerator
                 PHP,
             );
 
-        $this->configureConfigureMethod($method);
+        $this->configureGetLabelMethod($method);
     }
+
+    protected function configureGetLabelMethod(Method $method): void {}
 
     protected function addConfigureEditorActionMethodToClass(ClassType $class): void
     {
+        $label = (string) str($this->getBasename())
+            ->kebab()
+            ->replace('-', ' ');
+
         $method = $class->addMethod('configureEditorAction')
             ->setPublic()
             ->setStatic()
             ->setReturnType(Action::class)
             ->setBody(
-                <<<'PHP'
-                return $action
-                    ->modalDescription('Configure the block')
+                <<<PHP
+                return \$action
+                    ->modalDescription('Configure the {$label}')
                     ->schema([
                         //
                     ]);
@@ -102,8 +119,10 @@ class CustomBlockClassGenerator extends ClassGenerator
         $method->addParameter('action')
             ->setType(Action::class);
 
-        $this->configureConfigureMethod($method);
+        $this->configureConfigureEditorActionMethod($method);
     }
+
+    protected function configureConfigureEditorActionMethod(Method $method): void {}
 
     protected function addToPreviewHtmlMethodToClass(ClassType $class): void
     {
@@ -121,8 +140,10 @@ class CustomBlockClassGenerator extends ClassGenerator
         $method->addParameter('config')
             ->setType('array');
 
-        $this->configureConfigureMethod($method);
+        $this->configureToPreviewMethod($method);
     }
+
+    protected function configureToPreviewMethod(Method $method): void {}
 
     protected function addToHtmlMethodToClass(ClassType $class): void
     {
@@ -142,10 +163,10 @@ class CustomBlockClassGenerator extends ClassGenerator
         $method->addParameter('data')
             ->setType('array');
 
-        $this->configureConfigureMethod($method);
+        $this->configureToHtmlMethod($method);
     }
 
-    protected function configureConfigureMethod(Method $method): void {}
+    protected function configureToHtmlMethod(Method $method): void {}
 
     public function getFqn(): string
     {

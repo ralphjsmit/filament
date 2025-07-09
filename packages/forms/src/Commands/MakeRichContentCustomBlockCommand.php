@@ -2,28 +2,34 @@
 
 namespace Filament\Forms\Commands;
 
-use Filament\Forms\Commands\FileGenerators\CustomBlockClassGenerator;
+use Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator;
 use Filament\Support\Commands\Concerns\CanAskForComponentLocation;
 use Filament\Support\Commands\Concerns\CanAskForViewLocation;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-custom-block', aliases: [
+#[AsCommand(name: 'make:filament-rich-content-custom-block', aliases: [
+    'filament:rich-content-custom-block',
     'filament:rich-editor-custom-block',
     'filament:custom-block',
+    'forms:rich-content-custom-block',
     'forms:rich-editor-custom-block',
     'forms:make-custom-block',
+    'make:filament-rich-editor-custom-block',
+    'make:filament-custom-block',
+    'make:rich-content-custom-block',
     'make:rich-editor-custom-block',
     'make:custom-block',
 ])]
-class MakeCustomBlockCommand extends Command
+class MakeRichContentCustomBlockCommand extends Command
 {
     use CanAskForComponentLocation;
     use CanAskForViewLocation;
@@ -31,16 +37,21 @@ class MakeCustomBlockCommand extends Command
 
     protected $description = 'Create a new rich editor custom block class and view';
 
-    protected $name = 'make:filament-custom-block';
+    protected $name = 'make:filament-rich-content-custom-block';
 
     /**
      * @var array<string>
      */
     protected $aliases = [
+        'filament:rich-content-custom-block',
         'filament:rich-editor-custom-block',
         'filament:custom-block',
+        'forms:rich-content-custom-block',
         'forms:rich-editor-custom-block',
         'forms:make-custom-block',
+        'make:filament-rich-editor-custom-block',
+        'make:filament-custom-block',
+        'make:rich-content-custom-block',
         'make:rich-editor-custom-block',
         'make:custom-block',
     ];
@@ -128,7 +139,7 @@ class MakeCustomBlockCommand extends Command
             $path,
             $viewNamespace,
         ] = $this->askForComponentLocation(
-            path: 'Forms/Components/RichEditor/CustomBlocks',
+            path: 'Forms/Components/RichEditor/RichContentCustomBlocks',
             question: 'Where would you like to create the custom block?',
         );
 
@@ -142,8 +153,9 @@ class MakeCustomBlockCommand extends Command
             $viewPath,
         ] = $this->askForViewLocation(
             str($this->fqn)
-                ->afterLast('\\Forms\\Components\\RichEditor\\CustomBlocks\\')
-                ->prepend('Filament\\Forms\\Components\\RichEditor\\CustomBlocks\\')
+                ->afterLast('\\Forms\\Components\\RichEditor\\RichContentCustomBlocks\\')
+                ->prepend('Filament\\Forms\\Components\\RichEditor\\RichContentCustomBlocks\\')
+                ->whenEndsWith('Block', fn (Stringable $stringable) => $stringable->beforeLast('Block'))
                 ->replace('\\', '/')
                 ->explode('/')
                 ->map(Str::kebab(...))
@@ -162,7 +174,7 @@ class MakeCustomBlockCommand extends Command
             throw new FailureCommandOutput;
         }
 
-        $this->writeFile($this->path, app(CustomBlockClassGenerator::class, [
+        $this->writeFile($this->path, app(RichContentCustomBlockClassGenerator::class, [
             'fqn' => $this->fqn,
             'view' => $this->view,
             'previewView' => $this->previewView,
