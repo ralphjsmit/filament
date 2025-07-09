@@ -138,8 +138,8 @@ class MakeCustomBlockCommand extends Command
             ->replace('//', '/');
 
         [
-            $this->view,
-            $this->viewPath,
+            $view,
+            $viewPath,
         ] = $this->askForViewLocation(
             str($this->fqn)
                 ->afterLast('\\Forms\\Components\\RichEditor\\CustomBlocks\\')
@@ -150,9 +150,10 @@ class MakeCustomBlockCommand extends Command
                 ->implode('.'),
             defaultNamespace: $viewNamespace,
         );
-
-        $this->previewView = Str::beforeLast($this->view, '.') . '.' . 'preview' . '.' . Str::afterLast($this->view, '.');
-        $this->previewViewPath = Str::beforeLast($this->viewPath, '/') . '/' . 'preview' . '/' . Str::afterLast($this->viewPath, '/');
+        $this->view = str($view)->append('.index');
+        $this->viewPath = str($viewPath)->replaceLast('.blade.php', '/index.blade.php');
+        $this->previewView = str($view)->append('.preview');
+        $this->previewViewPath = str($viewPath)->replaceLast('.blade.php', '/preview.blade.php');
     }
 
     protected function createCustomBlock(): void
