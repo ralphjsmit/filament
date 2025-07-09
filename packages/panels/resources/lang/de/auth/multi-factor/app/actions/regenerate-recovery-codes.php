@@ -6,7 +6,7 @@ return [
 
     'modal' => [
 
-        'heading' => 'Wiederherstellungscodes der Authenticator-App regenerieren',
+        'heading' => 'Wiederherstellungscodes der Authenticator-App neu generieren',
 
         'description' => 'Wenn Sie Ihre Wiederherstellungscodes verlieren, können Sie sie hier regenerieren. Ihre alten Wiederherstellungscodes werden sofort ungültig.',
 
