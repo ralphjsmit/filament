@@ -35,19 +35,19 @@ trait HasHint
             $components = [];
 
             if ($component->hasHint()) {
-                $components[] = Text::make(static function (Text $component) {
+                $components[] = Text::make(static function (Text $component): string | Htmlable | null {
                     /** @var self $parentComponent */
                     $parentComponent = $component->getContainer()->getParentComponent();
 
                     return $parentComponent->getHint();
                 })
-                    ->color(static function (Text $component) {
+                    ->color(static function (Text $component): string | array | null {
                         /** @var self $parentComponent */
                         $parentComponent = $component->getContainer()->getParentComponent();
 
                         return $parentComponent->getHintColor();
                     })
-                    ->visible(static function (Text $component) {
+                    ->visible(static function (Text $component): bool {
                         /** @var self $parentComponent */
                         $parentComponent = $component->getContainer()->getParentComponent();
 
@@ -56,19 +56,19 @@ trait HasHint
             }
 
             if ($component->hasHintIcon()) {
-                $components[] = Icon::make(static function (Icon $component) {
+                $components[] = Icon::make(static function (Icon $component): string | BackedEnum | null {
                     /** @var self $parentComponent */
                     $parentComponent = $component->getContainer()->getParentComponent();
 
                     return $parentComponent->getHintIcon();
                 })
-                    ->tooltip(static function (Icon $component) {
+                    ->tooltip(static function (Icon $component): ?string {
                         /** @var self $parentComponent */
                         $parentComponent = $component->getContainer()->getParentComponent();
 
                         return $parentComponent->getHintIconTooltip();
                     })
-                    ->visible(static function (Icon $component) {
+                    ->visible(static function (Icon $component): bool {
                         /** @var self $parentComponent */
                         $parentComponent = $component->getContainer()->getParentComponent();
 
