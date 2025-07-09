@@ -2,13 +2,13 @@
 
 return [
 
-    'label' => 'Wiederherstellungscodes regenerieren',
+    'label' => 'Wiederherstellungscodes neu generieren',
 
     'modal' => [
 
         'heading' => 'Wiederherstellungscodes der Authenticator-App neu generieren',
 
-        'description' => 'Wenn Sie Ihre Wiederherstellungscodes verlieren, können Sie sie hier regenerieren. Ihre alten Wiederherstellungscodes werden sofort ungültig.',
+        'description' => 'Wenn Sie Ihre Wiederherstellungscodes verlieren, können Sie sie hier neu generieren. Ihre alten Wiederherstellungscodes werden sofort ungültig.',
 
         'form' => [
 
@@ -39,7 +39,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Wiederherstellungscodes regenerieren',
+                'label' => 'Wiederherstellungscodes neu generieren',
             ],
 
         ],
