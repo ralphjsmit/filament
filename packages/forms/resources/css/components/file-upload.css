@@ -41,6 +41,16 @@
         @apply rounded-full;
     }
 
+    & .filepond--root[data-style-panel-layout~='compact'],
+    & .filepond--root[data-style-panel-layout~='integrated'] {
+        & .filepond--list-scroller {
+            overflow: unset;
+            height: unset;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+    }
+
     & .filepond--panel-root {
         @apply bg-transparent;
     }
