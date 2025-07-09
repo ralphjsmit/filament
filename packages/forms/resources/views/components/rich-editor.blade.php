@@ -48,7 +48,11 @@
                 'fi-fo-rich-editor-uploading-file': isUploadingFile,
             }"
             wire:ignore
-            wire:key="{{ $livewireKey }}.editor{{ $isDisabled ? '.disabled' : '' }}"
+            wire:key="{{ $livewireKey }}.{{
+                substr(md5(serialize([
+                    $isDisabled,
+                ])), 0, 64)
+            }}"
         >
             @if ((! $isDisabled) && filled($toolbarButtons))
                 <div class="fi-fo-rich-editor-toolbar">
