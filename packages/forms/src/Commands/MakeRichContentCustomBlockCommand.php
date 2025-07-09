@@ -191,7 +191,7 @@ class MakeRichContentCustomBlockCommand extends Command
             throw new FailureCommandOutput;
         }
 
-        $this->copyStubToApp('CustomBlockView', $this->viewPath);
+        $this->copyStubToApp('RichContentCustomBlockView', $this->viewPath);
     }
 
     protected function createPreviewView(): void
@@ -204,6 +204,6 @@ class MakeRichContentCustomBlockCommand extends Command
             throw new FailureCommandOutput;
         }
 
-        $this->copyStubToApp('CustomBlockPreviewView', $this->previewViewPath);
+        $this->copyStubToApp('RichContentCustomBlockPreviewView', $this->previewViewPath);
     }
 }
