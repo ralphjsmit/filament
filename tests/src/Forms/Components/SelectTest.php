@@ -9,7 +9,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can trim whitespace from TextInput', function (): void {
+it('can validate a searchable `Select` without `->getOptionLabelUsing()`', function (): void {
     livewire(TestComponentWithSelect::class)
         ->fillForm(['product_id' => 123])
         ->call('save')
