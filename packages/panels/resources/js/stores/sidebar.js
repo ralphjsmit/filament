@@ -16,6 +16,7 @@ export default () => ({
             // Resize desktop to mobile
             if (wasDesktop && isMobile) {
                 this.isOpenDesktop = this.isOpen
+
                 if (this.isOpen) {
                     this.close()
                 }
