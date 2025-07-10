@@ -167,27 +167,24 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
             'pgsql' => (
                 str($column)->contains('->')
                     ? (
-                        // Handle table.field part with double quotes
+                        // Handle `table.field` part with double quotes
                         str($column)
                             ->before('->')
                             ->explode('.')
-                            ->map(fn (string $part) => str($part)->wrap('"'))
+                            ->map(fn (string $part): string => (string) str($part)->wrap('"'))
                             ->implode('.')
-                    ) .
-                    // Handle JSON path parts
-                    collect(str($column)->after('->')->explode('->'))
-                        ->map(function ($segment, $index) use ($column) {
+                    ) . collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
+                        ->map(function ($segment, $index) use ($column): string {
                             $totalParts = substr_count($column, '->');
 
-                            return ($index === $totalParts - 1)
-                                ? "->>'$segment'"
-                                : "->'$segment'";
+                            return ($index === ($totalParts - 1))
+                                ? "->>'{$segment}'"
+                                : "->'{$segment}'";
                         })
                         ->implode('')
-
                     : str($column)
                         ->explode('.')
-                        ->map(fn (string $part) => str($part)->wrap('"'))
+                        ->map(fn (string $part): string => (string) str($part)->wrap('"'))
                         ->implode('.')
             ) . '::text',
             default => $column,

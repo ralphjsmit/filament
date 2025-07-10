@@ -44,7 +44,7 @@ it('will prepare data attributes', function () {
     ]);
 });
 
-it('will generate json search column expression for mysql', function () {
+it('will generate a JSON search column expression for MySQL', function () {
     $column = 'data->name';
     $isSearchForcedCaseInsensitive = true;
 
@@ -62,7 +62,7 @@ it('will generate json search column expression for mysql', function () {
         ->toBe("lower(json_extract(`data`, '$.\"name\"'))");
 });
 
-it('will generate json search column expression for pgsql', function () {
+it('will generate a JSON search column expression for Postgres', function () {
     $column = 'data->name';
     $isSearchForcedCaseInsensitive = true;
 
@@ -78,7 +78,7 @@ it('will generate json search column expression for pgsql', function () {
         ->toBe("lower(\"data\"->>'name'::text)");
 });
 
-it('will generate nested json search column expression for pgsql', function () {
+it('will generate a nested JSON search column expression for Postgres', function () {
     $column = 'data->name->value->en';
     $isSearchForcedCaseInsensitive = true;
 
@@ -94,7 +94,7 @@ it('will generate nested json search column expression for pgsql', function () {
         ->toBe("lower(\"data\"->'name'->'value'->>'en'::text)");
 });
 
-it('will generate column expression for pgsql with colons in the name', function (string $column, string $text) {
+it('will generate a column expression for Postgres with colons in the table name', function (string $column, string $expectedExpression) {
     $isSearchForcedCaseInsensitive = true;
 
     $databaseConnection = Mockery::mock(Connection::class);
@@ -103,10 +103,10 @@ it('will generate column expression for pgsql with colons in the name', function
 
     $grammar = new PostgresGrammar($databaseConnection);
 
-    $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+    $actualExpression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 
-    expect($expression->getValue($grammar))
-        ->toBe($text);
+    expect($actualExpression->getValue($grammar))
+        ->toBe($expectedExpression);
 })
     ->with([
         ['blog:posts.title', 'lower("blog:posts"."title"::text)'],
