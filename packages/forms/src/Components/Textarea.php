@@ -69,34 +69,34 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
 
     public function mutateDehydratedState(mixed $state): mixed
     {
-	    if (is_array($state)) {
-		    $state = array_map(function (mixed $value) {
-			    $value = $this->stripCharactersFromState($value);
-			    $value = $this->trimState($value);
-			    
-			    return $value;
-		    }, $state);
-	    } else {
-		    $state = $this->stripCharactersFromState($state);
-		    $state = $this->trimState($state);
-	    }
+        if (is_array($state)) {
+            $state = array_map(function (mixed $value) {
+                $value = $this->stripCharactersFromState($value);
+                $value = $this->trimState($value);
+
+                return $value;
+            }, $state);
+        } else {
+            $state = $this->stripCharactersFromState($state);
+            $state = $this->trimState($state);
+        }
 
         return parent::mutateDehydratedState($state);
     }
 
     public function mutateStateForValidation(mixed $state): mixed
     {
-	    if (is_array($state)) {
-		    $state = array_map(function (mixed $value) {
-			    $value = $this->stripCharactersFromState($value);
-			    $value = $this->trimState($value);
-			    
-			    return $value;
-		    }, $state);
-	    } else {
-		    $state = $this->stripCharactersFromState($state);
-		    $state = $this->trimState($state);
-	    }
+        if (is_array($state)) {
+            $state = array_map(function (mixed $value) {
+                $value = $this->stripCharactersFromState($value);
+                $value = $this->trimState($value);
+
+                return $value;
+            }, $state);
+        } else {
+            $state = $this->stripCharactersFromState($state);
+            $state = $this->trimState($state);
+        }
 
         return parent::mutateStateForValidation($state);
     }
