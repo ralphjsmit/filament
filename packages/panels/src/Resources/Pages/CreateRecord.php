@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Support\Js;
+use Livewire\Attributes\Locked;
 use Throwable;
 
 /**
@@ -44,6 +45,7 @@ class CreateRecord extends Page
 
     protected static bool $canCreateAnother = true;
 
+    #[Locked]
     public bool $isCreating = false;
 
     public function getBreadcrumb(): string
@@ -76,7 +78,9 @@ class CreateRecord extends Page
 
     public function create(bool $another = false): void
     {
-        if ($this->isCreating) return;
+        if ($this->isCreating) {
+            return;
+        }
 
         $this->isCreating = true;
 
