@@ -263,12 +263,12 @@ TextInput::make('amount')
 
 ## Trimming whitespace
 
-You can automatically trim whitespace from the beginning and end of each tag using the `trim()` method:
+You can automatically trim whitespace from the beginning and end of the input value using the `trim()` method:
 
 ```php
-use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
 
-TagsInput::make('tags')
+TextInput::make('name')
     ->trim()
 ```
 

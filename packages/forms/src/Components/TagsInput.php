@@ -178,8 +178,12 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     public function mutateDehydratedState(mixed $state): mixed
     {
         if (is_array($state)) {
-            $state = array_map($this->stripCharactersFromState(...), $state);
-            $state = array_map($this->trimState(...), $state);
+            $state = array_map(function (mixed $value) {
+				$value = $this->stripCharactersFromState($value);
+				$value = $this->trimState($value);
+				
+				return $value;
+	        }, $state);
         } else {
             $state = $this->stripCharactersFromState($state);
             $state = $this->trimState($state);
@@ -190,13 +194,17 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
     public function mutateStateForValidation(mixed $state): mixed
     {
-        if (is_array($state)) {
-            $state = array_map($this->stripCharactersFromState(...), $state);
-            $state = array_map($this->trimState(...), $state);
-        } else {
-            $state = $this->stripCharactersFromState($state);
-            $state = $this->trimState($state);
-        }
+	    if (is_array($state)) {
+		    $state = array_map(function (mixed $value) {
+			    $value = $this->stripCharactersFromState($value);
+			    $value = $this->trimState($value);
+			    
+			    return $value;
+		    }, $state);
+	    } else {
+		    $state = $this->stripCharactersFromState($state);
+		    $state = $this->trimState($state);
+	    }
 
         return parent::mutateStateForValidation($state);
     }
