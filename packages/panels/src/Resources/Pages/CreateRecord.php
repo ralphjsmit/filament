@@ -44,6 +44,8 @@ class CreateRecord extends Page
 
     protected static bool $canCreateAnother = true;
 
+    public bool $isCreating = false;
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament-panels::resources/pages/create-record.breadcrumb');
@@ -74,6 +76,10 @@ class CreateRecord extends Page
 
     public function create(bool $another = false): void
     {
+        if ($this->isCreating) return;
+
+        $this->isCreating = true;
+
         $this->authorizeAccess();
 
         try {
@@ -99,9 +105,13 @@ class CreateRecord extends Page
                 $this->rollBackDatabaseTransaction() :
                 $this->commitDatabaseTransaction();
 
+            $this->isCreating = false;
+
             return;
         } catch (Throwable $exception) {
             $this->rollBackDatabaseTransaction();
+
+            $this->isCreating = false;
 
             throw $exception;
         }
@@ -118,6 +128,8 @@ class CreateRecord extends Page
             $this->record = null;
 
             $this->fillForm();
+
+            $this->isCreating = false;
 
             return;
         }
