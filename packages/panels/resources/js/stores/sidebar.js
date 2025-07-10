@@ -1,5 +1,6 @@
 export default () => ({
     isOpen: window.Alpine.$persist(true).as('isOpen'),
+    isOpenDesktop: window.Alpine.$persist(true).as('isOpenDesktop'),
 
     collapsedGroups: window.Alpine.$persist(null).as('collapsedGroups'),
 
@@ -12,20 +13,16 @@ export default () => ({
             const isMobile = currentWidth < 1024
             const isDesktop = currentWidth >= 1024
 
-            // Resize from desktop to mobile
+            // Resize desktop to mobile
             if (wasDesktop && isMobile) {
-                localStorage.setItem('isOpenDesktop', this.isOpen)
+                this.isOpenDesktop = this.isOpen
                 if (this.isOpen) {
                     this.close()
                 }
             }
-
-            // Resize from mobile to desktop
+            // Resize mobile to desktop
             else if (!wasDesktop && isDesktop) {
-                const desktopState = localStorage.getItem('isOpenDesktop')
-                if (desktopState !== null) {
-                    this.isOpen = desktopState === 'true'
-                }
+                this.isOpen = this.isOpenDesktop
             }
 
             previousWidth = currentWidth
@@ -35,11 +32,11 @@ export default () => ({
 
         if (window.innerWidth < 1024) {
             if (this.isOpen) {
-                localStorage.setItem('isOpenDesktop', 'true')
+                this.isOpenDesktop = true
                 this.close()
             }
         } else {
-            localStorage.setItem('isOpenDesktop', this.isOpen)
+            this.isOpenDesktop = this.isOpen
         }
     },
 
@@ -67,7 +64,7 @@ export default () => ({
         this.isOpen = false
 
         if (window.innerWidth >= 1024) {
-            localStorage.setItem('isOpenDesktop', 'false')
+            this.isOpenDesktop = false
         }
     },
 
@@ -75,7 +72,7 @@ export default () => ({
         this.isOpen = true
 
         if (window.innerWidth >= 1024) {
-            localStorage.setItem('isOpenDesktop', 'true')
+            this.isOpenDesktop = true
         }
     },
 })
