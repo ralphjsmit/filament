@@ -659,7 +659,7 @@
                                         type="checkbox"
                                         @if ($isSelectionDisabled)
                                             disabled
-                                        @else
+                                        @elseif ($maxSelectableRecords !== null)
                                             x-bind:disabled="
                                                 const recordsOnPage = getRecordsOnPage()
 
@@ -870,7 +870,7 @@
                                                 type="checkbox"
                                                 @if ($isSelectionDisabled)
                                                     disabled
-                                                @else
+                                                @elseif ($maxSelectableRecords !== null)
                                                     x-bind:disabled="
                                                         const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
 
@@ -974,7 +974,7 @@
                                             type="checkbox"
                                             @if ($isSelectionDisabled)
                                                 disabled
-                                            @else
+                                            @elseif ($canSelectMultipleRecords && $maxSelectableRecords !== null)
                                                 x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
                                             @endif
                                             value="{{ $recordKey }}"
@@ -1224,7 +1224,7 @@
                                                         type="checkbox"
                                                         @if ($isSelectionDisabled)
                                                             disabled
-                                                        @else
+                                                        @elseif ($maxSelectableRecords !== null)
                                                             x-bind:disabled="
                                                                 const recordsOnPage = getRecordsOnPage()
 
@@ -1355,7 +1355,7 @@
                                                     type="checkbox"
                                                     @if ($isSelectionDisabled)
                                                         disabled
-                                                    @else
+                                                    @elseif ($maxSelectableRecords !== null)
                                                         x-bind:disabled="
                                                             const recordsOnPage = getRecordsOnPage()
 
@@ -1563,7 +1563,7 @@
                                                                     type="checkbox"
                                                                     @if ($isSelectionDisabled)
                                                                         disabled
-                                                                    @else
+                                                                    @elseif ($maxSelectableRecords !== null)
                                                                         x-bind:disabled="
                                                                             const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
 
@@ -1650,7 +1650,7 @@
                                                                     type="checkbox"
                                                                     @if ($isSelectionDisabled)
                                                                         disabled
-                                                                    @else
+                                                                    @elseif ($maxSelectableRecords !== null)
                                                                         x-bind:disabled="
                                                                             const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
 
@@ -1745,7 +1745,7 @@
                                                                 type="checkbox"
                                                                 @if ($isSelectionDisabled)
                                                                     disabled
-                                                                @else
+                                                                @elseif ($canSelectMultipleRecords && $maxSelectableRecords !== null)
                                                                     x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
                                                                 @endif
                                                                 value="{{ $recordKey }}"
@@ -1877,7 +1877,7 @@
                                                                 type="checkbox"
                                                                 @if ($isSelectionDisabled)
                                                                     disabled
-                                                                @else
+                                                                @elseif ($canSelectMultipleRecords && $maxSelectableRecords !== null)
                                                                     x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
                                                                 @endif
                                                                 value="{{ $recordKey }}"
