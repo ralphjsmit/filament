@@ -1,6 +1,22 @@
 export default () => ({
     isOpen: window.Alpine.$persist(true).as('isOpen'),
 
+    init() {
+        // Close on resize
+        const resizeObserver = new ResizeObserver(() => {
+            if (window.innerWidth < 1024 && this.isOpen) {
+                this.close();
+            }
+        });
+
+        resizeObserver.observe(document.body);
+
+        // Force close on mobile
+        if (window.innerWidth < 1024 && this.isOpen) {
+            this.close();
+        }
+    },
+
     collapsedGroups: window.Alpine.$persist(null).as('collapsedGroups'),
 
     groupIsCollapsed(group) {
