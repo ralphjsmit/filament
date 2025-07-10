@@ -71,6 +71,8 @@ trait HasState
 
     protected bool | Closure $isTrimmed = false;
 
+    protected bool $cachedIsTrimmed;
+
     protected mixed $getConstantStateUsing = null;
 
     protected bool $hasConstantState = false;
@@ -863,7 +865,7 @@ trait HasState
 
     public function isTrimmed(): bool
     {
-        return (bool) $this->evaluate($this->isTrimmed);
+        return $this->cachedIsTrimmed ??= (bool) $this->evaluate($this->isTrimmed);
     }
 
     public function getConstantStateUsing(mixed $callback): static
