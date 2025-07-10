@@ -9,14 +9,14 @@ return [
         'heading' => 'Skonfiguruj aplikację uwierzytelniającą',
 
         'description' => <<<'BLADE'
-            Będziesz potrzebować aplikacji takiej jak Google Authenticator (<x-filament::link href="https://itunes.apple.com/us/app/google-authenticator/id388497605" target="_blank">iOS</x-filament::link>, <x-filament::link href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</x-filament::link>), aby zakończyć ten proces.
+            Zainstaluj aplikację Google Authenticator (<x-filament::link href="https://itunes.apple.com/us/app/google-authenticator/id388497605" target="_blank">iOS</x-filament::link>, <x-filament::link href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</x-filament::link>), aby zakończyć ten proces.
             BLADE,
 
         'content' => [
 
             'qr_code' => [
 
-                'instruction' => 'Zeskanuj ten kod QR za pomocą aplikacji uwierzytelniającej:',
+                'instruction' => 'Zeskanuj kod QR za pomocą aplikacji uwierzytelniającej:',
 
                 'alt' => 'Kod QR do zeskanowania za pomocą aplikacji uwierzytelniającej',
 
@@ -24,7 +24,7 @@ return [
 
             'text_code' => [
 
-                'instruction' => 'Lub wprowadź ten kod ręcznie:',
+                'instruction' => 'Lub wpisz kod ręcznie:',
 
                 'messages' => [
                     'copied' => 'Skopiowano',
@@ -48,7 +48,7 @@ return [
 
                 'validation_attribute' => 'kod',
 
-                'below_content' => 'Zostaniesz poproszony o 6-cyfrowy kod z aplikacji uwierzytelniającej podczas logowania lub wykonywania wrażliwych czynności.',
+                'below_content' => 'Kod z aplikacji uwierzytelniającej będzie wymagany podczas logowania lub wykonywania wrażliwych czynności.',
 
                 'messages' => [
 

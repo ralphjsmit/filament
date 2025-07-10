@@ -60,7 +60,7 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'wróć',
+            'label' => 'Anuluj',
         ],
 
     ],
