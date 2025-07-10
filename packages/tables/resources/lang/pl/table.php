@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Kolumny',
 
-          'actions' => [
+        'actions' => [
 
             'apply' => [
                 'label' => 'Zastosuj kolumny',

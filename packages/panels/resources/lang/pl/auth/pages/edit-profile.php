@@ -24,7 +24,7 @@ return [
             'validation_attribute' => 'potwierdzenie hasła',
         ],
 
-         'current_password' => [
+        'current_password' => [
             'label' => 'Aktualne hasło',
             'below_content' => 'Podaj swoje aktualne hasło, aby kontynuować.',
             'validation_attribute' => 'aktualne hasło',

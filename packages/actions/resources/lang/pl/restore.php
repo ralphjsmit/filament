@@ -54,7 +54,7 @@ return [
                 'title' => 'Przywrócono',
             ],
 
-             'restored_partial' => [
+            'restored_partial' => [
                 'title' => 'Przywrócono :count z :total rekordów',
                 'missing_authorization_failure_message' => 'Nie masz uprawnień do przywrócenia :count rekordów.',
                 'missing_processing_failure_message' => ':count rekordów nie mogło zostać przywróconych.',
