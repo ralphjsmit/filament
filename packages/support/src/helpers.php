@@ -166,17 +166,26 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
         $column = match ($driverName) {
             'pgsql' => (
                 str($column)->contains('->')
-                    ? str(
+                    ? (
+                        // Handle table.field part with double quotes
                         str($column)
-                            ->beforeLast('->')
+                            ->before('->')
                             ->explode('.')
                             ->map(fn (string $part) => str($part)->wrap('"'))
                             ->implode('.')
-                    )
-                        ->append('->>')
-                        ->append("'")
-                        ->append(str($column)->afterLast('->'))
-                        ->append("'")
+                    ) .
+                    // Handle JSON path parts
+                    collect(str($column)->after('->')->explode('->'))
+                        ->map(function ($segment, $index) use ($column) {
+                            $totalParts = substr_count($column, '->');
+
+                            return ($index === $totalParts - 1)
+                                ? "->>'$segment'"
+                                : "->'$segment'";
+                        })
+                        ->prepend('')
+                        ->implode('')
+
                     : str($column)
                         ->explode('.')
                         ->map(fn (string $part) => str($part)->wrap('"'))
