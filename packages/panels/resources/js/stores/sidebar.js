@@ -1,3 +1,5 @@
+const breakpoint = 1024
+
 export default () => ({
     isOpen: window.Alpine.$persist(true).as('isOpen'),
     isOpenDesktop: window.Alpine.$persist(true).as('isOpenDesktop'),
@@ -9,9 +11,9 @@ export default () => ({
 
         const resizeObserver = new ResizeObserver(() => {
             const currentWidth = window.innerWidth
-            const wasDesktop = previousWidth >= 1024
-            const isMobile = currentWidth < 1024
-            const isDesktop = currentWidth >= 1024
+            const wasDesktop = previousWidth >= breakpoint
+            const isMobile = currentWidth < breakpoint
+            const isDesktop = currentWidth >= breakpoint
 
             // Resize desktop to mobile
             if (wasDesktop && isMobile) {
@@ -31,7 +33,7 @@ export default () => ({
 
         resizeObserver.observe(document.body)
 
-        if (window.innerWidth < 1024) {
+        if (window.innerWidth < breakpoint) {
             if (this.isOpen) {
                 this.isOpenDesktop = true
                 this.close()
@@ -64,7 +66,7 @@ export default () => ({
     close() {
         this.isOpen = false
 
-        if (window.innerWidth >= 1024) {
+        if (window.innerWidth >= breakpoint) {
             this.isOpenDesktop = false
         }
     },
@@ -72,7 +74,7 @@ export default () => ({
     open() {
         this.isOpen = true
 
-        if (window.innerWidth >= 1024) {
+        if (window.innerWidth >= breakpoint) {
             this.isOpenDesktop = true
         }
     },
