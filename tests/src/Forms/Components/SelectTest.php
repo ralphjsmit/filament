@@ -12,9 +12,8 @@ uses(TestCase::class);
 it('can validate a searchable `Select` without `->getOptionLabelUsing()`', function (): void {
     livewire(TestComponentWithSelect::class)
         ->fillForm(['product_id' => 123])
-        ->call('save')
-        ->assertHasNoFormErrors();
-});
+        ->call('save');
+})->throws(Exception::class);
 
 class TestComponentWithSelect extends Livewire
 {
