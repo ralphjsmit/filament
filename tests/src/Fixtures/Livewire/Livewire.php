@@ -13,7 +13,7 @@ class Livewire extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
-
+	
     public $data;
 
     public static function make(): static

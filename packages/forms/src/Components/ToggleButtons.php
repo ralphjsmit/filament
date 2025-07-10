@@ -152,7 +152,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         if ($values !== null) {
             return $values;
         }
-
+		
         return array_keys($this->getEnabledOptions());
     }
 
