@@ -56,7 +56,7 @@ it('can handle policy being an object when method does not exist', function (): 
     get_authorization_response('edit', Ticket::class);
 })->throws(Exception::class, 'Strict authorization mode is enabled, but no [edit()] method was found on [Filament\Tests\Fixtures\Policies\TicketPolicy].');
 
-it('will generate json search column expression for mysql', function (): void {
+it('will generate a JSON search column expression for MySQL', function (): void {
     $column = 'data->name';
     $isSearchForcedCaseInsensitive = true;
 
@@ -74,7 +74,7 @@ it('will generate json search column expression for mysql', function (): void {
         ->toBe("lower(json_extract(`data`, '$.\"name\"'))");
 });
 
-it('will generate json search column expression for pgsql', function (): void {
+it('will generate a JSON search column expression for Postgres', function (): void {
     $column = 'data->name';
     $isSearchForcedCaseInsensitive = true;
 
@@ -90,7 +90,8 @@ it('will generate json search column expression for pgsql', function (): void {
         ->toBe("lower(\"data\"->>'name'::text)");
 });
 
-it('will generate column expression for pgsql with colons in the name', function (string $column, string $text): void {
+it('will generate a nested JSON search column expression for Postgres', function (): void {
+    $column = 'data->name->value->en';
     $isSearchForcedCaseInsensitive = true;
 
     $databaseConnection = Mockery::mock(Connection::class);
@@ -102,7 +103,22 @@ it('will generate column expression for pgsql with colons in the name', function
     $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
 
     expect($expression->getValue($grammar))
-        ->toBe($text);
+        ->toBe("lower(\"data\"->'name'->'value'->>'en'::text)");
+});
+
+it('will generate a column expression for Postgres with colons in the table name', function (string $column, string $expectedExpression): void {
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $actualExpression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($actualExpression->getValue($grammar))
+        ->toBe($expectedExpression);
 })
     ->with([
         ['blog:posts.title', 'lower("blog:posts"."title"::text)'],
