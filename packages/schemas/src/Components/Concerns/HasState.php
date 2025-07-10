@@ -59,8 +59,6 @@ trait HasState
 
     protected string $cachedAbsoluteStatePath;
 
-
-
     protected mixed $getConstantStateUsing = null;
 
     protected bool $hasConstantState = false;
@@ -498,18 +496,15 @@ trait HasState
         );
     }
 
-
-
     public function mutatesDehydratedState(): bool
     {
-        return ($this->mutateDehydratedStateUsing instanceof Closure);
+        return $this->mutateDehydratedStateUsing instanceof Closure;
     }
 
     public function mutatesStateForValidation(): bool
     {
-        return ($this->mutateStateForValidationUsing instanceof Closure);
+        return $this->mutateStateForValidationUsing instanceof Closure;
     }
-
 
     public function mutateDehydratedStateUsing(?Closure $callback): static
     {
@@ -781,8 +776,6 @@ trait HasState
     {
         unset($this->cachedAbsoluteStatePath);
     }
-
-
 
     public function getConstantStateUsing(mixed $callback): static
     {
