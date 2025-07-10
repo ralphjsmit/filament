@@ -9,4 +9,4 @@ return [
         'Dieser Code läuft in einer Minute ab.|Dieser Code läuft in :minutes Minuten ab.',
     ],
 
-]; 
+];

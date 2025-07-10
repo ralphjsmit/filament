@@ -13,4 +13,4 @@ return [
 
     'action' => 'E-Mail-Änderung blockieren',
 
-]; 
+];
