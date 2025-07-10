@@ -183,7 +183,6 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
                                 ? "->>'$segment'"
                                 : "->'$segment'";
                         })
-                        ->prepend('')
                         ->implode('')
 
                     : str($column)
