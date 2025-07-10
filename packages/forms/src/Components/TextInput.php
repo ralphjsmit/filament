@@ -285,7 +285,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     public function mutateDehydratedState(mixed $state): mixed
     {
         if (is_array($state)) {
-            $state = array_map(function (mixed $value) {
+            $state = array_map(function (mixed $value): mixed {
                 $value = $this->stripCharactersFromState($value);
                 $value = $this->trimState($value);
 
@@ -302,7 +302,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     public function mutateStateForValidation(mixed $state): mixed
     {
         if (is_array($state)) {
-            $state = array_map(function (mixed $value) {
+            $state = array_map(function (mixed $value): mixed {
                 $value = $this->stripCharactersFromState($value);
                 $value = $this->trimState($value);
 

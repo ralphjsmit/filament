@@ -70,7 +70,7 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
     public function mutateDehydratedState(mixed $state): mixed
     {
         if (is_array($state)) {
-            $state = array_map(function (mixed $value) {
+            $state = array_map(function (mixed $value): mixed {
                 $value = $this->stripCharactersFromState($value);
                 $value = $this->trimState($value);
 
@@ -87,7 +87,7 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
     public function mutateStateForValidation(mixed $state): mixed
     {
         if (is_array($state)) {
-            $state = array_map(function (mixed $value) {
+            $state = array_map(function (mixed $value): mixed {
                 $value = $this->stripCharactersFromState($value);
                 $value = $this->trimState($value);
 
