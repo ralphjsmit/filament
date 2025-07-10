@@ -153,8 +153,6 @@ TagsInput::configureUsing(function (TagsInput $component): void {
 });
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `trim()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
 ## Tags validation
 
 You may add validation rules for each tag by passing an array of rules to the `nestedRecursiveRules()` method:
