@@ -1414,15 +1414,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         if ($this->isMultiple()) {
             return array_keys($this->getOptionLabels(withDefaults: false));
         }
-		
-		$optionLabel = $this->getOptionLabel(withDefault: false);
-		
-		if ($this->isSearchable() && ! $optionLabel) {
-			// No `->getOptionLabelUsing()` specified.
-			return null;
-		}
 
-        return blank($this->getOptionLabel(withDefault: false)) ? [] : null;
+        $optionLabel = $this->getOptionLabel(withDefault: false);
+
+        if ($this->isSearchable() && ! $optionLabel) {
+            // No `->getOptionLabelUsing()` specified.
+            return null;
+        }
+
+        return blank($optionLabel) ? [] : null;
     }
 
     public function hasInValidationOnMultipleValues(): bool
