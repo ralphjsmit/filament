@@ -604,7 +604,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         $state = null;
 
-        $label = $this->evaluate($this->getOptionLabelUsing, [
+        $callback = $this->getOptionLabelUsing;
+
+        if (! $withDefault && ! $callback) {
+            throw new Exception("Select field [{$this->getStatePath()}] must have a [getOptionLabelsUsing()] callback set.");
+        }
+
+        $label = $this->evaluate($callback, [
             'value' => function () use (&$state): mixed {
                 return $state = $this->getState();
             },
@@ -622,7 +628,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function getOptionLabels(bool $withDefaults = true): array
     {
-        $labels = $this->evaluate($this->getOptionLabelsUsing, [
+        $callback = $this->getOptionLabelsUsing;
+
+        if (! $withDefaults && ! $callback) {
+            throw new Exception("Select field [{$this->getStatePath()}] must have a [getOptionLabelsUsing()] callback set.");
+        }
+
+        $labels = $this->evaluate($callback, [
             'values' => fn (): array => $this->getState(),
         ]);
 
@@ -1415,14 +1427,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return array_keys($this->getOptionLabels(withDefaults: false));
         }
 
-        $optionLabel = $this->getOptionLabel(withDefault: false);
-
-        if ($this->isSearchable() && ! $optionLabel) {
-            // No `->getOptionLabelUsing()` specified.
-            return null;
-        }
-
-        return blank($optionLabel) ? [] : null;
+        return blank($this->getOptionLabel(withDefault: false)) ? [] : null;
     }
 
     public function hasInValidationOnMultipleValues(): bool
