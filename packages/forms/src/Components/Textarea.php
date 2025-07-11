@@ -69,16 +69,16 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
 
     public function mutateDehydratedState(mixed $state): mixed
     {
-            $state = $this->stripCharactersFromState($state);
-            $state = $this->trimState($state);
+        $state = $this->stripCharactersFromState($state);
+        $state = $this->trimState($state);
 
         return parent::mutateDehydratedState($state);
     }
 
     public function mutateStateForValidation(mixed $state): mixed
     {
-            $state = $this->stripCharactersFromState($state);
-            $state = $this->trimState($state);
+        $state = $this->stripCharactersFromState($state);
+        $state = $this->trimState($state);
 
         return parent::mutateStateForValidation($state);
     }
