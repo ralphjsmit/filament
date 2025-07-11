@@ -73,8 +73,8 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
             ->selectable()
             ->trackDeselectedRecords(false)
             ->currentSelectionLivewireProperty('state')
-            ->multipleRecordsSelectable(is_array($this->state))
             ->maxSelectableRecords($this->maxSelectableRecords)
+            ->multipleRecordsSelectable(is_array($this->state))
             ->deselectAllRecordsWhenFiltered(false)
             ->disabledSelection($this->isDisabled);
 
