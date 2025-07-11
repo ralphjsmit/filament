@@ -5,6 +5,7 @@ namespace Filament\Pages\Dashboard\Actions;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Pages\Dashboard;
+use Filament\Panels\View\PanelsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Component;
@@ -26,7 +27,7 @@ class FilterAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-panels::pages/dashboard.actions.filter.modal.actions.apply.label'));
 
-        $this->icon(FilamentIcon::resolve('panels::pages.dashboard.actions.filter') ?? Heroicon::Funnel);
+        $this->icon(FilamentIcon::resolve(PanelsIconAlias::PAGES_DASHBOARD_ACTIONS_FILTER) ?? Heroicon::Funnel);
 
         $this->defaultColor('gray');
 

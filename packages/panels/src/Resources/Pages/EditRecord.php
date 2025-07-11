@@ -13,6 +13,7 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use Filament\Panels\View\PanelsIconAlias;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -53,7 +54,7 @@ class EditRecord extends Page
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
-            ?? FilamentIcon::resolve('panels::resources.pages.edit-record.navigation-item')
+            ?? FilamentIcon::resolve(PanelsIconAlias::RESOURCES_PAGES_EDIT_RECORD_NAVIGATION_ITEM)
             ?? Heroicon::OutlinedPencilSquare;
     }
 

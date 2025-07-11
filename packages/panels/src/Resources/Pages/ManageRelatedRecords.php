@@ -16,6 +16,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Panels\View\PanelsIconAlias;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -77,7 +78,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
-            ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
+            ?? FilamentIcon::resolve(PanelsIconAlias::RESOURCES_PAGES_MANAGE_RELATED_RECORDS_NAVIGATION_ITEM)
             ?? Heroicon::OutlinedRectangleStack;
     }
 

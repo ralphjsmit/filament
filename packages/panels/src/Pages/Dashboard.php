@@ -5,6 +5,7 @@ namespace Filament\Pages;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Panels\View\PanelsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Grid;
@@ -31,7 +32,7 @@ class Dashboard extends Page
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
-            ?? FilamentIcon::resolve('panels::pages.dashboard.navigation-item')
+            ?? FilamentIcon::resolve(PanelsIconAlias::PAGES_DASHBOARD_NAVIGATION_ITEM)
             ?? (Filament::hasTopNavigation() ? Heroicon::Home : Heroicon::OutlinedHome);
     }
 

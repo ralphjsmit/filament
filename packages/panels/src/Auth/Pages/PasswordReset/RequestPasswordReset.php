@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
+use Filament\Panels\View\PanelsIconAlias;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -158,8 +159,8 @@ class RequestPasswordReset extends SimplePage
             ->link()
             ->label(__('filament-panels::auth/pages/password-reset/request-password-reset.actions.login.label'))
             ->icon(match (__('filament-panels::layout.direction')) {
-                'rtl' => FilamentIcon::resolve('panels::pages.password-reset.request-password-reset.actions.login.rtl') ?? Heroicon::ArrowRight,
-                default => FilamentIcon::resolve('panels::pages.password-reset.request-password-reset.actions.login') ?? Heroicon::ArrowLeft,
+                'rtl' => FilamentIcon::resolve(PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN_RTL) ?? Heroicon::ArrowRight,
+                default => FilamentIcon::resolve(PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN) ?? Heroicon::ArrowLeft,
             })
             ->url(filament()->getLoginUrl());
     }

@@ -9,6 +9,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Panels\View\PanelsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -36,7 +37,7 @@ class ViewRecord extends Page
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
-            ?? FilamentIcon::resolve('panels::resources.pages.view-record.navigation-item')
+            ?? FilamentIcon::resolve(PanelsIconAlias::RESOURCES_PAGES_VIEW_RECORD_NAVIGATION_ITEM)
             ?? Heroicon::OutlinedEye;
     }
 
