@@ -18,7 +18,7 @@
 
             <x-filament::input.wrapper
                 :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
-                :prefix-icon-alias="\Filament\Panels\View\PanelsIconAlias::GLOBAL_SEARCH_FIELD"
+                :prefix-icon-alias="\Filament\View\PanelsIconAlias::GLOBAL_SEARCH_FIELD"
                 inline-prefix
                 :suffix="$suffix"
                 inline-suffix

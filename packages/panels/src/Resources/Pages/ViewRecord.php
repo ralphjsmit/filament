@@ -9,7 +9,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
-use Filament\Panels\View\PanelsIconAlias;
+use Filament\View\PanelsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Tabs\Tab;

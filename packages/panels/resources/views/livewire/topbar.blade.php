@@ -16,7 +16,7 @@
             <x-filament::icon-button
                 color="gray"
                 :icon="\Filament\Support\Icons\Heroicon::OutlinedBars3"
-                :icon-alias="\Filament\Panels\View\PanelsIconAlias::TOPBAR_OPEN_SIDEBAR_BUTTON"
+                :icon-alias="\Filament\View\PanelsIconAlias::TOPBAR_OPEN_SIDEBAR_BUTTON"
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                 x-cloak
@@ -29,7 +29,7 @@
             <x-filament::icon-button
                 color="gray"
                 :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
-                :icon-alias="\Filament\Panels\View\PanelsIconAlias::TOPBAR_CLOSE_SIDEBAR_BUTTON"
+                :icon-alias="\Filament\View\PanelsIconAlias::TOPBAR_CLOSE_SIDEBAR_BUTTON"
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
                 x-cloak
@@ -49,10 +49,10 @@
                     :icon-alias="
                         $isRtl
                         ? [
-                            \Filament\Panels\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL,
-                            \Filament\Panels\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON,
+                            \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL,
+                            \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON,
                         ]
-                        : \Filament\Panels\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON
+                        : \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON
                     "
                     icon-size="lg"
                     :label="__('filament-panels::layout.actions.sidebar.expand.label')"
@@ -72,10 +72,10 @@
                     :icon-alias="
                         $isRtl
                         ? [
-                            \Filament\Panels\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL,
-                            \Filament\Panels\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON,
+                            \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL,
+                            \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON,
                         ]
-                        : \Filament\Panels\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON
+                        : \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON
                     "
                     icon-size="lg"
                     :label="__('filament-panels::layout.actions.sidebar.collapse.label')"

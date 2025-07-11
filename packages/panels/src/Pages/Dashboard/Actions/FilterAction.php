@@ -5,7 +5,7 @@ namespace Filament\Pages\Dashboard\Actions;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Pages\Dashboard;
-use Filament\Panels\View\PanelsIconAlias;
+use Filament\View\PanelsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Component;

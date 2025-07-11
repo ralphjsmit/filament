@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Panels\View;
+namespace Filament\View;
 
 class PanelsIconAlias
 {

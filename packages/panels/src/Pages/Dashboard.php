@@ -5,7 +5,7 @@ namespace Filament\Pages;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Panel;
-use Filament\Panels\View\PanelsIconAlias;
+use Filament\View\PanelsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Grid;

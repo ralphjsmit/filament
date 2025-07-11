@@ -3,7 +3,7 @@
 namespace Filament\Widgets\ChartWidget\Concerns;
 
 use Filament\Actions\Action;
-use Filament\Panels\View\PanelsIconAlias;
+use Filament\View\PanelsIconAlias;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
