@@ -5,9 +5,9 @@ namespace Filament\Pages\Dashboard\Actions;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Pages\Dashboard;
-use Filament\View\PanelsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Livewire\Component;
 
 class FilterAction extends Action

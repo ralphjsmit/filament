@@ -6,9 +6,9 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
-use Filament\View\PanelsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Support\Collection;
 
 trait HasUserMenu

@@ -3,10 +3,10 @@
 namespace Filament\Widgets\ChartWidget\Concerns;
 
 use Filament\Actions\Action;
-use Filament\View\PanelsIconAlias;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 
 trait HasFiltersSchema /** @phpstan-ignore trait.unused */
 {
