@@ -18,9 +18,11 @@
     x-bind:class="{ 'fi-active': theme === @js($theme) }"
     class="fi-theme-switcher-btn"
 >
-    {{ \Filament\Support\generate_icon_html($icon, alias: match($theme) {
-        'light' => \Filament\Panels\View\PanelsIconAlias::THEME_SWITCHER_LIGHT_BUTTON,
-        'dark' => \Filament\Panels\View\PanelsIconAlias::THEME_SWITCHER_DARK_BUTTON,
-        'system' => \Filament\Panels\View\PanelsIconAlias::THEME_SWITCHER_SYSTEM_BUTTON,
-    }) }}
+    {{
+        \Filament\Support\generate_icon_html($icon, alias: match ($theme) {
+            'light' => \Filament\Panels\View\PanelsIconAlias::THEME_SWITCHER_LIGHT_BUTTON,
+            'dark' => \Filament\Panels\View\PanelsIconAlias::THEME_SWITCHER_DARK_BUTTON,
+            'system' => \Filament\Panels\View\PanelsIconAlias::THEME_SWITCHER_SYSTEM_BUTTON,
+        })
+    }}
 </button>
