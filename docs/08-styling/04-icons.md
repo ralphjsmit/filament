@@ -210,6 +210,7 @@ FilamentIcon::register([
 - `PanelsIconAlias::USER_MENU_PROFILE_ITEM` - Profile item in the user menu
 - `PanelsIconAlias::USER_MENU_LOGOUT_BUTTON` - Button in the user menu to log out
 - `PanelsIconAlias::WIDGETS_ACCOUNT_LOGOUT_BUTTON` - Button in the account widget to log out
+- `PanelsIconAlias::WIDGETS_CHART_WIDGET_FILTER` - Button of the filter action
 - `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON` - Button to open the documentation from the Filament info widget
 - `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_GITHUB_BUTTON` - Button to open GitHub from the Filament info widget
 

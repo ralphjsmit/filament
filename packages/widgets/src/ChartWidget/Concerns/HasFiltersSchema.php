@@ -3,6 +3,7 @@
 namespace Filament\Widgets\ChartWidget\Concerns;
 
 use Filament\Actions\Action;
+use Filament\Panels\View\PanelsIconAlias;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -21,7 +22,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         return Action::make('filter')
             ->label(__('filament-widgets::chart.actions.filter.label'))
             ->iconButton()
-            ->icon(FilamentIcon::resolve('widgets::chart-widget.filter') ?? Heroicon::Funnel)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::WIDGETS_CHART_WIDGET_FILTER) ?? Heroicon::Funnel)
             ->color('gray')
             ->livewireClickHandlerEnabled(false);
     }
