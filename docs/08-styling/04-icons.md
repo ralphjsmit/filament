@@ -94,8 +94,8 @@ To replace an icon, you can use the `FilamentIcon` facade. It has a `register()`
 use Filament\Support\Facades\FilamentIcon;
 
 FilamentIcon::register([
-    'panels::topbar.global-search.field' => 'fas-magnifying-glass',
-    'panels::sidebar.group.collapse-button' => view('icons.chevron-up'),
+    'PanelsIconAlias::GLOBAL_SEARCH_FIELD' => 'fas-magnifying-glass',
+    'PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON' => view('icons.chevron-up'),
 ]);
 ```
 
