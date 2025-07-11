@@ -64,6 +64,14 @@ class FormsIconAlias
 
     const COMPONENTS_REPEATER_ACTIONS_REORDER = 'forms::components.repeater.actions.reorder';
 
+    const COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON = 'forms::components.rich-editor.panels.custom-blocks.close-button';
+
+    const COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON = 'forms::components.rich-editor.panels.custom-block.delete-button';
+
+    const COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON = 'forms::components.rich-editor.panels.custom-block.edit-button';
+
+    const COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON = 'forms::components.rich-editor.panels.merge-tags.close-button';
+
     const COMPONENTS_SELECT_ACTIONS_CREATE_OPTION = 'forms::components.select.actions.create-option';
 
     const COMPONENTS_SELECT_ACTIONS_EDIT_OPTION = 'forms::components.select.actions.edit-option';

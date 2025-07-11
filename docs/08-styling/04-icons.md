@@ -160,6 +160,10 @@ FilamentIcon::register([
 - `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_MOVE_DOWN` - Trigger button of a move down action in a repeater item
 - `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_MOVE_UP` - Trigger button of a move up action in a repeater item
 - `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_REORDER` - Trigger button of a reorder action in a repeater item
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON` - Close button for custom blocks panel in a rich editor
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON` - Delete button for a custom block in a rich editor
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON` - Edit button for a custom block in a rich editor
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON` - Close button for merge tags panel in a rich editor
 - `FormsIconAlias::COMPONENTS_SELECT_ACTIONS_CREATE_OPTION` - Trigger button of a create option action in a select field
 - `FormsIconAlias::COMPONENTS_SELECT_ACTIONS_EDIT_OPTION` - Trigger button of an edit option action in a select field
 - `FormsIconAlias::COMPONENTS_TEXT_INPUT_ACTIONS_HIDE_PASSWORD` - Trigger button of a hide password action in a text input field
