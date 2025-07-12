@@ -30,7 +30,7 @@
     }
 
     & .filepond--root {
-        @apply mb-0 rounded-lg bg-white font-sans shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20;
+        @apply mb-0 rounded-lg bg-white font-sans shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 overflow-hidden;
     }
 
     & .filepond--root[data-disabled='disabled'] {
@@ -39,16 +39,6 @@
 
     & .filepond--root[data-style-panel-layout='compact circle'] {
         @apply rounded-full;
-    }
-
-    & .filepond--root[data-style-panel-layout~='compact'],
-    & .filepond--root[data-style-panel-layout~='integrated'] {
-        & .filepond--list-scroller {
-            overflow: unset;
-            height: unset;
-            margin-top: 0;
-            margin-bottom: 0;
-        }
     }
 
     & .filepond--panel-root {
