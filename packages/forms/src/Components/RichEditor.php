@@ -152,7 +152,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('codeBlock')
                 ->label(__('filament-forms::components.rich_editor.tools.code_block'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleCodeBlock().run()')
-                ->icon(Heroicon::CodeBracket)
+                ->icon('fi-o-code-block')
                 ->iconAlias('forms:components.rich-editor.toolbar.code-block'),
             RichEditorTool::make('bulletList')
                 ->label(__('filament-forms::components.rich_editor.tools.bullet_list'))
