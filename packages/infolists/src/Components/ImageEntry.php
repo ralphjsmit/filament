@@ -17,6 +17,8 @@ use Illuminate\View\ComponentAttributeBag;
 use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 
+use function Filament\Support\generate_href_html;
+
 class ImageEntry extends Entry implements HasEmbeddedView
 {
     use CanWrap;
@@ -489,31 +491,36 @@ class ImageEntry extends Entry implements HasEmbeddedView
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
-        ob_start(); ?>
+        $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
 
-        <div <?= $attributes->toHtml() ?>>
-            <?php foreach ($state as $stateItem) { ?>
-                <img
-                    <?= $this->getExtraImgAttributeBag()
-                        ->merge([
-                            'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
-                            'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
-                                ? '{
-                                    content: ' . Js::from($tooltip) . ',
-                                    theme: $store.theme,
-                                }'
-                                : null,
-                        ], escape: false)
-                        ->style([
-                            "height: {$height}" => $height,
-                            "width: {$width}" => $width,
-                        ])
-                        ->toHtml() ?>
-                />
-            <?php } ?>
+        $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
 
-            <?php if ($hasLimitedRemainingText) { ?>
-                <div <?= (new ComponentAttributeBag)
+            $item = '<img ' . $this->getExtraImgAttributeBag()
+                ->merge([
+                    'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
+                    'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                        ? '{
+                                content: ' . Js::from($tooltip) . ',
+                                theme: $store.theme,
+                            }'
+                        : null,
+                ], escape: false)
+                ->style([
+                    "height: {$height}" => $height,
+                    "width: {$width}" => $width,
+                ])
+                ->toHtml()
+                . ' />';
+
+            if (filled($url = $this->getUrl($stateItem))) {
+                $item = '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>' . $item . '</a>';
+            }
+
+            return $item;
+        };
+
+        $getLimitedRemainingTextHtml = function () use ($stateOverLimitCount, $limitedRemainingTextSize, $height, $width): string {
+            return '<div ' . (new ComponentAttributeBag)
                 ->class([
                     'fi-in-image-limited-remaining-text',
                     (($limitedRemainingTextSize instanceof TextSize) ? "fi-size-{$limitedRemainingTextSize->value}" : $limitedRemainingTextSize) => $limitedRemainingTextSize,
@@ -522,13 +529,18 @@ class ImageEntry extends Entry implements HasEmbeddedView
                     "height: {$height}" => $height,
                     "width: {$width}" => $width,
                 ])
-                ->toHtml() ?>>
-                    +<?= $stateOverLimitCount ?>
-                </div>
-            <?php } ?>
-        </div>
+                ->toHtml() . '> +' . $stateOverLimitCount . '</div>';
+        };
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        $html = implode('', array_map($formatState, $state));
+
+        if ($hasLimitedRemainingText) {
+            $html .= $getLimitedRemainingTextHtml();
+        }
+
+        $html = '<div ' . $attributes->toHtml() . '>' . $html . '</div>';
+
+        return $this->wrapEmbeddedHtml($html);
     }
 
     public function canWrapByDefault(): bool
