@@ -6,7 +6,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
-use Filament\View\PanelsIconAlias;
+use Filament\Widgets\View\WidgetsIconAlias;
 
 trait HasFiltersSchema /** @phpstan-ignore trait.unused */
 {
@@ -22,7 +22,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         return Action::make('filter')
             ->label(__('filament-widgets::chart.actions.filter.label'))
             ->iconButton()
-            ->icon(FilamentIcon::resolve(PanelsIconAlias::WIDGETS_CHART_WIDGET_FILTER) ?? Heroicon::Funnel)
+            ->icon(FilamentIcon::resolve(WidgetsIconAlias::CHART_WIDGET_FILTER) ?? Heroicon::Funnel)
             ->color('gray')
             ->livewireClickHandlerEnabled(false);
     }

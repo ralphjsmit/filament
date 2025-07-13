@@ -58,8 +58,6 @@ class PanelsIconAlias
 
     const WIDGETS_ACCOUNT_LOGOUT_BUTTON = 'panels::widgets.account.logout-button';
 
-    const WIDGETS_CHART_WIDGET_FILTER = 'panels::widgets.chart-widget.filter';
-
     const WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON = 'panels::widgets.filament-info.open-documentation-button';
 
     const WIDGETS_FILAMENT_INFO_OPEN_GITHUB_BUTTON = 'panels::widgets.filament-info.open-github-button';

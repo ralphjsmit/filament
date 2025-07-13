@@ -214,7 +214,6 @@ FilamentIcon::register([
 - `PanelsIconAlias::USER_MENU_PROFILE_ITEM` - Profile item in the user menu
 - `PanelsIconAlias::USER_MENU_LOGOUT_BUTTON` - Button in the user menu to log out
 - `PanelsIconAlias::WIDGETS_ACCOUNT_LOGOUT_BUTTON` - Button in the account widget to log out
-- `PanelsIconAlias::WIDGETS_CHART_WIDGET_FILTER` - Button of the filter action
 - `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON` - Button to open the documentation from the Filament info widget
 - `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_GITHUB_BUTTON` - Button to open GitHub from the Filament info widget
 
@@ -263,3 +262,7 @@ FilamentIcon::register([
 - `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON` - Button to go to the previous page
 - `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL` - Button to go to the previous page (right-to-left direction)
 - `SupportIconAlias::SECTION_COLLAPSE_BUTTON` - Button to collapse a section
+
+### Widgets icon aliases
+
+- `WidgetsIconAlias::CHART_WIDGET_FILTER` - Button of the filter action
