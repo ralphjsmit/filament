@@ -88,7 +88,7 @@
     }
 
     & .fi-modal-header {
-        @apply flex px-6 pt-6;
+        @apply flex gap-x-5 px-6 pt-6;
 
         &.fi-vertical-align-center {
             @apply items-center;
@@ -346,7 +346,7 @@
     }
 
     & .fi-modal-icon-bg {
-        @apply rounded-full bg-gray-100 dark:bg-gray-500/20;
+        @apply rounded-full bg-gray-100 dark:bg-gray-500/20 p-2;
 
         & > .fi-icon {
             @apply text-gray-500 dark:text-gray-400;
