@@ -4,7 +4,7 @@
 .fi-scrollbar-always,
 [data-overlayscrollbars-initialize] {
     scrollbar-width: none; /* Firefox */
-    
+
     &::-webkit-scrollbar {
         @apply hidden; /* Chrome, Safari, Edge */
     }
