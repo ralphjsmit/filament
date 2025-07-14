@@ -494,7 +494,6 @@ class ImageEntry extends Entry implements HasEmbeddedView
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
 
         $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
-
             $item = '<img ' . $this->getExtraImgAttributeBag()
                 ->merge([
                     'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
@@ -519,8 +518,15 @@ class ImageEntry extends Entry implements HasEmbeddedView
             return $item;
         };
 
-        $getLimitedRemainingTextHtml = function () use ($stateOverLimitCount, $limitedRemainingTextSize, $height, $width): string {
-            return '<div ' . (new ComponentAttributeBag)
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php foreach ($state as $stateItem) { ?>
+                <?= $formatState($stateItem) ?>
+            <?php } ?>
+
+            <?php if ($hasLimitedRemainingText) { ?>
+                <div <?= (new ComponentAttributeBag)
                 ->class([
                     'fi-in-image-limited-remaining-text',
                     (($limitedRemainingTextSize instanceof TextSize) ? "fi-size-{$limitedRemainingTextSize->value}" : $limitedRemainingTextSize) => $limitedRemainingTextSize,
@@ -529,18 +535,13 @@ class ImageEntry extends Entry implements HasEmbeddedView
                     "height: {$height}" => $height,
                     "width: {$width}" => $width,
                 ])
-                ->toHtml() . '> +' . $stateOverLimitCount . '</div>';
-        };
+                ->toHtml() ?>>
+                    <?= '+' . $stateOverLimitCount ?>
+                </div>
+            <?php } ?>
+        </div>
 
-        $html = implode('', array_map($formatState, $state));
-
-        if ($hasLimitedRemainingText) {
-            $html .= $getLimitedRemainingTextHtml();
-        }
-
-        $html = '<div ' . $attributes->toHtml() . '>' . $html . '</div>';
-
-        return $this->wrapEmbeddedHtml($html);
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
     public function canWrapByDefault(): bool
