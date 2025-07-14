@@ -121,9 +121,3 @@
     --os-handle-perpendicular-size-active: 100%;
     --os-handle-interactive-area-offset: 4px;
 }
-
-/* z-index adjustments for overlay contexts */
-.fi-modal .os-scrollbar,
-.fi-dropdown-panel .os-scrollbar {
-    @apply z-10;
-}
