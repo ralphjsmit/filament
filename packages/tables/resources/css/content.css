@@ -1,5 +1,5 @@
 .fi-ta-content-ctn {
-    @apply relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10;
+    @apply relative divide-y divide-gray-200 dark:divide-white/10 dark:border-t-white/10;
 
     & .fi-ta-content-header {
         @apply flex items-center gap-4 gap-x-6 bg-gray-50 px-4 sm:px-6 dark:bg-white/5;
