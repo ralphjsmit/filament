@@ -7,11 +7,13 @@ import Tooltip from '@ryangjchandler/alpine-tooltip'
 import dropdown from './components/dropdown.js'
 import formButton from './components/form-button.js'
 import modal from './components/modal.js'
+import scrollbar from './components/scrollbar.js'
 import './partials.js'
 import pluralize from './utilities/pluralize.js'
 
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
+import 'overlayscrollbars/overlayscrollbars.css'
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(AlpineFloatingUI)
@@ -22,6 +24,8 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.data('filamentDropdown', dropdown)
     window.Alpine.data('filamentFormButton', formButton)
     window.Alpine.data('filamentModal', modal)
+
+    scrollbar()
 })
 
 window.jsMd5 = md5
