@@ -375,12 +375,14 @@ trait CanFormatState
             $state = $state->getLabel();
         }
 
-        if ($characterLimit = $this->getCharacterLimit()) {
-            $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
-        }
+        if (! $isHtml) {
+            if ($characterLimit = $this->getCharacterLimit()) {
+                $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
+            }
 
-        if ($wordLimit = $this->getWordLimit()) {
-            $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
+            if ($wordLimit = $this->getWordLimit()) {
+                $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
+            }
         }
 
         $prefix = $this->getPrefix();
