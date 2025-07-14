@@ -528,7 +528,7 @@ class ImageColumn extends Column implements HasEmbeddedView
                     "width: {$width}" => $width,
                 ])
                 ->toHtml() ?>>
-                    <?= '+' . $stateOverLimitCount ?>
+                    +<?= $stateOverLimitCount ?>
                 </div>
             <?php } ?>
         </div>

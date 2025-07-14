@@ -536,7 +536,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
                     "width: {$width}" => $width,
                 ])
                 ->toHtml() ?>>
-                    <?= '+' . $stateOverLimitCount ?>
+                    +<?= $stateOverLimitCount ?>
                 </div>
             <?php } ?>
         </div>
