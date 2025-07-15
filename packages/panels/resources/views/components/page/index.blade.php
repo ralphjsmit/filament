@@ -128,6 +128,10 @@
         <div
             wire:init="mountAction(@js($this->defaultAction) @if (filled($this->defaultActionArguments) || filled($this->defaultActionContext)) , @if (filled($this->defaultActionArguments)) @js($this->defaultActionArguments) @else {} @endif @endif @if (filled($this->defaultActionContext)) @js($this->defaultActionContext) @endif)"
         ></div>
+    @elseif ($this instanceof \Filament\Tables\Contracts\HasTable && filled($this->defaultTableAction) && filled($this->defaultTableActionRecord))
+        <div
+            wire:init="mountTableAction(@js($this->defaultTableAction), @js($this->defaultTableActionRecord) @if(filled($this->tableActionArguments)), @js($this->tableActionArguments) @endif)"
+        ></div>
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_END, scopes: $this->getRenderHookScopes()) }}
