@@ -130,7 +130,7 @@
         ></div>
     @elseif ($this instanceof \Filament\Tables\Contracts\HasTable && filled($this->defaultTableAction) && filled($this->defaultTableActionRecord))
         <div
-            wire:init="mountTableAction(@js($this->defaultTableAction), @js($this->defaultTableActionRecord) @if(filled($this->tableActionArguments)), @js($this->tableActionArguments) @endif)"
+            wire:init="mountTableAction(@js($this->defaultTableAction), @js($this->defaultTableActionRecord) @if(filled($this->tableActionArguments)) , @js($this->tableActionArguments) @endif)"
         ></div>
     @endif
 
