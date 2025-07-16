@@ -25,6 +25,11 @@ trait HasState
     protected bool | Closure $shouldPartiallyRender = false;
 
     /**
+     * @var array<string, bool> | null
+     */
+    protected ?array $dehydratedComponentsCache = null;
+
+    /**
      * @param  array<string, mixed> | null  $state
      */
     public function state(?array $state): static
@@ -155,25 +160,40 @@ trait HasState
         }
     }
 
-    public function hasDehydratedComponent(string $statePath): bool
+    /**
+     * @return array<string, bool>
+     */
+    protected function buildDehydratedComponentsCache(): array
     {
+        $cache = [];
+
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if (! $component->isDehydrated()) {
                 continue;
             }
 
-            if ($component->hasStatePath() && ($component->getStatePath() === $statePath)) {
-                return true;
+            if ($component->hasStatePath()) {
+                $cache[$component->getStatePath()] = true;
             }
 
-            foreach ($component->getChildSchemas(withHidden: true) as $container) {
-                if ($container->hasDehydratedComponent($statePath)) {
-                    return true;
-                }
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $cache = [
+                    ...$cache,
+                    ...$childSchema->buildDehydratedComponentsCache(),
+                ];
             }
         }
 
-        return false;
+        return $cache;
+    }
+
+    public function hasDehydratedComponent(string $statePath): bool
+    {
+        if ($this->dehydratedComponentsCache === null) {
+            $this->dehydratedComponentsCache = $this->buildDehydratedComponentsCache();
+        }
+
+        return $this->dehydratedComponentsCache[$statePath] ?? false;
     }
 
     /**

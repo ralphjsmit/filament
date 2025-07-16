@@ -22,6 +22,9 @@ trait CanBeHidden
 
     protected static bool $isCachingVisibility = false;
 
+    /**
+     * @var array<string, bool>
+     */
     protected static array $visibilityCache = [];
 
     public function hidden(bool | Closure $condition = true): static
@@ -140,7 +143,7 @@ trait CanBeHidden
     public function isHidden(): bool
     {
         if (static::isVisibilityCacheEnabled()) {
-            $cacheKey = $this->getKey() ?? spl_object_hash($this);
+            $cacheKey = spl_object_hash($this);
 
             if (static::hasVisibilityCacheKey($cacheKey)) {
                 return ! static::getVisibilityCacheValue($cacheKey);
