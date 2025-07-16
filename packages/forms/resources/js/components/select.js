@@ -621,7 +621,7 @@ class CustomSelect {
             // If no items selected, show placeholder
             if (!Array.isArray(this.state) || this.state.length === 0) {
                 this.selectedDisplay.textContent =
-                    this.placeholder || 'Select options'
+                    typeof this.placeholder === 'string' ? this.placeholder : 'Select options'
                 return
             }
 
@@ -643,7 +643,7 @@ class CustomSelect {
         // If no value selected, show placeholder
         if (this.state === null || this.state === '') {
             this.selectedDisplay.textContent =
-                this.placeholder || 'Select an option'
+                typeof this.placeholder === 'string' ? this.placeholder : 'Select an option'
             return
         }
 
