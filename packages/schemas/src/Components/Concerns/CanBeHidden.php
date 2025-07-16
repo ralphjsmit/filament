@@ -20,6 +20,10 @@ trait CanBeHidden
 
     protected string | Closure | null $hiddenJs = null;
 
+    protected static bool $isCachingVisibility = false;
+
+    protected static array $visibilityCache = [];
+
     public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
@@ -135,6 +139,26 @@ trait CanBeHidden
 
     public function isHidden(): bool
     {
+        if (static::isVisibilityCacheEnabled()) {
+            $cacheKey = $this->getKey() ?? spl_object_hash($this);
+
+            if (static::hasVisibilityCacheKey($cacheKey)) {
+                return ! static::getVisibilityCacheValue($cacheKey);
+            }
+
+            if ($this->evaluate($this->isHidden)) {
+                static::setVisibilityCacheValue($cacheKey, false);
+
+                return true;
+            }
+
+            $isVisible = $this->evaluate($this->isVisible);
+
+            static::setVisibilityCacheValue($cacheKey, $isVisible);
+
+            return ! $isVisible;
+        }
+
         if ($this->evaluate($this->isHidden)) {
             return true;
         }
@@ -169,5 +193,60 @@ trait CanBeHidden
     public function getHiddenJs(): ?string
     {
         return $this->evaluate($this->hiddenJs);
+    }
+
+    public static function isVisibilityCacheEnabled(): bool
+    {
+        return static::$isCachingVisibility;
+    }
+
+    public static function getVisibilityCacheValue(string $key): bool
+    {
+        return static::$visibilityCache[$key] ?? false;
+    }
+
+    public static function setVisibilityCacheValue(string $key, bool $value): void
+    {
+        static::$visibilityCache[$key] = $value;
+    }
+
+    public static function hasVisibilityCacheKey(string $key): bool
+    {
+        return array_key_exists($key, static::$visibilityCache);
+    }
+
+    public static function enableVisibilityCache(): void
+    {
+        static::$isCachingVisibility = true;
+        static::$visibilityCache = [];
+    }
+
+    public static function disableVisibilityCache(): void
+    {
+        static::$isCachingVisibility = false;
+        static::$visibilityCache = [];
+    }
+
+    /**
+     * @template T
+     *
+     * @param  callable(): T  $callback
+     * @return T
+     */
+    public static function withVisibilityCache(callable $callback): mixed
+    {
+        $wasEnabled = static::isVisibilityCacheEnabled();
+
+        if (! $wasEnabled) {
+            static::enableVisibilityCache();
+        }
+
+        try {
+            return $callback();
+        } finally {
+            if (! $wasEnabled) {
+                static::disableVisibilityCache();
+            }
+        }
     }
 }

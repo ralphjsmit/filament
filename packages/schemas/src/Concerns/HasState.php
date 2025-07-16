@@ -5,6 +5,7 @@ namespace Filament\Schemas\Concerns;
 use Closure;
 use Exception;
 use Filament\Infolists\Components\Entry;
+use Filament\Schemas\Components\Component;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -392,30 +393,32 @@ trait HasState
      */
     public function getState(bool $shouldCallHooksBefore = true, ?Closure $afterValidate = null): array
     {
-        $state = $this->validate();
+        return Component::withVisibilityCache(function () use ($shouldCallHooksBefore, $afterValidate): array {
+            $state = $this->validate();
 
-        if ($shouldCallHooksBefore) {
-            $this->callBeforeStateDehydrated($state);
+            if ($shouldCallHooksBefore) {
+                $this->callBeforeStateDehydrated($state);
 
-            $afterValidate || $this->saveRelationships();
-            $afterValidate || $this->loadStateFromRelationships(shouldHydrate: true);
-        }
+                $afterValidate || $this->saveRelationships();
+                $afterValidate || $this->loadStateFromRelationships(shouldHydrate: true);
+            }
 
-        $this->dehydrateState($state);
-        $this->mutateDehydratedState($state);
+            $this->dehydrateState($state);
+            $this->mutateDehydratedState($state);
 
-        if ($statePath = $this->getStatePath()) {
-            $state = data_get($state, $statePath) ?? [];
-        }
+            if ($statePath = $this->getStatePath()) {
+                $state = data_get($state, $statePath) ?? [];
+            }
 
-        if ($afterValidate) {
-            value($afterValidate, $state);
+            if ($afterValidate) {
+                value($afterValidate, $state);
 
-            $shouldCallHooksBefore && $this->saveRelationships();
-            $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
-        }
+                $shouldCallHooksBefore && $this->saveRelationships();
+                $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
+            }
 
-        return $state;
+            return $state;
+        });
     }
 
     /**
