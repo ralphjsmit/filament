@@ -74,3 +74,15 @@ DEBUGBAR_ENABLED=false
 
 If you still need Debugbar for development, consider disabling specific collectors you're not using.
 Refer to the [Debugbar documentation](https://github.com/barryvdh/laravel-debugbar?tab=readme-ov-file#debugbar-for-laravel) for details.
+
+## Exclude your project folder from antivirus scanning
+
+Security software, such as realtime file scanners or antivirus tools, can slow down your development environment by scanning files every time they're accessed. This can affect PHP execution, view rendering, and performance in general.
+
+If you're noticing slowness, consider excluding your local project folder from realtime scanning.
+
+Tools like [Microsoft Defender](https://www.microsoft.com/en-us/microsoft-365/microsoft-defender-for-individuals), or similar antivirus solutions, can be configured to skip specific directories. Check your antivirus or security software documentation for instructions on how to exclude specific folders from realtime scanning.
+
+<Aside variant="warning">
+Only exclude folders from scanning if you fully trust the project and understand the risks.
+</Aside>
