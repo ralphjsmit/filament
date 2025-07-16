@@ -151,11 +151,11 @@ trait CanBeHidden
                 if (! static::hasVisibilityCacheKey($hiddenClosureKey)) {
                     static::setVisibilityCacheValue(
                         $hiddenClosureKey,
-                        $this->evaluate($this->isHidden)
+                        ! $this->evaluate($this->isHidden),
                     );
                 }
 
-                if (static::getVisibilityCacheValue($hiddenClosureKey)) {
+                if (! static::getVisibilityCacheValue($hiddenClosureKey)) {
                     return true;
                 }
             } elseif ($this->isHidden) {
