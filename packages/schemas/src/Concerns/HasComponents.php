@@ -260,6 +260,7 @@ trait HasComponents
                 if (($component instanceof Action) || ($component instanceof ActionGroup)) {
                     $component = $component->schemaContainer($this);
                     $carry[] = $component;
+
                     return $carry;
                 }
 

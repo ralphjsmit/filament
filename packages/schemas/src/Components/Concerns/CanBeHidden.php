@@ -143,23 +143,39 @@ trait CanBeHidden
     public function isHidden(): bool
     {
         if (static::isVisibilityCacheEnabled()) {
-            $cacheKey = spl_object_hash($this);
+            $componentKey = $this->getKey() ?? spl_object_id($this);
 
-            if (static::hasVisibilityCacheKey($cacheKey)) {
-                return ! static::getVisibilityCacheValue($cacheKey);
-            }
+            if ($this->isHidden instanceof Closure) {
+                $hiddenClosureKey = $componentKey . '.hidden.' . spl_object_id($this->isHidden);
 
-            if ($this->evaluate($this->isHidden)) {
-                static::setVisibilityCacheValue($cacheKey, false);
+                if (! static::hasVisibilityCacheKey($hiddenClosureKey)) {
+                    static::setVisibilityCacheValue(
+                        $hiddenClosureKey,
+                        $this->evaluate($this->isHidden)
+                    );
+                }
 
+                if (static::getVisibilityCacheValue($hiddenClosureKey)) {
+                    return true;
+                }
+            } elseif ($this->isHidden) {
                 return true;
             }
 
-            $isVisible = $this->evaluate($this->isVisible);
+            if ($this->isVisible instanceof Closure) {
+                $visibleClosureKey = $componentKey . '.visible.' . spl_object_id($this->isVisible);
 
-            static::setVisibilityCacheValue($cacheKey, $isVisible);
+                if (! static::hasVisibilityCacheKey($visibleClosureKey)) {
+                    static::setVisibilityCacheValue(
+                        $visibleClosureKey,
+                        $this->evaluate($this->isVisible)
+                    );
+                }
 
-            return ! $isVisible;
+                return ! static::getVisibilityCacheValue($visibleClosureKey);
+            }
+
+            return ! $this->isVisible;
         }
 
         if ($this->evaluate($this->isHidden)) {
