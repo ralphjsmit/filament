@@ -25,9 +25,9 @@ trait HasComponents
     protected array $cachedFlatComponents = [];
 
     /**
-     * @var array<array<array<Component | Action | ActionGroup>>>
+     * @var array<Component | Action | ActionGroup> | null
      */
-    protected array $cachedComponents = [];
+    protected ?array $cachedComponents = null;
 
     /**
      * @param  array<Component | Action | ActionGroup | string | Htmlable> | Component | Action | ActionGroup | string | Htmlable | Closure  $components
@@ -35,7 +35,7 @@ trait HasComponents
     public function components(array | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
     {
         $this->components = $components;
-        $this->cachedComponents = [];
+        $this->cachedComponents = null;
         $this->cachedFlatComponents = [];
 
         return $this;
@@ -246,49 +246,49 @@ trait HasComponents
      */
     public function getComponents(bool $withActions = true, bool $withHidden = false, bool $withOriginalKeys = false): array
     {
-        $components = $this->cachedComponents[$withActions][$withHidden] ??= (function () use ($withActions, $withHidden): array {
-            $components = array_reduce(
-                Arr::wrap($this->evaluate($this->components)),
-                function (array $carry, Component | Action | ActionGroup | string | Htmlable $component) use ($withActions, $withHidden): array {
-                    if ($component instanceof Action) {
-                        $this->modifyAction($component);
-                    }
+        $allComponents = $this->cachedComponents ??= array_reduce(
+            Arr::wrap($this->evaluate($this->components)),
+            function (array $carry, Component | Action | ActionGroup | string | Htmlable $component): array {
+                if ($component instanceof Action) {
+                    $this->modifyAction($component);
+                }
 
-                    if ($component instanceof ActionGroup) {
-                        $this->modifyActionGroup($component);
-                    }
+                if ($component instanceof ActionGroup) {
+                    $this->modifyActionGroup($component);
+                }
 
-                    if (($component instanceof Action) || ($component instanceof ActionGroup)) {
-                        $component = $component->schemaContainer($this);
-
-                        if ($withActions) {
-                            $carry[] = $component;
-                        }
-
-                        return $carry;
-                    }
-
-                    if (is_string($component)) {
-                        $component = Text::make($component);
-                    }
-
-                    if (! $component instanceof Component) {
-                        $component = Html::make($component);
-                    }
-
-                    $component = $component->container($this);
-
-                    if ($withHidden || ! $component->isHidden()) {
-                        $carry[] = $component;
-                    }
-
+                if (($component instanceof Action) || ($component instanceof ActionGroup)) {
+                    $component = $component->schemaContainer($this);
+                    $carry[] = $component;
                     return $carry;
-                },
-                initial: [],
-            );
+                }
 
-            return $components;
-        })();
+                if (is_string($component)) {
+                    $component = Text::make($component);
+                }
+
+                if (! $component instanceof Component) {
+                    $component = Html::make($component);
+                }
+
+                $component = $component->container($this);
+                $carry[] = $component;
+
+                return $carry;
+            },
+            initial: [],
+        );
+
+        $components = array_filter(
+            $allComponents,
+            function (Component | Action | ActionGroup $component) use ($withActions, $withHidden): bool {
+                if (($component instanceof Action) || ($component instanceof ActionGroup)) {
+                    return $withActions;
+                }
+
+                return $withHidden || ! $component->isHidden();
+            }
+        );
 
         if (! $withOriginalKeys) {
             $components = array_values($components);
@@ -312,7 +312,7 @@ trait HasComponents
                 Arr::wrap($this->components),
             );
 
-            $this->cachedComponents = [];
+            $this->cachedComponents = null;
             $this->cachedFlatComponents = [];
         }
 
