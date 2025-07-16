@@ -577,13 +577,13 @@ class CustomSelect {
         }
 
         // Handle HTML content if allowed
+        const labelSpan = document.createElement('span')
         if (this.isHtmlAllowed) {
-            const labelSpan = document.createElement('span')
             labelSpan.innerHTML = optionLabel
-            option.appendChild(labelSpan)
         } else {
-            option.appendChild(document.createTextNode(optionLabel))
+            labelSpan.appendChild(document.createTextNode(optionLabel))
         }
+        option.appendChild(labelSpan)
 
         // Add click event only if not disabled
         if (!isDisabled) {

@@ -33,7 +33,7 @@
     }
 
     & .fi-fo-select-value-label {
-        @apply flex-1;
+        @apply flex-1 truncate;
     }
 
     & .fi-fo-select-value-remove-btn {
@@ -54,6 +54,14 @@
 
     & .fi-fo-select-search-ctn {
         @apply sticky top-0 z-10 bg-white dark:bg-gray-900;
+    }
+
+    & .fi-fo-select-option {
+        @apply min-w-px;
+
+        > span {
+          @apply truncate;
+        }
     }
 
     & .fi-disabled {
