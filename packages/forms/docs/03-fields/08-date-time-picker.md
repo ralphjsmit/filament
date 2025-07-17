@@ -259,3 +259,16 @@ DatePicker::make('date_of_birth')
     ->minDate(now()->subYears(150))
     ->maxDate(now())
 ```
+
+### Focusing a default calendar date
+
+By default, if the field has no state, opening the calendar panel will open the calendar at the current date. This might not be convenient for situations where you want to open the calendar on a specific date instead. You can use the `defaultFocusedDate()` to set a default focused date on the calendar.
+
+```php
+use Filament\Forms\Components\DatePicker;
+
+DatePicker::make('custom_starts_at')
+    ->native(false)
+    ->placeholder(now()->startOfMonth())
+    ->defaultFocusedDate(now()->startOfMonth())
+```
