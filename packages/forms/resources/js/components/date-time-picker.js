@@ -14,14 +14,14 @@ dayjs.extend(utc)
 window.dayjs = dayjs
 
 export default function dateTimePickerFormComponent({
-                                                        displayFormat,
-                                                        firstDayOfWeek,
-                                                        isAutofocused,
-                                                        locale,
-                                                        shouldCloseOnDateSelection,
-                                                        state,
-                                                        defaultFocusedDate,
-                                                    }) {
+    displayFormat,
+    firstDayOfWeek,
+    isAutofocused,
+    locale,
+    shouldCloseOnDateSelection,
+    state,
+    defaultFocusedDate,
+}) {
     const timezone = dayjs.tz.guess()
 
     return {
@@ -57,11 +57,17 @@ export default function dateTimePickerFormComponent({
             dayjs.locale(locales[locale] ?? locales['en'])
 
             this.$nextTick(() => {
-                this.focusedDate ??= (this.getDefaultFocusedDate() ?? dayjs()).tz(timezone)
+                this.focusedDate ??= (
+                    this.getDefaultFocusedDate() ?? dayjs()
+                ).tz(timezone)
                 this.focusedMonth ??= this.focusedDate.month()
                 this.focusedYear ??= this.focusedDate.year()
 
-                console.log(this.focusedDate, this.focusedMonth, this.focusedYear)
+                console.log(
+                    this.focusedDate,
+                    this.focusedMonth,
+                    this.focusedYear,
+                )
             })
 
             let date =
