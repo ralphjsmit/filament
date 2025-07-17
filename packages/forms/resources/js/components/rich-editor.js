@@ -102,20 +102,22 @@ export default function richEditorFormComponent({
                 this.editorUpdatedAt = Date.now()
             })
 
-            editor.on(
-                'update',
-                Alpine.debounce(({ editor }) => {
-                    this.editorUpdatedAt = Date.now()
+            const debouncedOnUpdate = Alpine.debounce(() => {
+                if (isLiveDebounced) {
+                    this.$wire.commit()
+                }
+            }, liveDebounce ?? 300)
 
-                    this.state = editor.getJSON()
+            editor.on('update', ({ editor }) => {
 
-                    this.shouldUpdateState = false
+                this.editorUpdatedAt = Date.now()
 
-                    if (isLiveDebounced) {
-                        this.$wire.commit()
-                    }
-                }, liveDebounce ?? 300),
-            )
+                this.state = editor.getJSON()
+
+                this.shouldUpdateState = false
+
+                debouncedOnUpdate()
+            })
 
             editor.on('selectionUpdate', ({ transaction }) => {
                 this.editorUpdatedAt = Date.now()
@@ -218,9 +220,9 @@ export default function richEditorFormComponent({
 
             commands.forEach(
                 (command) =>
-                    (commandChain = commandChain[command.name](
-                        ...(command.arguments ?? []),
-                    )),
+                (commandChain = commandChain[command.name](
+                    ...(command.arguments ?? []),
+                )),
             )
 
             commandChain.run()
