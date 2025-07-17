@@ -48,6 +48,12 @@ trait HasResourcesLocation
                 (Arr::first($directories) ?? app_path('Filament/Resources/')),
             ];
         }
+        if ($this->option('resource-namespace')){
+            return[
+                $this->option('resource-namespace'),
+                $directories[array_search($this->option('resource-namespace'), $namespaces)],
+            ];
+        }
 
         $keyedNamespaces = array_combine(
             $namespaces,
