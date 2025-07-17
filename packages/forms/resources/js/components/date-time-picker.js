@@ -62,12 +62,6 @@ export default function dateTimePickerFormComponent({
                 ).tz(timezone)
                 this.focusedMonth ??= this.focusedDate.month()
                 this.focusedYear ??= this.focusedDate.year()
-
-                console.log(
-                    this.focusedDate,
-                    this.focusedMonth,
-                    this.focusedYear,
-                )
             })
 
             let date =
