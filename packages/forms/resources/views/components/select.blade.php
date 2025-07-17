@@ -10,7 +10,7 @@
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
     $isHtmlAllowed = $isHtmlAllowed();
-    $isNative = (! ($isSearchable || $isMultiple || $canOptionLabelsWrap) && $isNative());
+    $isNative = (! ($isSearchable || $isMultiple) && $isNative());
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
     $key = $getKey();

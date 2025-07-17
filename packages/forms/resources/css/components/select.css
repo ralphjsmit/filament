@@ -26,6 +26,15 @@
 
     & .fi-fo-select-value-ctn {
         @apply flex w-full items-center;
+
+        &.fi-fo-select-labels-wrap {
+            @apply text-wrap;
+            word-break: break-word;
+        }
+
+        &:not(.fi-fo-select-labels-wrap) > span {
+            @apply truncate;
+        }
     }
 
     & .fi-fo-select-value-badges-ctn {
@@ -34,15 +43,6 @@
 
     & .fi-fo-select-value-label {
         @apply flex-1;
-
-        &.fi-fo-select-labels-wrap {
-            @apply text-wrap;
-            word-break: break-word;
-        }
-
-        &:not(.fi-fo-select-labels-wrap) {
-            @apply truncate;
-        }
     }
 
     & .fi-fo-select-value-remove-btn {

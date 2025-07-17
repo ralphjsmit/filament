@@ -618,7 +618,7 @@ Select::make('technology')
 
 ## Wrap or truncate option labels
 
-Labels that exceed the width of the select element will wrap onto multiple lines by default. Alternatively, you may choose to truncate overflowing labels.
+When using the JavaScript select, labels that exceed the width of the select element will wrap onto multiple lines by default. Alternatively, you may choose to truncate overflowing labels.
 
 ```php
 use Filament\Forms\Components\Select;

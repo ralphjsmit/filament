@@ -238,6 +238,10 @@ class CustomSelect {
         this.selectedDisplay = document.createElement('div')
         this.selectedDisplay.className = 'fi-fo-select-value-ctn'
 
+        if(this.canOptionLabelsWrap) {
+            this.selectedDisplay.classList.add('fi-fo-select-labels-wrap')
+        }
+
         // Update the selected display based on current state
         this.updateSelectedDisplay()
 
@@ -629,8 +633,9 @@ class CustomSelect {
         if (this.isMultiple) {
             // If no items selected, show placeholder
             if (!Array.isArray(this.state) || this.state.length === 0) {
-                this.selectedDisplay.textContent =
-                    this.placeholder || 'Select options'
+                const placeholderSpan = document.createElement('span')
+                placeholderSpan.appendChild(document.createTextNode(this.placeholder || 'Select options'))
+                this.selectedDisplay.appendChild(placeholderSpan)
                 return
             }
 
@@ -651,8 +656,9 @@ class CustomSelect {
 
         // If no value selected, show placeholder
         if (this.state === null || this.state === '') {
-            this.selectedDisplay.textContent =
-                this.placeholder || 'Select an option'
+            const placeholderSpan = document.createElement('span')
+            placeholderSpan.appendChild(document.createTextNode(this.placeholder || 'Select an option'))
+            this.selectedDisplay.appendChild(placeholderSpan)
             return
         }
 
@@ -893,10 +899,6 @@ class CustomSelect {
             labelContainer.innerHTML = selectedLabel
         } else {
             labelContainer.textContent = selectedLabel
-        }
-
-        if(this.canOptionLabelsWrap) {
-            labelContainer.classList.add('fi-fo-select-labels-wrap')
         }
 
         this.selectedDisplay.appendChild(labelContainer)
