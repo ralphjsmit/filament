@@ -4,7 +4,7 @@ return [
 
     'actions' => [
 
-        'Klik om',
+        'Klik om te',
 
         'copy' => [
             'label' => 'kopiëren',
@@ -13,7 +13,7 @@ return [
         'of',
 
         'download' => [
-            'label' => 'download',
+            'label' => 'downloaden',
         ],
 
         'alle codes in één keer.',
