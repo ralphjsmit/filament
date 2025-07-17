@@ -220,9 +220,9 @@ export default function richEditorFormComponent({
 
             commands.forEach(
                 (command) =>
-                (commandChain = commandChain[command.name](
-                    ...(command.arguments ?? []),
-                )),
+                    (commandChain = commandChain[command.name](
+                        ...(command.arguments ?? []),
+                    )),
             )
 
             commandChain.run()
