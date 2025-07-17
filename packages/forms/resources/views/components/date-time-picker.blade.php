@@ -10,6 +10,7 @@
     $isSuffixInline = $isSuffixInline();
     $maxDate = $getMaxDate();
     $minDate = $getMinDate();
+    $defaultFocusedDate = $getDefaultFocusedDate();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
@@ -80,6 +81,7 @@
                             locale: @js($getLocale()),
                             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+                            defaultFocusedDate: @js($defaultFocusedDate),
                         })"
                 wire:ignore
                 wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.{{
@@ -222,7 +224,7 @@
                                                 ! dayIsSelected(day) &&
                                                 focusedDate.date() !== day &&
                                                 ! dayIsDisabled(day),
-                                            'bg-gray-50 dark:bg-white/5':
+                                            'bg-gray-100 dark:bg-white/10':
                                                 focusedDate.date() === day &&
                                                 ! dayIsSelected(day) &&
                                                 ! dayIsDisabled(day),

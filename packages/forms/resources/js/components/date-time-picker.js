@@ -14,13 +14,14 @@ dayjs.extend(utc)
 window.dayjs = dayjs
 
 export default function dateTimePickerFormComponent({
-    displayFormat,
-    firstDayOfWeek,
-    isAutofocused,
-    locale,
-    shouldCloseOnDateSelection,
-    state,
-}) {
+                                                        displayFormat,
+                                                        firstDayOfWeek,
+                                                        isAutofocused,
+                                                        locale,
+                                                        shouldCloseOnDateSelection,
+                                                        state,
+                                                        defaultFocusedDate,
+                                                    }) {
     const timezone = dayjs.tz.guess()
 
     return {
@@ -46,6 +47,8 @@ export default function dateTimePickerFormComponent({
 
         state,
 
+        defaultFocusedDate,
+
         dayLabels: [],
 
         months: [],
@@ -54,13 +57,16 @@ export default function dateTimePickerFormComponent({
             dayjs.locale(locales[locale] ?? locales['en'])
 
             this.$nextTick(() => {
-                this.focusedDate ??= dayjs().tz(timezone)
+                this.focusedDate ??= (this.getDefaultFocusedDate() ?? dayjs()).tz(timezone)
                 this.focusedMonth ??= this.focusedDate.month()
                 this.focusedYear ??= this.focusedDate.year()
+
+                console.log(this.focusedDate, this.focusedMonth, this.focusedYear)
             })
 
             let date =
                 this.getSelectedDate() ??
+                this.getDefaultFocusedDate() ??
                 dayjs().tz(timezone).hour(0).minute(0).second(0)
 
             if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
@@ -384,6 +390,20 @@ export default function dateTimePickerFormComponent({
             }
 
             return date
+        },
+
+        getDefaultFocusedDate: function () {
+            if (this.defaultFocusedDate === null) {
+                return null
+            }
+
+            let defaultFocusedDate = dayjs(this.defaultFocusedDate)
+
+            if (!defaultFocusedDate.isValid()) {
+                return null
+            }
+
+            return defaultFocusedDate
         },
 
         togglePanelVisibility: function () {
