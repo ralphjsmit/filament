@@ -109,7 +109,6 @@ export default function richEditorFormComponent({
             }, liveDebounce ?? 300)
 
             editor.on('update', ({ editor }) => {
-
                 this.editorUpdatedAt = Date.now()
 
                 this.state = editor.getJSON()
