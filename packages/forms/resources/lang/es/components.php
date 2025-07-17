@@ -289,7 +289,6 @@ return [
             'blockquote' => 'Cita',
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
-            'code' => 'Código',
             'code_block' => 'Bloque de código',
             'heading' => 'Encabezado',
             'italic' => 'Cursiva',

@@ -285,7 +285,6 @@ return [
             'blockquote' => 'نقل قول',
             'bold' => 'پررنگ',
             'bullet_list' => 'لیست نامرتب',
-            'code' => 'کد',
             'code_block' => 'بلاک کد',
             'heading' => 'عنوان',
             'italic' => 'مورب',
