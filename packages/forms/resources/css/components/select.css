@@ -33,7 +33,16 @@
     }
 
     & .fi-fo-select-value-label {
-        @apply flex-1 truncate;
+        @apply flex-1;
+
+        &.fi-fo-select-labels-wrap {
+            @apply text-wrap;
+            word-break: break-word;
+        }
+
+        &:not(.fi-fo-select-labels-wrap) {
+            @apply truncate;
+        }
     }
 
     & .fi-fo-select-value-remove-btn {
@@ -59,7 +68,12 @@
     & .fi-fo-select-option {
         @apply min-w-px;
 
-        > span {
+        &.fi-fo-select-labels-wrap {
+            @apply text-wrap;
+            word-break: break-word;
+        }
+
+        &:not(.fi-fo-select-labels-wrap) > span {
           @apply truncate;
         }
     }

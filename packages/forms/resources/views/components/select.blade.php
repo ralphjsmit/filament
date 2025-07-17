@@ -6,10 +6,11 @@
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
     $isSearchable = $isSearchable();
+    $canOptionLabelsWrap = $canOptionLabelsWrap();
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
     $isHtmlAllowed = $isHtmlAllowed();
-    $isNative = (! ($isSearchable || $isMultiple) && $isNative());
+    $isNative = (! ($isSearchable || $isMultiple || $canOptionLabelsWrap) && $isNative());
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
     $key = $getKey();
@@ -159,6 +160,7 @@
                             isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple),
                             isSearchable: @js($isSearchable),
+                            canOptionLabelsWrap: @js($canOptionLabelsWrap),
                             livewireId: @js($this->getId()),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),

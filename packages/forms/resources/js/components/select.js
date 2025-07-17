@@ -16,37 +16,38 @@ function filled(value) {
 }
 
 export default function selectFormComponent({
-    canSelectPlaceholder,
-    isHtmlAllowed,
-    getOptionLabelUsing,
-    getOptionLabelsUsing,
-    getOptionsUsing,
-    getSearchResultsUsing,
-    initialOptionLabel,
-    initialOptionLabels,
-    initialState,
-    isAutofocused,
-    isDisabled,
-    isMultiple,
-    isSearchable,
-    hasDynamicOptions,
-    hasDynamicSearchResults,
-    livewireId,
-    loadingMessage,
-    maxItems,
-    maxItemsMessage,
-    noSearchResultsMessage,
-    options,
-    optionsLimit,
-    placeholder,
-    position,
-    searchDebounce,
-    searchingMessage,
-    searchPrompt,
-    searchableOptionFields,
-    state,
-    statePath,
-}) {
+                                                canSelectPlaceholder,
+                                                isHtmlAllowed,
+                                                getOptionLabelUsing,
+                                                getOptionLabelsUsing,
+                                                getOptionsUsing,
+                                                getSearchResultsUsing,
+                                                initialOptionLabel,
+                                                initialOptionLabels,
+                                                initialState,
+                                                isAutofocused,
+                                                isDisabled,
+                                                isMultiple,
+                                                isSearchable,
+                                                canOptionLabelsWrap,
+                                                hasDynamicOptions,
+                                                hasDynamicSearchResults,
+                                                livewireId,
+                                                loadingMessage,
+                                                maxItems,
+                                                maxItemsMessage,
+                                                noSearchResultsMessage,
+                                                options,
+                                                optionsLimit,
+                                                placeholder,
+                                                position,
+                                                searchDebounce,
+                                                searchingMessage,
+                                                searchPrompt,
+                                                searchableOptionFields,
+                                                state,
+                                                statePath
+                                            }) {
     return {
         state,
         select: null,
@@ -66,6 +67,7 @@ export default function selectFormComponent({
                 isDisabled,
                 isMultiple,
                 isSearchable,
+                canOptionLabelsWrap,
                 getOptionLabelUsing,
                 getOptionLabelsUsing,
                 getOptionsUsing,
@@ -86,7 +88,7 @@ export default function selectFormComponent({
                 statePath,
                 onStateChange: (newState) => {
                     this.state = newState
-                },
+                }
             })
 
             this.$watch('state', (newState) => {
@@ -103,45 +105,47 @@ export default function selectFormComponent({
                 this.select.destroy()
                 this.select = null
             }
-        },
+        }
     }
 }
 
 class CustomSelect {
     constructor({
-        element,
-        options,
-        placeholder,
-        state,
-        canSelectPlaceholder = true,
-        initialOptionLabel = null,
-        initialOptionLabels = null,
-        initialState = null,
-        isHtmlAllowed = false,
-        isAutofocused = false,
-        isDisabled = false,
-        isMultiple = false,
-        isSearchable = false,
-        getOptionLabelUsing = null,
-        getOptionLabelsUsing = null,
-        getOptionsUsing = null,
-        getSearchResultsUsing = null,
-        hasDynamicOptions = false,
-        hasDynamicSearchResults = true,
-        searchPrompt = 'Search...',
-        searchDebounce = 1000,
-        loadingMessage = 'Loading...',
-        searchingMessage = 'Searching...',
-        noSearchResultsMessage = 'No results found',
-        maxItems = null,
-        maxItemsMessage = 'Maximum number of items selected',
-        optionsLimit = null,
-        position = null,
-        searchableOptionFields = ['label'],
-        livewireId = null,
-        statePath = null,
-        onStateChange = () => {},
-    }) {
+                    element,
+                    options,
+                    placeholder,
+                    state,
+                    canSelectPlaceholder = true,
+                    initialOptionLabel = null,
+                    initialOptionLabels = null,
+                    initialState = null,
+                    isHtmlAllowed = false,
+                    isAutofocused = false,
+                    isDisabled = false,
+                    isMultiple = false,
+                    isSearchable = false,
+                    canOptionLabelsWrap = true,
+                    getOptionLabelUsing = null,
+                    getOptionLabelsUsing = null,
+                    getOptionsUsing = null,
+                    getSearchResultsUsing = null,
+                    hasDynamicOptions = false,
+                    hasDynamicSearchResults = true,
+                    searchPrompt = 'Search...',
+                    searchDebounce = 1000,
+                    loadingMessage = 'Loading...',
+                    searchingMessage = 'Searching...',
+                    noSearchResultsMessage = 'No results found',
+                    maxItems = null,
+                    maxItemsMessage = 'Maximum number of items selected',
+                    optionsLimit = null,
+                    position = null,
+                    searchableOptionFields = ['label'],
+                    livewireId = null,
+                    statePath = null,
+                    onStateChange = () => {
+                    }
+                }) {
         this.element = element
         this.options = options
         this.originalOptions = JSON.parse(JSON.stringify(options)) // Keep a copy of original options
@@ -156,6 +160,7 @@ class CustomSelect {
         this.isDisabled = isDisabled
         this.isMultiple = isMultiple
         this.isSearchable = isSearchable
+        this.canOptionLabelsWrap = canOptionLabelsWrap
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
         this.getOptionsUsing = getOptionsUsing
@@ -337,7 +342,7 @@ class CustomSelect {
                     if (options[this.selectedIndex].id) {
                         this.dropdown.setAttribute(
                             'aria-activedescendant',
-                            options[this.selectedIndex].id,
+                            options[this.selectedIndex].id
                         )
                     }
 
@@ -420,7 +425,7 @@ class CustomSelect {
                 ) {
                     groupOptions = option.options.filter(
                         (groupOption) =>
-                            !this.state.includes(groupOption.value),
+                            !this.state.includes(groupOption.value)
                     )
                 }
 
@@ -459,7 +464,7 @@ class CustomSelect {
 
                 const optionElement = this.createOptionElement(
                     option.value,
-                    option,
+                    option
                 )
                 ungroupedList.appendChild(optionElement)
                 renderedCount++
@@ -541,6 +546,10 @@ class CustomSelect {
 
         if (isDisabled) {
             option.classList.add('fi-disabled')
+        }
+
+        if(this.canOptionLabelsWrap) {
+            option.classList.add('fi-fo-select-labels-wrap')
         }
 
         // Generate a unique ID for the option
@@ -790,7 +799,7 @@ class CustomSelect {
         removeButton.setAttribute(
             'aria-label',
             'Remove ' +
-                (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
+            (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label)
         )
 
         removeButton.addEventListener('click', (event) => {
@@ -884,6 +893,10 @@ class CustomSelect {
             labelContainer.innerHTML = selectedLabel
         } else {
             labelContainer.textContent = selectedLabel
+        }
+
+        if(this.canOptionLabelsWrap) {
+            labelContainer.classList.add('fi-fo-select-labels-wrap')
         }
 
         this.selectedDisplay.appendChild(labelContainer)
@@ -996,7 +1009,7 @@ class CustomSelect {
         // Keyboard navigation for the select button
         this.selectButton.addEventListener(
             'keydown',
-            this.buttonKeydownListener,
+            this.buttonKeydownListener
         )
 
         // Keyboard navigation within dropdown
@@ -1032,7 +1045,7 @@ class CustomSelect {
                             // Update the displayed label
                             const labelContainer =
                                 this.selectedDisplay.querySelector(
-                                    '.fi-fo-select-value-label',
+                                    '.fi-fo-select-value-label'
                                 )
                             if (filled(labelContainer)) {
                                 if (this.isHtmlAllowed) {
@@ -1047,7 +1060,7 @@ class CustomSelect {
                         } catch (error) {
                             console.error(
                                 'Error refreshing option label:',
-                                error,
+                                error
                             )
                         }
                     }
@@ -1056,7 +1069,7 @@ class CustomSelect {
 
             window.addEventListener(
                 'filament-forms::select.refreshSelectedOptionLabel',
-                this.refreshOptionLabelListener,
+                this.refreshOptionLabelListener
             )
         }
     }
@@ -1324,7 +1337,7 @@ class CustomSelect {
                 // Update options
                 this.options = fetchedOptions
                 this.originalOptions = JSON.parse(
-                    JSON.stringify(fetchedOptions),
+                    JSON.stringify(fetchedOptions)
                 )
 
                 // Populate the label repository with the fetched options
@@ -1363,7 +1376,7 @@ class CustomSelect {
                     for (let i = 0; i < options.length; i++) {
                         if (
                             this.state.includes(
-                                options[i].getAttribute('data-value'),
+                                options[i].getAttribute('data-value')
                             )
                         ) {
                             this.selectedIndex = i
@@ -1397,7 +1410,7 @@ class CustomSelect {
         const placement = this.position === 'top' ? 'top-start' : 'bottom-start'
         const middleware = [
             offset(4), // Add some space between button and dropdown
-            shift({ padding: 5 }), // Keep within viewport with some padding
+            shift({ padding: 5 }) // Keep within viewport with some padding
         ]
 
         // Only use flip middleware if position is not explicitly set to 'top' or 'bottom'
@@ -1413,11 +1426,11 @@ class CustomSelect {
         computePosition(this.selectButton, this.dropdown, {
             placement: placement,
             middleware: middleware,
-            strategy: useAbsolutePositioning ? 'absolute' : 'fixed',
+            strategy: useAbsolutePositioning ? 'absolute' : 'fixed'
         }).then(({ x, y }) => {
             Object.assign(this.dropdown.style, {
                 left: `${x}px`,
-                top: `${y}px`,
+                top: `${y}px`
             })
         })
     }
@@ -1477,7 +1490,7 @@ class CustomSelect {
         if (options[this.selectedIndex].id) {
             this.dropdown.setAttribute(
                 'aria-activedescendant',
-                options[this.selectedIndex].id,
+                options[this.selectedIndex].id
             )
         }
 
@@ -1516,7 +1529,7 @@ class CustomSelect {
         if (options[this.selectedIndex].id) {
             this.dropdown.setAttribute(
                 'aria-activedescendant',
-                options[this.selectedIndex].id,
+                options[this.selectedIndex].id
             )
         }
 
@@ -1543,22 +1556,22 @@ class CustomSelect {
         if (this.optionsList.classList.contains('fi-dropdown-list')) {
             // Get direct child options when there are no groups
             ungroupedOptions = Array.from(
-                this.optionsList.querySelectorAll(':scope > li[role="option"]'),
+                this.optionsList.querySelectorAll(':scope > li[role="option"]')
             )
         } else {
             // Get options from nested ungrouped list when there are groups
             ungroupedOptions = Array.from(
                 this.optionsList.querySelectorAll(
-                    ':scope > ul.fi-dropdown-list > li[role="option"]',
-                ),
+                    ':scope > ul.fi-dropdown-list > li[role="option"]'
+                )
             )
         }
 
         // Get all option elements that are in option groups
         const groupOptions = Array.from(
             this.optionsList.querySelectorAll(
-                'li.fi-fo-select-option-group > ul > li[role="option"]',
-            ),
+                'li.fi-fo-select-option-group > ul > li[role="option"]'
+            )
         )
 
         // Combine and return all options
@@ -1732,13 +1745,13 @@ class CustomSelect {
                                     .toLowerCase()
                                     .includes(query))
                         )
-                    },
+                    }
                 )
 
                 if (filteredGroupOptions.length > 0) {
                     filteredOptions.push({
                         label: option.label,
-                        options: filteredGroupOptions,
+                        options: filteredGroupOptions
                     })
                 }
             } else if (
@@ -1791,7 +1804,7 @@ class CustomSelect {
         if (newState.includes(value)) {
             // Find and remove the badge directly from the DOM
             const badgeToRemove = this.selectedDisplay.querySelector(
-                `[data-value="${value}"]`,
+                `[data-value="${value}"]`
             )
             if (filled(badgeToRemove)) {
                 // Check if this is the last badge
@@ -1846,7 +1859,7 @@ class CustomSelect {
 
         // Check if we already have a badges container
         const existingBadgesContainer = this.selectedDisplay.querySelector(
-            '.fi-fo-select-value-badges-ctn',
+            '.fi-fo-select-value-badges-ctn'
         )
 
         if (blank(existingBadgesContainer)) {
@@ -1983,7 +1996,7 @@ class CustomSelect {
             // If there are remove buttons in multiple mode, disable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-fo-select-badge-remove',
+                    '.fi-fo-select-badge-remove'
                 )
                 removeButtons.forEach((button) => {
                     button.setAttribute('disabled', 'disabled')
@@ -1994,7 +2007,7 @@ class CustomSelect {
             // If there's a remove button in single mode, disable it
             if (!this.isMultiple && this.canSelectPlaceholder) {
                 const removeButton = this.container.querySelector(
-                    '.fi-fo-select-value-remove-btn',
+                    '.fi-fo-select-value-remove-btn'
                 )
                 if (removeButton) {
                     removeButton.setAttribute('disabled', 'disabled')
@@ -2016,7 +2029,7 @@ class CustomSelect {
             // If there are remove buttons in multiple mode, enable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-fo-select-badge-remove',
+                    '.fi-fo-select-badge-remove'
                 )
                 removeButtons.forEach((button) => {
                     button.removeAttribute('disabled')
@@ -2027,7 +2040,7 @@ class CustomSelect {
             // If there's a remove button in single mode, enable it
             if (!this.isMultiple && this.canSelectPlaceholder) {
                 const removeButton = this.container.querySelector(
-                    '.fi-fo-select-value-remove-btn',
+                    '.fi-fo-select-value-remove-btn'
                 )
                 if (removeButton) {
                     removeButton.removeAttribute('disabled')
@@ -2048,7 +2061,7 @@ class CustomSelect {
         if (this.selectButton && this.buttonClickListener) {
             this.selectButton.removeEventListener(
                 'click',
-                this.buttonClickListener,
+                this.buttonClickListener
             )
         }
 
@@ -2061,7 +2074,7 @@ class CustomSelect {
         if (this.selectButton && this.buttonKeydownListener) {
             this.selectButton.removeEventListener(
                 'keydown',
-                this.buttonKeydownListener,
+                this.buttonKeydownListener
             )
         }
 
@@ -2069,7 +2082,7 @@ class CustomSelect {
         if (this.dropdown && this.dropdownKeydownListener) {
             this.dropdown.removeEventListener(
                 'keydown',
-                this.dropdownKeydownListener,
+                this.dropdownKeydownListener
             )
         }
 
@@ -2089,7 +2102,7 @@ class CustomSelect {
         if (this.refreshOptionLabelListener) {
             window.removeEventListener(
                 'filament-forms::select.refreshSelectedOptionLabel',
-                this.refreshOptionLabelListener,
+                this.refreshOptionLabelListener
             )
         }
 
