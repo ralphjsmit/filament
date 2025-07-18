@@ -226,7 +226,7 @@ trait HasBulkActions
 
             $maxSelectableRecords = $table->getMaxSelectableRecords();
 
-            if (($maxSelectableRecords !== null) && ($resolvedSelectedRecords->count() > $maxSelectableRecords)) {
+            if ($maxSelectableRecords && ($resolvedSelectedRecords->count() > $maxSelectableRecords)) {
                 throw new Exception("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
             }
 
@@ -262,7 +262,7 @@ trait HasBulkActions
                 $query = $table->getQuery()->whereKey($this->selectedTableRecords);
             }
 
-            if ($maxSelectableRecords !== null) {
+            if ($maxSelectableRecords) {
                 $query->limit($maxSelectableRecords);
             }
 
@@ -296,7 +296,7 @@ trait HasBulkActions
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords);
         }
 
-        if ($maxSelectableRecords !== null) {
+        if ($maxSelectableRecords) {
             $relationship->limit($maxSelectableRecords);
         }
 
