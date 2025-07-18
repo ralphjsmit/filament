@@ -634,7 +634,7 @@ class CustomSelect {
             // If no items selected, show placeholder
             if (!Array.isArray(this.state) || this.state.length === 0) {
                 const placeholderSpan = document.createElement('span')
-                placeholderSpan.appendChild(document.createTextNode(this.placeholder || 'Select options'))
+                placeholderSpan.appendChild(document.createTextNode(this.placeholder))
                 this.selectedDisplay.appendChild(placeholderSpan)
                 return
             }
@@ -657,7 +657,7 @@ class CustomSelect {
         // If no value selected, show placeholder
         if (this.state === null || this.state === '') {
             const placeholderSpan = document.createElement('span')
-            placeholderSpan.appendChild(document.createTextNode(this.placeholder || 'Select an option'))
+            placeholderSpan.appendChild(document.createTextNode(this.placeholder))
             this.selectedDisplay.appendChild(placeholderSpan)
             return
         }
