@@ -25,7 +25,7 @@
             }
 
             & .fi-modal-header {
-                @apply gap-x-5;
+                @apply gap-x-3;
             }
 
             & .fi-modal-icon-bg {
