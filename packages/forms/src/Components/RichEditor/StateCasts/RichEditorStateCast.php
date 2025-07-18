@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\RichEditor\StateCasts;
 
 use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Illuminate\Support\HtmlString;
 
 class RichEditorStateCast implements StateCast
 {
@@ -59,6 +60,10 @@ class RichEditorStateCast implements StateCast
      */
     public function set(mixed $state): array
     {
+        if ($state instanceof HtmlString) {
+            $state = $state->toHtml();
+        }
+
         $editor = $this->richEditor->getTipTapEditor()
             ->setContent($state ?? [
                 'type' => 'doc',
