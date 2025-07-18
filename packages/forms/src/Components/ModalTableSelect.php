@@ -175,7 +175,7 @@ class ModalTableSelect extends Field
         return $this;
     }
 
-    public function getOptionLabel(bool $withDefault = true): ?string
+    public function getOptionLabel(bool $withDefault = true): string | Htmlable | null
     {
         $state = null;
 
@@ -193,7 +193,7 @@ class ModalTableSelect extends Field
     }
 
     /**
-     * @return array<string>
+     * @return array<string | Htmlable>
      */
     public function getOptionLabels(bool $withDefaults = true): array
     {

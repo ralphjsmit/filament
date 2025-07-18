@@ -36,7 +36,7 @@
                 ->class(['fi-fo-table-repeater']) }}
     >
         @if (count($items))
-            <table>
+            <table class="fi-absolute-positioning-context">
                 <thead>
                     <tr>
                         @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))
@@ -48,7 +48,7 @@
                         @foreach ($tableColumns as $column)
                             <th
                                 @class([
-                                    'fi-wrapped' => $column->isHeaderWrapped(),
+                                    'fi-wrapped' => $column->canHeaderWrap(),
                                     (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
                                 ])
                                 @style([

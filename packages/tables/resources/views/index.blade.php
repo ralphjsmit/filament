@@ -2,7 +2,6 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
     use Filament\Support\Enums\Width;
-    use Filament\Support\Facades\FilamentView;
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
@@ -115,10 +114,12 @@
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 $wire,
             })"
-    @class([
-        'fi-ta',
-        'fi-loading' => $records === null,
-    ])
+    {{
+        $getExtraAttributeBag()->class([
+            'fi-ta',
+            'fi-loading' => $records === null,
+        ])
+    }}
 >
     <input
         type="hidden"
@@ -627,7 +628,7 @@
                         wire:target="removeTableFilters,removeTableFilter"
                         class="fi-icon-btn fi-size-sm"
                     >
-                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'tables::filters.remove-all-button', size: \Filament\Support\Enums\IconSize::Small) }}
+                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Tables\View\TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
                     </button>
                 @endif
             </div>
@@ -923,7 +924,7 @@
                                                 type="button"
                                                 class="fi-icon-btn fi-size-sm"
                                             >
-                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \Filament\Support\Enums\IconSize::Small) }}
+                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\Tables\View\TablesIconAlias::GROUPING_COLLAPSE_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
                                             </button>
                                         @endif
                                     </div>
@@ -964,7 +965,7 @@
                                             class="fi-ta-reorder-handle fi-icon-btn"
                                             type="button"
                                         >
-                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::reorder.handle') }}
+                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::REORDER_HANDLE) }}
                                         </button>
                                     @elseif ($isSelectionEnabled && $isRecordSelectable($record))
                                         <input
@@ -1079,7 +1080,7 @@
                                             x-on:click="isCollapsed = ! isCollapsed"
                                             class="fi-ta-record-collapse-btn fi-icon-btn"
                                         >
-                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: 'tables::columns.collapse-button') }}
+                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: \Filament\Tables\View\TablesIconAlias::COLUMNS_COLLAPSE_BUTTON) }}
                                         </button>
                                     @endif
                                 </div>
@@ -1169,7 +1170,7 @@
                                                     {{
                                                         $columnGroup->getExtraHeaderAttributeBag()->class([
                                                             'fi-ta-header-group-cell',
-                                                            'fi-wrapped' => $columnGroup->isHeaderWrapped(),
+                                                            'fi-wrapped' => $columnGroup->canHeaderWrap(),
                                                             ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
                                                             (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
                                                             (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
@@ -1289,7 +1290,7 @@
                                                     'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
                                                     'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
                                                     'fi-grouped' => $column->getGroup(),
-                                                    'fi-wrapped' => $column->isHeaderWrapped(),
+                                                    'fi-wrapped' => $column->canHeaderWrap(),
                                                     'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
                                                     ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
                                                     (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
@@ -1315,9 +1316,9 @@
 
                                                 {{
                                                     \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
-                                                        $isColumnActivelySorted && ($sortDirection === 'asc') => 'tables::header-cell.sort-asc-button',
-                                                        $isColumnActivelySorted && ($sortDirection === 'desc') => 'tables::header-cell.sort-desc-button',
-                                                        default => 'tables::header-cell.sort-button',
+                                                        $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
+                                                        $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
+                                                        default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
                                                     })
                                                 }}
                                             </span>
@@ -1632,7 +1633,7 @@
                                                                     type="button"
                                                                     class="fi-icon-btn fi-size-sm"
                                                                 >
-                                                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \Filament\Support\Enums\IconSize::Small) }}
+                                                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\Tables\View\TablesIconAlias::GROUPING_COLLAPSE_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
                                                                 </button>
                                                             @endif
                                                         </div>
@@ -1707,7 +1708,7 @@
                                                             class="fi-ta-reorder-handle fi-icon-btn"
                                                             type="button"
                                                         >
-                                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::reorder.handle') }}
+                                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::REORDER_HANDLE) }}
                                                         </button>
                                                     </td>
                                                 @endif
