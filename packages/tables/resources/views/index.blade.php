@@ -973,7 +973,7 @@
                                             type="checkbox"
                                             @if ($isSelectionDisabled)
                                                 disabled
-                                            @elseif ($canSelectMultipleRecords && $maxSelectableRecords !== null)
+                                            @elseif ($maxSelectableRecords && ($maxSelectableRecords !== 1))
                                                 x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
                                             @endif
                                             value="{{ $recordKey }}"
@@ -1744,7 +1744,7 @@
                                                                 type="checkbox"
                                                                 @if ($isSelectionDisabled)
                                                                     disabled
-                                                                @elseif ($canSelectMultipleRecords && $maxSelectableRecords !== null)
+                                                                @elseif ($maxSelectableRecords && ($maxSelectableRecords !== 1))
                                                                     x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
                                                                 @endif
                                                                 value="{{ $recordKey }}"
@@ -1876,7 +1876,7 @@
                                                                 type="checkbox"
                                                                 @if ($isSelectionDisabled)
                                                                     disabled
-                                                                @elseif ($canSelectMultipleRecords && $maxSelectableRecords !== null)
+                                                                @elseif ($maxSelectableRecords && ($maxSelectableRecords !== 1))
                                                                     x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
                                                                 @endif
                                                                 value="{{ $recordKey }}"
