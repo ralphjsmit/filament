@@ -69,7 +69,7 @@ class ContainsOperator extends Operator
             if (count($parts) === 3) {
                 [$schema, $table, $column] = $parts;
                 $table = "{$schema}.{$table}";
-            } elseif (count($parts) === 2) {
+            } else {
                 [$table, $column] = $parts;
             }
 
