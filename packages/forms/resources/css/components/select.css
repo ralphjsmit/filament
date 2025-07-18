@@ -74,7 +74,7 @@
         }
 
         &:not(.fi-fo-select-labels-wrap) > span {
-          @apply truncate;
+            @apply truncate;
         }
     }
 
