@@ -51,7 +51,7 @@ trait HasResourcesLocation
 
         if ($this->option('resource-namespace')) {
             return [
-                $this->option('resource-namespace'),
+                (string) $this->option('resource-namespace'),
                 $directories[array_search($this->option('resource-namespace'), $namespaces)],
             ];
         }
