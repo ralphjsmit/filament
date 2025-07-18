@@ -25,7 +25,6 @@
     $activeFiltersCount = $getActiveFiltersCount();
     $isSelectionDisabled = $isSelectionDisabled();
     $maxSelectableRecords = $getMaxSelectableRecords();
-    $canSelectMultipleRecords = $canSelectMultipleRecords() && ($maxSelectableRecords !== 1);
     $columns = $getVisibleColumns();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $columnsLayout = $getColumnsLayout();
@@ -111,7 +110,6 @@
         wire:init="loadTable"
     @endif
     x-data="filamentTable({
-                canSelectMultipleRecords: @js($canSelectMultipleRecords),
                 maxSelectableRecords: @js($maxSelectableRecords),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
@@ -528,7 +526,7 @@
 
                 {{ __('filament-tables::table.reorder_indicator') }}
             </div>
-        @elseif ($isSelectionEnabled && $canSelectMultipleRecords && $isLoaded)
+        @elseif ($isSelectionEnabled && ($maxSelectableRecords !== 1) && $isLoaded)
             <div
                 x-cloak
                 x-bind:hidden="! getSelectedRecordsCount()"
@@ -653,7 +651,7 @@
 
                         @if ($isSelectionEnabled || count($sortableColumns))
                             <div class="fi-ta-content-header">
-                                @if ($isSelectionEnabled && $canSelectMultipleRecords && (! $isReordering))
+                                @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering))
                                     <input
                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                         type="checkbox"
@@ -864,7 +862,7 @@
                                             'fi-collapsible' => $isRecordGroupCollapsible,
                                         ])
                                     >
-                                        @if ($isSelectionEnabled && $canSelectMultipleRecords)
+                                        @if ($isSelectionEnabled && ($maxSelectableRecords !== 1))
                                             <input
                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                 type="checkbox"
@@ -1218,7 +1216,7 @@
                                             <th
                                                 class="fi-ta-cell fi-ta-selection-cell"
                                             >
-                                                @if ($canSelectMultipleRecords)
+                                                @if ($maxSelectableRecords !== 1)
                                                     <input
                                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                         type="checkbox"
@@ -1349,7 +1347,7 @@
                                         <th
                                             class="fi-ta-cell fi-ta-selection-cell"
                                         >
-                                            @if ($canSelectMultipleRecords)
+                                            @if ($maxSelectableRecords !== 1)
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                     type="checkbox"
@@ -1557,7 +1555,7 @@
                                                         <td
                                                             class="fi-ta-cell fi-ta-group-selection-cell"
                                                         >
-                                                            @if ($canSelectMultipleRecords)
+                                                            @if ($maxSelectableRecords !== 1)
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"
@@ -1644,7 +1642,7 @@
                                                         <td
                                                             class="fi-ta-cell fi-ta-group-selection-cell"
                                                         >
-                                                            @if ($canSelectMultipleRecords)
+                                                            @if ($maxSelectableRecords !== 1)
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"

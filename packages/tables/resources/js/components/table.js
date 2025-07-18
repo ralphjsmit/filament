@@ -1,5 +1,4 @@
 export default ({
-    canSelectMultipleRecords,
     maxSelectableRecords,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
@@ -34,7 +33,7 @@ export default ({
         $wire.$on('deselectAllTableRecords', () => this.deselectAllRecords())
 
         if (currentSelectionLivewireProperty) {
-            if (canSelectMultipleRecords) {
+            if (maxSelectableRecords !== 1) {
                 this.selectedRecords = new Set(this.entangledSelectedRecords)
             } else {
                 this.selectedRecords = new Set(
@@ -134,7 +133,7 @@ export default ({
     },
 
     selectRecords(keys) {
-        if (!canSelectMultipleRecords) {
+        if (maxSelectableRecords === 1) {
             this.deselectAllRecords()
 
             keys = keys.slice(0, 1)
@@ -172,7 +171,7 @@ export default ({
     },
 
     updatedSelectedRecords() {
-        if (canSelectMultipleRecords) {
+        if (maxSelectableRecords !== 1) {
             this.entangledSelectedRecords = [...this.selectedRecords]
 
             return
@@ -268,7 +267,7 @@ export default ({
             return true
         }
 
-        if (!canSelectMultipleRecords) {
+        if (maxSelectableRecords === 1) {
             return true
         }
 

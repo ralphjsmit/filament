@@ -23,8 +23,6 @@ trait HasBulkActions
 
     protected string | Closure | null $currentSelectionLivewireProperty = null;
 
-    protected bool | Closure $canSelectMultipleRecords = true;
-
     protected int | Closure | null $maxSelectableRecords = null;
 
     protected bool | Closure $isSelectionDisabled = false;
@@ -167,31 +165,15 @@ trait HasBulkActions
         return $this->evaluate($this->currentSelectionLivewireProperty);
     }
 
-    public function multipleRecordsSelectable(bool | Closure $condition = true): static
-    {
-        $this->canSelectMultipleRecords = $condition;
-
-        return $this;
-    }
-
-    public function maxSelectableRecords(int | Closure | null $count = null): static
+    public function maxSelectableRecords(int | Closure | null $count): static
     {
         $this->maxSelectableRecords = $count;
 
         return $this;
     }
 
-    public function canSelectMultipleRecords(): bool
-    {
-        return (bool) $this->evaluate($this->canSelectMultipleRecords);
-    }
-
     public function getMaxSelectableRecords(): ?int
     {
-        if (! $this->canSelectMultipleRecords()) {
-            return 1;
-        }
-
         return $this->evaluate($this->maxSelectableRecords);
     }
 

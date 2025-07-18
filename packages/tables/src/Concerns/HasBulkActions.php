@@ -226,7 +226,7 @@ trait HasBulkActions
 
             $maxSelectableRecords = $table->getMaxSelectableRecords();
 
-            if ($maxSelectableRecords !== null && $resolvedSelectedRecords->count() > $maxSelectableRecords) {
+            if (($maxSelectableRecords !== null) && ($resolvedSelectedRecords->count() > $maxSelectableRecords)) {
                 throw new Exception("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
             }
 
