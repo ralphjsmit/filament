@@ -179,13 +179,6 @@ class MakeResourceCommand extends Command
                 description: 'The namespace of the model class, [App\\Models] by default',
             ),
             new InputOption(
-                name: 'resource-namespace',
-                shortcut: null,
-                mode: InputOption::VALUE_NONE,
-                description: 'The namespace of the resource class, [App\\Filament\\Resources] by default',
-            ),
-
-            new InputOption(
                 name: 'nested',
                 shortcut: 'N',
                 mode: InputOption::VALUE_OPTIONAL,
@@ -203,6 +196,12 @@ class MakeResourceCommand extends Command
                 shortcut: null,
                 mode: InputOption::VALUE_REQUIRED,
                 description: 'The panel to create the resource in',
+            ),
+            new InputOption(
+                name: 'resource-namespace',
+                shortcut: null,
+                mode: InputOption::VALUE_NONE,
+                description: 'The namespace of the resource class, such as [App\\Filament\\Resources]',
             ),
             new InputOption(
                 name: 'simple',

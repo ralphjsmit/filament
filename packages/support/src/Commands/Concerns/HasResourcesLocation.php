@@ -48,6 +48,7 @@ trait HasResourcesLocation
                 (Arr::first($directories) ?? app_path('Filament/Resources/')),
             ];
         }
+
         if ($this->option('resource-namespace')) {
             return [
                 $this->option('resource-namespace'),
