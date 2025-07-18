@@ -75,7 +75,7 @@ class EqualsOperator extends Operator
 
             if (Str::lower($table) !== $table) {
                 $table = collect(explode('.', $table))
-                    ->map(fn ($segment) => "\"{$segment}\"")
+                    ->map(fn (string $segment): string => "\"{$segment}\"")
                     ->implode('.');
             }
 
