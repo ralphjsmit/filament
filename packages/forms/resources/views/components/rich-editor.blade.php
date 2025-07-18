@@ -27,8 +27,8 @@
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
             x-data="richEditorFormComponent({
                         activePanel: @js($getActivePanel()),
-                        deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: 'forms:components.rich-editor.panels.custom-block.delete-button')->toHtml()),
-                        editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: 'forms:components.rich-editor.panels.custom-block.edit-button')->toHtml()),
+                        deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON)->toHtml()),
+                        editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON)->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
                         key: @js($key),
                         isDisabled: @js($isDisabled),
@@ -83,10 +83,12 @@
                 @if (! $isDisabled)
                     <div
                         x-show="isPanelActive()"
+                        x-cloak
                         class="fi-fo-rich-editor-panels"
                     >
                         <div
                             x-show="isPanelActive('customBlocks')"
+                            x-cloak
                             class="fi-fo-rich-editor-panel"
                         >
                             <div class="fi-fo-rich-editor-panel-header">
@@ -102,7 +104,7 @@
                                         x-on:click="togglePanel()"
                                         class="fi-icon-btn"
                                     >
-                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.custom-blocks.close-button') }}
+                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON) }}
                                     </button>
                                 </div>
                             </div>
@@ -145,6 +147,7 @@
 
                         <div
                             x-show="isPanelActive('mergeTags')"
+                            x-cloak
                             class="fi-fo-rich-editor-panel"
                         >
                             <div class="fi-fo-rich-editor-panel-header">
@@ -160,7 +163,7 @@
                                         x-on:click="togglePanel()"
                                         class="fi-icon-btn"
                                     >
-                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.merge-tags.close-button') }}
+                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON) }}
                                     </button>
                                 </div>
                             </div>
