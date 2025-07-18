@@ -1,7 +1,7 @@
 export default ({
-    maxSelectableRecords,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
+    maxSelectableRecords,
     $wire,
 }) => ({
     checkboxClickController: null,

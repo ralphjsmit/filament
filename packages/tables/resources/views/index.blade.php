@@ -109,9 +109,9 @@
         wire:init="loadTable"
     @endif
     x-data="filamentTable({
-                maxSelectableRecords: @js($maxSelectableRecords),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
+                maxSelectableRecords: @js($maxSelectableRecords),
                 $wire,
             })"
     {{
