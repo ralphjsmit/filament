@@ -77,20 +77,23 @@ export default ({
         this.selectRecords(keys)
     },
 
-    async toggleSelectRecordsInGroup(group) {
+    async toggleSelectGroup(group) {
         this.isLoading = true
 
-        if (this.areRecordsSelected(this.getRecordsInGroupOnPage(group))) {
-            this.deselectRecords(
-                await $wire.getGroupedSelectableTableRecordKeys(group),
-            )
-        } else {
-            this.selectRecords(
-                await $wire.getGroupedSelectableTableRecordKeys(group),
-            )
-        }
+        this.toggleSelectRecordsInGroup(
+            await $wire.getGroupedSelectableTableRecordKeys(group),
+            group,
+        )
 
         this.isLoading = false
+    },
+
+    toggleSelectRecordsInGroup(keys, group) {
+        if (this.areRecordsSelected(this.getRecordsInGroupOnPage(group))) {
+            this.deselectRecords(keys)
+        } else {
+            this.selectRecords(keys)
+        }
     },
 
     getRecordsInGroupOnPage(group) {
