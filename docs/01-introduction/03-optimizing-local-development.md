@@ -9,7 +9,9 @@ If you're looking for production-specific optimizations, check out [Deploying to
 
 ## Enabling OPcache
 
-[OPcache](https://www.php.net/manual/en/book.opcache.php) improves PHP performance by storing precompiled script bytecode in shared memory, thereby removing the need for PHP to load and parse scripts on each request.
+[OPcache](https://www.php.net/manual/en/book.opcache.php) improves PHP performance by storing precompiled script bytecode in shared memory, thereby removing the need for PHP to load and parse scripts on each request. This can significantly speed up your local development environment, especially for larger applications.
+
+### Checking OPcache status
 
 To check if [OPcache](https://www.php.net/manual/en/book.opcache.php) is enabled, run:
 
@@ -23,6 +25,10 @@ You should see `opcache.enable => 1`. If not, enable it by adding the following 
 opcache.enable=1 # Enable OPcache
 ```
 
+<Aside variant="tip">
+    To locate your `php.ini` file, run: `php --ini`
+</Aside>
+
 ### Configuring OPcache settings
 
 If you're experiencing slow response times or suspect that OPcache is running out of space, you can adjust these parameters in your `php.ini` file:
@@ -31,6 +37,10 @@ If you're experiencing slow response times or suspect that OPcache is running ou
 opcache.memory_consumption=128
 opcache.max_accelerated_files=10000
 ```
+
+<Aside variant="tip">
+    To locate your `php.ini` file, run: `php --ini`
+</Aside>
 
 - `opcache.memory_consumption`: defines how much memory (in megabytes) OPcache can use to store precompiled PHP code. You can try setting this to `128` and adjust based on your project's needs.
 - `opcache.max_accelerated_files`: sets the maximum number of PHP files that OPcache can cache. You can try `10000` as a starting point and increase if your application includes a large number of files.
@@ -53,7 +63,7 @@ Tools like [Microsoft Defender](https://www.microsoft.com/en-us/microsoft-365/mi
 
 ## Disabling debugging tools
 
-Debugging tools can be very useful for local development, but at the same time slow down your application unnecessarily when you aren't using them.
+Debugging tools can be very useful for local development, but they can significantly slow down your application when you aren't actively using them. Temporarily disabling these tools when you need maximum performance can make a noticeable difference in your development experience.
 
 ### Disabling view debugging in Laravel Herd
 
@@ -89,6 +99,10 @@ If `Xdebug` is installed but not disabled, it will still be enabled by default. 
 ```ini
 xdebug.mode=off # Disable Xdebug
 ```
+
+<Aside variant="tip">
+    To locate your `php.ini` file, run: `php --ini`
+</Aside>
 
 ## Caching Blade icons
 
