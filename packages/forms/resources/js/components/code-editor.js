@@ -5,6 +5,13 @@ import { html } from '@codemirror/lang-html'
 import { javascript } from '@codemirror/lang-javascript'
 import { json } from '@codemirror/lang-json'
 import { php } from '@codemirror/lang-php'
+import { cpp } from '@codemirror/lang-cpp'
+import { go } from '@codemirror/lang-go'
+import { java } from '@codemirror/lang-java'
+import { markdown } from '@codemirror/lang-markdown'
+import { python } from '@codemirror/lang-python'
+import { xml } from '@codemirror/lang-xml'
+import { yaml } from '@codemirror/lang-yaml'
 import { EditorState, Compartment } from '@codemirror/state'
 import { keymap } from '@codemirror/view'
 import { oneDark } from '@codemirror/theme-one-dark'
@@ -95,6 +102,13 @@ export default function codeEditorFormComponent({
                 javascript,
                 json,
                 php,
+                python,
+                go,
+                xml,
+                yaml,
+                cpp,
+                markdown,
+                java,
             }
 
             return extensions[language]?.() || null
