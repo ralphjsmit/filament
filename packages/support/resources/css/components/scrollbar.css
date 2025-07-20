@@ -1,41 +1,28 @@
-/* Hide native scrollbars for elements that use OverlayScrollbars */
-[data-overlayscrollbars-initialize] {
-    scrollbar-width: none; /* Firefox */
-}
-
-[data-overlayscrollbars-initialize]::-webkit-scrollbar {
-    @apply hidden; /* Chrome, Safari, Edge */
-}
-
 .os-theme-filament {
     @apply box-border;
     --os-size: 10px;
     --os-padding-perpendicular: 2px;
     --os-padding-axis: 2px;
     --os-track-border-radius: 10px;
-    --os-track-bg: none;
-    --os-track-bg-hover: none;
-    --os-track-bg-active: none;
-    --os-track-border: none;
-    --os-track-border-hover: none;
-    --os-track-border-active: none;
     --os-handle-border-radius: 10px;
     --os-handle-bg: theme('colors.gray.400 / 50%');
     --os-handle-bg-hover: theme('colors.gray.500 / 50%');
     --os-handle-bg-active: theme('colors.gray.600 / 50%');
-    --os-handle-border: none;
-    --os-handle-border-hover: none;
-    --os-handle-border-active: none;
-    --os-handle-min-size: 33px;
-    --os-handle-max-size: none;
-    --os-handle-perpendicular-size: 100%;
-    --os-handle-perpendicular-size-hover: 100%;
-    --os-handle-perpendicular-size-active: 100%;
     --os-handle-interactive-area-offset: 4px;
+
+    @variant dark {
+        --os-handle-bg: theme('colors.gray.500 / 30%');
+        --os-handle-bg-hover: theme('colors.gray.400 / 40%');
+        --os-handle-bg-active: theme('colors.gray.300 / 50%');
+    }
 }
 
-.dark .os-theme-filament {
-    --os-handle-bg: theme('colors.gray.500 / 30%');
-    --os-handle-bg-hover: theme('colors.gray.400 / 40%');
-    --os-handle-bg-active: theme('colors.gray.300 / 50%');
+/* Hide native scrollbars for elements that use OverlayScrollbars */
+
+[data-overlayscrollbars-initialize] {
+    scrollbar-width: none; /* Firefox */
+}
+
+[data-overlayscrollbars-initialize]::-webkit-scrollbar {
+    @apply hidden; /* Chrome, Safari, Edge */
 }
