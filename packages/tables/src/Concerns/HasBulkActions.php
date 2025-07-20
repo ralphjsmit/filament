@@ -145,7 +145,7 @@ trait HasBulkActions
                 $this->getTableRecords()
                     ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group)
                     ->pluck($query->getModel()->getKeyName()) :
-                $query->pluck($query->getModel()->getQualifiedKeyName());
+                $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
 
             return $records
                 ->map(fn ($key): string => (string) $key)
