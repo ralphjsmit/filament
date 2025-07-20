@@ -74,6 +74,7 @@
                 @endif
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
                 x-data="dateTimePickerFormComponent({
+                            defaultFocusedDate: @js($defaultFocusedDate),
                             displayFormat:
                                 '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
                             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
@@ -81,7 +82,6 @@
                             locale: @js($getLocale()),
                             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
-                            defaultFocusedDate: @js($defaultFocusedDate),
                         })"
                 wire:ignore
                 wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.{{

@@ -14,13 +14,13 @@ dayjs.extend(utc)
 window.dayjs = dayjs
 
 export default function dateTimePickerFormComponent({
+    defaultFocusedDate,
     displayFormat,
     firstDayOfWeek,
     isAutofocused,
     locale,
     shouldCloseOnDateSelection,
     state,
-    defaultFocusedDate,
 }) {
     const timezone = dayjs.tz.guess()
 
