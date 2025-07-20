@@ -134,7 +134,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
         } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode($url))) {
             $html .= ' wire:navigate';
 
-            if (FilamentView::hasSpaPrefetching($url)) {
+            if (FilamentView::hasSpaPrefetching()) {
                 $html .= '.hover';
             }
         }

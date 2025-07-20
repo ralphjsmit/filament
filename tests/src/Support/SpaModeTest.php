@@ -27,14 +27,6 @@ test('SPA prefetching can be toggled', function (): void {
     expect(FilamentView::hasSpaPrefetching())->toBeFalse();
 });
 
-test('SPA prefetching requires SPA mode to be enabled', function (): void {
-    FilamentView::spa(false, true);
-    expect(FilamentView::hasSpaPrefetching())->toBeFalse();
-
-    FilamentView::spa(true, true);
-    expect(FilamentView::hasSpaPrefetching())->toBeTrue();
-});
-
 test('`href` HTML can be generated with `wire:navigate` based on SPA mode', function (): void {
     FilamentView::spa();
     expect(generate_href_html('http://localhost/page'))
@@ -93,14 +85,6 @@ test('SPA URL exceptions work correctly', function (): void {
 
     expect(FilamentView::hasSpaMode('http://localhost/admin/users'))->toBeFalse();
     expect(FilamentView::hasSpaMode('http://localhost/dashboard'))->toBeTrue();
-});
-
-test('SPA prefetching respects URL exceptions', function (): void {
-    FilamentView::spa(true, true);
-    FilamentView::spaUrlExceptions(['*/admin/*']);
-
-    expect(FilamentView::hasSpaPrefetching('http://localhost/admin/users'))->toBeFalse();
-    expect(FilamentView::hasSpaPrefetching('http://localhost/dashboard'))->toBeTrue();
 });
 
 test('`href` HTML respects SPA URL exceptions for prefetching', function (): void {

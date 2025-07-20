@@ -15,10 +15,10 @@ trait HasSpaMode
      */
     protected array | Closure $spaModeUrlExceptions = [];
 
-    public function spa(bool | Closure $condition = true, bool | Closure $prefetch = false): static
+    public function spa(bool | Closure $condition = true, bool | Closure $hasPrefetching = false): static
     {
         $this->hasSpaMode = $condition;
-        $this->hasSpaPrefetching = $prefetch;
+        $this->hasSpaPrefetching = $hasPrefetching;
 
         return $this;
     }

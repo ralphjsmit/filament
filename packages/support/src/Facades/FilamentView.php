@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static bool hasSpaMode(?string $url = null)
- * @method static bool hasSpaPrefetching(?string $url = null)
+ * @method static bool hasSpaPrefetching()
  * @method static Htmlable renderHook(string $name, string | array<string> | null $scopes = null)
  *
  * @see ViewManager
@@ -31,10 +31,10 @@ class FilamentView extends Facade
         });
     }
 
-    public static function spa(bool $condition = true, bool $prefetch = false): void
+    public static function spa(bool $condition = true, bool $hasPrefetching = false): void
     {
-        static::resolved(function (ViewManager $viewManager) use ($condition, $prefetch): void {
-            $viewManager->spa($condition, $prefetch);
+        static::resolved(function (ViewManager $viewManager) use ($condition, $hasPrefetching): void {
+            $viewManager->spa($condition, $hasPrefetching);
         });
     }
 
