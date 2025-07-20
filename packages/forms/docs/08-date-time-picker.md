@@ -238,6 +238,19 @@ Datalists provide autocomplete options to users when they use the picker. Howeve
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `datalist()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Focusing a default calendar date
+
+By default, if the field has no state, opening the calendar panel will open the calendar at the current date. This might not be convenient for situations where you want to open the calendar on a specific date instead. You can use the `defaultFocusedDate()` to set a default focused date on the calendar:
+
+```php
+use Filament\Forms\Components\DatePicker;
+
+DatePicker::make('custom_starts_at')
+    ->native(false)
+    ->placeholder(now()->startOfMonth())
+    ->defaultFocusedDate(now()->startOfMonth())
+```
+
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
@@ -333,16 +346,3 @@ DatePicker::make('date_of_birth')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minDate()` and `maxDate()` methods also accept functions to dynamically calculate them. If the functions return `null`, the validation rule is not applied. You can inject various utilities into the functions as parameters. </UtilityInjection>
-
-### Focusing a default calendar date
-
-By default, if the field has no state, opening the calendar panel will open the calendar at the current date. This might not be convenient for situations where you want to open the calendar on a specific date instead. You can use the `defaultFocusedDate()` to set a default focused date on the calendar.
-
-```php
-use Filament\Forms\Components\DatePicker;
-
-DatePicker::make('custom_starts_at')
-    ->native(false)
-    ->placeholder(now()->startOfMonth())
-    ->defaultFocusedDate(now()->startOfMonth())
-```
