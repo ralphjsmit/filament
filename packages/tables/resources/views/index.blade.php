@@ -871,8 +871,15 @@
                                                 @if ($isSelectionDisabled)
                                                     disabled
                                                 @elseif ($maxSelectableRecords)
+                                                    data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
                                                     x-bind:disabled="
-                                                        const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+                                                        const recordsInGroupOnPage = getRecordsInGroupOnPage(@js($recordGroupKey))
+
+                                                        if (recordsInGroupOnPage.length && areRecordsSelected(recordsInGroupOnPage)) {
+                                                            return false
+                                                        }
+
+                                                        const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
 
                                                         return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
                                                     "
@@ -890,7 +897,16 @@
 
                                                     return null
                                                 "
-                                                x-on:click="toggleSelectRecordsInGroup(@js($recordGroupKey))"
+                                                @if ($maxSelectableRecords)
+                                                    x-on:click="
+                                                        toggleSelectRecordsInGroup(
+                                                            JSON.parse($el.dataset.groupSelectableRecordKeys),
+                                                            @js($recordGroupKey),
+                                                        )
+                                                    "
+                                                @elseif (! $isSelectionDisabled)
+                                                    x-on:click="toggleSelectGroup(@js($recordGroupKey))"
+                                                @endif
                                                 wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                 wire:loading.attr="disabled"
                                                 wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
@@ -1564,8 +1580,15 @@
                                                                     @if ($isSelectionDisabled)
                                                                         disabled
                                                                     @elseif ($maxSelectableRecords)
+                                                                        data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
                                                                         x-bind:disabled="
-                                                                            const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+                                                                            const recordsInGroupOnPage = getRecordsInGroupOnPage(@js($recordGroupKey))
+
+                                                                            if (recordsInGroupOnPage.length && areRecordsSelected(recordsInGroupOnPage)) {
+                                                                                return false
+                                                                            }
+
+                                                                            const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
 
                                                                             return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
                                                                         "
@@ -1583,7 +1606,16 @@
 
                                                                         return null
                                                                     "
-                                                                    x-on:click="toggleSelectRecordsInGroup(@js($recordGroupKey))"
+                                                                    @if ($maxSelectableRecords)
+                                                                        x-on:click="
+                                                                            toggleSelectRecordsInGroup(
+                                                                                JSON.parse($el.dataset.groupSelectableRecordKeys),
+                                                                                @js($recordGroupKey),
+                                                                            )
+                                                                        "
+                                                                    @elseif (! $isSelectionDisabled)
+                                                                        x-on:click="toggleSelectGroup(@js($recordGroupKey))"
+                                                                    @endif
                                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
@@ -1651,8 +1683,15 @@
                                                                     @if ($isSelectionDisabled)
                                                                         disabled
                                                                     @elseif ($maxSelectableRecords)
+                                                                        data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
                                                                         x-bind:disabled="
-                                                                            const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+                                                                            const recordsInGroupOnPage = getRecordsInGroupOnPage(@js($recordGroupKey))
+
+                                                                            if (recordsInGroupOnPage.length && areRecordsSelected(recordsInGroupOnPage)) {
+                                                                                return false
+                                                                            }
+
+                                                                            const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
 
                                                                             return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
                                                                         "
@@ -1670,7 +1709,16 @@
 
                                                                         return null
                                                                     "
-                                                                    x-on:click="toggleSelectRecordsInGroup(@js($recordGroupKey))"
+                                                                    @if ($maxSelectableRecords)
+                                                                        x-on:click="
+                                                                            toggleSelectRecordsInGroup(
+                                                                                JSON.parse($el.dataset.groupSelectableRecordKeys),
+                                                                                @js($recordGroupKey),
+                                                                            )
+                                                                        "
+                                                                    @elseif (! $isSelectionDisabled)
+                                                                        x-on:click="toggleSelectGroup(@js($recordGroupKey))"
+                                                                    @endif
                                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
