@@ -4,16 +4,27 @@ namespace Filament\Forms\Components\CodeEditor\Enums;
 
 enum Language: string
 {
+    case Cpp = 'cpp';
+
     case Css = 'css';
-    case Html = 'html';
-    case JavaScript = 'javascript';
-    case Json = 'json';
-    case Php = 'php';
-    case Python = 'python';
-    case Markdown = 'markdown';
-    case YAML = 'yaml';
-    case XML = 'xml';
-    case Java = 'java';
-    case CPP = 'cpp';
+
     case Go = 'go';
+
+    case Html = 'html';
+
+    case Java = 'java';
+
+    case JavaScript = 'javascript';
+
+    case Json = 'json';
+
+    case Markdown = 'markdown';
+
+    case Php = 'php';
+
+    case Python = 'python';
+
+    case Xml = 'xml';
+
+    case Yaml = 'yaml';
 }

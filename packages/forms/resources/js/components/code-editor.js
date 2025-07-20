@@ -1,21 +1,20 @@
-import { EditorView, basicSetup } from 'codemirror-v6'
-import { indentWithTab } from '@codemirror/commands'
+import { cpp } from '@codemirror/lang-cpp'
 import { css } from '@codemirror/lang-css'
+import { EditorState, Compartment } from '@codemirror/state'
+import { EditorView, basicSetup } from 'codemirror-v6'
+import { go } from '@codemirror/lang-go'
 import { html } from '@codemirror/lang-html'
+import { indentWithTab } from '@codemirror/commands'
+import { java } from '@codemirror/lang-java'
 import { javascript } from '@codemirror/lang-javascript'
 import { json } from '@codemirror/lang-json'
-import { php } from '@codemirror/lang-php'
-import { cpp } from '@codemirror/lang-cpp'
-import { go } from '@codemirror/lang-go'
-import { java } from '@codemirror/lang-java'
+import { keymap } from '@codemirror/view'
 import { markdown } from '@codemirror/lang-markdown'
+import { oneDark } from '@codemirror/theme-one-dark'
+import { php } from '@codemirror/lang-php'
 import { python } from '@codemirror/lang-python'
 import { xml } from '@codemirror/lang-xml'
 import { yaml } from '@codemirror/lang-yaml'
-import { EditorState, Compartment } from '@codemirror/state'
-import { keymap } from '@codemirror/view'
-import { oneDark } from '@codemirror/theme-one-dark'
-
 export default function codeEditorFormComponent({
     isDisabled,
     language,
@@ -97,18 +96,18 @@ export default function codeEditorFormComponent({
             }
 
             const extensions = {
+                cpp,
                 css,
+                go,
                 html,
+                java,
                 javascript,
                 json,
+                markdown,
                 php,
                 python,
-                go,
                 xml,
                 yaml,
-                cpp,
-                markdown,
-                java,
             }
 
             return extensions[language]?.() || null
