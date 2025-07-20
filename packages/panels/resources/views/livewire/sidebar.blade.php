@@ -35,8 +35,8 @@
             </header>
         </div>
 
-        <nav 
-            class="fi-sidebar-nav fi-scrollbar"
+        <nav
+            class="fi-sidebar-nav"
             data-overlayscrollbars-initialize
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
 
