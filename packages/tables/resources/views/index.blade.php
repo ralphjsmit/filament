@@ -868,10 +868,10 @@
                                             <input
                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                 type="checkbox"
+                                                data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
                                                 @if ($isSelectionDisabled)
                                                     disabled
                                                 @else
-                                                    data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
                                                     x-on:click="toggleSelectRecords(JSON.parse($el.dataset.groupSelectableRecordKeys))"
                                                     @if ($maxSelectableRecords)
                                                         x-bind:disabled="
@@ -880,20 +880,20 @@
                                                             return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
                                                         "
                                                     @endif
-                                                    x-bind:checked="
-                                                        const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
-
-                                                        if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
-                                                            $el.checked = true
-
-                                                            return 'checked'
-                                                        }
-
-                                                        $el.checked = false
-
-                                                        return null
-                                                    "
                                                 @endif
+                                                x-bind:checked="
+                                                    const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
+
+                                                    if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
+                                                        $el.checked = true
+
+                                                        return 'checked'
+                                                    }
+
+                                                    $el.checked = false
+
+                                                    return null
+                                                "
                                                 wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                 wire:loading.attr="disabled"
                                                 wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
@@ -1564,10 +1564,10 @@
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"
+                                                                    data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
                                                                     @if ($isSelectionDisabled)
                                                                         disabled
                                                                     @else
-                                                                        data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
                                                                         x-on:click="toggleSelectRecords(JSON.parse($el.dataset.groupSelectableRecordKeys))"
                                                                         @if ($maxSelectableRecords)
                                                                             x-bind:disabled="
@@ -1576,20 +1576,20 @@
                                                                                 return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
                                                                             "
                                                                         @endif
-                                                                        x-bind:checked="
-                                                                            const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
-
-                                                                            if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
-                                                                                $el.checked = true
-
-                                                                                return 'checked'
-                                                                            }
-
-                                                                            $el.checked = false
-
-                                                                            return null
-                                                                        "
                                                                     @endif
+                                                                    x-bind:checked="
+                                                                        const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
+
+                                                                        if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
+                                                                            $el.checked = true
+
+                                                                            return 'checked'
+                                                                        }
+
+                                                                        $el.checked = false
+
+                                                                        return null
+                                                                    "
                                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
@@ -1654,10 +1654,10 @@
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"
+                                                                    data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
                                                                     @if ($isSelectionDisabled)
                                                                         disabled
                                                                     @else
-                                                                        data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
                                                                         x-on:click="toggleSelectRecords(JSON.parse($el.dataset.groupSelectableRecordKeys))"
                                                                         @if ($maxSelectableRecords)
                                                                             x-bind:disabled="
@@ -1666,20 +1666,20 @@
                                                                                 return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
                                                                             "
                                                                         @endif
-                                                                        x-bind:checked="
-                                                                            const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
-
-                                                                            if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
-                                                                                $el.checked = true
-
-                                                                                return 'checked'
-                                                                            }
-
-                                                                            $el.checked = false
-
-                                                                            return null
-                                                                        "
                                                                     @endif
+                                                                    x-bind:checked="
+                                                                        const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
+
+                                                                        if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
+                                                                            $el.checked = true
+
+                                                                            return 'checked'
+                                                                        }
+
+                                                                        $el.checked = false
+
+                                                                        return null
+                                                                    "
                                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
