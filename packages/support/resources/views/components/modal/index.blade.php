@@ -1,7 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\Width;
-    use Filament\Support\Facades\FilamentView;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
@@ -178,7 +177,7 @@
                         <x-filament::icon-button
                             color="gray"
                             :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
-                            icon-alias="modal.close-button"
+                            :icon-alias="\Filament\Support\View\SupportIconAlias::MODAL_CLOSE_BUTTON"
                             icon-size="lg"
                             :label="__('filament::components/modal.actions.close.label')"
                             tabindex="-1"

@@ -386,6 +386,7 @@ return [
     ],
 
     'rich_editor' => [
+
         'actions' => [
 
             'attach_files' => [
@@ -480,8 +481,10 @@ return [
             'bold' => 'Tučně',
             'bullet_list' => 'Seznam s odrážkami',
             'clear_formatting' => 'Vymazat formátování',
+            'code' => 'Kód',
             'code_block' => 'Blok kódu',
             'custom_blocks' => 'Bloky',
+            'details' => 'Detaily',
             'h1' => 'Nadpis 1',
             'h2' => 'Nadpis 2',
             'h3' => 'Nadpis 3',

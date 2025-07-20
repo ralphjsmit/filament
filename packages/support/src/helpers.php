@@ -133,6 +133,10 @@ if (! function_exists('Filament\Support\generate_href_html')) {
             $html .= ' target="_blank"';
         } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode($url))) {
             $html .= ' wire:navigate';
+
+            if (FilamentView::hasSpaPrefetching()) {
+                $html .= '.hover';
+            }
         }
 
         return new HtmlString($html);
@@ -225,15 +229,30 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     {
         $driverName = $databaseConnection->getDriverName();
 
-        if (Str::lower($column) !== $column) {
-            $column = match ($driverName) {
-                'pgsql' => (string) str($column)->wrap('"'),
-                default => $column,
-            };
-        }
-
         $column = match ($driverName) {
-            'pgsql' => "{$column}::text",
+            'pgsql' => (
+                str($column)->contains('->')
+                    ? (
+                        // Handle `table.field` part with double quotes
+                        str($column)
+                            ->before('->')
+                            ->explode('.')
+                            ->map(fn (string $part): string => (string) str($part)->wrap('"'))
+                            ->implode('.')
+                    ) . collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
+                        ->map(function ($segment, $index) use ($column): string {
+                            $totalParts = substr_count($column, '->');
+
+                            return ($index === ($totalParts - 1))
+                                ? "->>'{$segment}'"
+                                : "->'{$segment}'";
+                        })
+                        ->implode('')
+                    : str($column)
+                        ->explode('.')
+                        ->map(fn (string $part): string => (string) str($part)->wrap('"'))
+                        ->implode('.')
+            ) . '::text',
             default => $column,
         };
 
