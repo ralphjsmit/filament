@@ -77,39 +77,12 @@ export default ({
         this.selectRecords(keys)
     },
 
-    async toggleSelectGroup(group) {
-        this.isLoading = true
-
-        this.toggleSelectRecordsInGroup(
-            await $wire.getGroupedSelectableTableRecordKeys(group),
-            group,
-        )
-
-        this.isLoading = false
-    },
-
-    toggleSelectRecordsInGroup(keys, group) {
-        if (this.areRecordsSelected(this.getRecordsInGroupOnPage(group))) {
+    toggleSelectRecords(keys) {
+        if (this.areRecordsSelected(keys)) {
             this.deselectRecords(keys)
         } else {
             this.selectRecords(keys)
         }
-    },
-
-    getRecordsInGroupOnPage(group) {
-        const keys = []
-
-        for (let checkbox of this.$root?.getElementsByClassName(
-            'fi-ta-record-checkbox',
-        ) ?? []) {
-            if (checkbox.dataset.group !== group) {
-                continue
-            }
-
-            keys.push(checkbox.value)
-        }
-
-        return keys
     },
 
     getSelectedRecordsCount() {
