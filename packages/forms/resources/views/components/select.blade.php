@@ -129,6 +129,7 @@
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
+                            canOptionLabelsWrap: @js($canOptionLabelsWrap),
                             canSelectPlaceholder: @js($canSelectPlaceholder),
                             isHtmlAllowed: @js($isHtmlAllowed),
                             getOptionLabelUsing: async () => {
@@ -160,7 +161,6 @@
                             isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple),
                             isSearchable: @js($isSearchable),
-                            canOptionLabelsWrap: @js($canOptionLabelsWrap),
                             livewireId: @js($this->getId()),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),

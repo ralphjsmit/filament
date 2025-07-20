@@ -624,10 +624,10 @@ When using the JavaScript select, labels that exceed the width of the select ele
 use Filament\Forms\Components\Select;
 
 Select::make('truncate')
-    ->canOptionLabelsWrap(false)
+    ->wrapOptionLabels(false)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `canOptionLabelsWrap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `wrapOptionLabels()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disable placeholder selection
 

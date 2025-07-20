@@ -25,16 +25,8 @@
     }
 
     & .fi-fo-select-value-ctn {
-        @apply flex w-full items-center;
-
-        &.fi-fo-select-labels-wrap {
-            @apply text-wrap;
-            word-break: break-word;
-        }
-
-        &:not(.fi-fo-select-labels-wrap) > span {
-            @apply truncate;
-        }
+        @apply flex w-full items-center text-wrap;
+        word-break: break-word;
     }
 
     & .fi-fo-select-value-badges-ctn {
@@ -66,16 +58,8 @@
     }
 
     & .fi-fo-select-option {
-        @apply min-w-px;
-
-        &.fi-fo-select-labels-wrap {
-            @apply text-wrap;
-            word-break: break-word;
-        }
-
-        &:not(.fi-fo-select-labels-wrap) > span {
-            @apply truncate;
-        }
+        @apply min-w-px text-wrap;
+        word-break: break-word;
     }
 
     & .fi-disabled {
@@ -84,5 +68,15 @@
 
     & .fi-fo-select-message {
         @apply px-3 py-2 text-sm text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-fo-select-ctn.fi-fo-select-ctn-option-labels-not-wrapped {
+        & .fi-fo-select-value-ctn > span {
+            @apply truncate text-nowrap break-normal;
+        }
+
+        & .fi-fo-select-option > span {
+            @apply truncate;
+        }
     }
 }

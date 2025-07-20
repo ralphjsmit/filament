@@ -16,6 +16,7 @@ function filled(value) {
 }
 
 export default function selectFormComponent({
+    canOptionLabelsWrap,
     canSelectPlaceholder,
     isHtmlAllowed,
     getOptionLabelUsing,
@@ -29,7 +30,6 @@ export default function selectFormComponent({
     isDisabled,
     isMultiple,
     isSearchable,
-    canOptionLabelsWrap,
     hasDynamicOptions,
     hasDynamicSearchResults,
     livewireId,
@@ -58,6 +58,7 @@ export default function selectFormComponent({
                 options,
                 placeholder,
                 state: this.state,
+                canOptionLabelsWrap,
                 canSelectPlaceholder,
                 initialOptionLabel,
                 initialOptionLabels,
@@ -67,7 +68,6 @@ export default function selectFormComponent({
                 isDisabled,
                 isMultiple,
                 isSearchable,
-                canOptionLabelsWrap,
                 getOptionLabelUsing,
                 getOptionLabelsUsing,
                 getOptionsUsing,
@@ -115,6 +115,7 @@ class CustomSelect {
         options,
         placeholder,
         state,
+        canOptionLabelsWrap = true,
         canSelectPlaceholder = true,
         initialOptionLabel = null,
         initialOptionLabels = null,
@@ -124,7 +125,6 @@ class CustomSelect {
         isDisabled = false,
         isMultiple = false,
         isSearchable = false,
-        canOptionLabelsWrap = true,
         getOptionLabelUsing = null,
         getOptionLabelsUsing = null,
         getOptionsUsing = null,
@@ -150,6 +150,7 @@ class CustomSelect {
         this.originalOptions = JSON.parse(JSON.stringify(options)) // Keep a copy of original options
         this.placeholder = placeholder
         this.state = state
+        this.canOptionLabelsWrap = canOptionLabelsWrap
         this.canSelectPlaceholder = canSelectPlaceholder
         this.initialOptionLabel = initialOptionLabel
         this.initialOptionLabels = initialOptionLabels
@@ -159,7 +160,6 @@ class CustomSelect {
         this.isDisabled = isDisabled
         this.isMultiple = isMultiple
         this.isSearchable = isSearchable
-        this.canOptionLabelsWrap = canOptionLabelsWrap
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
         this.getOptionsUsing = getOptionsUsing
@@ -225,6 +225,13 @@ class CustomSelect {
         // Create the main container
         this.container = document.createElement('div')
         this.container.className = 'fi-fo-select-ctn'
+
+        if (!this.canOptionLabelsWrap) {
+            this.container.classList.add(
+                'fi-fo-select-ctn-option-labels-not-wrapped',
+            )
+        }
+
         this.container.setAttribute('aria-haspopup', 'listbox')
 
         // Create the button that toggles the dropdown
@@ -236,10 +243,6 @@ class CustomSelect {
         // Create the selected value display
         this.selectedDisplay = document.createElement('div')
         this.selectedDisplay.className = 'fi-fo-select-value-ctn'
-
-        if (this.canOptionLabelsWrap) {
-            this.selectedDisplay.classList.add('fi-fo-select-labels-wrap')
-        }
 
         // Update the selected display based on current state
         this.updateSelectedDisplay()
@@ -551,10 +554,6 @@ class CustomSelect {
             option.classList.add('fi-disabled')
         }
 
-        if (this.canOptionLabelsWrap) {
-            option.classList.add('fi-fo-select-labels-wrap')
-        }
-
         // Generate a unique ID for the option
         const optionId = `fi-fo-select-option-${Math.random().toString(36).substring(2, 11)}`
         option.id = optionId
@@ -588,13 +587,15 @@ class CustomSelect {
             option.classList.add('fi-selected')
         }
 
-        // Handle HTML content if allowed
         const labelSpan = document.createElement('span')
+
+        // Handle HTML content if allowed
         if (this.isHtmlAllowed) {
             labelSpan.innerHTML = optionLabel
         } else {
-            labelSpan.appendChild(document.createTextNode(optionLabel))
+            labelSpan.textContent = optionLabel
         }
+
         option.appendChild(labelSpan)
 
         // Add click event only if not disabled
@@ -633,10 +634,10 @@ class CustomSelect {
             // If no items selected, show placeholder
             if (!Array.isArray(this.state) || this.state.length === 0) {
                 const placeholderSpan = document.createElement('span')
-                placeholderSpan.appendChild(
-                    document.createTextNode(this.placeholder),
-                )
+                placeholderSpan.textContent = this.placeholder
+
                 this.selectedDisplay.appendChild(placeholderSpan)
+
                 return
             }
 
@@ -658,10 +659,10 @@ class CustomSelect {
         // If no value selected, show placeholder
         if (this.state === null || this.state === '') {
             const placeholderSpan = document.createElement('span')
-            placeholderSpan.appendChild(
-                document.createTextNode(this.placeholder),
-            )
+            placeholderSpan.textContent = this.placeholder
+
             this.selectedDisplay.appendChild(placeholderSpan)
+
             return
         }
 
@@ -781,6 +782,10 @@ class CustomSelect {
         // Create an element for the label text
         const labelElement = document.createElement('span')
         labelElement.className = 'fi-badge-label'
+
+        if (this.canOptionLabelsWrap) {
+            labelElement.classList.add('fi-wrapped')
+        }
 
         if (this.isHtmlAllowed) {
             labelElement.innerHTML = label
