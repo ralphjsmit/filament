@@ -80,7 +80,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
         >
             <input type="hidden" value="<?= $state ? 1 : 0 ?>" x-ref="serverState" />
 
-            <button
+            <div
                 x-bind:aria-checked="state?.toString()"
                 x-on:click="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-bind:class="state ? '<?= Arr::toCssClasses([
@@ -111,7 +111,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                         <?= generate_icon_html($onIcon, size: IconSize::ExtraSmall)?->toHtml() ?>
                     </div>
                 </div>
-            </button>
+            </div>
 
             <?php if ($state) { ?>
                 <div
