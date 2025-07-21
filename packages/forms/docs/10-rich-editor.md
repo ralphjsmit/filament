@@ -37,9 +37,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $casts = [
-        'content' => 'array',
-    ];
+   protected function casts(): array
+    {
+        return [
+            'content' => 'array',
+        ];
 
     // ...
 }

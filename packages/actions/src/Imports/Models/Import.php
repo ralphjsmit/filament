@@ -28,12 +28,15 @@ class Import extends Model
 {
     use Prunable;
 
-    protected $casts = [
-        'completed_at' => 'timestamp',
-        'processed_rows' => 'integer',
-        'total_rows' => 'integer',
-        'successful_rows' => 'integer',
-    ];
+   protected function casts(): array
+    {
+        return [
+            'completed_at' => 'timestamp',
+            'processed_rows' => 'integer',
+            'total_rows' => 'integer',
+            'successful_rows' => 'integer',
+        ];
+    }
 
     protected $guarded = [];
 

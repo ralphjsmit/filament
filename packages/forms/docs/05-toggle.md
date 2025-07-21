@@ -23,9 +23,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-    protected $casts = [
-        'is_admin' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_admin' => 'boolean',
+        ];
+    }
 
     // ...
 }

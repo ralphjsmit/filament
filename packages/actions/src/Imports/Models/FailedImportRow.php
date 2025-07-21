@@ -16,9 +16,12 @@ class FailedImportRow extends Model
 {
     use Prunable;
 
-    protected $casts = [
-        'data' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'data' => 'array',
+        ];
+    }
 
     protected $guarded = [];
 

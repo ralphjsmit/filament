@@ -75,9 +75,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Message extends Model
 {
-    protected $casts = [
-        'attachments' => 'array',
-    ];
+   protected function casts(): array
+    { 
+        return [
+            'attachments' => 'array',
+        ];
 
     // ...
 }
