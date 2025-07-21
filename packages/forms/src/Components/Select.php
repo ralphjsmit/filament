@@ -7,6 +7,7 @@ use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
@@ -123,6 +124,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected int | Closure $optionsLimit = 50;
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
+
+    protected bool | Closure $canOptionLabelsWrap = true;
 
     protected function setUp(): void
     {
@@ -274,7 +277,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $action->halt();
             })
             ->color('gray')
-            ->icon(FilamentIcon::resolve('forms::components.select.actions.create-option') ?? Heroicon::Plus)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_SELECT_ACTIONS_CREATE_OPTION) ?? Heroicon::Plus)
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
@@ -383,10 +386,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
-        if (blank($this->getState())) {
-            return null;
-        }
-
         if (! $this->hasEditOptionActionFormSchema()) {
             return null;
         }
@@ -413,10 +412,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $component->refreshSelectedOptionLabel();
             })
             ->color('gray')
-            ->icon(FilamentIcon::resolve('forms::components.select.actions.edit-option') ?? Heroicon::PencilSquare)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_SELECT_ACTIONS_EDIT_OPTION) ?? Heroicon::PencilSquare)
             ->iconButton()
             ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
-            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
+            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'))
+            ->visible(fn (): bool => filled($this->getState()));
 
         if ($this->modifyManageOptionActionsUsing) {
             $action = $this->evaluate($this->modifyManageOptionActionsUsing, [
@@ -434,9 +434,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return array<string, mixed>
+     * @return ?array<string, mixed>
      */
-    public function getEditOptionActionFormData(): array
+    public function getEditOptionActionFormData(): ?array
     {
         return $this->evaluate($this->fillEditOptionActionFormUsing);
     }
@@ -1353,6 +1353,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function isSearchForcedCaseInsensitive(): ?bool
     {
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
+    }
+
+    public function wrapOptionLabels(bool | Closure $condition = true): static
+    {
+        $this->canOptionLabelsWrap = $condition;
+
+        return $this;
+    }
+
+    public function canOptionLabelsWrap(): bool
+    {
+        return (bool) $this->evaluate($this->canOptionLabelsWrap);
     }
 
     public function hydrateDefaultState(?array &$hydratedDefaultState): void

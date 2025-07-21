@@ -23,7 +23,7 @@
 
     $activeFiltersCount = $getActiveFiltersCount();
     $isSelectionDisabled = $isSelectionDisabled();
-    $canSelectMultipleRecords = $canSelectMultipleRecords();
+    $maxSelectableRecords = $getMaxSelectableRecords();
     $columns = $getVisibleColumns();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $columnsLayout = $getColumnsLayout();
@@ -109,9 +109,9 @@
         wire:init="loadTable"
     @endif
     x-data="filamentTable({
-                canSelectMultipleRecords: @js($canSelectMultipleRecords),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
+                maxSelectableRecords: @js($maxSelectableRecords),
                 $wire,
             })"
     {{
@@ -527,7 +527,7 @@
 
                 {{ __('filament-tables::table.reorder_indicator') }}
             </div>
-        @elseif ($isSelectionEnabled && $canSelectMultipleRecords && $isLoaded)
+        @elseif ($isSelectionEnabled && ($maxSelectableRecords !== 1) && $isLoaded)
             <div
                 x-cloak
                 x-bind:hidden="! getSelectedRecordsCount()"
@@ -560,7 +560,7 @@
                                 color="primary"
                                 tag="button"
                                 x-on:click="selectAllRecords"
-                                :x-show="$selectsCurrentPageOnly ? '! areRecordsSelected(getRecordsOnPage())' : $allSelectableRecordsCount . ' !== getSelectedRecordsCount()'"
+                                :x-show="'canSelectAllRecords(' . \Illuminate\Support\Js::from($selectsCurrentPageOnly) . ')'"
                                 {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
                                 :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
                             >
@@ -628,7 +628,7 @@
                         wire:target="removeTableFilters,removeTableFilter"
                         class="fi-icon-btn fi-size-sm"
                     >
-                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'tables::filters.remove-all-button', size: \Filament\Support\Enums\IconSize::Small) }}
+                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Tables\View\TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
                     </button>
                 @endif
             </div>
@@ -640,6 +640,7 @@
                     wire:poll.{{ $pollingInterval }}
                 @endif
                 class="fi-ta-content-ctn"
+                data-overlayscrollbars-initialize
             >
                 @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
                     @if (! $isReordering)
@@ -652,11 +653,19 @@
 
                         @if ($isSelectionEnabled || count($sortableColumns))
                             <div class="fi-ta-content-header">
-                                @if ($isSelectionEnabled && $canSelectMultipleRecords && (! $isReordering))
+                                @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering))
                                     <input
                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                         type="checkbox"
-                                        @disabled($isSelectionDisabled)
+                                        @if ($isSelectionDisabled)
+                                            disabled
+                                        @elseif ($maxSelectableRecords)
+                                            x-bind:disabled="
+                                                const recordsOnPage = getRecordsOnPage()
+
+                                                return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
+                                            "
+                                        @endif
                                         x-bind:checked="
                                             const recordsOnPage = getRecordsOnPage()
 
@@ -855,13 +864,25 @@
                                             'fi-collapsible' => $isRecordGroupCollapsible,
                                         ])
                                     >
-                                        @if ($isSelectionEnabled && $canSelectMultipleRecords)
+                                        @if ($isSelectionEnabled && ($maxSelectableRecords !== 1))
                                             <input
                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                 type="checkbox"
-                                                @disabled($isSelectionDisabled)
+                                                data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
+                                                @if ($isSelectionDisabled)
+                                                    disabled
+                                                @else
+                                                    x-on:click="toggleSelectRecords(JSON.parse($el.dataset.groupSelectableRecordKeys))"
+                                                    @if ($maxSelectableRecords)
+                                                        x-bind:disabled="
+                                                            const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
+
+                                                            return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
+                                                        "
+                                                    @endif
+                                                @endif
                                                 x-bind:checked="
-                                                    const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+                                                    const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
 
                                                     if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
                                                         $el.checked = true
@@ -873,7 +894,6 @@
 
                                                     return null
                                                 "
-                                                x-on:click="toggleSelectRecordsInGroup(@js($recordGroupKey))"
                                                 wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                 wire:loading.attr="disabled"
                                                 wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
@@ -908,7 +928,7 @@
                                                 type="button"
                                                 class="fi-icon-btn fi-size-sm"
                                             >
-                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \Filament\Support\Enums\IconSize::Small) }}
+                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\Tables\View\TablesIconAlias::GROUPING_COLLAPSE_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
                                             </button>
                                         @endif
                                     </div>
@@ -949,13 +969,17 @@
                                             class="fi-ta-reorder-handle fi-icon-btn"
                                             type="button"
                                         >
-                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::reorder.handle') }}
+                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::REORDER_HANDLE) }}
                                         </button>
                                     @elseif ($isSelectionEnabled && $isRecordSelectable($record))
                                         <input
                                             aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                             type="checkbox"
-                                            @disabled($isSelectionDisabled)
+                                            @if ($isSelectionDisabled)
+                                                disabled
+                                            @elseif ($maxSelectableRecords && ($maxSelectableRecords !== 1))
+                                                x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
+                                            @endif
                                             value="{{ $recordKey }}"
                                             x-on:click="toggleSelectedRecord(@js($recordKey))"
                                             x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
@@ -1060,7 +1084,7 @@
                                             x-on:click="isCollapsed = ! isCollapsed"
                                             class="fi-ta-record-collapse-btn fi-icon-btn"
                                         >
-                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: 'tables::columns.collapse-button') }}
+                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: \Filament\Tables\View\TablesIconAlias::COLUMNS_COLLAPSE_BUTTON) }}
                                         </button>
                                     @endif
                                 </div>
@@ -1150,7 +1174,7 @@
                                                     {{
                                                         $columnGroup->getExtraHeaderAttributeBag()->class([
                                                             'fi-ta-header-group-cell',
-                                                            'fi-wrapped' => $columnGroup->isHeaderWrapped(),
+                                                            'fi-wrapped' => $columnGroup->canHeaderWrap(),
                                                             ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
                                                             (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
                                                             (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
@@ -1197,11 +1221,19 @@
                                             <th
                                                 class="fi-ta-cell fi-ta-selection-cell"
                                             >
-                                                @if ($canSelectMultipleRecords)
+                                                @if ($maxSelectableRecords !== 1)
                                                     <input
                                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                         type="checkbox"
-                                                        @disabled($isSelectionDisabled)
+                                                        @if ($isSelectionDisabled)
+                                                            disabled
+                                                        @elseif ($maxSelectableRecords)
+                                                            x-bind:disabled="
+                                                                const recordsOnPage = getRecordsOnPage()
+
+                                                                return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
+                                                            "
+                                                        @endif
                                                         x-bind:checked="
                                                             const recordsOnPage = getRecordsOnPage()
 
@@ -1262,7 +1294,7 @@
                                                     'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
                                                     'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
                                                     'fi-grouped' => $column->getGroup(),
-                                                    'fi-wrapped' => $column->isHeaderWrapped(),
+                                                    'fi-wrapped' => $column->canHeaderWrap(),
                                                     'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
                                                     ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
                                                     (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
@@ -1288,9 +1320,9 @@
 
                                                 {{
                                                     \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
-                                                        $isColumnActivelySorted && ($sortDirection === 'asc') => 'tables::header-cell.sort-asc-button',
-                                                        $isColumnActivelySorted && ($sortDirection === 'desc') => 'tables::header-cell.sort-desc-button',
-                                                        default => 'tables::header-cell.sort-button',
+                                                        $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
+                                                        $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
+                                                        default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
                                                     })
                                                 }}
                                             </span>
@@ -1320,11 +1352,19 @@
                                         <th
                                             class="fi-ta-cell fi-ta-selection-cell"
                                         >
-                                            @if ($canSelectMultipleRecords)
+                                            @if ($maxSelectableRecords !== 1)
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                     type="checkbox"
-                                                    @disabled($isSelectionDisabled)
+                                                    @if ($isSelectionDisabled)
+                                                        disabled
+                                                    @elseif ($maxSelectableRecords)
+                                                        x-bind:disabled="
+                                                            const recordsOnPage = getRecordsOnPage()
+
+                                                            return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
+                                                        "
+                                                    @endif
                                                     x-bind:checked="
                                                         const recordsOnPage = getRecordsOnPage()
 
@@ -1520,13 +1560,25 @@
                                                         <td
                                                             class="fi-ta-cell fi-ta-group-selection-cell"
                                                         >
-                                                            @if ($canSelectMultipleRecords)
+                                                            @if ($maxSelectableRecords !== 1)
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"
-                                                                    @disabled($isSelectionDisabled)
+                                                                    data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
+                                                                    @if ($isSelectionDisabled)
+                                                                        disabled
+                                                                    @else
+                                                                        x-on:click="toggleSelectRecords(JSON.parse($el.dataset.groupSelectableRecordKeys))"
+                                                                        @if ($maxSelectableRecords)
+                                                                            x-bind:disabled="
+                                                                                const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
+
+                                                                                return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
+                                                                            "
+                                                                        @endif
+                                                                    @endif
                                                                     x-bind:checked="
-                                                                        const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+                                                                        const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
 
                                                                         if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
                                                                             $el.checked = true
@@ -1538,7 +1590,6 @@
 
                                                                         return null
                                                                     "
-                                                                    x-on:click="toggleSelectRecordsInGroup(@js($recordGroupKey))"
                                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
@@ -1589,7 +1640,7 @@
                                                                     type="button"
                                                                     class="fi-icon-btn fi-size-sm"
                                                                 >
-                                                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \Filament\Support\Enums\IconSize::Small) }}
+                                                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\Tables\View\TablesIconAlias::GROUPING_COLLAPSE_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
                                                                 </button>
                                                             @endif
                                                         </div>
@@ -1599,13 +1650,25 @@
                                                         <td
                                                             class="fi-ta-cell fi-ta-group-selection-cell"
                                                         >
-                                                            @if ($canSelectMultipleRecords)
+                                                            @if ($maxSelectableRecords !== 1)
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                                     type="checkbox"
-                                                                    @disabled($isSelectionDisabled)
+                                                                    data-group-selectable-record-keys="{{ json_encode($this->getGroupedSelectableTableRecordKeys($recordGroupKey)) }}"
+                                                                    @if ($isSelectionDisabled)
+                                                                        disabled
+                                                                    @else
+                                                                        x-on:click="toggleSelectRecords(JSON.parse($el.dataset.groupSelectableRecordKeys))"
+                                                                        @if ($maxSelectableRecords)
+                                                                            x-bind:disabled="
+                                                                                const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
+
+                                                                                return recordsInGroup.length && ! areRecordsToggleable(recordsInGroup)
+                                                                            "
+                                                                        @endif
+                                                                    @endif
                                                                     x-bind:checked="
-                                                                        const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+                                                                        const recordsInGroup = JSON.parse($el.dataset.groupSelectableRecordKeys)
 
                                                                         if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
                                                                             $el.checked = true
@@ -1617,7 +1680,6 @@
 
                                                                         return null
                                                                     "
-                                                                    x-on:click="toggleSelectRecordsInGroup(@js($recordGroupKey))"
                                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
@@ -1656,7 +1718,7 @@
                                                             class="fi-ta-reorder-handle fi-icon-btn"
                                                             type="button"
                                                         >
-                                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::reorder.handle') }}
+                                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::REORDER_HANDLE) }}
                                                         </button>
                                                     </td>
                                                 @endif
@@ -1690,7 +1752,11 @@
                                                             <input
                                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                 type="checkbox"
-                                                                @disabled($isSelectionDisabled)
+                                                                @if ($isSelectionDisabled)
+                                                                    disabled
+                                                                @elseif ($maxSelectableRecords && ($maxSelectableRecords !== 1))
+                                                                    x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
+                                                                @endif
                                                                 value="{{ $recordKey }}"
                                                                 x-on:click="toggleSelectedRecord(@js($recordKey))"
                                                                 x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
@@ -1818,7 +1884,11 @@
                                                             <input
                                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                 type="checkbox"
-                                                                @disabled($isSelectionDisabled)
+                                                                @if ($isSelectionDisabled)
+                                                                    disabled
+                                                                @elseif ($maxSelectableRecords && ($maxSelectableRecords !== 1))
+                                                                    x-bind:disabled="! areRecordsToggleable([@js($recordKey)])"
+                                                                @endif
                                                                 value="{{ $recordKey }}"
                                                                 x-on:click="toggleSelectedRecord(@js($recordKey))"
                                                                 x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"

@@ -57,7 +57,7 @@
             }}
         >
             <template
-                x-for="(column, index) in columns"
+                x-for="(column, index) in columns.filter((column) => ! column.isHidden)"
                 x-bind:key="(column.type === 'group' ? 'group::' : 'column::') + column.name + '_' + index"
             >
                 <div
@@ -91,7 +91,7 @@
                                         class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                         type="button"
                                     >
-                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
+                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::REORDER_HANDLE) }}
                                     </button>
                                 @endif
                             </div>
@@ -104,7 +104,7 @@
                                 class="fi-ta-col-manager-group-items"
                             >
                                 <template
-                                    x-for="(groupColumn, index) in column.columns"
+                                    x-for="(groupColumn, index) in column.columns.filter((column) => ! column.isHidden)"
                                     x-bind:key="'column::' + groupColumn.name + '_' + index"
                                 >
                                     <div
@@ -139,7 +139,7 @@
                                                     class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                                     type="button"
                                                 >
-                                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
+                                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::REORDER_HANDLE) }}
                                                 </button>
                                             @endif
                                         </div>
@@ -172,7 +172,7 @@
                                     class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                     type="button"
                                 >
-                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
+                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::REORDER_HANDLE) }}
                                 </button>
                             @endif
                         </div>
