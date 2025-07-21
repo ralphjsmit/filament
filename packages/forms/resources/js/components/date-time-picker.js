@@ -392,7 +392,7 @@ export default function dateTimePickerFormComponent({
             return date
         },
 
-        getDefaultFocusedDate () {
+        getDefaultFocusedDate() {
             if (this.defaultFocusedDate === null) {
                 return null
             }
