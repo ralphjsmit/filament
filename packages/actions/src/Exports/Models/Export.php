@@ -27,7 +27,7 @@ class Export extends Model
 {
     use Prunable;
 
-   protected function casts(): array
+    protected function casts(): array
     {
         return [
             'completed_at' => 'timestamp',
