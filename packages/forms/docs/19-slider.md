@@ -139,9 +139,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
+    //Laravel 10
     protected $casts = [
         'slider' => 'array',
     ];
+    //Laravel 11 or later
+    protected function casts(): array
+    {
+        return [
+            'slider' => array,
+        ];
+    }
 
     // ...
 }
