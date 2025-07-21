@@ -8,6 +8,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Filament\Forms\Components\Select;
 
 use function Filament\Tests\livewire;
 
@@ -140,6 +141,26 @@ it('can remove items from a repeater', function () {
     $undoRepeaterFake();
 });
 
+it('can use enum as select options with disableOptionsWhenSelectedInSiblingRepeaterItems', function () {
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(TestComponentWithEnumSelectRepeater::class)
+        ->fillForm([
+            'alternatives' => [
+                ['letter' => TestLetterEnum::A],
+                ['letter' => TestLetterEnum::B],
+            ],
+        ])
+        ->assertFormSet([
+            'alternatives' => [
+                ['letter' => TestLetterEnum::A],
+                ['letter' => TestLetterEnum::B],
+            ],
+        ]);
+
+    $undoRepeaterFake();
+});
+
 class TestComponentWithRepeater extends Livewire
 {
     public function form(Form $form): Form
@@ -177,4 +198,33 @@ class TestComponentWithRepeater extends Livewire
     {
         return view('forms.fixtures.form');
     }
+}
+
+class TestComponentWithEnumSelectRepeater extends Livewire
+{
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Repeater::make('alternatives')
+                    ->schema([
+                        Select::make('letter')
+                            ->options(TestLetterEnum::class)
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('forms.fixtures.form');
+    }
+}
+
+enum TestLetterEnum: string
+{
+    case A = 'A';
+    case B = 'B';
+    case C = 'C';
 }

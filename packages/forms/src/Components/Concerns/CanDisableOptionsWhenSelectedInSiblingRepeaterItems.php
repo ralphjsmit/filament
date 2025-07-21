@@ -27,7 +27,13 @@ trait CanDisableOptionsWhenSelectedInSiblingRepeaterItems
                         ->after('.'),
                 )
                 ->flatten()
-                ->diff(Arr::wrap($state))
+                ->map(function ($siblingItemState) {
+                    if ($siblingItemState instanceof \UnitEnum) {
+                        return property_exists($siblingItemState, 'value') ? $siblingItemState->value : $siblingItemState->name;
+                    }
+                    return $siblingItemState;
+                })
+                ->diff(Arr::wrap($state instanceof \UnitEnum ? (property_exists($state, 'value') ? $state->value : $state->name) : $state))
                 ->filter(fn (mixed $siblingItemState): bool => filled($siblingItemState))
                 ->contains($value);
         });
