@@ -147,7 +147,7 @@ class Post extends Model
     protected function casts(): array
     {
         return [
-            'slider' => array,
+            'slider' => 'array',
         ];
     }
 
