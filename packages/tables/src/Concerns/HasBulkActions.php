@@ -103,7 +103,7 @@ trait HasBulkActions
 
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords()->pluck($query->getModel()->getKeyName()) :
-                $query->pluck($query->getModel()->getQualifiedKeyName());
+                $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
 
             /** @phpstan-ignore-next-line */
             return $records->map(fn ($key): string => (string) $key)->all();
@@ -231,7 +231,7 @@ trait HasBulkActions
         }
 
         if (! $shouldFetchSelectedRecords) {
-            return $this->cachedSelectedTableRecords = $query->pluck($query->getModel()->getQualifiedKeyName());
+            return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
         }
 
         if ($chunkSize) {
