@@ -820,6 +820,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             $items[$itemKey] = $this
                 ->getChildSchema()
                 ->statePath($itemKey)
+                ->constantState($itemData)
                 ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
                 ->inlineLabel(false)
                 ->getClone();
