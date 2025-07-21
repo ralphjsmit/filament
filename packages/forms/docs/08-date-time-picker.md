@@ -251,6 +251,8 @@ DatePicker::make('custom_starts_at')
     ->defaultFocusedDate(now()->startOfMonth())
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `defaultFocusedDate()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
