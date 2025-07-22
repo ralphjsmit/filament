@@ -827,7 +827,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         $rules = [];
 
         if (filled($maxLength = $this->getMaxLength())) {
-            $rules[] = function (string $attribute, mixed $value, Closure $fail) use ($maxLength): void {
+            $rules[] = function (string $_attribute, mixed $value, Closure $fail) use ($maxLength): void {
                 if (blank($value)) {
                     return;
                 }
@@ -837,16 +837,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                     ->getText());
 
                 if ($textLength > $maxLength) {
-                    $fail(__('validation.max.string', [
-                        'attribute' => str_replace('data.', '', $attribute),
+                    $fail('validation.max.string')->translate([
                         'max' => $maxLength,
-                    ]));
+                    ]);
                 }
             };
         }
 
         if (filled($minLength = $this->getMinLength())) {
-            $rules[] = function (string $attribute, mixed $value, Closure $fail) use ($minLength): void {
+            $rules[] = function (string $_attribute, mixed $value, Closure $fail) use ($minLength): void {
                 if (blank($value)) {
                     return;
                 }
@@ -856,16 +855,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                     ->getText());
 
                 if ($textLength < $minLength) {
-                    $fail(__('validation.min.string', [
-                        'attribute' => str_replace('data.', '', $attribute),
+                    $fail('validation.min.string')->translate([
                         'min' => $minLength,
-                    ]));
+                    ]);
                 }
             };
         }
 
         if (filled($length = $this->getLength())) {
-            $rules[] = function (string $attribute, mixed $value, Closure $fail) use ($length): void {
+            $rules[] = function (string $_attribute, mixed $value, Closure $fail) use ($length): void {
                 if (blank($value)) {
                     return;
                 }
@@ -875,10 +873,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                     ->getText());
 
                 if ($textLength !== $length) {
-                    $fail(__('validation.size.string', [
-                        'attribute' => str_replace('data.', '', $attribute),
+                    $fail('validation.size.string')->translate([
                         'size' => $length,
-                    ]));
+                    ]);
                 }
             };
         }
