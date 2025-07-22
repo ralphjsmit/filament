@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Tests\Forms\Fixtures\Livewire;
@@ -8,7 +9,6 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Filament\Forms\Components\Select;
 
 use function Filament\Tests\livewire;
 
@@ -141,7 +141,7 @@ it('can remove items from a repeater', function () {
     $undoRepeaterFake();
 });
 
-it('can use enum as select options with disableOptionsWhenSelectedInSiblingRepeaterItems', function () {
+it('can use select options from an enum with `disableOptionsWhenSelectedInSiblingRepeaterItems()`', function () {
     $undoRepeaterFake = Repeater::fake();
 
     livewire(TestComponentWithEnumSelectRepeater::class)
