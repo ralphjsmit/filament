@@ -184,7 +184,7 @@ it('throws an exception for a missing relationship', function (): void {
         ->saveRelationships();
 })->throws(Exception::class, 'The relationship [missing] does not exist on the model [Filament\Tests\Fixtures\Models\Post].');
 
-it('can use select options from an enum with `disableOptionsWhenSelectedInSiblingRepeaterItems()`', function () {
+it('can use select options from an enum with `disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): void {
     $undoRepeaterFake = Repeater::fake();
 
     livewire(TestComponentWithEnumSelectRepeater::class)
