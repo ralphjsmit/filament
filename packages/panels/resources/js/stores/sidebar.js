@@ -9,14 +9,14 @@ export default () => ({
     init() {
         this.resizeObserver = null
 
-        this.setupResizeObserver()
+        this.setUpResizeObserver()
 
         document.addEventListener('livewire:navigated', () => {
-            this.setupResizeObserver()
+            this.setUpResizeObserver()
         })
     },
 
-    setupResizeObserver() {
+    setUpResizeObserver() {
         if (this.resizeObserver) {
             this.resizeObserver.disconnect()
         }
