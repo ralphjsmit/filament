@@ -33,11 +33,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-   protected function casts(): array
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
     { 
         return [
             'meta' => 'array',
         ];
+    }
 
     // ...
 }

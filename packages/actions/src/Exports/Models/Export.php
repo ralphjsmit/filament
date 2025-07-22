@@ -27,6 +27,9 @@ class Export extends Model
 {
     use Prunable;
 
+    /**
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [

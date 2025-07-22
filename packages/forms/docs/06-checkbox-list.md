@@ -32,11 +32,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class App extends Model
 {
-   protected function casts(): array
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
         return [
             'technologies' => 'array',
         ];
+    }
 
     // ...
 }

@@ -64,8 +64,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
      */
     protected function casts(): array
     {
-        // ...
         return [
+            // ...
             'app_authentication_secret' => 'encrypted',
         ];
     }
@@ -172,8 +172,8 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
      */
     protected function casts(): array
     {
-        // ...
         return [
+            // ...
             'app_authentication_recovery_codes' => 'encrypted:array',
         ];
     }
@@ -348,8 +348,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
      */
     protected function casts(): array
     {
-        // ...
         return [
+            // ...
             'has_email_authentication' => 'boolean',
         ];
     }

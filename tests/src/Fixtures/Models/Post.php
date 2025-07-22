@@ -14,6 +14,9 @@ class Post extends Model
     use HasFactory;
     use SoftDeletes;
 
+    /**
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
