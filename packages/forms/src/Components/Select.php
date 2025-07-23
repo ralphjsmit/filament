@@ -433,7 +433,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     $form->model($component->getSelectedRecord()),
                 );
             })
-            ->fillForm($this->getEditOptionActionFormData())
+            ->fillForm(fn () => $this->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getUpdateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
