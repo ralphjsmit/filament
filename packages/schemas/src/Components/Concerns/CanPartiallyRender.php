@@ -4,6 +4,7 @@ namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 
 trait CanPartiallyRender
@@ -68,8 +69,12 @@ trait CanPartiallyRender
                 throw new Exception('A [key()] or [statePath()] is required to partially render a component.');
             }
 
+            $render = $this instanceof HasEmbeddedView
+                ? $this->toEmbeddedHtml(...)
+                : $this->render(...);
+
             return [
-                "schema-component::{$key}" => $this->render(),
+                "schema-component::{$key}" => $render(),
             ];
         });
     }
