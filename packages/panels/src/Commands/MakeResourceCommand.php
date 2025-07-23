@@ -200,7 +200,7 @@ class MakeResourceCommand extends Command
             new InputOption(
                 name: 'resource-namespace',
                 shortcut: null,
-                mode: InputOption::VALUE_NONE,
+                mode: InputOption::VALUE_OPTIONAL,
                 description: 'The namespace of the resource class, such as [App\\Filament\\Resources]',
             ),
             new InputOption(
