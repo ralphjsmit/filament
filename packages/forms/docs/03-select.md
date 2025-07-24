@@ -853,6 +853,62 @@ ModalTableSelect::make('category_id')
 
 <UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The `selectAction()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
+You can pass context from your form to the table configuration class using the `tableSelectArguments()` method. For example, this can be used to modify the table's query based 
+on previously filled form fields:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\ModalTableSelect;
+use Filament\Schemas\Components\Utilities\Get;
+
+ModalTableSelect::make('products')
+    ->relationship('products', 'name')
+    ->multiple()
+    ->tableConfiguration(ProductsTable::class)
+    ->tableSelectArguments(function (Get $get) {
+        return [
+            'category_id' => $get('category_id'),
+            'budget_limit' => $get('budget'),
+        ];
+    })
+```
+
+In your table configuration class, you can access these arguments through the Livewire component:
+
+```php
+use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Table;
+
+class EmployeesTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->modifyQueryUsing(function (Builder $query, TableSelectLivewireComponent $livewire) {
+                if ($categoryId = $livewire->tableSelectArguments['category_id'] ?? null) {
+                    $query->where('category_id', $categoryId);
+                }
+                
+                if ($budgetLimit = $livewire->tableSelectArguments['budget_limit'] ?? null) {
+                    $query->where('price', '<=', $budgetLimit);
+                }
+                
+                return $query;
+            })
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('price')
+                    ->money(),
+                TextColumn::make('category.name'),
+            ]);
+    }
+}
+```
+
+<UtilityInjection set="formFields" version="4.x">The `tableSelectArguments()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
 The `getOptionLabelFromRecordUsing()` method can be used to customize the label of each selected option. This is useful if you want to display a more descriptive label or concatenate two columns together:
 
 ```php
