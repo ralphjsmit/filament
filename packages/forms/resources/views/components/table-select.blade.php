@@ -23,6 +23,7 @@
             'record' => $getRecord(),
             'relationshipName' => $getRelationshipName(),
             'tableConfiguration' => base64_encode($getTableConfiguration()),
+            'tableSelectArguments' => $getTableSelectArguments(),
             'wire:model' => $getStatePath(),
         ], key($getLivewireKey()))
     </div>

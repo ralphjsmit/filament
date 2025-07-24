@@ -46,6 +46,12 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
     public string $tableConfiguration;
 
     /**
+     * @var array<mixed>
+     */
+    #[Locked]
+    public array $tableSelectArguments = [];
+
+    /**
      * @var string | array<string> | null
      */
     #[Modelable]

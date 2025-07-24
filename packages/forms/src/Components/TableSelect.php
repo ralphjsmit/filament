@@ -32,6 +32,11 @@ class TableSelect extends Field
 
     protected bool | Closure $isMultiple = false;
 
+    /**
+     * @var array<mixed> | Closure
+     */
+    protected array | Closure $tableSelectArguments = [];
+
     public function tableConfiguration(string | Closure $tableConfiguration): static
     {
         $this->tableConfiguration = $tableConfiguration;
@@ -39,9 +44,27 @@ class TableSelect extends Field
         return $this;
     }
 
+    /**
+     * @param  array<mixed> | Closure  $arguments
+     */
+    public function tableSelectArguments(array | Closure $arguments): static
+    {
+        $this->tableSelectArguments = $arguments;
+
+        return $this;
+    }
+
     public function getTableConfiguration(): string
     {
         return $this->evaluate($this->tableConfiguration) ?? throw new Exception('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getTableSelectArguments(): array
+    {
+        return $this->evaluate($this->tableSelectArguments) ?? [];
     }
 
     public function relationship(string | Closure | null $name): static
