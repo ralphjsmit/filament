@@ -68,7 +68,8 @@ export default function table() {
         toggleSelectRecordsInGroup: async function (group) {
             this.isLoading = true
 
-            const keys = await this.$wire.getGroupedSelectableTableRecordKeys(group)
+            const keys =
+                await this.$wire.getGroupedSelectableTableRecordKeys(group)
 
             if (this.areRecordsSelected(this.getRecordsInGroupOnPage(group))) {
                 this.deselectRecords(keys)
