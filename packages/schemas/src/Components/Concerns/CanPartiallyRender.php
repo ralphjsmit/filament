@@ -69,12 +69,8 @@ trait CanPartiallyRender
                 throw new Exception('A [key()] or [statePath()] is required to partially render a component.');
             }
 
-            $render = $this instanceof HasEmbeddedView
-                ? $this->toEmbeddedHtml(...)
-                : $this->render(...);
-
             return [
-                "schema-component::{$key}" => $render(),
+                "schema-component::{$key}" => $this->toHtml(),
             ];
         });
     }
