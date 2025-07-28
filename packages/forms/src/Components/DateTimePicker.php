@@ -431,7 +431,13 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
 
     public function getDefaultFocusedDate(): ?string
     {
-        return $this->evaluate($this->defaultFocusedDate);
+        $defaultFocusedDate = $this->evaluate($this->defaultFocusedDate);
+
+        if ($timezone = $this->getTimezone()) {
+            $defaultFocusedDate->timezone($timezone);
+        }
+
+        return $defaultFocusedDate;
     }
 
     /**
