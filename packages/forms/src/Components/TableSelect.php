@@ -35,7 +35,7 @@ class TableSelect extends Field
     /**
      * @var array<mixed> | Closure
      */
-    protected array | Closure $tableSelectArguments = [];
+    protected array | Closure $tableArguments = [];
 
     public function tableConfiguration(string | Closure $tableConfiguration): static
     {
@@ -47,9 +47,9 @@ class TableSelect extends Field
     /**
      * @param  array<mixed> | Closure  $arguments
      */
-    public function tableSelectArguments(array | Closure $arguments): static
+    public function tableArguments(array | Closure $arguments): static
     {
-        $this->tableSelectArguments = $arguments;
+        $this->tableArguments = $arguments;
 
         return $this;
     }
@@ -62,9 +62,9 @@ class TableSelect extends Field
     /**
      * @return array<mixed>
      */
-    public function getTableSelectArguments(): array
+    public function getTableArguments(): array
     {
-        return $this->evaluate($this->tableSelectArguments) ?? [];
+        return $this->evaluate($this->tableArguments) ?? [];
     }
 
     public function relationship(string | Closure | null $name): static

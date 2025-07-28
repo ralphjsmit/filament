@@ -59,7 +59,7 @@ class ModalTableSelect extends Field
     /**
      * @var array<mixed> | Closure
      */
-    protected array | Closure $tableSelectArguments = [];
+    protected array | Closure $tableArguments = [];
 
     protected function setUp(): void
     {
@@ -101,9 +101,9 @@ class ModalTableSelect extends Field
     /**
      * @param  array<mixed> | Closure  $arguments
      */
-    public function tableSelectArguments(array | Closure $arguments): static
+    public function tableArguments(array | Closure $arguments): static
     {
-        $this->tableSelectArguments = $arguments;
+        $this->tableArguments = $arguments;
 
         return $this;
     }
@@ -145,7 +145,7 @@ class ModalTableSelect extends Field
             ->relationshipName($this->getRelationshipName())
             ->multiple()
             ->maxItems($this->getMaxItems())
-            ->tableSelectArguments($this->getTableSelectArguments());
+            ->tableArguments($this->getTableArguments());
 
         if ($this->modifyTableSelectUsing) {
             $select = $this->evaluate(
@@ -670,8 +670,8 @@ class ModalTableSelect extends Field
     /**
      * @return array<mixed>
      */
-    public function getTableSelectArguments(): array
+    public function getTableArguments(): array
     {
-        return $this->evaluate($this->tableSelectArguments) ?? [];
+        return $this->evaluate($this->tableArguments) ?? [];
     }
 }

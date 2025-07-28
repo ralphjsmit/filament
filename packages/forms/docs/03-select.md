@@ -834,6 +834,8 @@ ModalTableSelect::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">The `tableConfiguration()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Customizing the modal table select actions
+
 You can customize the "Select" button and modal using the [action](../actions) object configuration methods. Passing a function to the `selectAction()` method allows you to modify the `$action` object, for example, to change the button label and the modal heading:
 
 ```php
@@ -853,8 +855,22 @@ ModalTableSelect::make('category_id')
 
 <UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The `selectAction()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
-You can pass context from your form to the table configuration class using the `tableSelectArguments()` method. For example, this can be used to modify the table's query based 
-on previously filled form fields:
+### Customizing the option labels in the modal table select
+
+The `getOptionLabelFromRecordUsing()` method can be used to customize the label of each selected option. This is useful if you want to display a more descriptive label or concatenate two columns together:
+
+```php
+use Filament\Forms\Components\ModalTableSelect;
+
+ModalTableSelect::make('category_id')
+    ->relationship('category', 'name')
+    ->tableConfiguration(CategoriesTable::class)
+    ->getOptionLabelFromRecordUsing(fn (Category $record): string => "{$record->name} ({$record->slug})")
+```
+
+### Passing additional arguments to the table in a modal select
+
+You can pass arguments from your form to the table configuration class using the `tableArguments()` method. For example, this can be used to modify the table's query based on previously filled form fields:
 
 ```php
 use Filament\Actions\Action;
@@ -865,7 +881,7 @@ ModalTableSelect::make('products')
     ->relationship('products', 'name')
     ->multiple()
     ->tableConfiguration(ProductsTable::class)
-    ->tableSelectArguments(function (Get $get) {
+    ->tableArguments(function (Get $get): array {
         return [
             'category_id' => $get('category_id'),
             'budget_limit' => $get('budget'),
@@ -873,7 +889,9 @@ ModalTableSelect::make('products')
     })
 ```
 
-In your table configuration class, you can access these arguments through the Livewire component:
+<UtilityInjection set="formFields" version="4.x">The `tableArguments()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
+In your table configuration class, you can access these arguments using the `$table->getArguments()` method:
 
 ```php
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
@@ -886,12 +904,14 @@ class EmployeesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query, TableSelectLivewireComponent $livewire) {
-                if ($categoryId = $livewire->tableSelectArguments['category_id'] ?? null) {
+            ->modifyQueryUsing(function (Builder $query) use ($table): Builder {
+                $arguments = $table->getArguments();
+            
+                if ($categoryId = $arguments['category_id'] ?? null) {
                     $query->where('category_id', $categoryId);
                 }
                 
-                if ($budgetLimit = $livewire->tableSelectArguments['budget_limit'] ?? null) {
+                if ($budgetLimit = $arguments['budget_limit'] ?? null) {
                     $query->where('price', '<=', $budgetLimit);
                 }
                 
@@ -901,23 +921,11 @@ class EmployeesTable
                 TextColumn::make('name'),
                 TextColumn::make('price')
                     ->money(),
-                TextColumn::make('category.name'),
+                TextColumn::make('category.name')
+                    ->hidden(filled($table->getArguments()['category_id'])),
             ]);
     }
 }
-```
-
-<UtilityInjection set="formFields" version="4.x">The `tableSelectArguments()` method can inject various utilities into the function as parameters.</UtilityInjection>
-
-The `getOptionLabelFromRecordUsing()` method can be used to customize the label of each selected option. This is useful if you want to display a more descriptive label or concatenate two columns together:
-
-```php
-use Filament\Forms\Components\ModalTableSelect;
-
-ModalTableSelect::make('category_id')
-    ->relationship('category', 'name')
-    ->tableConfiguration(CategoriesTable::class)
-    ->getOptionLabelFromRecordUsing(fn (Category $record): string => "{$record->name} ({$record->slug})")
 ```
 
 ## Select validation
