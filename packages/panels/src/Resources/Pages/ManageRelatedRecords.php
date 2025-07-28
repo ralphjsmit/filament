@@ -134,15 +134,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     public static function getNavigationLabel(): string
     {
-        if (filled(static::$navigationLabel)) {
-            return static::$navigationLabel;
-        }
-
-        if ($relatedResource = static::getRelatedResource()) {
-            return $relatedResource::getTitleCasePluralModelLabel();
-        }
-
-        return static::getRelationshipTitle();
+        return static::$navigationLabel ?? static::getRelationshipTitle();
     }
 
     /**
@@ -300,15 +292,9 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             return static::$title;
         }
 
-        if ($relatedResource = static::getRelatedResource()) {
-            $relationshipTitle = $relatedResource::getTitleCasePluralModelLabel();
-        } else {
-            $relationshipTitle = static::getRelationshipTitle();
-        }
-
         return __('filament-panels::resources/pages/manage-related-records.title', [
             'label' => $this->getRecordTitle(),
-            'relationship' => $relationshipTitle,
+            'relationship' => static::getRelationshipTitle(),
         ]);
     }
 }
