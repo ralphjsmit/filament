@@ -76,6 +76,10 @@ class MorphToSelect extends Component
             $types = $component->getTypes();
             $isRequired = $component->isRequired();
 
+            /** @var ?Type $selectedType */
+            $selectedTypeKey = data_get($this->container->getConstantState(), $typeColumn);
+            $selectedType = $selectedTypeKey ? data_get($this->getTypes(), $selectedTypeKey) : null;
+
             $typeSelect = Select::make($typeColumn)
                 ->label($component->getLabel())
                 ->hiddenLabel()
@@ -125,6 +129,12 @@ class MorphToSelect extends Component
             }
 
             if ($callback = $component->getModifyKeySelectUsingCallback()) {
+                $keySelect = $component->evaluate($callback, [
+                    'select' => $keySelect,
+                ]) ?? $keySelect;
+            }
+
+            if ($callback = $selectedType?->getModifyKeySelectUsingCallback()) {
                 $keySelect = $component->evaluate($callback, [
                     'select' => $keySelect,
                 ]) ?? $keySelect;
