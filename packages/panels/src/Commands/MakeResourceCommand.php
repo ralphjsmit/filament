@@ -32,6 +32,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 use function Filament\Support\discover_app_classes;
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
