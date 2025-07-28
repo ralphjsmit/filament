@@ -154,7 +154,7 @@ class Login extends SimplePage
      */
     protected function fireFailedEvent(Guard $guard, ?Authenticatable $user, #[SensitiveParameter] array $credentials): void
     {
-        event(app(Failed::class, ['guard' => $guard->name, 'user' => $user, 'credentials' => $credentials]));
+        event(app(Failed::class, ['guard' => property_exists($guard, 'name') ? $guard->name : '', 'user' => $user, 'credentials' => $credentials]));
     }
 
     protected function throwFailureValidationException(): never
