@@ -127,7 +127,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     {
         parent::setUp();
 
-        $this->iconButton();
+        $this->defaultTriggerView(static::ICON_BUTTON_VIEW);
     }
 
     /**
@@ -233,7 +233,10 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     public function getActions(): array
     {
         return array_map(
-            fn (Action | ActionGroup $action) => $action->defaultView($this->isButtonGroup() ? $action::BUTTON_VIEW : $action::GROUPED_VIEW),
+            fn (Action | ActionGroup $action) => match (true) {
+                $action instanceof Action => $action->defaultView($this->isButtonGroup() ? $action::BUTTON_VIEW : $action::GROUPED_VIEW),
+                $action instanceof ActionGroup => $action->defaultTriggerView($this->isButtonGroup() ? $action::BUTTON_VIEW : $action::GROUPED_VIEW),
+            },
             $this->actions,
         );
     }
