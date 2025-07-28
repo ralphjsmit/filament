@@ -33,6 +33,7 @@ use Symfony\Component\Console\Input\InputOption;
 use function Filament\Support\discover_app_classes;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\suggest;
+use function Laravel\Prompts\text;
 
 #[AsCommand(name: 'make:filament-resource', aliases: [
     'filament:make-resource',
@@ -95,6 +96,8 @@ class MakeResourceCommand extends Command
     protected ?string $infolistSchemaFqn = null;
 
     protected ?string $tableFqn = null;
+
+    protected ?string $recordTitleAttribute = null;
 
     protected bool $hasViewOperation;
 
@@ -198,6 +201,12 @@ class MakeResourceCommand extends Command
                 description: 'The panel to create the resource in',
             ),
             new InputOption(
+                name: 'record-title-attribute',
+                shortcut: null,
+                mode: InputOption::VALUE_REQUIRED,
+                description: 'The title attribute, used to label each record in the UI',
+            ),
+            new InputOption(
                 name: 'resource-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_OPTIONAL,
@@ -234,6 +243,7 @@ class MakeResourceCommand extends Command
     {
         try {
             $this->configureModel();
+            $this->configureRecordTitleAttribute();
             $this->configurePanel(question: 'Which panel would you like to create this resource in?');
             $this->configureIsSimple();
             $this->configureIsNested();
@@ -340,6 +350,24 @@ class MakeResourceCommand extends Command
                 'name' => $this->modelFqnEnd,
             ]);
         }
+    }
+
+    protected function configureRecordTitleAttribute(): void
+    {
+        $this->recordTitleAttribute = $this->option('record-title-attribute');
+
+        if (filled($this->recordTitleAttribute)) {
+            return;
+        }
+
+        info('The "title attribute" is used to label each record in the UI.');
+
+        info('You can leave this blank if records do not have a title.');
+
+        $this->recordTitleAttribute = text(
+            label: 'What is the title attribute for this model?',
+            placeholder: 'name',
+        );
     }
 
     protected function configureIsSimple(): void
@@ -612,6 +640,7 @@ class MakeResourceCommand extends Command
             'formSchemaFqn' => $this->formSchemaFqn,
             'infolistSchemaFqn' => $this->infolistSchemaFqn,
             'tableFqn' => $this->tableFqn,
+            'recordTitleAttribute' => $this->recordTitleAttribute,
             'hasViewOperation' => $this->hasViewOperation,
             'isGenerated' => $this->isGenerated,
             'isSoftDeletable' => $this->isSoftDeletable,
