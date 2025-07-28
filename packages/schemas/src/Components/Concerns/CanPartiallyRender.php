@@ -4,7 +4,6 @@ namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 
 trait CanPartiallyRender
@@ -70,7 +69,7 @@ trait CanPartiallyRender
             }
 
             return [
-                "schema-component::{$key}" => $this->toHtml(),
+                "schema-component::{$key}" => $this->hasView() ? $this->render() : $this->toHtml(),
             ];
         });
     }
