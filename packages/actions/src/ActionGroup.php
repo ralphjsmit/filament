@@ -246,6 +246,17 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return $this->flatActions;
     }
 
+    public function hasNonBulkAction(): bool
+    {
+        foreach ($this->getFlatActions() as $action) {
+            if (! $action->isBulk()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getIcon(): string | BackedEnum
     {
         return $this->getBaseIcon() ?? FilamentIcon::resolve(ActionsIconAlias::ACTION_GROUP) ?? Heroicon::EllipsisVertical;
