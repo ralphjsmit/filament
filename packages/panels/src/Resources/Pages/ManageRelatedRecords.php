@@ -293,4 +293,22 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
         return null;
     }
+
+    public function getTitle(): string | Htmlable
+    {
+        if (filled(static::$title)) {
+            return static::$title;
+        }
+
+        if ($relatedResource = static::getRelatedResource()) {
+            $relationshipTitle = $relatedResource::getTitleCasePluralModelLabel();
+        } else {
+            $relationshipTitle = static::getRelationshipTitle();
+        }
+
+        return __('filament-panels::resources/pages/manage-related-records.title', [
+            'label' => $this->getRecordTitle(),
+            'relationship' => $relationshipTitle,
+        ]);
+    }
 }
