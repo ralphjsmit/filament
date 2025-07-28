@@ -126,16 +126,34 @@ By default, this command will use NPM to install dependencies. If you want to us
 ```bash
 php artisan make:filament-theme --pm=bun
 ````
+This command generates a CSS file and a Tailwind configuration file in the `resources/css/filament` directory. To complete the setup, follow these steps:
 
-The command will create a CSS file and Tailwind Configuration file in the `/resources/css/filament` directory. You can then customize the theme by editing these files. It will also give you instructions on how to compile the theme and register it in Filament. **Please follow the instructions in the command to complete the setup process:**
-
+1. Add the theme's CSS file to the input array in `vite.config.js`:
 ```
-⇂ First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/admin/theme.css`
-⇂ Next, register the theme in the admin panel provider using `->viteTheme('resources/css/filament/admin/theme.css')`
-⇂ Finally, run `npm run build` to compile the theme
+input: [
+    // ...
+    'resources/css/filament/admin/theme.css',
+],
 ```
 
-Please reference the command to see the exact file names that you need to register, they may not be `admin/theme.css`.
+2. Register the theme in the admin panel provider:
+```
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->viteTheme('resources/css/filament/admin/theme.css');
+}
+```
+
+3. Compile the theme:
+```
+npm run build
+```
+Note: Check the command output for the exact file path `(e.g., admin/theme.css)`, as it may vary depending on your panel configuration.
+You can now customize the theme by editing the CSS and Tailwind configuration files in `resources/css/filament`.
 
 ## Using Tailwind CSS classes in your Blade views or PHP files
 
