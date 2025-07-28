@@ -162,7 +162,7 @@ npm run build
     Check the command output for the exact file path (e.g., `app/theme.css`), as it may vary depending on your panel's ID.
 </Aside>
 
-You can now customize the theme by editing the CSS and Tailwind configuration files in `resources/css/filament`.
+You can now customize the theme by editing the CSS file in `resources/css/filament`.
 
 ## Using Tailwind CSS classes in your Blade views or PHP files
 
