@@ -78,6 +78,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
+            ?? (filled($relatedResource = static::getRelatedResource()) ? $relatedResource::getNavigationIcon() : null)
             ?? FilamentIcon::resolve(PanelsIconAlias::RESOURCES_PAGES_MANAGE_RELATED_RECORDS_NAVIGATION_ITEM)
             ?? Heroicon::OutlinedRectangleStack;
     }
