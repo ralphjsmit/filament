@@ -62,7 +62,6 @@ trait CanSpanColumns
 
         if (! is_array($start)) {
             $start = [
-                'default' => null,
                 'lg' => $start,
             ];
         }
