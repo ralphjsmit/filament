@@ -184,8 +184,12 @@
         }
     }
 
-    & img.fi-loading {
-        @apply animate-pulse;
+    & img {
+        @apply inline-block;
+
+        &.fi-loading {
+            @apply animate-pulse;
+        }
     }
 
     & div[data-type='customBlock'] {
