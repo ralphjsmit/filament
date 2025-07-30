@@ -100,7 +100,9 @@ class PartialsComponentHook extends ComponentHook
 
         $renderAndQueuePartials = function (Closure $getPartialsUsing) use (&$partials): void {
             foreach ($getPartialsUsing() as $partialName => $view) {
-                $view = ($view instanceof View) ? $view : view('filament::anonymous-partial', ['html' => $view]);
+                if (! ($view instanceof View)) {
+                    $view = view('filament::anonymous-partial', ['html' => $view]);
+                }
 
                 $finish = trigger('render', $this->component, $view, []);
 
