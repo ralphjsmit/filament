@@ -6,6 +6,7 @@ use BackedEnum;
 use Closure;
 use Exception;
 use Filament\Actions\Concerns\InteractsWithRecord;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
@@ -126,7 +127,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     {
         parent::setUp();
 
-        $this->iconButton();
+        $this->defaultTriggerView(static::ICON_BUTTON_VIEW);
     }
 
     /**
@@ -232,7 +233,10 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     public function getActions(): array
     {
         return array_map(
-            fn (Action | ActionGroup $action) => $action->defaultView($this->isButtonGroup() ? $action::BUTTON_VIEW : $action::GROUPED_VIEW),
+            fn (Action | ActionGroup $action) => match (true) {
+                $action instanceof Action => $action->defaultView($this->isButtonGroup() ? $action::BUTTON_VIEW : $action::GROUPED_VIEW),
+                $action instanceof ActionGroup => $action->defaultTriggerView($this->isButtonGroup() ? $action::BUTTON_VIEW : $action::GROUPED_VIEW),
+            },
             $this->actions,
         );
     }
@@ -245,9 +249,20 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return $this->flatActions;
     }
 
+    public function hasNonBulkAction(): bool
+    {
+        foreach ($this->getFlatActions() as $action) {
+            if (! $action->isBulk()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getIcon(): string | BackedEnum
     {
-        return $this->getBaseIcon() ?? FilamentIcon::resolve('actions::action-group') ?? Heroicon::EllipsisVertical;
+        return $this->getBaseIcon() ?? FilamentIcon::resolve(ActionsIconAlias::ACTION_GROUP) ?? Heroicon::EllipsisVertical;
     }
 
     public function isHidden(): bool

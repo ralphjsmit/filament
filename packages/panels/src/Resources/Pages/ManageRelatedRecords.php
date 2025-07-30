@@ -27,6 +27,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
+use Filament\View\PanelsIconAlias;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
@@ -77,7 +78,8 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
-            ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
+            ?? (filled($relatedResource = static::getRelatedResource()) ? $relatedResource::getNavigationIcon() : null)
+            ?? FilamentIcon::resolve(PanelsIconAlias::RESOURCES_PAGES_MANAGE_RELATED_RECORDS_NAVIGATION_ITEM)
             ?? Heroicon::OutlinedRectangleStack;
     }
 
@@ -132,15 +134,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     public static function getNavigationLabel(): string
     {
-        if (filled(static::$navigationLabel)) {
-            return static::$navigationLabel;
-        }
-
-        if ($relatedResource = static::getRelatedResource()) {
-            return $relatedResource::getTitleCasePluralModelLabel();
-        }
-
-        return static::getRelationshipTitle();
+        return static::$navigationLabel ?? static::getRelationshipTitle();
     }
 
     /**
@@ -290,5 +284,17 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         }
 
         return null;
+    }
+
+    public function getTitle(): string | Htmlable
+    {
+        if (filled(static::$title)) {
+            return static::$title;
+        }
+
+        return __('filament-panels::resources/pages/manage-related-records.title', [
+            'label' => $this->getRecordTitle(),
+            'relationship' => static::getRelationshipTitle(),
+        ]);
     }
 }

@@ -22,6 +22,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Tiptap\Editor;
 
@@ -144,10 +145,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleBlockquote().run()')
                 ->icon(Heroicon::ChatBubbleBottomCenterText)
                 ->iconAlias('forms:components.rich-editor.toolbar.blockquote'),
+            RichEditorTool::make('code')
+                ->label(__('filament-forms::components.rich_editor.tools.code'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleCode().run()')
+                ->icon('fi-o-code')
+                ->iconAlias('forms:components.rich-editor.toolbar.code'),
             RichEditorTool::make('codeBlock')
                 ->label(__('filament-forms::components.rich_editor.tools.code_block'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleCodeBlock().run()')
-                ->icon(Heroicon::CodeBracket)
+                ->icon('fi-o-code-block')
                 ->iconAlias('forms:components.rich-editor.toolbar.code-block'),
             RichEditorTool::make('bulletList')
                 ->label(__('filament-forms::components.rich_editor.tools.bullet_list'))
@@ -814,5 +820,66 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getFloatingToolbars(): array
     {
         return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
+    }
+
+    public function getLengthValidationRules(): array
+    {
+        $rules = [];
+
+        if (filled($maxLength = $this->getMaxLength())) {
+            $rules[] = function (string $_attribute, mixed $value, Closure $fail) use ($maxLength): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                $textLength = Str::length($this->getTipTapEditor()
+                    ->setContent($value)
+                    ->getText());
+
+                if ($textLength > $maxLength) {
+                    $fail('validation.max.string')->translate([
+                        'max' => $maxLength,
+                    ]);
+                }
+            };
+        }
+
+        if (filled($minLength = $this->getMinLength())) {
+            $rules[] = function (string $_attribute, mixed $value, Closure $fail) use ($minLength): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                $textLength = Str::length($this->getTipTapEditor()
+                    ->setContent($value)
+                    ->getText());
+
+                if ($textLength < $minLength) {
+                    $fail('validation.min.string')->translate([
+                        'min' => $minLength,
+                    ]);
+                }
+            };
+        }
+
+        if (filled($length = $this->getLength())) {
+            $rules[] = function (string $_attribute, mixed $value, Closure $fail) use ($length): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                $textLength = Str::length($this->getTipTapEditor()
+                    ->setContent($value)
+                    ->getText());
+
+                if ($textLength !== $length) {
+                    $fail('validation.size.string')->translate([
+                        'size' => $length,
+                    ]);
+                }
+            };
+        }
+
+        return $rules;
     }
 }
