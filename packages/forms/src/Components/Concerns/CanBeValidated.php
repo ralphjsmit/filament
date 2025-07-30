@@ -568,8 +568,8 @@ trait CanBeValidated
 
     public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = null, ?Closure $modifyRuleUsing = null): static
     {
-        $this->rule(static function (Field $component, ?string $model) use ($column, $ignorable, $ignoreRecord, $modifyRuleUsing, $table) {
-            $ignoreRecord ??= $component->shouldUniqueValidationIgnoreRecordByDefault();
+        $this->rule(static function (Field $component, ?string $model, string $operation) use ($column, $ignorable, $ignoreRecord, $modifyRuleUsing, $table) {
+            $ignoreRecord ??= $component->shouldUniqueValidationIgnoreRecordByDefault() && $operation !== 'replicate';
 
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
