@@ -10,6 +10,7 @@
     $isSuffixInline = $isSuffixInline();
     $maxDate = $getMaxDate();
     $minDate = $getMinDate();
+    $defaultFocusedDate = $getDefaultFocusedDate();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
@@ -17,6 +18,7 @@
     $suffixIcon = $getSuffixIcon();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
+    $disabledDates = $getDisabledDates();
 @endphp
 
 <x-dynamic-component
@@ -72,6 +74,7 @@
                 @endif
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
                 x-data="dateTimePickerFormComponent({
+                            defaultFocusedDate: @js($defaultFocusedDate),
                             displayFormat:
                                 '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
                             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
@@ -80,6 +83,15 @@
                             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                         })"
+                wire:ignore
+                wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.{{
+                    substr(md5(serialize([
+                        'disabledDates' => $disabledDates,
+                        'isDisabled' => $isDisabled,
+                        'maxDate' => $maxDate,
+                        'minDate' => $minDate,
+                    ])), 0, 64)
+                }}"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{
                     $attributes
@@ -95,7 +107,7 @@
                 <input
                     x-ref="disabledDates"
                     type="hidden"
-                    value="{{ json_encode($getDisabledDates()) }}"
+                    value="{{ json_encode($disabledDates) }}"
                 />
 
                 <button
@@ -212,7 +224,7 @@
                                                 ! dayIsSelected(day) &&
                                                 focusedDate.date() !== day &&
                                                 ! dayIsDisabled(day),
-                                            'bg-gray-50 dark:bg-white/5':
+                                            'bg-gray-100 dark:bg-white/10':
                                                 focusedDate.date() === day &&
                                                 ! dayIsSelected(day) &&
                                                 ! dayIsDisabled(day),
