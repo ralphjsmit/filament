@@ -1,7 +1,5 @@
 .fi-in-repeatable {
-    &ul {
-        @apply gap-4;
-    }
+    @apply gap-4;
 
     & .fi-in-repeatable-item {
         @apply block;
