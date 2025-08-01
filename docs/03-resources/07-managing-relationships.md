@@ -308,7 +308,7 @@ use Filament\Actions\AttachAction;
 use Filament\Forms;
 
 AttachAction::make()
-    ->form(fn (AttachAction $action): array => [
+    ->schema(fn (AttachAction $action): array => [
         $action->getRecordSelect(),
         Forms\Components\TextInput::make('role')->required(),
     ])
