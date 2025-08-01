@@ -608,55 +608,63 @@
         @endif
 
         @if ($filterIndicators)
-            <div class="fi-ta-filter-indicators">
-                <div>
-                    <span class="fi-ta-filter-indicators-label">
-                        {{ __('filament-tables::table.filters.indicator') }}
-                    </span>
+            @php
+                $renderedFilterIndicators = \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::FILTER_INDICATORS, scopes: static::class, data: ['filterIndicators' => $filterIndicators]);
+            @endphp
 
-                    <div class="fi-ta-filter-indicators-badges-ctn">
-                        @foreach ($filterIndicators as $indicator)
-                            @php
-                                $indicatorColor = $indicator->getColor();
-                            @endphp
+            @if ($renderedFilterIndicators)
+                {{ $renderedFilterIndicators }}
+            @else
+                <div class="fi-ta-filter-indicators">
+                    <div>
+                        <span class="fi-ta-filter-indicators-label">
+                            {{ __('filament-tables::table.filters.indicator') }}
+                        </span>
 
-                            <x-filament::badge :color="$indicatorColor">
-                                {{ $indicator->getLabel() }}
+                        <div class="fi-ta-filter-indicators-badges-ctn">
+                            @foreach ($filterIndicators as $indicator)
+                                @php
+                                    $indicatorColor = $indicator->getColor();
+                                @endphp
 
-                                @if ($indicator->isRemovable())
-                                    @php
-                                        $indicatorRemoveLivewireClickHandler = $indicator->getRemoveLivewireClickHandler();
-                                    @endphp
+                                <x-filament::badge :color="$indicatorColor">
+                                    {{ $indicator->getLabel() }}
 
-                                    <x-slot
-                                        name="deleteButton"
-                                        :label="__('filament-tables::table.filters.actions.remove.label')"
-                                        :wire:click="$indicatorRemoveLivewireClickHandler"
-                                        wire:loading.attr="disabled"
-                                        wire:target="removeTableFilter"
-                                    ></x-slot>
-                                @endif
-                            </x-filament::badge>
-                        @endforeach
+                                    @if ($indicator->isRemovable())
+                                        @php
+                                            $indicatorRemoveLivewireClickHandler = $indicator->getRemoveLivewireClickHandler();
+                                        @endphp
+
+                                        <x-slot
+                                            name="deleteButton"
+                                            :label="__('filament-tables::table.filters.actions.remove.label')"
+                                            :wire:click="$indicatorRemoveLivewireClickHandler"
+                                            wire:loading.attr="disabled"
+                                            wire:target="removeTableFilter"
+                                        ></x-slot>
+                                    @endif
+                                </x-filament::badge>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
 
-                @if (collect($filterIndicators)->contains(fn (\Filament\Tables\Filters\Indicator $indicator): bool => $indicator->isRemovable()))
-                    <button
-                        type="button"
-                        x-tooltip="{
-                            content: @js(__('filament-tables::table.filters.actions.remove_all.tooltip')),
-                            theme: $store.theme,
-                        }"
-                        wire:click="removeTableFilters"
-                        wire:loading.attr="disabled"
-                        wire:target="removeTableFilters,removeTableFilter"
-                        class="fi-icon-btn fi-size-sm"
-                    >
-                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Tables\View\TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
-                    </button>
-                @endif
-            </div>
+                    @if (collect($filterIndicators)->contains(fn (\Filament\Tables\Filters\Indicator $indicator): bool => $indicator->isRemovable()))
+                        <button
+                            type="button"
+                            x-tooltip="{
+                                content: @js(__('filament-tables::table.filters.actions.remove_all.tooltip')),
+                                theme: $store.theme,
+                            }"
+                            wire:click="removeTableFilters"
+                            wire:loading.attr="disabled"
+                            wire:target="removeTableFilters,removeTableFilter"
+                            class="fi-icon-btn fi-size-sm"
+                        >
+                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Tables\View\TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
+                        </button>
+                    @endif
+                </div>
+            @endif
         @endif
 
         @if (((! $content) && (! $hasColumnsLayout)) || ($records === null) || count($records))
