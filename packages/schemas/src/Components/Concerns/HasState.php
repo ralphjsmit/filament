@@ -485,7 +485,6 @@ trait HasState
 
     public function mutateStateForValidation(mixed $state): mixed
     {
-
         if (! $this->mutateStateForValidationUsing) {
             return $state;
         }
