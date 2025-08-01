@@ -380,6 +380,37 @@ The [automated upgrade script](#running-the-automated-upgrade-script) suggests c
 
 ### Medium-impact changes
 
+<Disclosure x-show="packages.includes('forms')">
+<span slot="summary">Enum field state</span>
+
+In v3, fields that wrote to an enum attribute on a model, such as a `Select`, `CheckboxList` or `Radio` field using `options(Enum::class)`, would inconsistently return the value of the field as either the enum value or the enum instance, depending on whether or not the field was last modified by the server or by the user. This was not useful, and you had to check the type of the value returned by the field to determine if it was an enum value or an enum instance.
+
+In v4, the field state is always returned as the enum instance. This means that you can always use the enum methods on field state. If you were not handling the possibility of the field state being an enum instance in your code previously, you now need to do so.
+
+The following code examples illustrate how field state may now return an enum instance:
+
+```php
+use App\Enums\Status;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput
+;use Filament\Schemas\Components\Utilities\Get;
+
+Select::make('status')
+    ->options(Status::class)
+    ->afterStateUpdated(function (?Status $state) {
+        // `$state` is now always an instance of `Status`, or `null` if the field is empty.
+    });
+
+TextInput::make('...')
+    ->afterStateUpdated(function (Get $get) {
+        // `$get('status')` is now always an instance of `Status`, or `null` if the field is empty.
+    });
+
+$data = $this->form->getState();
+// `$data['status']` is now always an instance of `Status`, or `null` if the field is empty.
+```
+</Disclosure>
+
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Automatic tenancy global scoping and association</span>
 
