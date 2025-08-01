@@ -42,6 +42,7 @@ class ViewManager
 
     /**
      * @param  string | array<string> | null  $scopes
+     * @param  array<string, mixed> | null  $data
      */
     public function renderHook(string $name, string | array | null $scopes = null, ?array $data = null): Htmlable
     {
