@@ -76,7 +76,6 @@ class MorphToSelect extends Component
             $types = $component->getTypes();
             $isRequired = $component->isRequired();
 
-            /** @var ?Type $selectedType */
             $selectedTypeKey = $component->getRawState()[$typeColumn] ?? null;
             $selectedType = $selectedTypeKey ? ($component->getTypes()[$selectedTypeKey] ?? null) : null;
 
