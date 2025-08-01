@@ -172,6 +172,9 @@ trait HasHint
      */
     public function getHintActions(): array
     {
-	    return array_map($this->evaluate(...), $this->hintActions);
+	    return array_map(
+			callback: fn (Action|Closure $hintAction): Action => $this->evaluate($hintAction),
+			array: $this->hintActions
+	    );
     }
 }
