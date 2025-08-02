@@ -721,22 +721,43 @@
                                 @if (count($sortableColumns))
                                     <div
                                         x-data="{
-                                            column: $wire.$entangle('tableSortColumn', true),
-                                            direction: $wire.$entangle('tableSortDirection', true),
+                                            sort: $wire.$entangle('tableSort', true),
+                                            column: null,
+                                            direction: null,
                                         }"
                                         x-init="
+                                            if (sort) {
+                                                [column, direction] = sort.split(':')
+                                            }
+
+                                            $watch('sort', function () {
+                                                if (! sort) {
+                                                    return
+                                                }
+
+                                                [column, direction] = sort.split(':')
+                                            })
+
+                                            $watch('direction', function () {
+                                                sort = column ? `${column}:${direction}` : null
+                                            })
+
                                             $watch('column', function (newColumn, oldColumn) {
                                                 if (! newColumn) {
                                                     direction = null
+                                                    sort = column ? `${column}:${direction}` : null
 
                                                     return
                                                 }
 
                                                 if (oldColumn) {
+                                                    sort = column ? `${column}:${direction}` : null
+
                                                     return
                                                 }
 
                                                 direction = 'asc'
+                                                sort = column ? `${column}:${direction}` : null
                                             })
                                         "
                                         class="fi-ta-sorting-settings"

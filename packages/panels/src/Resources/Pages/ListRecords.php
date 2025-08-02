@@ -52,10 +52,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     public $tableSearch = '';
 
     #[Url]
-    public ?string $tableSortColumn = null;
-
-    #[Url]
-    public ?string $tableSortDirection = null;
+    public ?string $tableSort = null;
 
     #[Url]
     public ?string $activeTab = null;
