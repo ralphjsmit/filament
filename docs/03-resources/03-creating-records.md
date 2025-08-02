@@ -324,16 +324,15 @@ public function hasSkippableSteps(): bool
 
 ### Sharing fields between the resource form and wizards
 
-If you'd like to reduce the amount of repetition between the resource form and wizard steps, it's a good idea to extract public static resource functions for your fields, where you can easily retrieve an instance of a field from the resource or the wizard:
+If you'd like to reduce the amount of repetition between the resource form and wizard steps, it's a good idea to extract public static resource functions for your fields, where you can easily retrieve an instance of a field from the schema or the wizard:
 
 ```php
 use Filament\Forms;
-use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 
-class CategoryResource extends Resource
+class CategoryForm
 {
-    public static function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
@@ -362,7 +361,7 @@ class CategoryResource extends Resource
 ```
 
 ```php
-use App\Filament\Resources\Categories\CategoryResource;
+use App\Filament\Resources\Categories\Schemas\CategoryForm;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateCategory extends CreateRecord
@@ -377,8 +376,8 @@ class CreateCategory extends CreateRecord
             Step::make('Name')
                 ->description('Give the category a clear and unique name')
                 ->schema([
-                    CategoryResource::getNameFormField(),
-                    CategoryResource::getSlugFormField(),
+                    CategoryForm::getNameFormField(),
+                    CategoryForm::getSlugFormField(),
                 ]),
             // ...
         ];
