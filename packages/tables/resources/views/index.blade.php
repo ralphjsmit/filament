@@ -727,7 +727,7 @@
                                         }"
                                         x-init="
                                             if (sort) {
-                                                [column, direction] = sort.split(':')
+                                                ;[column, direction] = sort.split(':')
                                             }
 
                                             $watch('sort', function () {
@@ -735,7 +735,7 @@
                                                     return
                                                 }
 
-                                                [column, direction] = sort.split(':')
+                                                ;[column, direction] = sort.split(':')
                                             })
 
                                             $watch('direction', function () {
