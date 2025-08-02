@@ -322,7 +322,7 @@ public function hasSkippableSteps(): bool
 }
 ```
 
-### Sharing fields between the resource form and wizards
+### Sharing fields between the schema form and wizards
 
 If you'd like to reduce the amount of repetition between the resource form and wizard steps, it's a good idea to extract public static configure functions for your fields, where you can easily retrieve an instance of a field from the form schema or the wizard:
 
