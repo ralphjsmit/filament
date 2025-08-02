@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
-use Illuminate\View\View;
 
 use function Filament\Support\is_app_url;
 
@@ -42,9 +41,9 @@ class ViewManager
 
     /**
      * @param  string | array<string> | null  $scopes
-     * @param  array<string, mixed> | null  $data
+     * @param  array<string, mixed>  $data
      */
-    public function renderHook(string $name, string | array | null $scopes = null, ?array $data = null): Htmlable
+    public function renderHook(string $name, string | array | null $scopes = null, array $data = []): Htmlable
     {
         $renderedHooks = [];
 
@@ -59,11 +58,7 @@ class ViewManager
 
             $renderedHooks[] = $hookId;
 
-            $result = app()->call($hook, ['scopes' => $scopes]);
-
-            if (filled($data) && $result instanceof View) {
-                $result->with($data);
-            }
+            $result = app()->call($hook, ['data' => $data, 'scopes' => $scopes]);
 
             return (string) $result;
         };
