@@ -25,6 +25,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property Form $form
@@ -70,7 +71,7 @@ class Register extends SimplePage
             return null;
         }
 
-        $user = $this->wrapInDatabaseTransaction(function () {
+        $user = $this->wrapInDatabaseTransaction(function (): Model {
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState();
