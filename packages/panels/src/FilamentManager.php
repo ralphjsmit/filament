@@ -488,6 +488,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getProfilePage();
     }
 
+    public function getTopbarLivewireComponent(): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getTopbarLivewireComponent();
+    }
+
     public function getTenantProfilePage(): ?string
     {
         return $this->getCurrentOrDefaultPanel()->getTenantProfilePage();
