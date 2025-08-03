@@ -9,7 +9,6 @@ use Filament\Livewire\GlobalSearch;
 use Filament\Livewire\Notifications;
 use Filament\Livewire\Sidebar;
 use Filament\Livewire\SimpleUserMenu;
-use Filament\Livewire\Topbar;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
 use Filament\Resources\RelationManagers\RelationGroup;
