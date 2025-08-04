@@ -392,8 +392,8 @@ The following code examples illustrate how field state may now return an enum in
 ```php
 use App\Enums\Status;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput
-;use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
 
 Select::make('status')
     ->options(Status::class)
@@ -409,6 +409,16 @@ TextInput::make('...')
 $data = $this->form->getState();
 // `$data['status']` is now always an instance of `Status`, or `null` if the field is empty.
 ```
+</Disclosure>
+
+<Disclosure x-show="packages.includes('panels')">
+<span slot="summary">URL parameter names have changed</span>
+
+Filament v4 has renamed some of the URL parameters that are used on resource pages, to make them cleaner in the URL and easier to remember:
+
+- `activeRelationManager` has been renamed to just `relation` on Edit / View resource pages.
+
+To find out if you are using this parameter in your code, try searching for `'activeRelationManager' => ` (etc.) in your code, and looking for areas where you are using `::getUrl()` or another method of generating a URL with a parameter.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('panels')">
