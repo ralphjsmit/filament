@@ -1,5 +1,9 @@
 & .fi-dropdown-trigger {
     @apply flex cursor-pointer;
+
+    & > .fi-btn {
+        @apply w-full justify-between;
+    }
 }
 
 & .fi-dropdown-panel {
