@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use Livewire\Component;
 
 class FilamentManager
 {
@@ -488,9 +489,20 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getProfilePage();
     }
 
+    /**
+     * @return class-string<Component>
+     */
     public function getSidebarLivewireComponent(): string
     {
         return $this->getCurrentOrDefaultPanel()->getSidebarLivewireComponent();
+    }
+
+    /**
+     * @return class-string<Component>
+     */
+    public function getTopbarLivewireComponent(): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getTopbarLivewireComponent();
     }
 
     public function getTenantProfilePage(): ?string

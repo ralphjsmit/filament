@@ -26,6 +26,7 @@ use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Facade;
+use Livewire\Component;
 
 /**
  * @method static bool arePasswordsRevealable()
@@ -105,6 +106,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getTenantProfileUrl(array<string, mixed> $parameters = [])
  * @method static string | null getTenantRegistrationUrl(array<string, mixed> $parameters = [])
  * @method static Theme getTheme()
+ * @method static class-string<Component> getTopbarLivewireComponent()
  * @method static ThemeMode getDefaultThemeMode()
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)

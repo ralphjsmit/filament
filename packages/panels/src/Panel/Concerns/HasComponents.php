@@ -8,7 +8,6 @@ use Filament\Clusters\Cluster;
 use Filament\Livewire\GlobalSearch;
 use Filament\Livewire\Notifications;
 use Filament\Livewire\SimpleUserMenu;
-use Filament\Livewire\Topbar;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
 use Filament\Resources\RelationManagers\RelationGroup;
@@ -492,7 +491,7 @@ trait HasComponents
             $this->queueLivewireComponentForRegistration(Notifications::class);
             $this->queueLivewireComponentForRegistration($this->getSidebarLivewireComponent());
             $this->queueLivewireComponentForRegistration(SimpleUserMenu::class);
-            $this->queueLivewireComponentForRegistration(Topbar::class);
+            $this->queueLivewireComponentForRegistration($this->getTopbarLivewireComponent());
 
             if ($this->hasEmailVerification() && is_subclass_of($emailVerificationPromptRouteAction = $this->getEmailVerificationPromptRouteAction(), Component::class)) {
                 $this->queueLivewireComponentForRegistration($emailVerificationPromptRouteAction);

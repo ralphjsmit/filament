@@ -28,7 +28,7 @@
     @if ($hasTopbar)
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_BEFORE, scopes: $renderHookScopes) }}
 
-        @livewire(\Filament\Livewire\Topbar::class)
+        @livewire(filament()->getTopbarLivewireComponent())
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $renderHookScopes) }}
     @endif
