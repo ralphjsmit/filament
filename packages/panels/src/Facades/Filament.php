@@ -90,6 +90,7 @@ use Livewire\Component;
  * @method static string getResourceUrl(string | Model $model, string $name = 'index', array<string, mixed> $parameters = [], bool $isAbsolute = false, ?Model $tenant = null)
  * @method static ?string getResourceCreatePageRedirect()
  * @method static ?string getResourceEditPageRedirect()
+ * @method static class-string<Component> getSidebarLivewireComponent()
  * @method static string getSidebarWidth()
  * @method static SubNavigationPosition getSubNavigationPosition()
  * @method static string getTenancyScopeName()
