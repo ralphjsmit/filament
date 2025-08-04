@@ -74,7 +74,7 @@ trait CanSortRecords
         }
 
         if ($this->isTableReordering()) {
-            return $query->orderBy($this->getTable()->getReorderColumn());
+            return $query->orderBy($this->getTable()->getReorderColumn(), $this->getTable()->getReorderDirection());
         }
 
         if (
