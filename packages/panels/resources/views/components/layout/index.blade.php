@@ -47,7 +47,7 @@
                 class="fi-sidebar-close-overlay"
             ></div>
 
-            @livewire(\Filament\Livewire\Sidebar::class)
+            @livewire(filament()->getSidebarLivewireComponent())
         @endif
 
         <div

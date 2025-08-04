@@ -492,6 +492,14 @@ class FilamentManager
     /**
      * @return class-string<Component>
      */
+    public function getSidebarLivewireComponent(): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getSidebarLivewireComponent();
+    }
+
+    /**
+     * @return class-string<Component>
+     */
     public function getTopbarLivewireComponent(): string
     {
         return $this->getCurrentOrDefaultPanel()->getTopbarLivewireComponent();
