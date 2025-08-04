@@ -1,6 +1,7 @@
 ---
 title: Chart widgets
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -125,6 +126,8 @@ protected function getData(): array
 
 ## Filtering chart data
 
+### Single Select filter
+
 You can set up chart filters to change the data shown on chart. Commonly, this is used to change the time period that chart data is rendered for.
 
 To set a default filter value, set the `$filter` property:
@@ -157,6 +160,68 @@ protected function getData(): array
     // ...
 }
 ```
+
+### Custom filter schemas
+
+You can use [schema components](../schemas) to build custom filters for your chart widget. This approach offers a more flexible way to define filters.
+
+To get started, use the `HasFiltersSchema` trait and implement the `filtersSchema()` method:
+
+```php
+use Filament\Forms\Components\DatePicker;
+use Filament\Schemas\Schema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+
+use HasFiltersSchema;
+
+public function filtersSchema(Schema $schema): Schema
+{
+    return $schema->components([
+        DatePicker::make('date_start')
+            ->default(
+                now()
+                    ->subDays(30)
+                    ->format('Y-m-d')
+            ),
+        
+        DatePicker::make('date_end')
+            ->default(
+                now()
+                    ->format('Y-m-d')
+            ),
+    ]);
+}
+```
+
+The filter values are accessible via the `$this->filters` array.
+You can use these values inside your `getData()` method:
+
+```php
+protected function getData(): array
+{
+    $dateStart = $this->filters['date_start'];
+    $dateEnd = $this->filters['date_end'];
+
+    return [
+        //
+    ];
+}
+```
+
+<Aside variant="tip">
+    You can run custom logic using this hook after the widget filter form is updated:
+
+    ```php
+    public function updatedInteractsWithSchemas(string $statePath): void
+    {
+        // Runs after the form update is completed
+    }
+    ```
+</Aside>
+
+<Aside variant="info">
+    If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
+</Aside>
 
 ## Live updating chart data (polling)
 
