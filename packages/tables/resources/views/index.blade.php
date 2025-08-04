@@ -610,7 +610,7 @@
         @endif
 
         @if ($filterIndicators)
-            @if ($filterIndicatorsView = FilamentView::renderHook(TablesRenderHook::FILTER_INDICATORS, scopes: static::class, data: ['filterIndicators' => $filterIndicators]))
+            @if (filled($filterIndicatorsView = FilamentView::renderHook(TablesRenderHook::FILTER_INDICATORS, scopes: static::class, data: ['filterIndicators' => $filterIndicators])))
                 {{ $filterIndicatorsView }}
             @else
                 <div class="fi-ta-filter-indicators">
