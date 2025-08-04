@@ -25,7 +25,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property Form $form
