@@ -12,10 +12,9 @@ trait HasTopbar
 
     protected string | Closure | null $topbarLivewireComponent = null;
 
-    public function topbar(bool | Closure $condition = true, string | Closure | null $livewireComponent = null): static
+    public function topbar(bool | Closure $condition = true): static
     {
         $this->hasTopbar = $condition;
-        $this->topbarLivewireComponent($livewireComponent);
 
         return $this;
     }
