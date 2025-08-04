@@ -1,5 +1,9 @@
 .fi-page-sub-navigation-dropdown {
     @apply md:hidden;
+
+    & > .fi-dropdown-trigger > .fi-btn {
+        @apply w-full justify-between;
+    }
 }
 
 .fi-page-sub-navigation-sidebar-ctn {
