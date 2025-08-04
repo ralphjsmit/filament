@@ -416,7 +416,14 @@ $data = $this->form->getState();
 
 Filament v4 has renamed some of the URL parameters that are used on resource pages, to make them cleaner in the URL and easier to remember:
 
-- `activeRelationManager` has been renamed to just `relation` on Edit / View resource pages.
+- `activeRelationManager` has been renamed to `relation` on Edit / View resource pages.
+- `activeTab` has been renamed to `tab` on List / Manage Relation resource pages.
+- `isTableReordering` has been renamed to `reordering` on List / Manage Relation resource pages.
+- `tableFilters` has been renamed to `filters` on List / Manage Relation resource pages.
+- `tableGrouping` has been renamed to `grouping` on List / Manage Relation resource pages.
+- `tableGroupingDirection` has been renamed to `groupingDirection` on List / Manage Relation resource pages.
+- `tableSearch` has been renamed to `search` on List / Manage Relation resource pages.
+- `tableSort` has been renamed to `sort` on List / Manage Relation resource pages.
 
 To find out if you are using this parameter in your code, try searching for `'activeRelationManager' => ` (etc.) in your code, and looking for areas where you are using `::getUrl()` or another method of generating a URL with a parameter.
 </Disclosure>
