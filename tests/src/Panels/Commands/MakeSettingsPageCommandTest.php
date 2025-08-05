@@ -8,6 +8,7 @@ use Carbon\CarbonInterface;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Filament\Facades\Filament;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Spatie\LaravelSettings\Settings as BaseSettings;
@@ -59,7 +60,7 @@ it('can generate a page class in a cluster', function (): void {
     $this->artisan('make:filament-settings-page', [
         'name' => 'ManageSettings',
         'settings' => Settings::class,
-        '--cluster' => 'App\\Filament\\Clusters\\Site\\SiteCluster',
+        '--cluster' => Filament::namespaceFor('Filament\\Clusters\\Site\\SiteCluster'),
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);

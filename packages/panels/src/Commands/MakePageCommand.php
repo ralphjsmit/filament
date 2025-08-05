@@ -8,6 +8,7 @@ use Filament\Commands\FileGenerators\Resources\Pages\ResourceCustomPageClassGene
 use Filament\Commands\FileGenerators\Resources\Pages\ResourceEditRecordPageClassGenerator;
 use Filament\Commands\FileGenerators\Resources\Pages\ResourceManageRelatedRecordsPageClassGenerator;
 use Filament\Commands\FileGenerators\Resources\Pages\ResourceViewRecordPageClassGenerator;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -149,7 +150,7 @@ class MakePageCommand extends Command
                 name: 'resource-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_OPTIONAL,
-                description: 'The namespace of the resource class, such as [App\\Filament\\Resources]',
+                description: 'The namespace of the resource class, such as [' . Filament::namespaceFor('Filament\\Resources') . ']',
             ),
             new InputOption(
                 name: 'type',
@@ -336,7 +337,7 @@ class MakePageCommand extends Command
         }
 
         if (count($namespaces) < 2) {
-            $this->pagesNamespace = (Arr::first($namespaces) ?? 'App\\Filament\\Pages');
+            $this->pagesNamespace = (Arr::first($namespaces) ?? Filament::namespaceFor('Filament\\Pages'));
             $this->pagesDirectory = (Arr::first($directories) ?? app_path('Filament/Pages/'));
 
             return;
@@ -381,7 +382,7 @@ class MakePageCommand extends Command
                     ->whenContains(
                         'Filament\\',
                         fn (Stringable $fqn) => $fqn->after('Filament\\')->prepend('Filament\\'),
-                        fn (Stringable $fqn) => $fqn->replaceFirst('App\\', ''),
+                        fn (Stringable $fqn) => $fqn->replaceFirst(Filament::getRootNamespace(), ''),
                     )
                     ->replace('\\', '/')
                     ->explode('/')
@@ -584,7 +585,7 @@ class MakePageCommand extends Command
                 $formSchemaFqn = $this->askForSchema(
                     intialQuestion: 'Should an existing form schema class be used?',
                     question: 'Which form schema class would you like to use?',
-                    questionPlaceholder: 'App\\Filament\\Resources\\Users\\Schemas\\UserForm',
+                    questionPlaceholder: Filament::namespaceFor('Filament\\Resources\\Users\\Schemas\\UserForm'),
                 );
             }
 
@@ -604,7 +605,7 @@ class MakePageCommand extends Command
                     $infolistSchemaFqn = $this->askForSchema(
                         intialQuestion: 'Would you like to use an existing infolist schema class?',
                         question: 'Which infolist schema class would you like to use?',
-                        questionPlaceholder: 'App\\Filament\\Resources\\Users\\Schemas\\UserInfolist',
+                        questionPlaceholder: Filament::namespaceFor('Filament\\Resources\\Users\\Schemas\\UserInfolist'),
                     );
                 }
 
@@ -621,7 +622,7 @@ class MakePageCommand extends Command
                 $tableFqn = $this->askForSchema(
                     intialQuestion: 'Would you like to use an existing table class?',
                     question: 'Which table class would you like to use?',
-                    questionPlaceholder: 'App\\Filament\\Resources\\Users\\Tables\\UsersTable',
+                    questionPlaceholder: Filament::namespaceFor('Filament\\Resources\\Users\\Tables\\UsersTable'),
                 );
             }
 

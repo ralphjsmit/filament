@@ -6,6 +6,7 @@ use App\Models\User;
 use Carbon\CarbonInterface;
 use Exception;
 use Filament\Actions\Exports\Exporter;
+use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Model;
@@ -59,7 +60,7 @@ class Export extends Model
         }
 
         if (! class_exists(User::class)) {
-            throw new Exception('No [App\\Models\\User] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
+            throw new Exception('No [' . Filament::namespaceFor('Models\\User') . '] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
         }
 
         /** @phpstan-ignore-next-line */

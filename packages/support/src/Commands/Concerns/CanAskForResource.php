@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
 
@@ -60,7 +61,7 @@ trait CanAskForResource
         if (! $resourceFqns) {
             return (string) str(text(
                 label: "No resources were found within [{$resourcesNamespace}]. {$question}",
-                placeholder: 'App\\Filament\\Resources\\Posts\\PostResource',
+                placeholder: Filament::namespaceFor('Filament\\Resources\\Posts\\PostResource'),
                 required: true,
                 validate: function (string $value): ?string {
                     $value = (string) str($value)

@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands\Concerns;
 
+use Filament\Facades\Filament;
 use Illuminate\Support\Arr;
 
 use function Laravel\Prompts\search;
@@ -44,7 +45,7 @@ trait HasResourcesLocation
 
         if (count($namespaces) < 2) {
             return [
-                (Arr::first($namespaces) ?? 'App\\Filament\\Resources'),
+                (Arr::first($namespaces) ?? Filament::namespaceFor('Filament\\Resources')),
                 (Arr::first($directories) ?? app_path('Filament/Resources/')),
             ];
         }

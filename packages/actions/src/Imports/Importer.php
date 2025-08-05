@@ -6,6 +6,7 @@ use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Facades\Filament;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
@@ -293,7 +294,7 @@ abstract class Importer
     {
         return static::$model ?? (string) str(class_basename(static::class))
             ->beforeLast('Importer')
-            ->prepend('App\\Models\\');
+            ->prepend(Filament::namespaceFor('Models\\'));
     }
 
     abstract public static function getCompletedNotificationBody(Import $import): string;

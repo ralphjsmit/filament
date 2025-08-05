@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentCli;
 
 use function Laravel\Prompts\select;
@@ -23,14 +24,14 @@ trait CanAskForComponentLocation
 
         if (blank($locations)) {
             return [
-                "App\\Filament\\{$pathNamespace}",
+                Filament::namespaceFor("Filament\\{$pathNamespace}"),
                 app_path('Filament' . DIRECTORY_SEPARATOR . $path),
                 '',
             ];
         }
 
         $options = [
-            null => "App\\Filament\\{$pathNamespace}",
+            null => Filament::namespaceFor("Filament\\{$pathNamespace}"),
             ...array_map(
                 fn (string $namespace): string => "{$namespace}\\{$pathNamespace}",
                 array_combine(
@@ -47,7 +48,7 @@ trait CanAskForComponentLocation
 
         if (blank($namespace)) {
             return [
-                "App\\Filament\\{$pathNamespace}",
+                Filament::namespaceFor("Filament\\{$pathNamespace}"),
                 app_path('Filament' . DIRECTORY_SEPARATOR . $path),
                 '',
             ];

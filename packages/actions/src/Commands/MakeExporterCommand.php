@@ -3,6 +3,7 @@
 namespace Filament\Actions\Commands;
 
 use Filament\Actions\Commands\FileGenerators\ExporterClassGenerator;
+use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanAskForComponentLocation;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
@@ -84,7 +85,7 @@ class MakeExporterCommand extends Command
                 name: 'model-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_REQUIRED,
-                description: 'The namespace of the model class, [App\\Models] by default',
+                description: 'The namespace of the model class, [' . Filament::namespaceFor('Models') . '] by default',
             ),
             new InputOption(
                 name: 'force',
@@ -131,7 +132,7 @@ class MakeExporterCommand extends Command
                 $this->modelFqnEnd = 'Resource';
             }
 
-            $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
+            $modelNamespace = $this->option('model-namespace') ?? Filament::namespaceFor('Models');
 
             $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
         } else {
@@ -151,7 +152,7 @@ class MakeExporterCommand extends Command
                         fn (string $class): bool => str($class)->replace(['\\', '/'], '')->contains($search, ignoreCase: true),
                     );
                 },
-                placeholder: 'App\\Models\\BlogPost',
+                placeholder: Filament::namespaceFor('Models\\BlogPost'),
                 required: true,
             );
 

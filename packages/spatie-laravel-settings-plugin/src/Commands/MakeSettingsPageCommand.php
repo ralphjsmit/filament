@@ -3,6 +3,7 @@
 namespace Filament\Commands;
 
 use Filament\Commands\FileGenerators\SettingsPageClassGenerator;
+use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\HasCluster;
 use Filament\Support\Commands\Concerns\HasClusterPagesLocation;
@@ -188,7 +189,7 @@ class MakeSettingsPageCommand extends Command
 
                 return array_filter($settingsFqns, fn (string $modelFqn): bool => str($modelFqn)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
             },
-            placeholder: 'App\\Settings\\SiteSettings',
+            placeholder: Filament::namespaceFor('Settings\\SiteSettings'),
             hint: 'Please provide the fully-qualified class name.',
         );
     }
@@ -232,7 +233,7 @@ class MakeSettingsPageCommand extends Command
         }
 
         if (count($namespaces) < 2) {
-            $this->pagesNamespace = (Arr::first($namespaces) ?? 'App\\Filament\\Pages');
+            $this->pagesNamespace = (Arr::first($namespaces) ?? Filament::namespaceFor('Filament\\Pages'));
             $this->pagesDirectory = (Arr::first($directories) ?? app_path('Filament/Pages/'));
 
             return;

@@ -3,6 +3,7 @@
 namespace Filament\Support\Commands\Concerns;
 
 use Filament\Clusters\Cluster;
+use Filament\Facades\Filament;
 use ReflectionClass;
 
 use function Laravel\Prompts\confirm;
@@ -57,7 +58,7 @@ trait HasCluster
         if (empty($clusterFqns)) {
             $clusterFqn = (string) str(text(
                 label: "No clusters were found within the [{$this->panel->getId()}] panel. {$question}",
-                placeholder: 'App\\Filament\\Clusters\\Blog',
+                placeholder: Filament::namespaceFor('Filament\\Clusters\\Blog'),
                 required: true,
                 validate: function (string $value): ?string {
                     $value = (string) str($value)

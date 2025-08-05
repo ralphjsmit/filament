@@ -4,6 +4,7 @@ namespace Filament\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
@@ -146,7 +147,7 @@ class SettingsPage extends Page
     {
         return static::$settings ?? (string) str(class_basename(static::class))
             ->beforeLast('Settings')
-            ->prepend('App\\Settings\\')
+            ->prepend(Filament::namespaceFor('Settings\\'))
             ->append('Settings');
     }
 

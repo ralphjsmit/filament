@@ -55,7 +55,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+        ->discoverPages(in: app_path('Filament/Pages'), for: Filament::namespaceFor('Filament\\Pages'))
         ->pages([]);
 }
 ```

@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Facades\Filament;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 
@@ -75,7 +76,7 @@ it('can generate a table class with a model in a custom namespace', function ():
     $this->artisan('make:filament-table', [
         'name' => 'PostsTable',
         'model' => 'Post',
-        '--model-namespace' => 'App\\Models\\Blog',
+        '--model-namespace' => Filament::namespaceFor('Models\\Blog'),
         '--no-interaction' => true,
     ]);
 

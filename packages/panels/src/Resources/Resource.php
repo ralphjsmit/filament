@@ -2,6 +2,7 @@
 
 namespace Filament\Resources;
 
+use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -76,7 +77,7 @@ abstract class Resource
     {
         return static::$model ?? (string) str(class_basename(static::class))
             ->beforeLast('Resource')
-            ->prepend('App\\Models\\');
+            ->prepend(Filament::namespaceFor('Models\\'));
     }
 
     /**

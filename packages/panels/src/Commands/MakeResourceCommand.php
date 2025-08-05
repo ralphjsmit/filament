@@ -11,6 +11,7 @@ use Filament\Commands\FileGenerators\Resources\ResourceClassGenerator;
 use Filament\Commands\FileGenerators\Resources\Schemas\ResourceFormSchemaClassGenerator;
 use Filament\Commands\FileGenerators\Resources\Schemas\ResourceInfolistSchemaClassGenerator;
 use Filament\Commands\FileGenerators\Resources\Schemas\ResourceTableClassGenerator;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Commands\Concerns\CanAskForResource;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
@@ -180,7 +181,7 @@ class MakeResourceCommand extends Command
                 name: 'model-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_REQUIRED,
-                description: 'The namespace of the model class, [App\\Models] by default',
+                description: 'The namespace of the model class, [' . Filament::namespaceFor('Models') . '] by default',
             ),
             new InputOption(
                 name: 'nested',
@@ -211,7 +212,7 @@ class MakeResourceCommand extends Command
                 name: 'resource-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_OPTIONAL,
-                description: 'The namespace of the resource class, such as [App\\Filament\\Resources]',
+                description: 'The namespace of the resource class, such as [' . Filament::namespaceFor('Filament\\Resources') . ']',
             ),
             new InputOption(
                 name: 'simple',
@@ -301,7 +302,7 @@ class MakeResourceCommand extends Command
                 $this->modelFqnEnd = 'Resource';
             }
 
-            $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
+            $modelNamespace = $this->option('model-namespace') ?? Filament::namespaceFor('Models');
 
             $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
         } else {
@@ -321,7 +322,7 @@ class MakeResourceCommand extends Command
                         fn (string $class): bool => str($class)->replace(['\\', '/'], '')->contains($search, ignoreCase: true),
                     );
                 },
-                placeholder: 'App\\Models\\BlogPost',
+                placeholder: Filament::namespaceFor('Models\\BlogPost'),
                 required: true,
             );
 
