@@ -48,7 +48,7 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
-    protected string|null $rootNamespace = null;
+    protected ?string $rootNamespace = null;
 
     public function auth(): Guard
     {
@@ -846,9 +846,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use the `navigationGroups()` method on the panel configuration instead.
-     *
      * @param  array<string | int, NavigationGroup | string>  $groups
+     *
+     * @deprecated Use the `navigationGroups()` method on the panel configuration instead.
      */
     public function registerNavigationGroups(array $groups): void
     {
@@ -860,9 +860,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use the `navigationItems()` method on the panel configuration instead.
-     *
      * @param  array<NavigationItem>  $items
+     *
+     * @deprecated Use the `navigationItems()` method on the panel configuration instead.
      */
     public function registerNavigationItems(array $items): void
     {
@@ -874,9 +874,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use the `pages()` method on the panel configuration instead.
-     *
      * @param  array<class-string>  $pages
+     *
+     * @deprecated Use the `pages()` method on the panel configuration instead.
      */
     public function registerPages(array $pages): void
     {
@@ -896,9 +896,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use the `resources()` method on the panel configuration instead.
-     *
      * @param  array<class-string>  $resources
+     *
+     * @deprecated Use the `resources()` method on the panel configuration instead.
      */
     public function registerResources(array $resources): void
     {
@@ -910,9 +910,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Register scripts using the `FilamentAsset` facade instead.
-     *
      * @param  array<mixed>  $scripts
+     *
+     * @deprecated Register scripts using the `FilamentAsset` facade instead.
      */
     public function registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false): void
     {
@@ -920,9 +920,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Register script data using the `FilamentAsset` facade instead.
-     *
      * @param  array<string, mixed>  $data
+     *
+     * @deprecated Register script data using the `FilamentAsset` facade instead.
      */
     public function registerScriptData(array $data): void
     {
@@ -930,9 +930,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Register styles using the `FilamentAsset` facade instead.
-     *
      * @param  array<mixed>  $styles
+     *
+     * @deprecated Register styles using the `FilamentAsset` facade instead.
      */
     public function registerStyles(array $styles): void
     {
@@ -952,9 +952,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use the `viteTheme()` method on the panel configuration instead.
-     *
      * @param  string | array<string>  $theme
+     *
+     * @deprecated Use the `viteTheme()` method on the panel configuration instead.
      */
     public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
     {
@@ -966,9 +966,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use the `userMenuItems()` method on the panel configuration instead.
-     *
      * @param  array<MenuItem>  $items
+     *
+     * @deprecated Use the `userMenuItems()` method on the panel configuration instead.
      */
     public function registerUserMenuItems(array $items): void
     {
@@ -980,9 +980,9 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use the `widgets()` method on the panel configuration instead.
-     *
      * @param  array<class-string>  $widgets
+     *
+     * @deprecated Use the `widgets()` method on the panel configuration instead.
      */
     public function registerWidgets(array $widgets): void
     {
@@ -1064,5 +1064,14 @@ class FilamentManager
     public function getRootNamespace(): string
     {
         return $this->rootNamespace ?? app()->getNamespace();
+    }
+
+    /**
+     * @param  class-string|non-empty-string  $namespace
+     * @return class-string
+     */
+    public function namespaceFor(string $namespace): string
+    {
+        return $this->getRootNamespace() . $namespace;
     }
 }
