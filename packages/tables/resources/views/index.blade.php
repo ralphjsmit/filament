@@ -588,7 +588,7 @@
                                 color="primary"
                                 tag="button"
                                 x-on:click="selectAllRecords"
-                                x-show="canSelectAllRecords"
+                                x-show="canSelectAllRecords()"
                                 {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
                                 :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
                             >
