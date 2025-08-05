@@ -48,6 +48,8 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
+    protected string|null $rootNamespace = null;
+
     public function auth(): Guard
     {
         return $this->getCurrentOrDefaultPanel()->auth();
@@ -1052,5 +1054,15 @@ class FilamentManager
     public function getErrorNotifications(): array
     {
         return $this->getCurrentOrDefaultPanel()->getErrorNotifications();
+    }
+
+    public function setRootNamespace(string $namespace): void
+    {
+        $this->rootNamespace = $namespace;
+    }
+
+    public function getRootNamespace(): string
+    {
+        return $this->rootNamespace ?? app()->getNamespace();
     }
 }
