@@ -126,9 +126,9 @@ protected function getData(): array
 
 ## Filtering chart data
 
-### Single Select filter
+### Basic Select filter
 
-You can set up chart filters to change the data shown on chart. Commonly, this is used to change the time period that chart data is rendered for.
+You can set up chart filters to change the data that is presented. Commonly, this is used to change the time period that chart data is rendered for.
 
 To set a default filter value, set the `$filter` property:
 
@@ -161,7 +161,7 @@ protected function getData(): array
 }
 ```
 
-### Custom filter schemas
+### Custom filters
 
 You can use [schema components](../schemas) to build custom filters for your chart widget. This approach offers a more flexible way to define filters.
 
