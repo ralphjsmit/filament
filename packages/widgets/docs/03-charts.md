@@ -172,52 +172,39 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Schemas\Schema;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 
-use HasFiltersSchema;
-
-public function filtersSchema(Schema $schema): Schema
+class BlogPostsChart extends ChartWidget
 {
-    return $schema->components([
-        DatePicker::make('date_start')
-            ->default(
-                now()
-                    ->subDays(30)
-                    ->format('Y-m-d')
-            ),
-        
-        DatePicker::make('date_end')
-            ->default(
-                now()
-                    ->format('Y-m-d')
-            ),
-    ]);
+    use HasFiltersSchema;
+    
+    // ...
+    
+    public function filtersSchema(Schema $schema): Schema
+    {
+        return $schema->components([
+            DatePicker::make('startDate')
+                ->default(now()->subDays(30)),
+            DatePicker::make('endDate')
+                ->default(now()),
+        ]);
+    }
 }
 ```
 
-The filter values are accessible via the `$this->filters` array.
-You can use these values inside your `getData()` method:
+The filter values are accessible via the `$this->filters` array. You can use these values inside your `getData()` method:
 
 ```php
 protected function getData(): array
 {
-    $dateStart = $this->filters['date_start'];
-    $dateEnd = $this->filters['date_end'];
+    $startDate = $this->filters['startDate'] ?? null;
+    $endDate = $this->filters['endDate'] ?? null;
 
     return [
-        //
+        // ...
     ];
 }
 ```
 
-<Aside variant="tip">
-    You can run custom logic using this hook after the widget filter form is updated:
-
-    ```php
-    public function updatedInteractsWithSchemas(string $statePath): void
-    {
-        // Runs after the form update is completed
-    }
-    ```
-</Aside>
+The `$this->filters` array will always reflect the current form data. Please note that this data is not validated, as it is available live and not intended to be used for anything other than querying the database. You must ensure that the data is valid before using it.
 
 <Aside variant="info">
     If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
