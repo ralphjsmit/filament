@@ -33,7 +33,7 @@ class EditAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::edit.single.notifications.saved.title'));
 
-        $this->defaultColor('warning');
+        $this->defaultColor('primary');
 
         $this->icon(FilamentIcon::resolve('actions::edit-action') ?? 'heroicon-m-pencil-square');
 
