@@ -351,18 +351,14 @@
                             @if (! $areGroupingSettingsInDropdownOnDesktop)
                                 <div class="fi-ta-grouping-settings-fields">
                                     <label>
-                                        <span class="fi-sr-only">
-                                            {{ __('filament-tables::table.grouping.fields.group.label') }}
-                                        </span>
-
-                                        <x-filament::input.wrapper>
+                                        <x-filament::input.wrapper
+                                            :prefix="__('filament-tables::table.grouping.fields.group.label')"
+                                        >
                                             <x-filament::input.select
                                                 x-model="group"
                                                 x-on:change="resetCollapsedGroups()"
                                             >
-                                                <option value="">
-                                                    {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
-                                                </option>
+                                                <option value="">-</option>
 
                                                 @foreach ($groups as $groupOption)
                                                     <option
