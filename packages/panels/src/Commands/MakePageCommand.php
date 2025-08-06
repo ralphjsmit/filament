@@ -382,7 +382,7 @@ class MakePageCommand extends Command
                     ->whenContains(
                         'Filament\\',
                         fn (Stringable $fqn) => $fqn->after('Filament\\')->prepend('Filament\\'),
-                        fn (Stringable $fqn) => $fqn->replaceFirst(Filament::getRootNamespace(), ''),
+                        fn (Stringable $fqn) => $fqn->replaceFirst(app()->getNamespace(), ''),
                     )
                     ->replace('\\', '/')
                     ->explode('/')
