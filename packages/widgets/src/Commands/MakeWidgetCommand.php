@@ -2,7 +2,6 @@
 
 namespace Filament\Widgets\Commands;
 
-use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanAskForLivewireComponentLocation;
 use Filament\Support\Commands\Concerns\CanAskForResource;
 use Filament\Support\Commands\Concerns\CanAskForViewLocation;
@@ -140,7 +139,7 @@ class MakeWidgetCommand extends Command
                 name: 'resource-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_OPTIONAL,
-                description: 'The namespace of the resource class, such as [' . Filament::namespaceFor('Filament\\Resources') . ']',
+                description: 'The namespace of the resource class, such as [' . app()->getNamespace() . 'Filament\\Resources]',
             ),
             new InputOption(
                 name: 'stats-overview',
@@ -330,7 +329,7 @@ class MakeWidgetCommand extends Command
         }
 
         if (count($namespaces) < 2) {
-            $this->widgetsNamespace = (Arr::first($namespaces) ?? Filament::namespaceFor('Filament\\Widgets'));
+            $this->widgetsNamespace = (Arr::first($namespaces) ?? app()->getNamespace() . 'Filament\\Widgets');
             $this->widgetsDirectory = (Arr::first($directories) ?? app_path('Filament/Widgets/'));
 
             return;
@@ -487,7 +486,7 @@ class MakeWidgetCommand extends Command
                     fn (string $class): bool => str($class)->replace(['\\', '/'], '')->contains($search, ignoreCase: true),
                 );
             },
-            placeholder: Filament::namespaceFor('Models\\BlogPost'),
+            placeholder: app()->getNamespace() . 'Models\\BlogPost',
         );
 
         $isGenerated = confirm(

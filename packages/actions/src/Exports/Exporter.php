@@ -8,7 +8,6 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Facades\Filament;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -78,7 +77,7 @@ abstract class Exporter
     {
         return static::$model ?? (string) str(class_basename(static::class))
             ->beforeLast('Exporter')
-            ->prepend(Filament::namespaceFor('Models\\'));
+            ->prepend(app()->getNamespace() . 'Models\\');
     }
 
     abstract public static function getCompletedNotificationBody(Export $export): string;

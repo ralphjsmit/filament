@@ -44,7 +44,7 @@ trait CanGeneratePanels
             throw new FailureCommandOutput;
         }
 
-        $fqn = Filament::namespaceFor("Providers\\Filament\\{$basename}");
+        $fqn = app()->getNamespace() . "Providers\\Filament\\{$basename}";
 
         if (empty(Filament::getPanels())) {
             $this->writeFile($path, app(PanelProviderClassGenerator::class, [
@@ -71,8 +71,8 @@ trait CanGeneratePanels
 
             if (! Str::contains($appConfig, "{$fqn}::class")) {
                 file_put_contents(config_path('app.php'), str_replace(
-                    Filament::namespaceFor('Providers\\RouteServiceProvider') . '::class,',
-                    "{$fqn}::class," . PHP_EOL . '        ' . Filament::namespaceFor('Providers\\RouteServiceProvider') . '::class,',
+                    app()->getNamespace() . 'Providers\\RouteServiceProvider::class,',
+                    "{$fqn}::class," . PHP_EOL . '        ' . app()->getNamespace() . 'Providers\\RouteServiceProvider::class,',
                     $appConfig,
                 ));
             }

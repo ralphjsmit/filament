@@ -2,7 +2,6 @@
 
 namespace Filament\Support\Commands\Concerns;
 
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
 use function Filament\Support\discover_app_classes;
@@ -36,7 +35,7 @@ trait CanAskForRelatedModel
 
                 return array_filter($modelFqns, fn (string $modelFqn): bool => str($modelFqn)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
             },
-            placeholder: Filament::namespaceFor('Models\\User'),
+            placeholder: app()->getNamespace() . 'Models\\User',
             hint: 'Please provide the fully-qualified class name.',
         );
     }

@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Commands;
 
-use Filament\Facades\Filament;
 use Filament\Forms\Commands\FileGenerators\FormSchemaClassGenerator;
 use Filament\Support\Commands\Concerns\CanAskForComponentLocation;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
@@ -82,7 +81,7 @@ class MakeFormCommand extends Command
                 name: 'model-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_REQUIRED,
-                description: 'The namespace of the model class, [' . Filament::namespaceFor('Models') . '] by default',
+                description: 'The namespace of the model class, [' . app()->getNamespace() . 'Models] by default',
             ),
             new InputOption(
                 name: 'force',
@@ -135,7 +134,7 @@ class MakeFormCommand extends Command
                 ->studly()
                 ->replace('/', '\\');
 
-            $modelNamespace = $this->option('model-namespace') ?? Filament::namespaceFor('Models');
+            $modelNamespace = $this->option('model-namespace') ?? app()->getNamespace() . 'Models';
 
             $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
 
@@ -165,7 +164,7 @@ class MakeFormCommand extends Command
                     fn (string $class): bool => str($class)->replace(['\\', '/'], '')->contains($search, ignoreCase: true),
                 );
             },
-            placeholder: Filament::namespaceFor('Models\\BlogPost'),
+            placeholder: app()->getNamespace() . 'Models\\BlogPost',
             required: true,
         );
 

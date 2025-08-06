@@ -2,7 +2,6 @@
 
 namespace Filament\Support\Commands\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentCli;
 
 use function Laravel\Prompts\select;
@@ -22,14 +21,14 @@ trait CanAskForLivewireComponentLocation
 
         if (blank($locations)) {
             return [
-                Filament::namespaceFor('Livewire'),
+                app()->getNamespace() . 'Livewire',
                 app_path('Livewire'),
                 '',
             ];
         }
 
         $options = [
-            null => Filament::namespaceFor('Livewire'),
+            null => app()->getNamespace() . 'Livewire',
             ...array_combine(
                 array_keys($locations),
                 array_keys($locations),
@@ -43,7 +42,7 @@ trait CanAskForLivewireComponentLocation
 
         if (blank($namespace)) {
             return [
-                Filament::namespaceFor('Livewire'),
+                app()->getNamespace() . 'Livewire',
                 app_path('Livewire'),
                 '',
             ];

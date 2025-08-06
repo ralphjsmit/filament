@@ -97,7 +97,7 @@ it('can generate a page class in a cluster', function (): void {
     $this->artisan('make:filament-page', [
         'name' => 'ManageSettings',
         '--panel' => 'admin',
-        '--cluster' => Filament::namespaceFor('Filament\\Clusters\\Site'),
+        '--cluster' => app()->getNamespace() . 'Filament\\Clusters\\Site',
         '--no-interaction' => true,
     ]);
 
@@ -120,7 +120,7 @@ it('can generate a page view in a cluster', function (): void {
     $this->artisan('make:filament-page', [
         'name' => 'ManageSettings',
         '--panel' => 'admin',
-        '--cluster' => Filament::namespaceFor('Filament\\Clusters\\Site'),
+        '--cluster' => app()->getNamespace() . 'Filament\\Clusters\\Site',
         '--no-interaction' => true,
     ]);
 
@@ -146,7 +146,7 @@ it('can generate a page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        Filament::namespaceFor('Filament\\Resources\\UserResource'),
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -179,7 +179,7 @@ it('can generate a page view in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        Filament::namespaceFor('Filament\\Resources\\UserResource'),
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -212,7 +212,7 @@ it('can generate a create page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        Filament::namespaceFor('Filament\\Resources\\UserResource'),
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -247,7 +247,7 @@ it('can generate an edit page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        Filament::namespaceFor('Filament\\Resources\\UserResource'),
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -282,7 +282,7 @@ it('can generate a view page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        Filament::namespaceFor('Filament\\Resources\\UserResource'),
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -334,8 +334,8 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        Filament::namespaceFor('Filament\\Resources\\TeamResource'),
-        Filament::namespaceFor('Filament\\Resources\\UserResource'),
+        app()->getNamespace() . 'Filament\\Resources\\TeamResource',
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     return $testCase->artisan('make:filament-page', [
@@ -385,8 +385,8 @@ it('can generate a manage related records page class in a resource with a relate
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], true)
-        ->expectsQuestion($questions['relatedResource'], Filament::namespaceFor('Filament\\Resources\\TeamResource'))
-        ->expectsQuestion($questions['relatedResource'], Filament::namespaceFor('Filament\\Resources\\TeamResource')); // Repeat the question as there is a bug when testing `search()` in Prompts
+        ->expectsQuestion($questions['relatedResource'], app()->getNamespace() . 'Filament\\Resources\\TeamResource')
+        ->expectsQuestion($questions['relatedResource'], app()->getNamespace() . 'Filament\\Resources\\TeamResource'); // Repeat the question as there is a bug when testing `search()` in Prompts
 
     assertFileExists($path = app_path('Filament/Resources/UserResource/Pages/ManageUserTeams.php'));
     expect(file_get_contents($path))

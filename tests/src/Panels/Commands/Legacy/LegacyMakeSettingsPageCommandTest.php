@@ -8,7 +8,6 @@ use Carbon\CarbonInterface;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Filament\Facades\Filament;
 use Filament\Support\Commands\FileGenerators\FileGenerationFlag;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
@@ -66,7 +65,7 @@ it('can generate a page class in a cluster', function (): void {
     $this->artisan('make:filament-settings-page', [
         'name' => 'ManageSettings',
         'settings' => Settings::class,
-        '--cluster' => Filament::namespaceFor('Filament\\Clusters\\Site'),
+        '--cluster' => app()->getNamespace() . 'Filament\\Clusters\\Site',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);

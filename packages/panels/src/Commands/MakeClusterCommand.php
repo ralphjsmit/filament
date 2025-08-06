@@ -3,7 +3,6 @@
 namespace Filament\Commands;
 
 use Filament\Commands\FileGenerators\ClusterClassGenerator;
-use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\HasPanel;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
@@ -160,7 +159,7 @@ class MakeClusterCommand extends Command
         }
 
         if (count($namespaces) < 2) {
-            $this->clustersNamespace = (Arr::first($namespaces) ?? Filament::namespaceFor('Filament\\Clusters'));
+            $this->clustersNamespace = (Arr::first($namespaces) ?? app()->getNamespace() . 'Filament\\Clusters');
             $this->clustersDirectory = (Arr::first($directories) ?? app_path('Filament/Clusters/'));
 
             return;

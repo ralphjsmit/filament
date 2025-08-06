@@ -1053,13 +1053,4 @@ class FilamentManager
     {
         return $this->getCurrentOrDefaultPanel()->getErrorNotifications();
     }
-
-    /**
-     * @param  class-string|non-empty-string  $namespace
-     * @return class-string
-     */
-    public function namespaceFor(string $namespace): string
-    {
-        return app()->getNamespace() . $namespace;
-    }
 }
