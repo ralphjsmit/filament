@@ -172,8 +172,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     }
 
     public function copyable(
-        bool | Closure $condition = true, 
-        string | Closure | null $copyMessage = null, 
+        bool | Closure $condition = true,
+        string | Closure | null $copyMessage = null,
         int | Closure | null $copyMessageTimeout = null
     ): static {
         $this->isCopyable = $condition;

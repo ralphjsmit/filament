@@ -604,7 +604,7 @@ return [
             'copy' => [
                 'label' => 'Copy',
                 'message' => 'Copied',
-            ]
+            ],
 
         ],
 

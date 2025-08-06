@@ -2,12 +2,12 @@
 
 namespace Filament\Forms\Components\TextInput\Actions;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Js;
-use Closure;
 
 class CopyAction extends Action
 {
@@ -39,7 +39,7 @@ class CopyAction extends Action
             JS;
         });
     }
-    
+
     public static function getDefaultName(): ?string
     {
         return 'copy';
@@ -58,7 +58,6 @@ class CopyAction extends Action
 
         return $this;
     }
-
 
     public function getCopyMessage(mixed $state): string
     {
