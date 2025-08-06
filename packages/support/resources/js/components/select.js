@@ -1,4 +1,4 @@
-import { Select } from '../../../../support/resources/js/utilities/select.js'
+import { Select } from '../utilities/select.js'
 
 export default function selectFormComponent({
                                                 canOptionLabelsWrap,

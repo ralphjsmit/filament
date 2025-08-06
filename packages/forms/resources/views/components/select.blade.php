@@ -190,6 +190,7 @@
                 {{
                     $attributes
                         ->merge($getExtraAlpineAttributes(), escape: false)
+                        ->class(['fi-select'])
                 }}
             >
                 <div x-ref="select"></div>

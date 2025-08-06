@@ -5,6 +5,7 @@ namespace Filament\Support;
 use BladeUI\Icons\Factory as BladeIconsFactory;
 use Composer\InstalledVersions;
 use Filament\Commands\CacheComponentsCommand;
+use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;
@@ -145,6 +146,7 @@ class SupportServiceProvider extends PackageServiceProvider
         app('livewire')->componentHook(new PartialsComponentHook);
 
         FilamentAsset::register([
+            AlpineComponent::make('select', __DIR__ . '/../dist/components/select.js'),
             Js::make('support', __DIR__ . '/../dist/index.js'),
         ], 'filament/support');
 
