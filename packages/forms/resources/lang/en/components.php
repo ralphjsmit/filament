@@ -601,6 +601,10 @@ return [
             'show_password' => [
                 'label' => 'Show password',
             ],
+            'copy' => [
+                'label' => 'Copy',
+                'message' => 'Copied',
+            ]
 
         ],
 
