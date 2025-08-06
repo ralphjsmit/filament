@@ -11,9 +11,9 @@ use Illuminate\Support\Js;
 
 class CopyAction extends Action
 {
-    private string | Closure | null $copyMessage = null;
+    protected string | Closure | null $copyMessage = null;
 
-    private int | Closure | null $copyMessageTimeout = null;
+    protected int | Closure | null $copyMessageDuration = null;
 
     protected function setUp(): void
     {
@@ -21,22 +21,22 @@ class CopyAction extends Action
 
         $this->label(__('filament-forms::components.text_input.actions.copy.label'));
 
-        $this->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_TEXT_INPUT_ACTIONS_COPY) ?? Heroicon::ClipboardDocument);
+        $this->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_TEXT_INPUT_ACTIONS_COPY) ?? Heroicon::ClipboardDocumentList);
 
         $this->defaultColor('gray');
 
-        $this->alpineClickHandler(function (mixed $state) {
+        $this->alpineClickHandler(function (mixed $state): string {
             $copyableState = Js::from($state);
             $copyMessageJs = Js::from($this->getCopyMessage($state));
-            $copyMessageTimeoutJs = Js::from($this->getCopyMessageTimeout($state));
+            $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($state));
 
             return <<<JS
                 window.navigator.clipboard.writeText({$copyableState})
                 \$tooltip({$copyMessageJs}, {
                     theme: \$store.theme,
-                    timeout: {$copyMessageTimeoutJs}
+                    timeout: {$copyMessageDurationJs},
                 })
-            JS;
+                JS;
         });
     }
 
@@ -52,9 +52,9 @@ class CopyAction extends Action
         return $this;
     }
 
-    public function copyMessageTimeout(int | Closure | null $duration): static
+    public function copyMessageDuration(int | Closure | null $duration): static
     {
-        $this->copyMessageTimeout = $duration;
+        $this->copyMessageDuration = $duration;
 
         return $this;
     }
@@ -66,9 +66,9 @@ class CopyAction extends Action
         ]) ?? __('filament-forms::components.text_input.actions.copy.message');
     }
 
-    public function getCopyMessageTimeout(mixed $state): int
+    public function getCopyMessageDuration(mixed $state): int
     {
-        return $this->evaluate($this->copyMessageTimeout, [
+        return $this->evaluate($this->copyMessageDuration, [
             'state' => $state,
         ]) ?? 2000;
     }

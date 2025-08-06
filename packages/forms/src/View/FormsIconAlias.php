@@ -76,11 +76,11 @@ class FormsIconAlias
 
     const COMPONENTS_SELECT_ACTIONS_EDIT_OPTION = 'forms::components.select.actions.edit-option';
 
+    const COMPONENTS_TEXT_INPUT_ACTIONS_COPY = 'forms::components.text-input.actions.copy';
+
     const COMPONENTS_TEXT_INPUT_ACTIONS_HIDE_PASSWORD = 'forms::components.text-input.actions.hide-password';
 
     const COMPONENTS_TEXT_INPUT_ACTIONS_SHOW_PASSWORD = 'forms::components.text-input.actions.show-password';
-
-    const COMPONENTS_TEXT_INPUT_ACTIONS_COPY = 'forms::components.text-input.actions.copy';
 
     const COMPONENTS_TOGGLE_BUTTONS_BOOLEAN_FALSE = 'forms::components.toggle-buttons.boolean.false';
 

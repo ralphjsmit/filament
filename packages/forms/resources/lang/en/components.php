@@ -594,16 +594,17 @@ return [
 
         'actions' => [
 
+            'copy' => [
+                'label' => 'Copy',
+                'message' => 'Copied',
+            ],
+
             'hide_password' => [
                 'label' => 'Hide password',
             ],
 
             'show_password' => [
                 'label' => 'Show password',
-            ],
-            'copy' => [
-                'label' => 'Copy',
-                'message' => 'Copied',
             ],
 
         ],
