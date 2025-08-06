@@ -263,26 +263,45 @@
                     @if ($areGroupingSettingsVisible)
                         <div
                             x-data="{
-                                direction: $wire.$entangle('tableGroupingDirection', true),
-                                group: $wire.$entangle('tableGrouping', true),
+                                grouping: $wire.$entangle('tableGrouping', true),
+                                group: null,
+                                direction: null,
                             }"
                             x-init="
-                                $watch('group', function (newGroup, oldGroup) {
-                                    if (newGroup && direction) {
+                                if (grouping) {
+                                    ;[group, direction] = grouping.split(':')
+                                    direction ??= 'asc'
+                                }
+
+                                $watch('grouping', function () {
+                                    if (! grouping) {
                                         return
                                     }
 
+                                    ;[group, direction] = grouping.split(':')
+                                    direction ??= 'asc'
+                                })
+
+                                $watch('direction', function () {
+                                    grouping = group ? `${group}:${direction}` : null
+                                })
+
+                                $watch('group', function (newGroup, oldGroup) {
                                     if (! newGroup) {
                                         direction = null
+                                        grouping = group ? `${group}:${direction}` : null
 
                                         return
                                     }
 
                                     if (oldGroup) {
+                                        grouping = group ? `${group}:${direction}` : null
+
                                         return
                                     }
 
                                     direction = 'asc'
+                                    grouping = group ? `${group}:${direction}` : null
                                 })
                             "
                             class="fi-ta-grouping-settings"
@@ -725,6 +744,7 @@
                                         x-init="
                                             if (sort) {
                                                 ;[column, direction] = sort.split(':')
+                                                direction ??= 'asc'
                                             }
 
                                             $watch('sort', function () {
@@ -733,6 +753,7 @@
                                                 }
 
                                                 ;[column, direction] = sort.split(':')
+                                                direction ??= 'asc'
                                             })
 
                                             $watch('direction', function () {
