@@ -120,12 +120,12 @@ class PanelProviderClassGenerator extends ClassGenerator
                     ->colors([
                         'primary' => {$this->simplifyFqn(Color::class)}::Amber,
                     ])
-                    ->discoverResources(in: app_path('Filament/{$componentsDirectory}Resources'), for: {$this->simplifyFqn(app()->getNamespace() . "Filament\\{$componentsNamespace}Resources")})
-                    ->discoverPages(in: app_path('Filament/{$componentsDirectory}Pages'), for: {$this->simplifyFqn(app()->getNamespace() . "Filament\\{$componentsNamespace}Pages")})
+                    ->discoverResources(in: app_path('Filament/{$componentsDirectory}Resources'), for: '{$this->simplifyFqn(app()->getNamespace() . "Filament\\{$componentsNamespace}Resources")}')
+                    ->discoverPages(in: app_path('Filament/{$componentsDirectory}Pages'), for: '{$this->simplifyFqn(app()->getNamespace() . "Filament\\{$componentsNamespace}Pages")}')
                     ->pages([
                         {$this->simplifyFqn(Dashboard::class)}::class,
                     ])
-                    ->discoverWidgets(in: app_path('Filament/{$componentsDirectory}Widgets'), for: {$this->simplifyFqn(app()->getNamespace() . "Filament\\{$componentsNamespace}Widgets")})
+                    ->discoverWidgets(in: app_path('Filament/{$componentsDirectory}Widgets'), for: '{$this->simplifyFqn(app()->getNamespace() . "Filament\\{$componentsNamespace}Widgets")}')
                     ->widgets([
                         {$this->simplifyFqn(AccountWidget::class)}::class,
                         {$this->simplifyFqn(FilamentInfoWidget::class)}::class,
