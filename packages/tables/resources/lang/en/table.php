@@ -186,7 +186,6 @@ return [
 
             'group' => [
                 'label' => 'Group by',
-                'placeholder' => 'Group by',
             ],
 
             'direction' => [
