@@ -16,6 +16,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
@@ -37,7 +38,29 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     protected bool | Closure $isSelectSearchable = false;
 
+    protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
+
+    protected int | Closure $searchDebounce = 1000;
+
+    protected string | Closure | null $searchingMessage = null;
+
+    protected string | Htmlable | Closure | null $searchPrompt = null;
+
+    protected bool | Closure $shouldSearchLabels = true;
+
+    protected bool | Closure $shouldSearchValues = false;
+
     protected ?Closure $transformOptionsForJsUsing = null;
+
+    protected string | Closure | null $loadingMessage = null;
+
+    protected bool | Closure $canOptionLabelsWrap = true;
+
+    protected bool | Closure $isHtmlAllowed = false;
+
+    protected int | Closure $optionsLimit = 50;
+
+    protected string | Closure | null $position = null;
 
     protected function setUp(): void
     {
@@ -55,6 +78,18 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 ->values()
                 ->all();
         });
+    }
+
+    public function loadingMessage(string | Closure | null $message): static
+    {
+        $this->loadingMessage = $message;
+
+        return $this;
+    }
+
+    public function getLoadingMessage(): string
+    {
+        return $this->evaluate($this->loadingMessage) ?? __('filament-forms::components.select.loading_message');
     }
 
     /**
@@ -92,6 +127,137 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     public function isSelectSearchable(): bool
     {
         return (bool) $this->evaluate($this->isSelectSearchable);
+    }
+
+    public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
+    {
+        $this->noSearchResultsMessage = $message;
+
+        return $this;
+    }
+
+    public function searchDebounce(int | Closure $debounce): static
+    {
+        $this->searchDebounce = $debounce;
+
+        return $this;
+    }
+
+    public function searchingMessage(string | Closure | null $message): static
+    {
+        $this->searchingMessage = $message;
+
+        return $this;
+    }
+
+    public function searchPrompt(string | Htmlable | Closure | null $message): static
+    {
+        $this->searchPrompt = $message;
+
+        return $this;
+    }
+
+    public function searchLabels(bool | Closure | null $condition = true): static
+    {
+        $this->shouldSearchLabels = $condition;
+
+        return $this;
+    }
+
+    public function searchValues(bool | Closure | null $condition = true): static
+    {
+        $this->shouldSearchValues = $condition;
+
+        return $this;
+    }
+
+    public function getNoSearchResultsMessage(): string | Htmlable
+    {
+        return $this->evaluate($this->noSearchResultsMessage) ?? __('filament-tables::table.columns.select.no_search_results_message');
+    }
+
+    public function getSearchPrompt(): string | Htmlable
+    {
+        return $this->evaluate($this->searchPrompt) ?? __('filament-tables::table.columns.select.search_prompt');
+    }
+
+    public function shouldSearchLabels(): bool
+    {
+        return (bool) $this->evaluate($this->shouldSearchLabels);
+    }
+
+    public function shouldSearchValues(): bool
+    {
+        return (bool) $this->evaluate($this->shouldSearchValues);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getSearchableOptionFields(): array
+    {
+        return [
+            ...($this->shouldSearchLabels() ? ['label'] : []),
+            ...($this->shouldSearchValues() ? ['value'] : []),
+        ];
+    }
+
+    public function getSearchDebounce(): int
+    {
+        return $this->evaluate($this->searchDebounce);
+    }
+
+    public function wrapOptionLabels(bool | Closure $condition = true): static
+    {
+        $this->canOptionLabelsWrap = $condition;
+
+        return $this;
+    }
+
+    public function canOptionLabelsWrap(): bool
+    {
+        return (bool) $this->evaluate($this->canOptionLabelsWrap);
+    }
+
+    public function getSearchingMessage(): string
+    {
+        return $this->evaluate($this->searchingMessage) ?? __('filament-tables::table.columns.select.searching_message');
+    }
+
+    public function allowHtml(bool | Closure $condition = true): static
+    {
+        $this->isHtmlAllowed = $condition;
+
+        return $this;
+    }
+
+    public function isHtmlAllowed(): bool
+    {
+        return (bool) $this->evaluate($this->isHtmlAllowed);
+    }
+
+    public function optionsLimit(int | Closure $limit): static
+    {
+        $this->optionsLimit = $limit;
+
+        return $this;
+    }
+
+    public function getOptionsLimit(): int
+    {
+        return $this->evaluate($this->optionsLimit);
+    }
+
+    public function position(string | Closure | null $position): static
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function getPosition(): ?string
+    {
+        return $this->evaluate($this->position);
     }
 
     /**
@@ -134,8 +300,11 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
+        $canSelectPlaceholder = $this->canSelectPlaceholder();
         $isDisabled = $this->isDisabled();
         $isNative = ! $this->isSelectSearchable() && $this->isNative();
+        $options = $this->getOptions();
+        $placeholder = $this->getPlaceholder() ?? __('filament-tables::table.columns.select.placeholder');
         $state = $this->getState();
 
         $attributes = $this->getExtraAttributeBag()
@@ -143,13 +312,24 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/select', 'filament/tables'),
                 'x-data' => 'selectTableColumn({
-                    canSelectPlaceholder: ' . Js::from($this->canSelectPlaceholder()) . ',
+                    canOptionLabelsWrap: ' . Js::from($this->canOptionLabelsWrap()) . ',
+                    canSelectPlaceholder: ' . Js::from($canSelectPlaceholder) . ',
+                    isDisabled: ' . Js::from($isDisabled) . ',
+                    isHtmlAllowed: ' . Js::from($this->isHtmlAllowed()) . ',
                     isNative: ' . Js::from($isNative) . ',
                     isSearchable: ' . Js::from($this->isSelectSearchable()) . ',
+                    loadingMessage: ' . Js::from($this->getLoadingMessage()) . ',
                     name: ' . Js::from($this->getName()) . ',
-                    options: ' . Js::from($this->getOptionsForJs()) . ',
-                    placeholder: ' . Js::from($this->getPlaceholder()) . ',
+                    noSearchResultsMessage: ' . Js::from($this->getNoSearchResultsMessage()) . ',
+                    options: ' . Js::from($isNative ? [] : $this->getOptionsForJs()) . ',
+                    optionsLimit: ' . Js::from($this->getOptionsLimit()) . ',
+                    placeholder: ' . Js::from($placeholder) . ',
+                    position: ' . Js::from($this->getPosition()) . ',
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
+                    searchableOptionFields: ' . Js::from($this->getSearchableOptionFields()) . ',
+                    searchDebounce: ' . Js::from($this->getSearchDebounce()) . ',
+                    searchingMessage: ' . Js::from($this->getSearchingMessage()) . ',
+                    searchPrompt: ' . Js::from($this->getSearchPrompt()) . ',
                     state: ' . Js::from($state) . ',
                 })',
             ], escape: false)
@@ -208,11 +388,11 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                         x-model="state"
                         <?= $inputAttributes->toHtml() ?>
                     >
-                        <?php if ($this->canSelectPlaceholder()) { ?>
-                            <option value=""><?= $this->getPlaceholder() ?></option>
+                        <?php if ($canSelectPlaceholder) { ?>
+                            <option value=""><?= $placeholder ?></option>
                         <?php } ?>
 
-                        <?php foreach ($this->getOptions() as $value => $label) { ?>
+                        <?php foreach ($options as $value => $label) { ?>
                             <option
                                 <?= $this->isOptionDisabled($value, $label) ? 'disabled' : null ?>
                                 value="<?= $value ?>"
