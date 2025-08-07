@@ -449,22 +449,6 @@ The `getOptionLabelUsing()` method should return `null` if the option is not val
 
 If you are using the `optionsRelationship()` method, the `getOptionLabelUsing()` method will be automatically defined for you, so you don't need to worry about it.
 
-## Disabling placeholder selection
-
-You can prevent the placeholder from being selected using the `selectablePlaceholder()` method:
-
-```php
-use Filament\Tables\Columns\SelectColumn;
-
-SelectColumn::make('status')
-    ->options([
-        'draft' => 'Draft',
-        'reviewing' => 'Reviewing',
-        'published' => 'Published',
-    ])
-    ->selectablePlaceholder(false)
-```
-
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within the select's lifecycle:
