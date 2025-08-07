@@ -20,6 +20,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -45,7 +46,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     use Concerns\CanUpdateState;
     use HasEnum;
     use HasExtraInputAttributes;
-    use HasOptions;
+    use HasOptions {
+        getOptions as getBaseOptions;
+    }
 
     protected bool | Closure $isNative = true;
 
@@ -94,7 +97,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     protected string | Closure | null $optionsRelationshipTitleAttribute = null;
 
+    protected ?Closure $modifyOptionsRelationshipQueryUsing = null;
+
     protected bool | Closure | null $isOptionsSearchForcedCaseInsensitive = null;
+
+    protected bool | Closure | null $areOptionsRemembered = null;
+
+    protected ?array $rememberedOptions = null;
 
     protected function setUp(): void
     {
@@ -401,6 +410,18 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return $label;
     }
 
+    public function rememberOptions(bool | Closure $condition = true): static
+    {
+        $this->areOptionsRemembered = $condition;
+
+        return $this;
+    }
+
+    public function areOptionsRemembered(): bool
+    {
+        return (bool) $this->evaluate($this->areOptionsRemembered);
+    }
+
     /**
      * @return array<string>
      */
@@ -524,6 +545,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     {
         $this->optionsRelationship = $name;
         $this->optionsRelationshipTitleAttribute = $titleAttribute;
+        $this->modifyOptionsRelationshipQueryUsing = $modifyQueryUsing;
 
         $this->getOptionsSearchResultsUsing(static function (SelectColumn $column, ?string $search) use ($modifyQueryUsing): array {
             $relationship = Relation::noConstraints(fn () => $column->getOptionsRelationship());
@@ -634,21 +656,25 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 ->toArray();
         });
 
-        $this->getOptionLabelUsing(static function (SelectColumn $column, $state) use ($modifyQueryUsing) {
+        $this->getOptionLabelUsing(static function (SelectColumn $column, Model $record, $state) use ($modifyQueryUsing) {
             $relationship = Relation::noConstraints(fn () => $column->getOptionsRelationship());
 
-            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+            $record = $record->getRelationValue($column->getOptionsRelationshipName());
 
-            $relationshipQuery->where($column->getQualifiedRelatedKeyNameForOptionsRelationship($relationship), $state);
+            if (strval($record?->getAttribute($column->getRelatedKeyNameForOptionsRelationship($relationship))) !== strval($state)) {
+                $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-            if ($modifyQueryUsing) {
-                $relationshipQuery = $column->evaluate($modifyQueryUsing, [
-                    'query' => $relationshipQuery,
-                    'search' => null,
-                ]) ?? $relationshipQuery;
+                $relationshipQuery->where($column->getQualifiedRelatedKeyNameForOptionsRelationship($relationship), $state);
+
+                if ($modifyQueryUsing) {
+                    $relationshipQuery = $column->evaluate($modifyQueryUsing, [
+                        'query' => $relationshipQuery,
+                        'search' => null,
+                    ]) ?? $relationshipQuery;
+                }
+
+                $record = $relationshipQuery->first();
             }
-
-            $record = $relationshipQuery->first();
 
             if (! $record) {
                 return null;
@@ -667,7 +693,18 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             return data_get($record, $relationshipTitleAttribute);
         });
 
+        $this->rememberOptions();
+
         return $this;
+    }
+
+    public function getOptions(): array
+    {
+        if ($this->areOptionsRemembered()) {
+            return $this->rememberedOptions ??= $this->getBaseOptions();
+        }
+
+        return $this->getBaseOptions();
     }
 
     public function forceOptionsSearchCaseInsensitive(bool | Closure | null $condition = true): static
@@ -760,6 +797,28 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return filled($this->getOptionsRelationshipName());
     }
 
+    public function getRelatedKeyNameForOptionsRelationship(Relation $relationship): string
+    {
+        if ($relationship instanceof BelongsToMany) {
+            return $relationship->getRelatedKeyName();
+        }
+
+        if ($relationship instanceof HasOneOrManyThrough) {
+            return $relationship->getForeignKeyName();
+        }
+
+        if (
+            ($relationship instanceof HasOneOrMany) ||
+            ($relationship instanceof BelongsToThrough)
+        ) {
+            return $relationship->getRelated()->getKeyName();
+        }
+
+        /** @var BelongsTo $relationship */
+
+        return $relationship->getOwnerKeyName();
+    }
+
     public function getQualifiedRelatedKeyNameForOptionsRelationship(Relation $relationship): string
     {
         if ($relationship instanceof BelongsToMany) {
@@ -780,6 +839,19 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         /** @var BelongsTo $relationship */
 
         return $relationship->getQualifiedOwnerKeyName();
+    }
+
+    public function applyEagerLoading(EloquentBuilder | Relation $query): EloquentBuilder | Relation
+    {
+        if ($this->hasOptionsRelationship()) {
+            $relationshipName = $this->getOptionsRelationshipName($query->getModel());
+
+            if (! array_key_exists($relationshipName, $query->getEagerLoads())) {
+                $query = $query->with($this->modifyOptionsRelationshipQueryUsing ? [$relationshipName => $this->modifyOptionsRelationshipQueryUsing] : [$relationshipName]);
+            }
+        }
+
+        return parent::applyEagerLoading($query);
     }
 
     public function toEmbeddedHtml(): string
