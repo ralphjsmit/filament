@@ -35,6 +35,8 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     protected bool | Closure $isNative = true;
 
+    protected bool | Closure $isSelectSearchable = false;
+
     protected ?Closure $transformOptionsForJsUsing = null;
 
     protected function setUp(): void
@@ -80,6 +82,18 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return (bool) $this->evaluate($this->isNative);
     }
 
+    public function searchableSelect(bool | Closure $condition = true): static
+    {
+        $this->isSelectSearchable = $condition;
+
+        return $this;
+    }
+
+    public function isSelectSearchable(): bool
+    {
+        return (bool) $this->evaluate($this->isSelectSearchable);
+    }
+
     /**
      * @return array<array{'label': string, 'value': string}>
      */
@@ -121,6 +135,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     public function toEmbeddedHtml(): string
     {
         $isDisabled = $this->isDisabled();
+        $isNative = ! $this->isSelectSearchable() && $this->isNative();
         $state = $this->getState();
 
         $attributes = $this->getExtraAttributeBag()
@@ -129,7 +144,8 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/select', 'filament/tables'),
                 'x-data' => 'selectTableColumn({
                     canSelectPlaceholder: ' . Js::from($this->canSelectPlaceholder()) . ',
-                    isNative: ' . Js::from($this->isNative()) . ',
+                    isNative: ' . Js::from($isNative) . ',
+                    isSearchable: ' . Js::from($this->isSelectSearchable()) . ',
                     name: ' . Js::from($this->getName()) . ',
                     options: ' . Js::from($this->getOptionsForJs()) . ',
                     placeholder: ' . Js::from($this->getPlaceholder()) . ',
@@ -181,13 +197,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                         }
                 "
                 x-on:click.prevent.stop=""
-                <?php if (! $this->isNative()) { ?>
+                <?php if (! $isNative) { ?>
                     wire:ignore
                     x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 <?php } ?>
                 class="fi-input-wrp"
             >
-                <?php if ($this->isNative()) { ?>
+                <?php if ($isNative) { ?>
                     <select
                         x-model="state"
                         <?= $inputAttributes->toHtml() ?>

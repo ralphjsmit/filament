@@ -2,12 +2,13 @@ import { Select } from '../../../../../support/resources/js/utilities/select.js'
 
 export default function selectTableColumn({
     canSelectPlaceholder,
-                                              isNative,
-                                              name,
-                                              options,
-                                              placeholder,
-                                              recordKey,
-                                              state,
+    isNative,
+    isSearchable,
+    name,
+    options,
+    placeholder,
+    recordKey,
+    state,
 }) {
     return {
         error: undefined,
@@ -34,7 +35,7 @@ export default function selectTableColumn({
                     // isAutofocused,
                     // isDisabled,
                     // isMultiple,
-                    // isSearchable,
+                    isSearchable,
                     // getOptionLabelUsing,
                     // getOptionLabelsUsing,
                     // getOptionsUsing,
@@ -70,7 +71,7 @@ export default function selectTableColumn({
 
                             if (
                                 component.id !==
-                                this.$root.closest('[wire\\:id]').attributes[
+                                this.$root.closest('[wire\\:id]')?.attributes[
                                     'wire:id'
                                 ].value
                             ) {
