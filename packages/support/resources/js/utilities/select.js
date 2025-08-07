@@ -130,11 +130,11 @@ export class Select {
 
         // Create the main container
         this.container = document.createElement('div')
-        this.container.className = 'fi-select-ctn'
+        this.container.className = 'fi-select-input-ctn'
 
         if (!this.canOptionLabelsWrap) {
             this.container.classList.add(
-                'fi-select-ctn-option-labels-not-wrapped',
+                'fi-select-input-ctn-option-labels-not-wrapped',
             )
         }
 
@@ -142,13 +142,13 @@ export class Select {
 
         // Create the button that toggles the dropdown
         this.selectButton = document.createElement('button')
-        this.selectButton.className = 'fi-select-btn'
+        this.selectButton.className = 'fi-select-input-btn'
         this.selectButton.type = 'button'
         this.selectButton.setAttribute('aria-expanded', 'false')
 
         // Create the selected value display
         this.selectedDisplay = document.createElement('div')
-        this.selectedDisplay.className = 'fi-select-value-ctn'
+        this.selectedDisplay.className = 'fi-select-input-value-ctn'
 
         // Update the selected display based on current state
         this.updateSelectedDisplay()
@@ -163,7 +163,7 @@ export class Select {
         this.dropdown.style.display = 'none'
 
         // Generate a unique ID for the dropdown
-        this.dropdownId = `fi-select-dropdown-${Math.random().toString(36).substring(2, 11)}`
+        this.dropdownId = `fi-select-input-dropdown-${Math.random().toString(36).substring(2, 11)}`
         this.dropdown.id = this.dropdownId
 
         // Set aria-multiselectable for multi-select
@@ -174,7 +174,7 @@ export class Select {
         // Add search input if searchable
         if (this.isSearchable) {
             this.searchContainer = document.createElement('div')
-            this.searchContainer.className = 'fi-select-search-ctn'
+            this.searchContainer.className = 'fi-select-input-search-ctn'
 
             this.searchInput = document.createElement('input')
             this.searchInput.className = 'fi-input'
@@ -308,7 +308,7 @@ export class Select {
 
         // Set the appropriate class based on whether we have grouped options
         if (hasGroupedOptions) {
-            this.optionsList.className = 'fi-select-options-ctn'
+            this.optionsList.className = 'fi-select-input-options-ctn'
         } else if (optionsCount > 0) {
             // Only set fi-dropdown-list class if there are options to render
             this.optionsList.className = 'fi-dropdown-list'
@@ -417,7 +417,7 @@ export class Select {
         }
 
         const optionGroup = document.createElement('li')
-        optionGroup.className = 'fi-select-option-group'
+        optionGroup.className = 'fi-select-input-option-group'
 
         const optionGroupLabel = document.createElement('div')
         optionGroupLabel.className = 'fi-dropdown-header'
@@ -454,14 +454,14 @@ export class Select {
         }
 
         const option = document.createElement('li')
-        option.className = 'fi-dropdown-list-item fi-select-option'
+        option.className = 'fi-dropdown-list-item fi-select-input-option'
 
         if (isDisabled) {
             option.classList.add('fi-disabled')
         }
 
         // Generate a unique ID for the option
-        const optionId = `fi-select-option-${Math.random().toString(36).substring(2, 11)}`
+        const optionId = `fi-select-input-option-${Math.random().toString(36).substring(2, 11)}`
         option.id = optionId
 
         option.setAttribute('role', 'option')
@@ -747,7 +747,7 @@ export class Select {
     addBadgesForSelectedOptions(selectedLabels) {
         // Create a container for the badges
         const badgesContainer = document.createElement('div')
-        badgesContainer.className = 'fi-select-value-badges-ctn'
+        badgesContainer.className = 'fi-select-input-value-badges-ctn'
 
         // Add badges for each selected option
         selectedLabels.forEach((label, index) => {
@@ -807,7 +807,7 @@ export class Select {
     addSingleSelectionDisplay(selectedLabel) {
         // Create a container for the label
         const labelContainer = document.createElement('span')
-        labelContainer.className = 'fi-select-value-label'
+        labelContainer.className = 'fi-select-input-value-label'
 
         if (this.isHtmlAllowed) {
             labelContainer.innerHTML = selectedLabel
@@ -824,7 +824,7 @@ export class Select {
 
         const removeButton = document.createElement('button')
         removeButton.type = 'button'
-        removeButton.className = 'fi-select-value-remove-btn'
+        removeButton.className = 'fi-select-input-value-remove-btn'
         removeButton.innerHTML =
             '<svg class="fi-icon fi-size-sm" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>'
         removeButton.setAttribute('aria-label', 'Clear selection')
@@ -961,7 +961,7 @@ export class Select {
                             // Update the displayed label
                             const labelContainer =
                                 this.selectedDisplay.querySelector(
-                                    '.fi-select-value-label',
+                                    '.fi-select-input-value-label',
                                 )
                             if (filled(labelContainer)) {
                                 if (this.isHtmlAllowed) {
@@ -1486,7 +1486,7 @@ export class Select {
         // Get all option elements that are in option groups
         const groupOptions = Array.from(
             this.optionsList.querySelectorAll(
-                'li.fi-select-option-group > ul > li[role="option"]',
+                'li.fi-select-input-option-group > ul > li[role="option"]',
             ),
         )
 
@@ -1605,7 +1605,7 @@ export class Select {
 
         // Add loading message
         const loadingItem = document.createElement('div')
-        loadingItem.className = 'fi-select-message'
+        loadingItem.className = 'fi-select-input-message'
         loadingItem.textContent = isSearching
             ? this.searchingMessage
             : this.loadingMessage
@@ -1614,7 +1614,7 @@ export class Select {
 
     hideLoadingState() {
         // Remove loading message
-        const loadingItem = this.dropdown.querySelector('.fi-select-message')
+        const loadingItem = this.dropdown.querySelector('.fi-select-input-message')
         if (loadingItem) {
             loadingItem.remove()
         }
@@ -1634,7 +1634,7 @@ export class Select {
 
         // Add "No results" message
         const noResultsItem = document.createElement('div')
-        noResultsItem.className = 'fi-select-message'
+        noResultsItem.className = 'fi-select-input-message'
         noResultsItem.textContent = this.noSearchResultsMessage
         this.dropdown.appendChild(noResultsItem)
     }
@@ -1775,7 +1775,7 @@ export class Select {
 
         // Check if we already have a badges container
         const existingBadgesContainer = this.selectedDisplay.querySelector(
-            '.fi-select-value-badges-ctn',
+            '.fi-select-input-value-badges-ctn',
         )
 
         if (blank(existingBadgesContainer)) {
@@ -1912,7 +1912,7 @@ export class Select {
             // If there are remove buttons in multiple mode, disable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-badge-remove',
+                    '.fi-select-input-badge-remove',
                 )
                 removeButtons.forEach((button) => {
                     button.setAttribute('disabled', 'disabled')
@@ -1923,7 +1923,7 @@ export class Select {
             // If there's a remove button in single mode, disable it
             if (!this.isMultiple && this.canSelectPlaceholder) {
                 const removeButton = this.container.querySelector(
-                    '.fi-select-value-remove-btn',
+                    '.fi-select-input-value-remove-btn',
                 )
                 if (removeButton) {
                     removeButton.setAttribute('disabled', 'disabled')
@@ -1945,7 +1945,7 @@ export class Select {
             // If there are remove buttons in multiple mode, enable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-badge-remove',
+                    '.fi-select-input-badge-remove',
                 )
                 removeButtons.forEach((button) => {
                     button.removeAttribute('disabled')
@@ -1956,7 +1956,7 @@ export class Select {
             // If there's a remove button in single mode, enable it
             if (!this.isMultiple && this.canSelectPlaceholder) {
                 const removeButton = this.container.querySelector(
-                    '.fi-select-value-remove-btn',
+                    '.fi-select-input-value-remove-btn',
                 )
                 if (removeButton) {
                     removeButton.removeAttribute('disabled')

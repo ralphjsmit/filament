@@ -143,18 +143,6 @@ schemaComponents.forEach((component) => {
     })
 })
 
-const supportComponents = ['select']
-
-supportComponents.forEach((component) => {
-    compile({
-        ...defaultOptions,
-        entryPoints: [
-            `./packages/support/resources/js/components/${component}.js`,
-        ],
-        outfile: `./packages/support/dist/components/${component}.js`,
-    })
-})
-
 const tableColumns = ['checkbox', 'select', 'text-input', 'toggle']
 
 tableColumns.forEach((column) => {

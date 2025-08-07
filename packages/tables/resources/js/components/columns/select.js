@@ -1,12 +1,64 @@
-export default function selectTableColumn({ name, recordKey, state }) {
+import { Select } from '../../../../../support/resources/js/utilities/select.js'
+
+export default function selectTableColumn({
+    canSelectPlaceholder,
+                                              isNative,
+                                              name,
+                                              options,
+                                              placeholder,
+                                              recordKey,
+                                              state,
+}) {
     return {
         error: undefined,
 
         isLoading: false,
 
+        select: null,
+
         state,
 
         init() {
+            if (! isNative) {
+                this.select = new Select({
+                    element: this.$refs.select,
+                    options,
+                    placeholder,
+                    state: this.state,
+                    // canOptionLabelsWrap,
+                    canSelectPlaceholder,
+                    // initialOptionLabel,
+                    // initialOptionLabels,
+                    // initialState,
+                    // isHtmlAllowed,
+                    // isAutofocused,
+                    // isDisabled,
+                    // isMultiple,
+                    // isSearchable,
+                    // getOptionLabelUsing,
+                    // getOptionLabelsUsing,
+                    // getOptionsUsing,
+                    // getSearchResultsUsing,
+                    // hasDynamicOptions,
+                    // hasDynamicSearchResults,
+                    // searchPrompt,
+                    // searchDebounce,
+                    // loadingMessage,
+                    // searchingMessage,
+                    // noSearchResultsMessage,
+                    // maxItems,
+                    // maxItemsMessage,
+                    // optionsLimit,
+                    // position,
+                    // searchableOptionFields,
+                    // livewireId,
+                    // statePath,
+                    onStateChange: (newState) => {
+                        this.state = newState
+                    },
+                })
+            }
+
             Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
@@ -40,7 +92,13 @@ export default function selectTableColumn({ name, recordKey, state }) {
                 },
             )
 
-            this.$watch('state', async () => {
+            this.$watch('state', async (newState) => {
+                if ((! isNative) && this.select && this.select.state !== newState) {
+                    this.select.state = newState
+                    this.select.updateSelectedDisplay()
+                    this.select.renderOptions()
+                }
+
                 const serverState = this.getServerState()
 
                 if (

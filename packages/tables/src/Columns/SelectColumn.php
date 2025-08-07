@@ -3,18 +3,23 @@
 namespace Filament\Tables\Columns;
 
 use BackedEnum;
+use Closure;
 use Filament\Forms\Components\Concerns\CanDisableOptions;
 use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
+use Filament\Forms\Components\Select;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Js;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use Livewire\Attributes\Renderless;
 
 class SelectColumn extends Column implements Editable, HasEmbeddedView
 {
@@ -28,6 +33,10 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     use HasExtraInputAttributes;
     use HasOptions;
 
+    protected bool | Closure $isNative = true;
+
+    protected ?Closure $transformOptionsForJsUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -35,6 +44,15 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $this->disabledClick();
 
         $this->placeholder(__('filament-forms::components.select.placeholder'));
+
+        $this->transformOptionsForJsUsing(static function (SelectColumn $column, array $options): array {
+            return collect($options)
+                ->map(fn ($label, $value): array => is_array($label)
+                    ? ['label' => $value, 'options' => $column->transformOptionsForJs($label)]
+                    : ['label' => $label, 'value' => strval($value), 'isDisabled' => $column->isOptionDisabled($value, $label)])
+                ->values()
+                ->all();
+        });
     }
 
     /**
@@ -50,6 +68,56 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         ];
     }
 
+    public function native(bool | Closure $condition = true): static
+    {
+        $this->isNative = $condition;
+
+        return $this;
+    }
+
+    public function isNative(): bool
+    {
+        return (bool) $this->evaluate($this->isNative);
+    }
+
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getOptionsForJs(): array
+    {
+        return $this->transformOptionsForJs($this->getOptions());
+    }
+
+    public function transformOptionsForJsUsing(?Closure $callback): static
+    {
+        $this->transformOptionsForJsUsing = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string | array<string>>  $options
+     * @return array<array<string, mixed>>
+     */
+    protected function transformOptionsForJs(array $options): array
+    {
+        if (empty($options)) {
+            return [];
+        }
+
+        $transformedOptions = $this->evaluate($this->transformOptionsForJsUsing, [
+            'options' => $options,
+        ]);
+
+        if ($transformedOptions instanceof Arrayable) {
+            return $transformedOptions->toArray();
+        }
+
+        return $transformedOptions;
+    }
+
     public function toEmbeddedHtml(): string
     {
         $isDisabled = $this->isDisabled();
@@ -60,7 +128,11 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/select', 'filament/tables'),
                 'x-data' => 'selectTableColumn({
+                    canSelectPlaceholder: ' . Js::from($this->canSelectPlaceholder()) . ',
+                    isNative: ' . Js::from($this->isNative()) . ',
                     name: ' . Js::from($this->getName()) . ',
+                    options: ' . Js::from($this->getOptionsForJs()) . ',
+                    placeholder: ' . Js::from($this->getPlaceholder()) . ',
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
                     state: ' . Js::from($state) . ',
                 })',
@@ -109,25 +181,35 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                         }
                 "
                 x-on:click.prevent.stop=""
+                <?php if (! $this->isNative()) { ?>
+                    wire:ignore
+                    x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
+                <?php } ?>
                 class="fi-input-wrp"
             >
-                <select
-                    x-model="state"
-                    <?= $inputAttributes->toHtml() ?>
-                >
-                    <?php if ($this->canSelectPlaceholder()) { ?>
-                        <option value=""><?= $this->getPlaceholder() ?></option>
-                    <?php } ?>
+                <?php if ($this->isNative()) { ?>
+                    <select
+                        x-model="state"
+                        <?= $inputAttributes->toHtml() ?>
+                    >
+                        <?php if ($this->canSelectPlaceholder()) { ?>
+                            <option value=""><?= $this->getPlaceholder() ?></option>
+                        <?php } ?>
 
-                    <?php foreach ($this->getOptions() as $value => $label) { ?>
-                        <option
-                            <?= $this->isOptionDisabled($value, $label) ? 'disabled' : null ?>
-                            value="<?= $value ?>"
-                        >
-                            <?= $label ?>
-                        </option>
-                    <?php } ?>
-                </select>
+                        <?php foreach ($this->getOptions() as $value => $label) { ?>
+                            <option
+                                <?= $this->isOptionDisabled($value, $label) ? 'disabled' : null ?>
+                                value="<?= $value ?>"
+                            >
+                                <?= $label ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                <?php } else { ?>
+                    <div class="fi-select-input">
+                        <div x-ref="select"></div>
+                    </div>
+                <?php } ?>
             </div>
         </div>
 

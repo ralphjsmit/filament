@@ -34,8 +34,9 @@ export default function selectFormComponent({
                                                 statePath,
                                             }) {
     return {
-        state,
         select: null,
+
+        state,
 
         init() {
             this.select = new Select({
