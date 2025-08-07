@@ -103,6 +103,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     protected bool | Closure | null $areOptionsRemembered = null;
 
+    /**
+     * @var ?array<string | array<string>>
+     */
     protected ?array $rememberedOptions = null;
 
     protected function setUp(): void
@@ -698,6 +701,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
+    /**
+     * @return array<string | array<string>>
+     */
     public function getOptions(): array
     {
         if ($this->areOptionsRemembered()) {
@@ -844,7 +850,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     public function applyEagerLoading(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
         if ($this->hasOptionsRelationship()) {
-            $relationshipName = $this->getOptionsRelationshipName($query->getModel());
+            $relationshipName = $this->getOptionsRelationshipName();
 
             if (! array_key_exists($relationshipName, $query->getEagerLoads())) {
                 $query = $query->with($this->modifyOptionsRelationshipQueryUsing ? [$relationshipName => $this->modifyOptionsRelationshipQueryUsing] : [$relationshipName]);
