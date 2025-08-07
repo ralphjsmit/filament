@@ -21,7 +21,7 @@ trait HasPanel
             return;
         }
 
-        $panelName = ($this->hasArgument('panel') ? $this->argument('panel') : null) ?? $this->option('panel'); /** @phpstan-ignore larastan.console.undefinedArgument */
+        $panelName = ($this->hasArgument('panel') ? $this->argument('panel') : null) ?? $this->option('panel'); /** @phpstan-ignore-line */
 
         $this->panel = filled($panelName) ? Filament::getPanel($panelName, isStrict: false) : null;
 
