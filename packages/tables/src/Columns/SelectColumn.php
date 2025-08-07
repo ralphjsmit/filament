@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns;
 
 use BackedEnum;
 use Closure;
+use Exception;
 use Filament\Forms\Components\Concerns\CanDisableOptions;
 use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasEnum;
@@ -12,14 +13,27 @@ use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Js;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Enum;
 use Livewire\Attributes\Renderless;
+use Znck\Eloquent\Relations\BelongsToThrough;
+
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 
 class SelectColumn extends Column implements Editable, HasEmbeddedView
 {
@@ -35,37 +49,52 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     protected bool | Closure $isNative = true;
 
-    protected bool | Closure $isSelectSearchable = false;
+    protected bool | Closure $areOptionsPreloaded = false;
 
-    protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
+    protected bool | Closure $areOptionsSearchable = false;
 
-    protected int | Closure $searchDebounce = 1000;
+    protected string | Htmlable | Closure | null $noOptionsSearchResultsMessage = null;
 
-    protected string | Closure | null $searchingMessage = null;
+    protected int | Closure $optionsSearchDebounce = 1000;
 
-    protected string | Htmlable | Closure | null $searchPrompt = null;
+    protected string | Closure | null $optionsSearchingMessage = null;
+
+    protected string | Htmlable | Closure | null $optionsSearchPrompt = null;
 
     protected ?Closure $getOptionLabelUsing = null;
 
     protected ?Closure $getOptionLabelsUsing = null;
 
-    protected ?Closure $getSearchResultsUsing = null;
+    protected ?Closure $getOptionsSearchResultsUsing = null;
 
-    protected bool | Closure $shouldSearchLabels = true;
+    protected bool | Closure $shouldSearchOptionLabels = true;
 
-    protected bool | Closure $shouldSearchValues = false;
+    protected bool | Closure $shouldSearchOptionValues = false;
 
     protected ?Closure $transformOptionsForJsUsing = null;
 
-    protected string | Closure | null $loadingMessage = null;
+    protected string | Closure | null $optionsLoadingMessage = null;
 
     protected bool | Closure $canOptionLabelsWrap = true;
 
-    protected bool | Closure $isHtmlAllowed = false;
+    protected bool | Closure $isOptionsHtmlAllowed = false;
 
     protected int | Closure $optionsLimit = 50;
 
+    /**
+     * @var array<string> | null
+     */
+    protected ?array $optionsSearchColumns = null;
+
     protected string | Closure | null $position = null;
+
+    protected ?Closure $getOptionLabelFromRecordUsing = null;
+
+    protected string | Closure | null $optionsRelationship = null;
+
+    protected string | Closure | null $optionsRelationshipTitleAttribute = null;
+
+    protected bool | Closure | null $isOptionsSearchForcedCaseInsensitive = null;
 
     protected function setUp(): void
     {
@@ -85,16 +114,16 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         });
     }
 
-    public function loadingMessage(string | Closure | null $message): static
+    public function optionsLoadingMessage(string | Closure | null $message): static
     {
-        $this->loadingMessage = $message;
+        $this->optionsLoadingMessage = $message;
 
         return $this;
     }
 
-    public function getLoadingMessage(): string
+    public function getOptionsLoadingMessage(): string
     {
-        return $this->evaluate($this->loadingMessage) ?? __('filament-forms::components.select.loading_message');
+        return $this->evaluate($this->optionsLoadingMessage) ?? __('filament-forms::components.select.loading_message');
     }
 
     /**
@@ -102,12 +131,29 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
      */
     public function getRules(): array
     {
-        return [
-            ...$this->getBaseRules(),
-            (filled($enum = $this->getEnum()) ?
-                new Enum($enum) :
-                Rule::in(array_keys($this->getEnabledOptions()))),
-        ];
+        $optionLabel = $this->getOptionLabel(withDefault: false);
+
+        if (blank($optionLabel)) {
+            return [
+                ...$this->getBaseRules(),
+                Rule::in([]),
+            ];
+        }
+
+        $state = $this->getState();
+
+        if ($state instanceof BackedEnum) {
+            $state = $state->value;
+        }
+
+        if ($this->hasDisabledOptions() && $this->isOptionDisabled($state, $optionLabel)) {
+            return [
+                ...$this->getBaseRules(),
+                Rule::in([]),
+            ];
+        }
+
+        return $this->getBaseRules();
     }
 
     public function getOptionLabelUsing(?Closure $callback): static
@@ -117,9 +163,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    public function getSearchResultsUsing(?Closure $callback): static
+    public function getOptionsSearchResultsUsing(?Closure $callback): static
     {
-        $this->getSearchResultsUsing = $callback;
+        $this->getOptionsSearchResultsUsing = $callback;
 
         return $this;
     }
@@ -136,78 +182,87 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return (bool) $this->evaluate($this->isNative);
     }
 
-    public function searchableSelect(bool | Closure $condition = true): static
+    /**
+     * @param  bool | array<string> | Closure  $condition
+     */
+    public function searchableOptions(bool | array | Closure $condition = true): static
     {
-        $this->isSelectSearchable = $condition;
+        if (is_array($condition)) {
+            $this->areOptionsSearchable = true;
+            $this->optionsSearchColumns = $condition;
+        } else {
+            $this->areOptionsSearchable = $condition;
+            $this->optionsSearchColumns = null;
+        }
 
         return $this;
     }
 
-    public function isSelectSearchable(): bool
+    public function areOptionsSearchable(): bool
     {
-        return (bool) $this->evaluate($this->isSelectSearchable);
+        return (bool) $this->evaluate($this->areOptionsSearchable);
     }
 
-    public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
+    public function noOptionsSearchResultsMessage(string | Htmlable | Closure | null $message): static
     {
-        $this->noSearchResultsMessage = $message;
+        $this->noOptionsSearchResultsMessage = $message;
 
         return $this;
     }
 
-    public function searchDebounce(int | Closure $debounce): static
+    public function optionsSearchDebounce(int | Closure $debounce): static
     {
-        $this->searchDebounce = $debounce;
+        $this->optionsSearchDebounce = $debounce;
 
         return $this;
     }
 
-    public function searchingMessage(string | Closure | null $message): static
+    public function optionsSearchingMessage(string | Closure | null $message): static
     {
-        $this->searchingMessage = $message;
+        $this->optionsSearchingMessage = $message;
 
         return $this;
     }
 
-    public function searchPrompt(string | Htmlable | Closure | null $message): static
+    public function optionsSearchPrompt(string | Htmlable | Closure | null $message): static
     {
-        $this->searchPrompt = $message;
+        $this->optionsSearchPrompt = $message;
 
         return $this;
     }
 
-    public function searchLabels(bool | Closure | null $condition = true): static
+    public function searchOptionLabels(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchLabels = $condition;
+        $this->shouldSearchOptionLabels = $condition;
 
         return $this;
     }
 
-    public function searchValues(bool | Closure | null $condition = true): static
+    public function searchOptionValues(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchValues = $condition;
+        $this->shouldSearchOptionValues = $condition;
 
         return $this;
     }
 
-    public function getNoSearchResultsMessage(): string | Htmlable
+    public function getNoOptionsSearchResultsMessage(): string | Htmlable
     {
-        return $this->evaluate($this->noSearchResultsMessage) ?? __('filament-tables::table.columns.select.no_search_results_message');
+        return $this->evaluate($this->noOptionsSearchResultsMessage) ?? __('filament-tables::table.columns.select.no_search_results_message');
     }
 
-    public function getSearchPrompt(): string | Htmlable
+    public function getOptionsSearchPrompt(): string | Htmlable
     {
-        return $this->evaluate($this->searchPrompt) ?? __('filament-tables::table.columns.select.search_prompt');
+        return $this->evaluate($this->optionsSearchPrompt) ?? __('filament-tables::table.columns.select.search_prompt');
     }
 
-    public function shouldSearchLabels(): bool
+    public function shouldSearchOptionLabels(): bool
     {
-        return (bool) $this->evaluate($this->shouldSearchLabels);
+        return (bool) $this->evaluate($this->shouldSearchOptionLabels);
     }
 
-    public function shouldSearchValues(): bool
+    public function shouldSearchOptionValues(): bool
     {
-        return (bool) $this->evaluate($this->shouldSearchValues);
+        return (bool) $this->evaluate($this->shouldSearchOptionValues);
     }
 
     /**
@@ -216,14 +271,14 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     public function getSearchableOptionFields(): array
     {
         return [
-            ...($this->shouldSearchLabels() ? ['label'] : []),
-            ...($this->shouldSearchValues() ? ['value'] : []),
+            ...($this->shouldSearchOptionLabels() ? ['label'] : []),
+            ...($this->shouldSearchOptionValues() ? ['value'] : []),
         ];
     }
 
-    public function getSearchDebounce(): int
+    public function getOptionsSearchDebounce(): int
     {
-        return $this->evaluate($this->searchDebounce);
+        return $this->evaluate($this->optionsSearchDebounce);
     }
 
     public function wrapOptionLabels(bool | Closure $condition = true): static
@@ -238,21 +293,21 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return (bool) $this->evaluate($this->canOptionLabelsWrap);
     }
 
-    public function getSearchingMessage(): string
+    public function getOptionsSearchingMessage(): string
     {
-        return $this->evaluate($this->searchingMessage) ?? __('filament-tables::table.columns.select.searching_message');
+        return $this->evaluate($this->optionsSearchingMessage) ?? __('filament-tables::table.columns.select.searching_message');
     }
 
-    public function allowHtml(bool | Closure $condition = true): static
+    public function allowOptionsHtml(bool | Closure $condition = true): static
     {
-        $this->isHtmlAllowed = $condition;
+        $this->isOptionsHtmlAllowed = $condition;
 
         return $this;
     }
 
-    public function isHtmlAllowed(): bool
+    public function isOptionsHtmlAllowed(): bool
     {
-        return (bool) $this->evaluate($this->isHtmlAllowed);
+        return (bool) $this->evaluate($this->isOptionsHtmlAllowed);
     }
 
     public function optionsLimit(int | Closure $limit): static
@@ -349,13 +404,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @return array<string>
      */
-    public function getSearchResults(string $search): array
+    public function getOptionsSearchResults(string $search): array
     {
-        if (! $this->getSearchResultsUsing) {
+        if (! $this->getOptionsSearchResultsUsing) {
             return [];
         }
 
-        $results = $this->evaluate($this->getSearchResultsUsing, [
+        $results = $this->evaluate($this->getOptionsSearchResultsUsing, [
             'query' => $search,
             'search' => $search,
             'searchQuery' => $search,
@@ -373,9 +428,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
      */
     #[ExposedLivewireMethod]
     #[Renderless]
-    public function getSearchResultsForJs(string $search): array
+    public function getOptionsSearchResultsForJs(string $search): array
     {
-        return $this->transformOptionsForJs($this->getSearchResults($search));
+        return $this->transformOptionsForJs($this->getOptionsSearchResults($search));
     }
 
     /**
@@ -408,16 +463,330 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return $this->options instanceof Closure;
     }
 
-    public function hasDynamicSearchResults(): bool
+    public function getOptionLabelFromRecordUsing(?Closure $callback): static
     {
-        return $this->getSearchResultsUsing instanceof Closure;
+        $this->getOptionLabelFromRecordUsing = $callback;
+
+        return $this;
+    }
+
+    public function hasOptionLabelFromRecordUsingCallback(): bool
+    {
+        return $this->getOptionLabelFromRecordUsing !== null;
+    }
+
+    public function getOptionLabelFromRecord(Model $record): string
+    {
+        return $this->evaluate(
+            $this->getOptionLabelFromRecordUsing,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
+    }
+
+    public function preloadOptions(bool | Closure $condition = true): static
+    {
+        $this->areOptionsPreloaded = $condition;
+
+        return $this;
+    }
+
+    public function areOptionsPreloaded(): bool
+    {
+        return (bool) $this->evaluate($this->areOptionsPreloaded);
+    }
+
+    public function hasDynamicOptionsSearchResults(): bool
+    {
+        return $this->getOptionsSearchResultsUsing instanceof Closure;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getOptionsSearchColumns(): ?array
+    {
+        $columns = $this->optionsSearchColumns;
+
+        if ($this->hasOptionsRelationship() && (filled($relationshipTitleAttribute = $this->getOptionsRelationshipTitleAttribute()))) {
+            $columns ??= [$relationshipTitleAttribute];
+        }
+
+        return $columns;
+    }
+
+    public function optionsRelationship(string | Closure $name, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
+    {
+        $this->optionsRelationship = $name;
+        $this->optionsRelationshipTitleAttribute = $titleAttribute;
+
+        $this->getOptionsSearchResultsUsing(static function (SelectColumn $column, ?string $search) use ($modifyQueryUsing): array {
+            $relationship = Relation::noConstraints(fn () => $column->getOptionsRelationship());
+
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $column->evaluate($modifyQueryUsing, [
+                    'query' => $relationshipQuery,
+                    'search' => $search,
+                ]) ?? $relationshipQuery;
+            }
+
+            $column->applyOptionsSearchConstraint(
+                $relationshipQuery,
+                generate_search_term_expression($search, $column->isOptionsSearchForcedCaseInsensitive(), $relationshipQuery->getConnection()),
+            );
+
+            $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+            if (isset($baseRelationshipQuery->limit)) {
+                $column->optionsLimit($baseRelationshipQuery->limit);
+            } else {
+                $relationshipQuery->limit($column->getOptionsLimit());
+            }
+
+            $qualifiedRelatedKeyName = $column->getQualifiedRelatedKeyNameForOptionsRelationship($relationship);
+
+            if ($column->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record) => [
+                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $column->getOptionLabelFromRecord($record),
+                    ])
+                    ->toArray();
+            }
+
+            $relationshipTitleAttribute = $column->getOptionsRelationshipTitleAttribute();
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+            }
+
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
+            }
+
+            return $relationshipQuery
+                ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
+                ->toArray();
+        });
+
+        $this->options(static function (SelectColumn $column) use ($modifyQueryUsing): ?array {
+            if (($column->areOptionsSearchable()) && ! $column->areOptionsPreloaded()) {
+                return null;
+            }
+
+            $relationship = Relation::noConstraints(fn () => $column->getOptionsRelationship());
+
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $column->evaluate($modifyQueryUsing, [
+                    'query' => $relationshipQuery,
+                    'search' => null,
+                ]) ?? $relationshipQuery;
+            }
+
+            $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+            if (isset($baseRelationshipQuery->limit)) {
+                $column->optionsLimit($baseRelationshipQuery->limit);
+            } elseif ($column->isSearchable() && filled($column->getOptionsSearchColumns())) {
+                $relationshipQuery->limit($column->getOptionsLimit());
+            }
+
+            $qualifiedRelatedKeyName = $column->getQualifiedRelatedKeyNameForOptionsRelationship($relationship);
+
+            if ($column->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record) => [
+                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $column->getOptionLabelFromRecord($record),
+                    ])
+                    ->toArray();
+            }
+
+            $relationshipTitleAttribute = $column->getOptionsRelationshipTitleAttribute();
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+            }
+
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
+            }
+
+            return $relationshipQuery
+                ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
+                ->toArray();
+        });
+
+        $this->getOptionLabelUsing(static function (SelectColumn $column, $state) use ($modifyQueryUsing) {
+            $relationship = Relation::noConstraints(fn () => $column->getOptionsRelationship());
+
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+            $relationshipQuery->where($column->getQualifiedRelatedKeyNameForOptionsRelationship($relationship), $state);
+
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $column->evaluate($modifyQueryUsing, [
+                    'query' => $relationshipQuery,
+                    'search' => null,
+                ]) ?? $relationshipQuery;
+            }
+
+            $record = $relationshipQuery->first();
+
+            if (! $record) {
+                return null;
+            }
+
+            if ($column->hasOptionLabelFromRecordUsingCallback()) {
+                return $column->getOptionLabelFromRecord($record);
+            }
+
+            $relationshipTitleAttribute = $column->getOptionsRelationshipTitleAttribute();
+
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
+            }
+
+            return data_get($record, $relationshipTitleAttribute);
+        });
+
+        return $this;
+    }
+
+    public function forceOptionsSearchCaseInsensitive(bool | Closure | null $condition = true): static
+    {
+        $this->isOptionsSearchForcedCaseInsensitive = $condition;
+
+        return $this;
+    }
+
+    public function isOptionsSearchForcedCaseInsensitive(): ?bool
+    {
+        return $this->evaluate($this->isOptionsSearchForcedCaseInsensitive);
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function applyOptionsSearchConstraint(Builder $query, string $search): Builder
+    {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        $isForcedCaseInsensitive = $this->isOptionsSearchForcedCaseInsensitive();
+
+        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $search): Builder {
+            $isFirst = true;
+
+            foreach ($this->getOptionsSearchColumns() ?? [] as $searchColumn) {
+                $whereClause = $isFirst ? 'where' : 'orWhere';
+
+                $query->{$whereClause}(
+                    generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
+                    'like',
+                    "%{$search}%",
+                );
+
+                $isFirst = false;
+            }
+
+            return $query;
+        });
+
+        return $query;
+    }
+
+    public function getOptionsRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasOneOrManyThrough | BelongsToThrough | null
+    {
+        if (! $this->hasOptionsRelationship()) {
+            return null;
+        }
+
+        $record = $this->getRecord();
+
+        $relationship = null;
+
+        $relationshipName = $this->getOptionsRelationshipName();
+
+        foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if (! $record->isRelation($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
+            $relationship = $record->{$nestedRelationshipName}();
+            $record = $relationship->getRelated();
+        }
+
+        if (! $relationship) {
+            $model = $record::class;
+
+            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$model}].");
+        }
+
+        return $relationship;
+    }
+
+    public function getOptionsRelationshipTitleAttribute(): ?string
+    {
+        return $this->evaluate($this->optionsRelationshipTitleAttribute);
+    }
+
+    public function getOptionsRelationshipName(): ?string
+    {
+        return $this->evaluate($this->optionsRelationship);
+    }
+
+    public function hasOptionsRelationship(): bool
+    {
+        return filled($this->getOptionsRelationshipName());
+    }
+
+    public function getQualifiedRelatedKeyNameForOptionsRelationship(Relation $relationship): string
+    {
+        if ($relationship instanceof BelongsToMany) {
+            return $relationship->getQualifiedRelatedKeyName();
+        }
+
+        if ($relationship instanceof HasOneOrManyThrough) {
+            return $relationship->getQualifiedForeignKeyName();
+        }
+
+        if (
+            ($relationship instanceof HasOneOrMany) ||
+            ($relationship instanceof BelongsToThrough)
+        ) {
+            return $relationship->getRelated()->getQualifiedKeyName();
+        }
+
+        /** @var BelongsTo $relationship */
+
+        return $relationship->getQualifiedOwnerKeyName();
     }
 
     public function toEmbeddedHtml(): string
     {
         $canSelectPlaceholder = $this->canSelectPlaceholder();
         $isDisabled = $this->isDisabled();
-        $isNative = ! $this->isSelectSearchable() && $this->isNative();
+        $isNative = ! $this->areOptionsSearchable() && $this->isNative();
         $name = $this->getName();
         $options = $this->getOptions();
         $placeholder = $this->getPlaceholder();
@@ -445,29 +814,29 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                         return await $wire.callTableColumnMethod(
                             ' . Js::from($name) . ',
                             ' . Js::from($recordKey) . ',
-                            \'getSearchResultsForJs\',
+                            \'getOptionsSearchResultsForJs\',
                             { search },
                         )
                     },
                     hasDynamicOptions: ' . Js::from($this->hasDynamicOptions()) . ',
-                    hasDynamicSearchResults: ' . Js::from($this->hasDynamicSearchResults()) . ',
+                    hasDynamicSearchResults: ' . Js::from($this->hasDynamicOptionsSearchResults()) . ',
                     initialOptionLabel: ' . Js::from($this->getOptionLabel()) . ',
                     isDisabled: ' . Js::from($isDisabled) . ',
-                    isHtmlAllowed: ' . Js::from($this->isHtmlAllowed()) . ',
+                    isHtmlAllowed: ' . Js::from($this->isOptionsHtmlAllowed()) . ',
                     isNative: ' . Js::from($isNative) . ',
-                    isSearchable: ' . Js::from($this->isSelectSearchable()) . ',
-                    loadingMessage: ' . Js::from($this->getLoadingMessage()) . ',
+                    isSearchable: ' . Js::from($this->areOptionsSearchable()) . ',
+                    loadingMessage: ' . Js::from($this->getOptionsLoadingMessage()) . ',
                     name: ' . Js::from($name) . ',
-                    noSearchResultsMessage: ' . Js::from($this->getNoSearchResultsMessage()) . ',
+                    noSearchResultsMessage: ' . Js::from($this->getNoOptionsSearchResultsMessage()) . ',
                     options: ' . Js::from($isNative ? [] : $this->getOptionsForJs()) . ',
                     optionsLimit: ' . Js::from($this->getOptionsLimit()) . ',
                     placeholder: ' . Js::from($placeholder) . ',
                     position: ' . Js::from($this->getPosition()) . ',
                     recordKey: ' . Js::from($recordKey) . ',
                     searchableOptionFields: ' . Js::from($this->getSearchableOptionFields()) . ',
-                    searchDebounce: ' . Js::from($this->getSearchDebounce()) . ',
-                    searchingMessage: ' . Js::from($this->getSearchingMessage()) . ',
-                    searchPrompt: ' . Js::from($this->getSearchPrompt()) . ',
+                    searchDebounce: ' . Js::from($this->getOptionsSearchDebounce()) . ',
+                    searchingMessage: ' . Js::from($this->getOptionsSearchingMessage()) . ',
+                    searchPrompt: ' . Js::from($this->getOptionsSearchPrompt()) . ',
                     state: ' . Js::from($state) . ',
                 })',
             ], escape: false)
