@@ -5,7 +5,6 @@ namespace Filament\Support;
 use BladeUI\Icons\Factory as BladeIconsFactory;
 use Composer\InstalledVersions;
 use Filament\Commands\CacheComponentsCommand;
-use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;

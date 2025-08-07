@@ -9,7 +9,6 @@ use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
-use Filament\Forms\Components\Select;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Facades\FilamentAsset;

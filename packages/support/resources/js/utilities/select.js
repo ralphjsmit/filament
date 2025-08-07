@@ -17,40 +17,40 @@ function filled(value) {
 
 export class Select {
     constructor({
-                    element,
-                    options,
-                    placeholder,
-                    state,
-                    canOptionLabelsWrap = true,
-                    canSelectPlaceholder = true,
-                    initialOptionLabel = null,
-                    initialOptionLabels = null,
-                    initialState = null,
-                    isHtmlAllowed = false,
-                    isAutofocused = false,
-                    isDisabled = false,
-                    isMultiple = false,
-                    isSearchable = false,
-                    getOptionLabelUsing = null,
-                    getOptionLabelsUsing = null,
-                    getOptionsUsing = null,
-                    getSearchResultsUsing = null,
-                    hasDynamicOptions = false,
-                    hasDynamicSearchResults = true,
-                    searchPrompt = 'Search...',
-                    searchDebounce = 1000,
-                    loadingMessage = 'Loading...',
-                    searchingMessage = 'Searching...',
-                    noSearchResultsMessage = 'No results found',
-                    maxItems = null,
-                    maxItemsMessage = 'Maximum number of items selected',
-                    optionsLimit = null,
-                    position = null,
-                    searchableOptionFields = ['label'],
-                    livewireId = null,
-                    statePath = null,
-                    onStateChange = () => {},
-                }) {
+        element,
+        options,
+        placeholder,
+        state,
+        canOptionLabelsWrap = true,
+        canSelectPlaceholder = true,
+        initialOptionLabel = null,
+        initialOptionLabels = null,
+        initialState = null,
+        isHtmlAllowed = false,
+        isAutofocused = false,
+        isDisabled = false,
+        isMultiple = false,
+        isSearchable = false,
+        getOptionLabelUsing = null,
+        getOptionLabelsUsing = null,
+        getOptionsUsing = null,
+        getSearchResultsUsing = null,
+        hasDynamicOptions = false,
+        hasDynamicSearchResults = true,
+        searchPrompt = 'Search...',
+        searchDebounce = 1000,
+        loadingMessage = 'Loading...',
+        searchingMessage = 'Searching...',
+        noSearchResultsMessage = 'No results found',
+        maxItems = null,
+        maxItemsMessage = 'Maximum number of items selected',
+        optionsLimit = null,
+        position = null,
+        searchableOptionFields = ['label'],
+        livewireId = null,
+        statePath = null,
+        onStateChange = () => {},
+    }) {
         this.element = element
         this.options = options
         this.originalOptions = JSON.parse(JSON.stringify(options)) // Keep a copy of original options
@@ -719,7 +719,7 @@ export class Select {
         removeButton.setAttribute(
             'aria-label',
             'Remove ' +
-            (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
+                (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
         )
 
         removeButton.addEventListener('click', (event) => {
@@ -1614,7 +1614,9 @@ export class Select {
 
     hideLoadingState() {
         // Remove loading message
-        const loadingItem = this.dropdown.querySelector('.fi-select-input-message')
+        const loadingItem = this.dropdown.querySelector(
+            '.fi-select-input-message',
+        )
         if (loadingItem) {
             loadingItem.remove()
         }

@@ -1,24 +1,24 @@
 import { Select } from '../../../../../support/resources/js/utilities/select.js'
 
 export default function selectTableColumn({
-                                              canOptionLabelsWrap,
+    canOptionLabelsWrap,
     canSelectPlaceholder,
-                                              isDisabled,
-                                              isHtmlAllowed,
+    isDisabled,
+    isHtmlAllowed,
     isNative,
     isSearchable,
-                                              loadingMessage,
+    loadingMessage,
     name,
-                                              noSearchResultsMessage,
+    noSearchResultsMessage,
     options,
-                                              optionsLimit,
+    optionsLimit,
     placeholder,
     position,
     recordKey,
-                                              searchableOptionFields,
-                                              searchDebounce,
-                                              searchingMessage,
-                                              searchPrompt,
+    searchableOptionFields,
+    searchDebounce,
+    searchingMessage,
+    searchPrompt,
     state,
 }) {
     return {
@@ -31,7 +31,7 @@ export default function selectTableColumn({
         state,
 
         init() {
-            if (! isNative) {
+            if (!isNative) {
                 this.select = new Select({
                     element: this.$refs.select,
                     options,
@@ -99,7 +99,11 @@ export default function selectTableColumn({
             )
 
             this.$watch('state', async (newState) => {
-                if ((! isNative) && this.select && this.select.state !== newState) {
+                if (
+                    !isNative &&
+                    this.select &&
+                    this.select.state !== newState
+                ) {
                     this.select.state = newState
                     this.select.updateSelectedDisplay()
                     this.select.renderOptions()
