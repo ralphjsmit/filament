@@ -73,7 +73,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
         $this->disabledClick();
 
-        $this->placeholder(__('filament-forms::components.select.placeholder'));
+        $this->placeholder(__('filament-tables::table.columns.select.placeholder'));
 
         $this->transformOptionsForJsUsing(static function (SelectColumn $column, array $options): array {
             return collect($options)
@@ -420,7 +420,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $isNative = ! $this->isSelectSearchable() && $this->isNative();
         $name = $this->getName();
         $options = $this->getOptions();
-        $placeholder = $this->getPlaceholder() ?? __('filament-tables::table.columns.select.placeholder');
+        $placeholder = $this->getPlaceholder();
         $recordKey = $this->getRecordKey();
         $state = $this->getState();
 
