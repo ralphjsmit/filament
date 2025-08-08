@@ -176,7 +176,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
                                     ->explode('.')
                                     ->map(fn (string $part): string => (string) str($part)->wrap('"'))
                                     ->implode('.')
-                            ).collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
+                            ) . collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
                                 ->map(function ($segment, $index) use ($column): string {
                                     $totalParts = substr_count($column, '->');
 
@@ -190,7 +190,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
                                 ->map(fn (string $part): string => (string) str($part)->wrap('"'))
                                 ->implode('.')
                     )
-            ).'::text',
+            ) . '::text',
             default => $column,
         };
 
