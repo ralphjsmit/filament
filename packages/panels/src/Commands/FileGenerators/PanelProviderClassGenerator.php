@@ -112,6 +112,8 @@ class PanelProviderClassGenerator extends ClassGenerator
         $componentsDirectory = $isDefault ? '' : (Str::studly($id) . '/');
         $componentsNamespace = $isDefault ? '' : (Str::studly($id) . '\\');
 
+        $rootNamespace = app()->getNamespace();
+
         return new Literal(
             <<<PHP
                 return \$panel{$defaultOutput}
@@ -120,8 +122,8 @@ class PanelProviderClassGenerator extends ClassGenerator
                     ->colors([
                         'primary' => {$this->simplifyFqn(Color::class)}::Amber,
                     ])
-                    ->discoverResources(in: app_path('Filament/{$componentsDirectory}Resources'), for: '{$this->simplifyFqn(app()->getNamespace() . "Filament\\{$componentsNamespace}Resources")}')
-                    ->discoverPages(in: app_path('Filament/{$componentsDirectory}Pages'), for: '{$this->simplifyFqn(app()->getNamespace() . "Filament\\{$componentsNamespace}Pages")}')
+                    ->discoverResources(in: app_path('Filament/{$componentsDirectory}Resources'), for: '{$rootNamespace}Filament\\{$componentsNamespace}Resources')
+                    ->discoverPages(in: app_path('Filament/{$componentsDirectory}Pages'), for: '{$rootNamespace}Filament\\{$componentsNamespace}Pages')
                     ->pages([
                         {$this->simplifyFqn(Dashboard::class)}::class,
                     ])
