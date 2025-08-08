@@ -127,7 +127,7 @@ class PanelProviderClassGenerator extends ClassGenerator
                     ->pages([
                         {$this->simplifyFqn(Dashboard::class)}::class,
                     ])
-                    ->discoverWidgets(in: app_path('Filament/{$componentsDirectory}Widgets'), for: '{$rootNamespace}Filament\\{$componentsNamespace}Widgets")}')
+                    ->discoverWidgets(in: app_path('Filament/{$componentsDirectory}Widgets'), for: '{$rootNamespace}Filament\\{$componentsNamespace}Widgets')
                     ->widgets([
                         {$this->simplifyFqn(AccountWidget::class)}::class,
                         {$this->simplifyFqn(FilamentInfoWidget::class)}::class,
