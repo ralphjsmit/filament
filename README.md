@@ -19,7 +19,7 @@ It includes a collection of beautifully designed, fully extensible components th
 
 Why rebuild dashboards, forms, and tables from scratch every time?
 
-[Read the documentation](https://filamentphp.com/docs) • [Check out a demo app](https://demo.filamentphp.com)
+[Read the documentation](https://filamentphp.com/docs) • [Check out the demo](https://demo.filamentphp.com)
 
 ## Contributing
 
