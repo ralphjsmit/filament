@@ -112,3 +112,67 @@ it('will generate a column expression for Postgres with colons in the table name
         ['blog:posts.title', 'lower("blog:posts"."title"::text)'],
         ['blog:posts:comments.author.name', 'lower("blog:posts:comments"."author"."name"::text)'],
     ]);
+
+it('will handle PostgreSQL columns that already contain ->> operator', function () {
+    $column = 'name->>\'ar\'';
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($expression->getValue($grammar))
+        ->toBe("lower(name->>'ar'::text)");
+});
+
+it('will handle PostgreSQL columns with table prefix that already contain ->> operator', function () {
+    $column = 'products.name->>\'en\'';
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($expression->getValue($grammar))
+        ->toBe("lower(products.name->>'en'::text)");
+});
+
+it('will handle PostgreSQL columns from relationships that already contain ->> operator', function () {
+    $column = 'categories.name->>\'ar\'';
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($expression->getValue($grammar))
+        ->toBe("lower(categories.name->>'ar'::text)");
+});
+
+it('will handle PostgreSQL columns from nested relationships that already contain ->> operator', function () {
+    $column = 'categories.parent.name->>\'en\'';
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($expression->getValue($grammar))
+        ->toBe("lower(categories.parent.name->>'en'::text)");
+});
