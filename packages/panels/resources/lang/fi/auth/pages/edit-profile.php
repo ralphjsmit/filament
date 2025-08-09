@@ -25,7 +25,7 @@ return [
         ],
 
         'current_password' => [
-            'label' => 'Nykyinen salasana', 
+            'label' => 'Nykyinen salasana',
             'below_content' => 'Turvallisuuden vuoksi, vahvista salasanasi jatkaaksesi.',
             'validation_attribute' => 'nykyinen salasana',
         ],
