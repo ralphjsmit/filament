@@ -1,4 +1,8 @@
 .fi-modal {
+    .fi-modal-window {
+        contain: layout;
+    }
+
     &.fi-modal-slide-over,
     &.fi-width-screen {
         & .fi-modal-window {
