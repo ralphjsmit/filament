@@ -165,10 +165,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
 
         $column = match ($driverName) {
             'pgsql' => (
-                str($column)->contains('->>')
-                    ? $column
-                    : (
-                        str($column)->contains('->')
+                str($column)->contains('->')
                             ? (
                                 // Handle `table.field` part with double quotes
                                 str($column)
@@ -178,6 +175,18 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
                                     ->implode('.')
                             ) . collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
                                 ->map(function ($segment, $index) use ($column): string {
+                                    // if segment already contains '>something' (from ->> operator), preserve it
+                                    $isExplicitOperatorPrefixed = str($segment)->startsWith('>');
+                                    $segment = $isExplicitOperatorPrefixed ? (string) str($segment)->after('>') : $segment;
+
+                                    // Remove single quotes from segment if present to avoid redundant quoting
+                                    $isWrappedWithSingleQuotes = str($segment)->startsWith("'") && str($segment)->endsWith("'");
+                                    $segment = $isWrappedWithSingleQuotes ? (string) str($segment)->trim("'") : $segment;
+
+                                    if ($isExplicitOperatorPrefixed) {
+                                        return "->>'{$segment}'";
+                                    }
+
                                     $totalParts = substr_count($column, '->');
 
                                     return ($index === ($totalParts - 1))
@@ -189,7 +198,6 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
                                 ->explode('.')
                                 ->map(fn (string $part): string => (string) str($part)->wrap('"'))
                                 ->implode('.')
-                    )
             ) . '::text',
             default => $column,
         };
