@@ -125,7 +125,7 @@ it('will generate a column expression for Postgres with colons in the table name
         ['blog:posts:comments.author.name', 'lower("blog:posts:comments"."author"."name"::text)'],
     ]);
 
-it('will generate a JSON search column expression for Postgres with explicit ->> operator', function () {
+it('will generate a JSON search column expression for Postgres with explicit ->> operator', function (): void {
     $column = 'data->>name';
     $isSearchForcedCaseInsensitive = true;
 
@@ -141,7 +141,7 @@ it('will generate a JSON search column expression for Postgres with explicit ->>
         ->toBe("lower(\"data\"->>'name'::text)");
 });
 
-it('will generate a nested JSON search column expression for Postgres with explicit ->> operator on the last segment', function () {
+it('will generate a nested JSON search column expression for Postgres with explicit ->> operator on the last segment', function (): void {
     $column = 'data->name->>ar';
     $isSearchForcedCaseInsensitive = true;
 
@@ -157,7 +157,7 @@ it('will generate a nested JSON search column expression for Postgres with expli
         ->toBe("lower(\"data\"->'name'->>'ar'::text)");
 });
 
-it('will generate a JSON search column expression for Postgres with explicit ->> operator and simple key', function () {
+it('will generate a JSON search column expression for Postgres with explicit ->> operator and simple key', function (): void {
     $column = 'name->>\'en\'';
     $isSearchForcedCaseInsensitive = true;
 
