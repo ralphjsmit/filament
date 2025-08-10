@@ -175,7 +175,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
                                     ->implode('.')
                             ) . collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
                                 ->map(function ($segment, $index) use ($column): string {
-                                    // if segment already contains '>something' (from ->> operator), preserve it
+                                    // If segment already starts with `>` (from `->>` operator), preserve it
                                     $isExplicitOperatorPrefixed = str($segment)->startsWith('>');
                                     $segment = $isExplicitOperatorPrefixed ? (string) str($segment)->after('>') : $segment;
 
