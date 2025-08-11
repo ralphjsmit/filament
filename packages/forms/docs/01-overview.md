@@ -9,9 +9,9 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 <AutoScreenshot name="forms/overview" alt="Account settings form example" version="4.x" />
 
-Filament's form package allows you to easily build dynamic forms in your app. You can use it to [add a form to any Livewire component](adding-a-form-to-a-livewire-component). Additionally, it's used within other Filament packages to render forms within [app resources](../panels/resources/getting-started), [action modals](../actions/modals), [table filters](../tables/filters/getting-started), and more. Learning how to build forms is essential to learning how to use these Filament packages.
+Filament's forms package allows you to easily build dynamic forms in your app. It's used within other Filament packages to render forms within [panel resources](../panels/resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essential to learning how to use these Filament packages.
 
-This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](adding-a-form-to-a-livewire-component) and then come back. If you're adding a form to an [app resource](../panels/resources/getting-started), or another Filament package, you're ready to go!
+This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](../components/form) and then come back. If you're adding a form to a [panel resource](../panels/resources), or another Filament package, you're ready to go!
 
 ## Form fields
 
