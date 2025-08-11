@@ -35,7 +35,7 @@ return [
         'sent' => [
             'body' => 'Jika akun Anda tidak ada, Anda tidak akan menerima email.',
         ],
-    
+
         'throttled' => [
             'title' => 'Terlalu banyak permintaan',
             'body' => 'Silakan coba lagi dalam :seconds detik.',
