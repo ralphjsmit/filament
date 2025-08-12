@@ -262,7 +262,6 @@ class UpgradeDirectoryStructureToV4Command extends Command
     }
 
     /**
-     * @param  string  $directory
      * @return array<int, string>
      */
     protected function findPhpFiles(string $directory): array

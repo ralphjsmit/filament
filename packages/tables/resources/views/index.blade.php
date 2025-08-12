@@ -277,7 +277,7 @@
                                     if (! grouping) {
                                         group = null
                                         direction = null
-                                        
+
                                         return
                                     }
 
