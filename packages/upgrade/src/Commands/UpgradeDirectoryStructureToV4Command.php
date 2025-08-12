@@ -256,19 +256,14 @@ class UpgradeDirectoryStructureToV4Command extends Command
         }
     }
 
-    /**
-     * Check if a path is in the vendor directory
-     */
     protected function isVendorPath(string $path): bool
     {
         return str_contains($path, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR);
     }
 
     /**
-     * Find all PHP files in a directory
-     *
-     * @param  string  $directory  The directory to search in
-     * @return array<int, string> Array of file paths
+     * @param  string  $directory
+     * @return array<int, string>
      */
     protected function findPhpFiles(string $directory): array
     {
