@@ -2,10 +2,13 @@
 
 namespace Filament\Upgrade\Commands;
 
+use Exception;
 use ReflectionClass;
+use RuntimeException;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,6 +21,13 @@ class UpgradeDirectoryStructureToV4Command extends Command
     protected $name = 'filament:upgrade-directory-structure-to-v4';
 
     protected string $phpactorPath;
+
+    /**
+     * @var array<string, array<string, string>>
+     */
+    protected array $movedFiles = [];
+
+    protected ?string $currentResource = null;
 
     /**
      * @return array<InputOption>
@@ -34,52 +44,71 @@ class UpgradeDirectoryStructureToV4Command extends Command
         ];
     }
 
+    protected function formatPath(string $path): string
+    {
+        return str_replace(base_path() . '/', '', $path);
+    }
+
     public function handle(): int
     {
         $isDryRun = $this->option('dry-run');
 
-        if ($isDryRun) {
-            $this->info('Running in dry-run mode. No changes will be made.');
+        // Ask for confirmation if not in dry-run mode
+        if (! $isDryRun && ! $this->components->confirm('This command will modify your Filament resources and clusters to match the new v4 directory structure. Please commit any changes you have made to your project before continuing. Do you want to continue?', default: true)) {
+            $this->components->info('Migration cancelled.');
+            return self::FAILURE;
         }
 
-        $this->info('Starting migration from Filament v3 to v4...');
+        $this->components->info('Starting migration from Filament v3 to v4...');
+
+        if ($isDryRun) {
+            $this->newLine();
+            $this->components->info('Running in dry-run mode. No changes will be made.');
+            $this->newLine();
+        }
 
         // Step 1: Download phpactor if it doesn't exist (skip in dry-run mode)
         if (! $isDryRun) {
             $this->downloadPhpactor();
         } else {
-            $this->info('[DRY RUN] Would download phpactor to vendor/bin/phpactor.phar');
             $this->phpactorPath = base_path('vendor/bin/phpactor.phar');
         }
 
         // Step 2: Get all panels
         $panels = Filament::getPanels();
-        $this->info('Found ' . count($panels) . ' panel(s)');
-
         foreach ($panels as $panel) {
-            $this->info('Processing panel: ' . $panel->getId());
-
             // Step 3: Get all resources for this panel
             $resources = $panel->getResources();
-            $this->info('Found ' . count($resources) . ' resource(s) in panel');
 
-            foreach ($resources as $resourceClass) {
-                $this->processResource($resourceClass, $isDryRun);
+            if (count($resources) > 0) {
+                $this->components->info('Processing resources in ' . $panel->getId() . ' panel');
+
+                foreach ($resources as $resourceClass) {
+                    $this->processResource($resourceClass, $isDryRun);
+                }
+
+                $this->newLine();
             }
 
             // Step 4: Get all clusters for this panel
             $clusters = $panel->getClusters();
-            $this->info('Found ' . count($clusters) . ' cluster(s) in panel');
 
-            foreach ($clusters as $clusterClass) {
-                $this->processCluster($clusterClass, $isDryRun);
+            if (count($clusters) > 0) {
+                $this->components->info('Processing resources in ' . $panel->getId() . ' panel');
+
+                foreach ($clusters as $clusterClass) {
+                    $this->processCluster($clusterClass, $isDryRun);
+                }
+
+                $this->newLine();
             }
         }
 
+
         if ($isDryRun) {
-            $this->info('Dry run completed. Run without --dry-run to apply changes.');
+            $this->components->info('Dry run completed. Run without --dry-run to apply changes.');
         } else {
-            $this->info('Migration completed successfully!');
+            $this->components->info('Migration completed successfully!');
         }
 
         return self::SUCCESS;
@@ -90,26 +119,25 @@ class UpgradeDirectoryStructureToV4Command extends Command
         $this->phpactorPath = base_path('vendor/bin/phpactor.phar');
 
         if (File::exists($this->phpactorPath)) {
-            $this->info('Phpactor already exists at: ' . $this->phpactorPath);
-
+            $this->components->info('Phpactor already exists at: ' . $this->formatPath($this->phpactorPath));
             return;
         }
 
-        $this->info('Downloading phpactor...');
-        $process = Process::fromShellCommandline(
-            'curl -Lo ' . $this->phpactorPath . ' https://github.com/phpactor/phpactor/releases/latest/download/phpactor.phar'
-        );
-        $process->run();
+        $this->components->task('Downloading phpactor', function () {
+            $process = Process::command(
+                'curl -Lo ' . $this->phpactorPath . ' https://github.com/phpactor/phpactor/releases/latest/download/phpactor.phar'
+            );
+            $process = $process->run();
 
-        if (! $process->isSuccessful()) {
-            $this->error('Failed to download phpactor: ' . $process->getErrorOutput());
+            if (! $process->successful()) {
+                $this->error('Failed to download phpactor: ' . $process->errorOutput());
+                throw new RuntimeException('Failed to download phpactor');
+            }
 
-            throw new RuntimeException('Failed to download phpactor');
-        }
-
-        // Make phpactor executable
-        chmod($this->phpactorPath, 0755);
-        $this->info('Phpactor downloaded successfully to: ' . $this->phpactorPath);
+            // Make phpactor executable
+            chmod($this->phpactorPath, 0755);
+            return true;
+        });
     }
 
     /**
@@ -117,30 +145,26 @@ class UpgradeDirectoryStructureToV4Command extends Command
      */
     protected function processResource(string $resourceClass, bool $isDryRun = false): void
     {
-        $this->info('Processing resource: ' . $resourceClass);
-
         // Get the base path for the resource
         $resourceReflection = new ReflectionClass($resourceClass);
         $resourcePath = $resourceReflection->getFileName();
 
         if ($resourcePath === false) {
-            $this->warn("Could not get file path for resource: {$resourceClass}");
-
+            $this->components->warn("Could not get file path for resource: {$resourceClass}");
             return;
         }
 
         // Skip if the resource is in vendor directory
         if ($this->isVendorPath($resourcePath)) {
-            $this->warn("Skipping resource in vendor directory: {$resourcePath}");
-
+            $this->components->warn("Skipping resource in vendor directory");
             return;
         }
 
-        $resourceNamespace = $resourceReflection->getNamespaceName();
         $resourceBaseName = class_basename($resourceClass);
-
-        // Extract directory information
         $resourceDir = dirname($resourcePath);
+
+        // Set the current resource being processed
+        $this->currentResource = $resourceBaseName;
 
         // Determine the new directory name (pluralized)
         $resourceName = str_replace('Resource', '', $resourceBaseName);
@@ -151,12 +175,9 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         // Skip if the new resource directory would be in vendor
         if ($this->isVendorPath($newResourceDir)) {
-            $this->warn("Skipping resource with destination in vendor directory: {$newResourceDir}");
-
+            $this->components->warn("Skipping resource with destination in vendor directory");
             return;
         }
-
-        $this->info("Resource will be moved from {$resourceDir} to {$newResourceDir}");
 
         // Find all related classes
         $this->findAndMoveRelatedClasses($resourceClass, $resourceDir, $newResourceDir, $resourceBaseName, $isDryRun);
@@ -171,30 +192,26 @@ class UpgradeDirectoryStructureToV4Command extends Command
      */
     protected function processCluster(string $clusterClass, bool $isDryRun = false): void
     {
-        $this->info('Processing cluster: ' . $clusterClass);
-
         // Get the base path for the cluster
         $clusterReflection = new ReflectionClass($clusterClass);
         $clusterPath = $clusterReflection->getFileName();
 
         if ($clusterPath === false) {
-            $this->warn("Could not get file path for cluster: {$clusterClass}");
-
+            $this->components->warn("Could not get file path for cluster: {$clusterClass}");
             return;
         }
 
         // Skip if the cluster is in vendor directory
         if ($this->isVendorPath($clusterPath)) {
-            $this->warn("Skipping cluster in vendor directory: {$clusterPath}");
-
+            $this->components->warn("Skipping cluster in vendor directory");
             return;
         }
 
-        $clusterNamespace = $clusterReflection->getNamespaceName();
         $clusterBaseName = class_basename($clusterClass);
-
-        // Extract directory information
         $clusterDir = dirname($clusterPath);
+
+        // Set the current resource being processed (in this case, a cluster)
+        $this->currentResource = $clusterBaseName;
 
         // Determine if the cluster name ends with "Cluster"
         $endsWithCluster = Str::endsWith($clusterBaseName, 'Cluster');
@@ -212,34 +229,20 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         // Skip if the new cluster directory would be in vendor
         if ($this->isVendorPath($newClusterDir)) {
-            $this->warn("Skipping cluster with destination in vendor directory: {$newClusterDir}");
-
+            $this->components->warn("Skipping cluster with destination in vendor directory");
             return;
         }
 
-        $this->info("Cluster will be moved from {$clusterDir} to {$newClusterDir}");
-
-        // Create the new directory if it doesn't exist
-        if (! $isDryRun && ! File::exists($newClusterDir)) {
-            File::makeDirectory($newClusterDir, 0755, true);
-        } elseif ($isDryRun && ! File::exists($newClusterDir)) {
-            $this->info("[DRY RUN] Would create directory: {$newClusterDir}");
-        }
 
         // Move the cluster class
         $newClusterPath = $newClusterDir . '/' . $newClusterBaseName . '.php';
         $this->moveClass($clusterPath, $newClusterPath, $isDryRun);
-
-        // Note: We don't process any other files for clusters as they are already in the correct place
-        $this->info('Cluster processed successfully. No other files were moved as they are already in the correct place.');
     }
 
     protected function findAndMoveRelatedClasses(string $resourceClass, string $resourceDir, string $newResourceDir, string $resourceBaseName, bool $isDryRun = false): void
     {
         // Find all PHP files in the resource directory and subdirectories
         $files = $this->findPhpFiles($resourceDir);
-
-        $this->info('Found ' . count($files) . ' file(s) in resource directory');
 
         $relatedFiles = [];
         foreach ($files as $file) {
@@ -251,15 +254,11 @@ class UpgradeDirectoryStructureToV4Command extends Command
             // Only process files that are related to this resource
             // Check if the file path contains the resource basename directory
             if (strpos($file, $resourceDir . '/' . $resourceBaseName) === false) {
-                $this->info("Skipping file not related to {$resourceBaseName}: {$file}");
-
                 continue;
             }
 
             $relatedFiles[] = $file;
         }
-
-        $this->info('Found ' . count($relatedFiles) . ' related file(s) for resource ' . $resourceBaseName);
 
         foreach ($relatedFiles as $file) {
             // Determine the new path for this file
@@ -276,13 +275,6 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
             $newPath = $newResourceDir . $relativePath;
 
-            // Ensure the directory exists
-            $newDir = dirname($newPath);
-            if (! $isDryRun && ! File::exists($newDir)) {
-                File::makeDirectory($newDir, 0755, true);
-            } elseif ($isDryRun && ! File::exists($newDir)) {
-                $this->info("[DRY RUN] Would create directory: {$newDir}");
-            }
 
             // Move the class
             $this->moveClass($file, $newPath, $isDryRun);
@@ -313,8 +305,6 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         // Skip if the directory is in vendor
         if ($this->isVendorPath($directory)) {
-            $this->warn("Skipping vendor directory: {$directory}");
-
             return $files;
         }
 
@@ -325,8 +315,6 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
             // Skip files in vendor directory
             if ($this->isVendorPath($pathname)) {
-                $this->info("Skipping vendor file: {$pathname}");
-
                 continue;
             }
 
@@ -342,48 +330,72 @@ class UpgradeDirectoryStructureToV4Command extends Command
     {
         // Safety check: Never touch files in the vendor directory
         if ($this->isVendorPath($sourcePath)) {
-            $this->warn("Skipping file in vendor directory: {$sourcePath}");
-
+            $this->components->warn("Skipping file in vendor directory");
             return;
         }
 
         if ($this->isVendorPath($destinationPath)) {
-            $this->warn("Skipping move to vendor directory: {$destinationPath}");
-
+            $this->components->warn("Skipping move to vendor directory");
             return;
         }
 
-        // Ensure the destination directory exists
-        $destinationDir = dirname($destinationPath);
-        if (! $isDryRun && ! File::exists($destinationDir)) {
-            File::makeDirectory($destinationDir, 0755, true);
-        } elseif ($isDryRun && ! File::exists($destinationDir)) {
-            $this->info("[DRY RUN] Would create directory: {$destinationDir}");
-        }
 
         if ($isDryRun) {
-            $this->info("[DRY RUN] Would move class from {$sourcePath} to {$destinationPath}");
+            // Display resource grouping information in real-time for dry runs
+            // If this is the first file for this resource, display the resource heading
+            if ($this->currentResource && (!isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
+                $this->line('  <fg=yellow;options=bold>' . $this->currentResource . '</>');
+                $this->movedFiles[$this->currentResource] = [];
+            } elseif (!$this->currentResource && (!isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
+                $this->line('  <fg=yellow;options=bold>Other</>');
+                $this->movedFiles['Other'] = [];
+            }
 
+            // Display the file move information with proper indentation
+            $this->line('    • ' . $this->formatPath($sourcePath) . ' → ' . $this->formatPath($destinationPath));
+
+            // Track the file for resource grouping
+            if ($this->currentResource) {
+                $this->movedFiles[$this->currentResource][$sourcePath] = $destinationPath;
+            } else {
+                $this->movedFiles['Other'][$sourcePath] = $destinationPath;
+            }
             return;
         }
-
-        $this->info("Moving class from {$sourcePath} to {$destinationPath}");
 
         try {
             // Use phpactor to move the class
-            $process = Process::fromShellCommandline(
+            $process = Process::command(
                 "php {$this->phpactorPath} class:move {$sourcePath} {$destinationPath}"
             );
-            $process->setTimeout(60); // Give it a minute to complete
-            $process->run();
+            $process->timeout(60); // Give it a minute to complete
+            $process = $process->run();
 
-            if ($process->isSuccessful()) {
-                $this->info("Successfully moved class from {$sourcePath} to {$destinationPath}");
+            if ($process->successful()) {
+                // Display resource grouping information in real-time for actual moves
+                // If this is the first file for this resource, display the resource heading
+                if ($this->currentResource && (!isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
+                    $this->line('  <fg=yellow;options=bold>' . $this->currentResource . '</>');
+                    $this->movedFiles[$this->currentResource] = [];
+                } elseif (!$this->currentResource && (!isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
+                    $this->line('  <fg=yellow;options=bold>Other</>');
+                    $this->movedFiles['Other'] = [];
+                }
+
+                // Display the file move information with proper indentation
+                $this->line('    • ' . $this->formatPath($sourcePath) . ' → ' . $this->formatPath($destinationPath));
+
+                // Track the file for resource grouping
+                if ($this->currentResource) {
+                    $this->movedFiles[$this->currentResource][$sourcePath] = $destinationPath;
+                } else {
+                    $this->movedFiles['Other'][$sourcePath] = $destinationPath;
+                }
             } else {
-                $this->error('Failed to move class: ' . $process->getErrorOutput());
+                $this->components->error('Failed to move class: ' . $process->errorOutput());
             }
         } catch (Exception $exception) {
-            $this->error('Exception occurred while moving class: ' . $exception->getMessage());
+            $this->components->error('Exception occurred while moving class: ' . $exception->getMessage());
         }
     }
 }
