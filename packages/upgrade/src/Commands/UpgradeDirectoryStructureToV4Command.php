@@ -70,7 +70,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
         if (! $isDryRun) {
             $this->downloadPhpactor();
         } else {
-            $this->phpactorPath = base_path('vendor/bin/phpactor.phar');
+            $this->phpactorPath = base_path('vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpactor.phar');
         }
 
         $panels = Filament::getPanels();
@@ -111,7 +111,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
     protected function downloadPhpactor(): void
     {
-        $this->phpactorPath = base_path('vendor/bin/phpactor.phar');
+        $this->phpactorPath = base_path('vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpactor.phar');
 
         if (File::exists($this->phpactorPath)) {
             $this->components->info('Phpactor already exists at: ' . $this->formatPath($this->phpactorPath));
@@ -165,7 +165,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
         $resourceName = Str::replaceEnd('Resource', '', $resourceBaseName);
         $pluralizedName = Str::plural($resourceName);
 
-        $newResourceDirectory = $resourceDirectory . '/' . $pluralizedName;
+        $newResourceDirectory = $resourceDirectory . DIRECTORY_SEPARATOR . $pluralizedName;
 
         if ($this->isVendorPath($newResourceDirectory)) {
             $this->components->warn('Skipping resource with destination in vendor directory');
@@ -175,7 +175,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         $this->findAndMoveRelatedClasses($resourceClass, $resourceDirectory, $newResourceDirectory, $resourceBaseName, $isDryRun);
 
-        $newResourcePath = $newResourceDirectory . '/' . $resourceBaseName . '.php';
+        $newResourcePath = $newResourceDirectory . DIRECTORY_SEPARATOR . $resourceBaseName . '.php';
         $this->moveClass($resourcePath, $newResourcePath, $isDryRun);
     }
 
@@ -208,10 +208,10 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         if ($endsWithCluster) {
             $newClusterBaseName = $clusterBaseName;
-            $newClusterDirectory = $clusterDirectory . '/' . $clusterBaseName;
+            $newClusterDirectory = $clusterDirectory . DIRECTORY_SEPARATOR . $clusterBaseName;
         } else {
             $newClusterBaseName = $clusterBaseName . 'Cluster';
-            $newClusterDirectory = $clusterDirectory . '/' . $clusterBaseName;
+            $newClusterDirectory = $clusterDirectory . DIRECTORY_SEPARATOR . $clusterBaseName;
         }
 
         if ($this->isVendorPath($newClusterDirectory)) {
@@ -220,7 +220,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
             return;
         }
 
-        $newClusterPath = $newClusterDirectory . '/' . $newClusterBaseName . '.php';
+        $newClusterPath = $newClusterDirectory . DIRECTORY_SEPARATOR . $newClusterBaseName . '.php';
         $this->moveClass($clusterPath, $newClusterPath, $isDryRun);
     }
 
