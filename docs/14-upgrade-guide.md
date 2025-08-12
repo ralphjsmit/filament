@@ -23,26 +23,20 @@ import Disclosure from "@components/Disclosure.astro"
     The upgrade script is not a replacement for the upgrade guide. It handles many small changes that are not mentioned in the upgrade guide, but it does not handle all breaking changes. You should still read the [manual upgrade steps](#breaking-changes-that-must-be-handled-manually) to see what changes you need to make to your code.
 </Aside>
 
-The first step to upgrade your Filament app is to run the automated upgrade script. Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages. Either adjust it manually or via CLI:
+<Aside variant="info">
+    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
+</Aside>
 
-```bash
-composer config minimum-stability beta
-```
-
-Your `composer.json` should look like this:
-
-```json
-{
-    "minimum-stability": "beta"
-}
-```
-
-This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
+The first step to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
 
 ```bash
 composer require filament/upgrade:"^4.0" -W --dev
 
 vendor/bin/filament-v4
+
+# Run the commands output by the upgrade script, they are unique to your app
+composer require filament/filament:"^4.0" -W --no-update
+composer update
 ```
 
 <Aside variant="warning">
@@ -52,6 +46,10 @@ vendor/bin/filament-v4
     composer require filament/upgrade:"~4.0" -W --dev
 
     vendor/bin/filament-v4
+
+    # Run the commands output by the upgrade script, they are unique to your app
+    composer require filament/filament:"^4.0" -W --no-update
+    composer update
     ```
 </Aside>
 
@@ -61,11 +59,23 @@ vendor/bin/filament-v4
 
 Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
 
-You can now `composer remove filament/upgrade` as you don't need it anymore.
+Filament v4 introduces a new default directory structure for your Filament resources and clusters. If you are using Filament panels with resources and clusters, you can choose to keep the old directory structure, or migrate to the new one. If you want to migrate to the new directory structure, you can run the following command:
 
-<Aside variant="info">
-    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
+```bash
+php artisan filament:upgrade-directory-structure-to-v4 --dry-run
+```
+
+The `--dry-run` option will show you what the command would do without actually making any changes. If you are happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
+
+```bash
+php artisan filament:upgrade-directory-structure-to-v4
+```
+
+<Aside variant="warning">
+    This directory upgrade script is not able to perfectly update any references to classes in the same namespace that were present in resource and cluster files, and those references will need to be updated manually after the script has run. You should use tools like [PHPStan](https://phpstan.org) to identify references to classes that are broken after the upgrade.
 </Aside>
+
+You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 ## Publishing the configuration file
 
@@ -102,8 +112,8 @@ return [
         'flags' => [
             FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS, // Define new forms and infolists inside the resource class instead of a separate schema class.
             FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_TABLES, // Define new tables inside the resource class instead of a separate table class.
-            FileGenerationFlag::PANEL_CLUSTER_CLASSES_OUTSIDE_DIRECTORIES, // Create new cluster classes outside of their directories.
-            FileGenerationFlag::PANEL_RESOURCE_CLASSES_OUTSIDE_DIRECTORIES, // Create new resource classes outside of their directories.
+            FileGenerationFlag::PANEL_CLUSTER_CLASSES_OUTSIDE_DIRECTORIES, // Create new cluster classes outside of their directories. Not required if you run `php artisan filament:upgrade-directory-structure-to-v4`.
+            FileGenerationFlag::PANEL_RESOURCE_CLASSES_OUTSIDE_DIRECTORIES, // Create new resource classes outside of their directories. Not required if you run `php artisan filament:upgrade-directory-structure-to-v4`.
             FileGenerationFlag::PARTIAL_IMPORTS, // Partially import components such as form fields and table columns instead of importing each component explicitly.
         ],
     ],
@@ -112,6 +122,24 @@ return [
 
 ]
 ```
+
+<Aside variant="tip">
+    The `filament/upgrade` package includes a command to help you move panel resources and clusters to the new directory structure, which is the default in v4:
+
+    ```bash
+    php artisan filament:upgrade-directory-structure-to-v4 --dry-run
+    ```
+
+    The `--dry-run` option will show you what the command would do without actually making any changes. If you are happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
+
+    ```bash
+    php artisan filament:upgrade-directory-structure-to-v4
+    ```
+
+    This directory upgrade script is not able to perfectly update any references to classes in the same namespace that were present in resource and cluster files, and those references will need to be updated manually after the script has run. You should use tools like [PHPStan](https://phpstan.org) to identify references to classes that are broken after the upgrade.
+
+    Once you have run the command, you do not need to keep the `FileGenerationFlag::PANEL_CLUSTER_CLASSES_OUTSIDE_DIRECTORIES` or `FileGenerationFlag::PANEL_RESOURCE_CLASSES_OUTSIDE_DIRECTORIES` flags in your configuration file, as the new directory structure is now the default. You can remove them from the `file_generation.flags` array.
+</Aside>
 
 ## Breaking changes that must be handled manually
 
