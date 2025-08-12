@@ -62,6 +62,12 @@ Make sure to carefully follow the instructions, and review the changes made by t
 Filament v4 introduces a new default directory structure for your Filament resources and clusters. If you are using Filament panels with resources and clusters, you can choose to keep the old directory structure, or migrate to the new one. If you want to migrate to the new directory structure, you can run the following command:
 
 ```bash
+php artisan filament:upgrade-directory-structure-to-v4 --dry-run
+```
+
+The `--dry-run` option will show you what the command would do without actually making any changes. If you are happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
+
+```bash
 php artisan filament:upgrade-directory-structure-to-v4
 ```
 
@@ -119,6 +125,12 @@ return [
 
 <Aside variant="tip">
     The `filament/upgrade` package includes a command to help you move panel resources and clusters to the new directory structure, which is the default in v4:
+
+    ```bash
+    php artisan filament:upgrade-directory-structure-to-v4 --dry-run
+    ```
+
+    The `--dry-run` option will show you what the command would do without actually making any changes. If you are happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
 
     ```bash
     php artisan filament:upgrade-directory-structure-to-v4
