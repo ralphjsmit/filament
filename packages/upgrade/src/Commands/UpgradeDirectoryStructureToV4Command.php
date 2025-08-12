@@ -46,7 +46,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
     protected function formatPath(string $path): string
     {
-        return str_replace(base_path() . '/', '', $path);
+        return str_replace(base_path() . DIRECTORY_SEPARATOR, '', $path);
     }
 
     public function handle(): int
@@ -234,7 +234,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
                 continue;
             }
 
-            if (strpos($file, $resourceDirectory . '/' . $resourceBaseName) === false) {
+            if (strpos($file, $resourceDirectory . DIRECTORY_SEPARATOR . $resourceBaseName) === false) {
                 continue;
             }
 
@@ -244,10 +244,10 @@ class UpgradeDirectoryStructureToV4Command extends Command
         foreach ($relatedFiles as $file) {
             $relativePath = str_replace($resourceDirectory, '', $file);
 
-            $resourceDirectoryPattern = '/' . $resourceBaseName . '/';
+            $resourceDirectoryPattern = DIRECTORY_SEPARATOR . $resourceBaseName . DIRECTORY_SEPARATOR;
             if (strpos($relativePath, $resourceDirectoryPattern) === 0) {
                 $relativePath = substr($relativePath, strlen($resourceDirectoryPattern));
-                $relativePath = '/' . $relativePath;
+                $relativePath = DIRECTORY_SEPARATOR . $relativePath;
             }
 
             $newPath = $newResourceDirectory . $relativePath;
@@ -261,7 +261,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
      */
     protected function isVendorPath(string $path): bool
     {
-        return str_contains($path, '/vendor/');
+        return str_contains($path, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR);
     }
 
     /**
