@@ -3,13 +3,13 @@
 namespace Filament\Upgrade\Commands;
 
 use Exception;
-use ReflectionClass;
-use RuntimeException;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
+use ReflectionClass;
+use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -55,6 +55,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         if (! $isDryRun && ! $this->components->confirm('This command will modify your Filament resources and clusters to match the new v4 directory structure. Please commit any changes you have made to your project before continuing. Do you want to continue?', default: true)) {
             $this->components->info('Migration cancelled.');
+
             return self::FAILURE;
         }
 
@@ -99,7 +100,6 @@ class UpgradeDirectoryStructureToV4Command extends Command
             }
         }
 
-
         if ($isDryRun) {
             $this->components->info('Dry run completed. Run without --dry-run to apply changes.');
         } else {
@@ -115,6 +115,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         if (File::exists($this->phpactorPath)) {
             $this->components->info('Phpactor already exists at: ' . $this->formatPath($this->phpactorPath));
+
             return;
         }
 
@@ -122,14 +123,16 @@ class UpgradeDirectoryStructureToV4Command extends Command
             $process = Process::command(
                 'curl -Lo ' . $this->phpactorPath . ' https://github.com/phpactor/phpactor/releases/latest/download/phpactor.phar'
             );
-            $process = $process->run();
+            $processOutput = $process->run();
 
-            if (! $process->successful()) {
-                $this->error('Failed to download phpactor: ' . $process->errorOutput());
+            if (! $processOutput->successful()) {
+                $this->error('Failed to download phpactor: ' . $processOutput->errorOutput());
+
                 throw new RuntimeException('Failed to download phpactor');
             }
 
             chmod($this->phpactorPath, 0755);
+
             return true;
         });
     }
@@ -144,32 +147,35 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         if ($resourcePath === false) {
             $this->components->warn("Could not get file path for resource: {$resourceClass}");
+
             return;
         }
 
         if ($this->isVendorPath($resourcePath)) {
-            $this->components->warn("Skipping resource in vendor directory");
+            $this->components->warn('Skipping resource in vendor directory');
+
             return;
         }
 
         $resourceBaseName = class_basename($resourceClass);
-        $resourceDir = dirname($resourcePath);
+        $resourceDirectory = dirname($resourcePath);
 
         $this->currentResource = $resourceBaseName;
 
-        $resourceName = str_replace('Resource', '', $resourceBaseName);
+        $resourceName = Str::replaceEnd('Resource', '', $resourceBaseName);
         $pluralizedName = Str::plural($resourceName);
 
-        $newResourceDir = $resourceDir . '/' . $pluralizedName;
+        $newResourceDirectory = $resourceDirectory . '/' . $pluralizedName;
 
-        if ($this->isVendorPath($newResourceDir)) {
-            $this->components->warn("Skipping resource with destination in vendor directory");
+        if ($this->isVendorPath($newResourceDirectory)) {
+            $this->components->warn('Skipping resource with destination in vendor directory');
+
             return;
         }
 
-        $this->findAndMoveRelatedClasses($resourceClass, $resourceDir, $newResourceDir, $resourceBaseName, $isDryRun);
+        $this->findAndMoveRelatedClasses($resourceClass, $resourceDirectory, $newResourceDirectory, $resourceBaseName, $isDryRun);
 
-        $newResourcePath = $newResourceDir . '/' . $resourceBaseName . '.php';
+        $newResourcePath = $newResourceDirectory . '/' . $resourceBaseName . '.php';
         $this->moveClass($resourcePath, $newResourcePath, $isDryRun);
     }
 
@@ -183,16 +189,18 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         if ($clusterPath === false) {
             $this->components->warn("Could not get file path for cluster: {$clusterClass}");
+
             return;
         }
 
         if ($this->isVendorPath($clusterPath)) {
-            $this->components->warn("Skipping cluster in vendor directory");
+            $this->components->warn('Skipping cluster in vendor directory');
+
             return;
         }
 
         $clusterBaseName = class_basename($clusterClass);
-        $clusterDir = dirname($clusterPath);
+        $clusterDirectory = dirname($clusterPath);
 
         $this->currentResource = $clusterBaseName;
 
@@ -200,25 +208,25 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
         if ($endsWithCluster) {
             $newClusterBaseName = $clusterBaseName;
-            $newClusterDir = $clusterDir . '/' . $clusterBaseName;
+            $newClusterDirectory = $clusterDirectory . '/' . $clusterBaseName;
         } else {
             $newClusterBaseName = $clusterBaseName . 'Cluster';
-            $newClusterDir = $clusterDir . '/' . $clusterBaseName;
+            $newClusterDirectory = $clusterDirectory . '/' . $clusterBaseName;
         }
 
-        if ($this->isVendorPath($newClusterDir)) {
-            $this->components->warn("Skipping cluster with destination in vendor directory");
+        if ($this->isVendorPath($newClusterDirectory)) {
+            $this->components->warn('Skipping cluster with destination in vendor directory');
+
             return;
         }
 
-
-        $newClusterPath = $newClusterDir . '/' . $newClusterBaseName . '.php';
+        $newClusterPath = $newClusterDirectory . '/' . $newClusterBaseName . '.php';
         $this->moveClass($clusterPath, $newClusterPath, $isDryRun);
     }
 
-    protected function findAndMoveRelatedClasses(string $resourceClass, string $resourceDir, string $newResourceDir, string $resourceBaseName, bool $isDryRun = false): void
+    protected function findAndMoveRelatedClasses(string $resourceClass, string $resourceDirectory, string $newResourceDirectory, string $resourceBaseName, bool $isDryRun = false): void
     {
-        $files = $this->findPhpFiles($resourceDir);
+        $files = $this->findPhpFiles($resourceDirectory);
 
         $relatedFiles = [];
         foreach ($files as $file) {
@@ -226,7 +234,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
                 continue;
             }
 
-            if (strpos($file, $resourceDir . '/' . $resourceBaseName) === false) {
+            if (strpos($file, $resourceDirectory . '/' . $resourceBaseName) === false) {
                 continue;
             }
 
@@ -234,16 +242,15 @@ class UpgradeDirectoryStructureToV4Command extends Command
         }
 
         foreach ($relatedFiles as $file) {
-            $relativePath = str_replace($resourceDir, '', $file);
+            $relativePath = str_replace($resourceDirectory, '', $file);
 
-            $resourceDirPattern = '/' . $resourceBaseName . '/';
-            if (strpos($relativePath, $resourceDirPattern) === 0) {
-                $relativePath = substr($relativePath, strlen($resourceDirPattern));
+            $resourceDirectoryPattern = '/' . $resourceBaseName . '/';
+            if (strpos($relativePath, $resourceDirectoryPattern) === 0) {
+                $relativePath = substr($relativePath, strlen($resourceDirectoryPattern));
                 $relativePath = '/' . $relativePath;
             }
 
-            $newPath = $newResourceDir . $relativePath;
-
+            $newPath = $newResourceDirectory . $relativePath;
 
             $this->moveClass($file, $newPath, $isDryRun);
         }
@@ -295,21 +302,22 @@ class UpgradeDirectoryStructureToV4Command extends Command
     protected function moveClass(string $sourcePath, string $destinationPath, bool $isDryRun = false): void
     {
         if ($this->isVendorPath($sourcePath)) {
-            $this->components->warn("Skipping file in vendor directory");
+            $this->components->warn('Skipping file in vendor directory');
+
             return;
         }
 
         if ($this->isVendorPath($destinationPath)) {
-            $this->components->warn("Skipping move to vendor directory");
+            $this->components->warn('Skipping move to vendor directory');
+
             return;
         }
 
-
         if ($isDryRun) {
-            if ($this->currentResource && (!isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
+            if ($this->currentResource && (! isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
                 $this->line('  <fg=yellow;options=bold>' . $this->currentResource . '</>');
                 $this->movedFiles[$this->currentResource] = [];
-            } elseif (!$this->currentResource && (!isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
+            } elseif (! $this->currentResource && (! isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
                 $this->line('  <fg=yellow;options=bold>Other</>');
                 $this->movedFiles['Other'] = [];
             }
@@ -321,6 +329,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
             } else {
                 $this->movedFiles['Other'][$sourcePath] = $destinationPath;
             }
+
             return;
         }
 
@@ -329,13 +338,13 @@ class UpgradeDirectoryStructureToV4Command extends Command
                 "php {$this->phpactorPath} class:move {$sourcePath} {$destinationPath}"
             );
             $process->timeout(60);
-            $process = $process->run();
+            $processOutput = $process->run();
 
-            if ($process->successful()) {
-                if ($this->currentResource && (!isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
+            if ($processOutput->successful()) {
+                if ($this->currentResource && (! isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
                     $this->line('  <fg=yellow;options=bold>' . $this->currentResource . '</>');
                     $this->movedFiles[$this->currentResource] = [];
-                } elseif (!$this->currentResource && (!isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
+                } elseif (! $this->currentResource && (! isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
                     $this->line('  <fg=yellow;options=bold>Other</>');
                     $this->movedFiles['Other'] = [];
                 }
@@ -348,7 +357,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
                     $this->movedFiles['Other'][$sourcePath] = $destinationPath;
                 }
             } else {
-                $this->components->error('Failed to move class: ' . $process->errorOutput());
+                $this->components->error('Failed to move class: ' . $processOutput->errorOutput());
             }
         } catch (Exception $exception) {
             $this->components->error('Exception occurred while moving class: ' . $exception->getMessage());
