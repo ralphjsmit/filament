@@ -48,7 +48,7 @@ composer update
     vendor/bin/filament-v4
 
     # Run the commands output by the upgrade script, they are unique to your app
-    composer require filament/filament:"^4.0" -W --no-update
+    composer require filament/filament:"~4.0" -W --no-update
     composer update
     ```
 </Aside>
