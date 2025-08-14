@@ -75,7 +75,7 @@ php artisan filament:upgrade-directory-structure-to-v4
     This directory upgrade script is not able to perfectly update any references to classes in the same namespace that were present in resource and cluster files, and those references will need to be updated manually after the script has run. You should use tools like [PHPStan](https://phpstan.org) to identify references to classes that are broken after the upgrade.
 </Aside>
 
-You can now `composer remove filament/upgrade` as you don't need it anymore.
+You can now `composer remove filament/upgrade --dev` as you don't need it anymore.
 
 ## Publishing the configuration file
 
