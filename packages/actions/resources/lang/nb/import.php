@@ -11,9 +11,12 @@ return [
         'form' => [
 
             'file' => [
-                'label' => 'Fil',
-                'placeholder' => 'Last opp en CSV fil',
-            ],
+                    'label' => 'Fil',
+                    'placeholder' => 'Last opp en CSV fil',
+                    'rules' => [
+                        'duplicate_columns' => '{0} Filen kan ikke inneholde mer enn én tom kolonneoverskrift.|{1,*} Filen kan ikke inneholde dupliserte kolonneoverskrifter: :columns.',
+                    ],
+                ],
 
             'columns' => [
                 'label' => 'Kolonner',
@@ -72,6 +75,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-rader-feilet',
         'error_header' => 'feil',
         'system_error' => 'Systemfeil, vennligst kontakt support.',
+        'column_mapping_required_for_new_record' => ':attribute-kolonnen ble ikke koblet til en kolonne i filen, men den er påkrevd for å opprette nye poster.',
     ],
 
 ];
