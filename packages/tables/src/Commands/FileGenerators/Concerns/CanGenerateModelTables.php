@@ -163,7 +163,7 @@ trait CanGenerateModelTables
                     'float',
                     'double',
                     'money',
-                ])) {
+                ]) && blank($guessedRelationshipName ?? null)) {
                     $columnData[in_array($columnName, [
                         'cost',
                         'money',

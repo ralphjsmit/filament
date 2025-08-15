@@ -134,7 +134,7 @@ trait CanGenerateModelInfolists
                     'float',
                     'double',
                     'money',
-                ])) {
+                ]) && blank($guessedRelationshipName ?? null)) {
                     $componentData[in_array($componentName, [
                         'cost',
                         'money',
