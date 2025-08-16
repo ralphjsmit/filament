@@ -2,9 +2,21 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'الأعمدة',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'تطبيق الأعمدة',
+            ],
+
+            'reset' => [
+                'label' => 'إعادة ضبط التصفيات',
+            ],
+
+        ],
 
     ],
 
@@ -99,7 +111,7 @@ return [
             'label' => 'الإجراءات',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'تبديل الأعمدة',
         ],
 
@@ -145,7 +157,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'الكل',
+
+            'relationship' => [
+                'empty_option_label' => 'لا يوجد اختيار',
+            ],
+
         ],
 
         'trashed' => [
@@ -228,5 +246,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'سِجِلّ',
 
 ];

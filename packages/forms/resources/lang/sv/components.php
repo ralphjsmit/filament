@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Lägg till filer',
             'blockquote' => 'Citat',
             'bold' => 'Fet',
@@ -382,7 +382,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Lägg till filer',
             'blockquote' => 'Citat',
             'bold' => 'Fet',
@@ -496,22 +496,6 @@ return [
         'boolean' => [
             'true' => 'Ja',
             'false' => 'Nej',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Föregående',
-            ],
-
-            'next_step' => [
-                'label' => 'Nästa',
-            ],
-
         ],
 
     ],

@@ -220,7 +220,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'הוסף קבצים',
             'blockquote' => 'בלוק ציטוט',
             'bold' => 'מודגש',
@@ -305,7 +305,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'הוסף קבצים',
             'blockquote' => 'בלוק ציטוט',
             'bold' => 'מודגש',
@@ -391,22 +391,6 @@ return [
 
     'tags_input' => [
         'placeholder' => 'תגית חדשה',
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'הקודם',
-            ],
-
-            'next_step' => [
-                'label' => 'הבא',
-            ],
-
-        ],
-
     ],
 
 ];

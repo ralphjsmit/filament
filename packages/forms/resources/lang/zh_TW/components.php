@@ -72,7 +72,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => '附加檔案',
             'bold' => '粗體',
             'bullet_list' => '無序清單',
@@ -146,7 +146,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => '附加檔案',
             'blockquote' => '引用區塊',
             'bold' => '粗體',
@@ -208,22 +208,6 @@ return [
 
     'tags_input' => [
         'placeholder' => '新增標籤',
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => '返回',
-            ],
-
-            'next_step' => [
-                'label' => '繼續',
-            ],
-
-        ],
-
     ],
 
 ];
