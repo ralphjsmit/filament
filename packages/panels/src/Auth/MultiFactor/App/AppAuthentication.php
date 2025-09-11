@@ -3,7 +3,6 @@
 namespace Filament\Auth\MultiFactor\App;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\MultiFactor\App\Actions\DisableAppAuthenticationAction;
@@ -24,6 +23,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use LogicException;
 use PragmaRX\Google2FAQRCode\Google2FA;
 
 class AppAuthentication implements MultiFactorAuthenticationProvider
@@ -63,7 +63,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     public function isEnabled(Authenticatable $user): bool
     {
         if (! ($user instanceof HasAppAuthentication)) {
-            throw new Exception('The user model must implement the [' . HasAppAuthentication::class . '] interface to use app authentication.');
+            throw new LogicException('The user model must implement the [' . HasAppAuthentication::class . '] interface to use app authentication.');
         }
 
         return filled($user->getAppAuthenticationSecret());
@@ -79,7 +79,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         $secret = $user->getAppAuthenticationSecret();
 
         if (blank($secret)) {
-            throw new Exception('The user does not have a app authentication secret.');
+            throw new LogicException('The user does not have a app authentication secret.');
         }
 
         return $secret;
@@ -98,7 +98,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         $codes = $user->getAppAuthenticationRecoveryCodes();
 
         if (blank($codes)) {
-            throw new Exception('The user does not have any app authentication recovery codes.');
+            throw new LogicException('The user does not have any app authentication recovery codes.');
         }
 
         return $codes;
@@ -136,11 +136,22 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         /** @var HasAppAuthentication $user */
         $user = Filament::auth()->user();
 
-        return $this->google2FA->getQRCodeInline(
+        $inlineQrCode = $this->google2FA->getQRCodeInline(
             $this->getBrandName(),
             $this->getHolderName($user),
             $secret,
         );
+
+        // This is a fallback for when `bacon/bacon-qr-code` is installed but the `imagick` extension is not.
+        if (
+            class_exists(\BaconQrCode\Writer::class)
+            && class_exists(\BaconQrCode\Renderer\ImageRenderer::class)
+            && (! extension_loaded('imagick'))
+        ) {
+            $inlineQrCode = 'data:image/svg+xml;base64,' . base64_encode($inlineQrCode);
+        }
+
+        return $inlineQrCode;
     }
 
     /**

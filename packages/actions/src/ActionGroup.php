@@ -4,7 +4,6 @@ namespace Filament\Actions;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -26,10 +25,12 @@ use Filament\Support\View\Concerns\CanGenerateDropdownItemHtml;
 use Filament\Support\View\Concerns\CanGenerateIconButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateLinkHtml;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use LogicException;
 
 class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 {
@@ -142,7 +143,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $action->group($this);
 
             if ($action instanceof ActionGroup) {
-                $action->dropdownPlacement('right-top');
+                $action->defaultDropdownPlacement('right-top');
 
                 $this->flatActions = [
                     ...$this->flatActions,
@@ -220,11 +221,13 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return $this->getTriggerView() === static::LINK_VIEW;
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         $label = $this->evaluate($this->label) ?? __('filament-actions::group.trigger.label');
 
-        return $this->shouldTranslateLabel ? __($label) : $label;
+        return is_string($label) && $this->shouldTranslateLabel
+            ? __($label)
+            : $label;
     }
 
     /**
@@ -525,7 +528,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             return $defaultView;
         }
 
-        throw new Exception('Class [' . static::class . '] extends [' . ActionGroup::class . '] but does not have a [$triggerView] property defined.');
+        throw new LogicException('Class [' . static::class . '] extends [' . ActionGroup::class . '] but does not have a [$triggerView] property defined.');
     }
 
     /**
