@@ -72,7 +72,7 @@ TextColumn::make('title')
     ->state('Hello, world!')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting the default state of a column
 
@@ -958,7 +958,7 @@ TextColumn::make('email')
     ->placeholder(fn (User $record): string => "No email for {$record->name}")
 
 TextColumn::make('role')
-    ->hidden(fn (User $record): bool => $record->role === 'admin')
+    ->badge(fn (User $record): bool => $record->role === 'admin')
 
 TextColumn::make('name')
     ->extraAttributes(fn (User $record): array => ['class' => "{$record->getKey()}-name-column"])
