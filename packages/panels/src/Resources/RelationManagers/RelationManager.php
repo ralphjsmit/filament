@@ -42,6 +42,7 @@ use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
@@ -55,6 +56,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     use InteractsWithActions;
     use InteractsWithRelationshipTable {
         InteractsWithRelationshipTable::makeTable as makeBaseRelationshipTable;
+        InteractsWithRelationshipTable::canReorder as baseCanReorder;
     }
     use InteractsWithSchemas;
 
@@ -109,7 +111,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     protected static ?string $badgeColor = null;
 
-    protected static ?string $badgeTooltip = null;
+    protected static string | Htmlable | null $badgeTooltip = null;
 
     public function mount(): void
     {
@@ -158,7 +160,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
             ->iconPosition(static::class::getIconPosition($ownerRecord, $pageClass));
     }
 
-    public static function getIcon(Model $ownerRecord, string $pageClass): string | BackedEnum | null
+    public static function getIcon(Model $ownerRecord, string $pageClass): string | BackedEnum | Htmlable | null
     {
         return static::$icon;
     }
@@ -178,7 +180,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         return static::$badgeColor;
     }
 
-    public static function getBadgeTooltip(Model $ownerRecord, string $pageClass): ?string
+    public static function getBadgeTooltip(Model $ownerRecord, string $pageClass): string | Htmlable | null
     {
         return static::$badgeTooltip;
     }
@@ -320,6 +322,11 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
                 EmbeddedTable::make(),
                 RenderHook::make(PanelsRenderHook::RESOURCE_RELATION_MANAGER_AFTER),
             ]);
+    }
+
+    protected function canReorder(): bool
+    {
+        return $this->isReadOnly() ? false : $this->baseCanReorder();
     }
 
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response

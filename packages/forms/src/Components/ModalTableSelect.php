@@ -504,7 +504,7 @@ class ModalTableSelect extends Field
             $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
         });
 
-        $this->dehydrated(fn (ModalTableSelect $component): bool => ! $component->isMultiple());
+        $this->dehydrated(fn (ModalTableSelect $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
         return $this;
     }
@@ -568,6 +568,12 @@ class ModalTableSelect extends Field
         $relationshipName = $this->getRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -639,6 +645,12 @@ class ModalTableSelect extends Field
 
         if ($values !== null) {
             return $values;
+        }
+
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
         }
 
         if ($this->isMultiple()) {
