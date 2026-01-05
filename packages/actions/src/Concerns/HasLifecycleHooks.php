@@ -9,56 +9,104 @@ use Illuminate\Support\Facades\Event;
 
 trait HasLifecycleHooks
 {
-    protected ?Closure $before = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $beforeCallbacks = [];
 
-    protected ?Closure $after = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $afterCallbacks = [];
 
-    protected ?Closure $beforeFormFilled = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $beforeFormFilledCallbacks = [];
 
-    protected ?Closure $afterFormFilled = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $afterFormFilledCallbacks = [];
 
-    protected ?Closure $beforeFormValidated = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $beforeFormValidatedCallbacks = [];
 
-    protected ?Closure $afterFormValidated = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $afterFormValidatedCallbacks = [];
 
     public function before(?Closure $callback): static
     {
-        $this->before = $callback;
+        if ($callback) {
+            $this->beforeCallbacks[] = $callback;
+        } else {
+            // Note: passing null to clear callbacks due to backwards compatibility reasons.
+            $this->beforeCallbacks = [];
+        }
 
         return $this;
     }
 
     public function after(?Closure $callback): static
     {
-        $this->after = $callback;
+        if ($callback) {
+            $this->afterCallbacks[] = $callback;
+        } else {
+            // Note: passing null to clear callbacks due to backwards compatibility reasons.
+            $this->afterCallbacks = [];
+        }
 
         return $this;
     }
 
     public function beforeFormFilled(?Closure $callback): static
     {
-        $this->beforeFormFilled = $callback;
+        if ($callback) {
+            $this->beforeFormFilledCallbacks[] = $callback;
+        } else {
+            // Note: passing null to clear callbacks due to backwards compatibility reasons.
+            $this->beforeFormFilledCallbacks = [];
+        }
 
         return $this;
     }
 
     public function afterFormFilled(?Closure $callback): static
     {
-        $this->afterFormFilled = $callback;
+        if ($callback) {
+            $this->afterFormFilledCallbacks[] = $callback;
+        } else {
+            // Note: passing null to clear callbacks due to backwards compatibility reasons.
+            $this->afterFormFilledCallbacks = [];
+        }
 
         return $this;
     }
 
     public function beforeFormValidated(?Closure $callback): static
     {
-        $this->beforeFormValidated = $callback;
+        if ($callback) {
+            $this->beforeFormValidatedCallbacks[] = $callback;
+        } else {
+            // Note: passing null to clear callbacks due to backwards compatibility reasons.
+            $this->beforeFormValidatedCallbacks = [];
+        }
 
         return $this;
     }
 
     public function afterFormValidated(?Closure $callback): static
     {
-        $this->afterFormValidated = $callback;
+        if ($callback) {
+            $this->afterFormValidatedCallbacks[] = $callback;
+        } else {
+            // Note: passing null to clear callbacks due to backwards compatibility reasons.
+            $this->afterFormValidatedCallbacks = [];
+        }
 
         return $this;
     }
@@ -67,13 +115,25 @@ trait HasLifecycleHooks
     {
         Event::dispatch(ActionCalling::class, $this);
 
-        return $this->evaluate($this->before);
+        $result = null;
+
+        foreach ($this->beforeCallbacks as $callback) {
+            $result ??= $this->evaluate($callback);
+        }
+
+        return $result;
     }
 
     public function callAfter(): mixed
     {
         try {
-            return $this->evaluate($this->after);
+            $result = null;
+
+            foreach ($this->afterCallbacks as $callback) {
+                $result ??= $this->evaluate($callback);
+            }
+
+            return $result;
         } finally {
             Event::dispatch(ActionCalled::class, $this);
         }
@@ -81,21 +141,45 @@ trait HasLifecycleHooks
 
     public function callBeforeFormFilled(): mixed
     {
-        return $this->evaluate($this->beforeFormFilled);
+        $result = null;
+
+        foreach ($this->beforeFormFilledCallbacks as $callback) {
+            $result ??= $this->evaluate($callback);
+        }
+
+        return $result;
     }
 
     public function callAfterFormFilled(): mixed
     {
-        return $this->evaluate($this->afterFormFilled);
+        $result = null;
+
+        foreach ($this->afterFormFilledCallbacks as $callback) {
+            $result ??= $this->evaluate($callback);
+        }
+
+        return $result;
     }
 
     public function callBeforeFormValidated(): mixed
     {
-        return $this->evaluate($this->beforeFormValidated);
+        $result = null;
+
+        foreach ($this->beforeFormValidatedCallbacks as $callback) {
+            $result ??= $this->evaluate($callback);
+        }
+
+        return $result;
     }
 
     public function callAfterFormValidated(): mixed
     {
-        return $this->evaluate($this->afterFormValidated);
+        $result = null;
+
+        foreach ($this->afterFormValidatedCallbacks as $callback) {
+            $result ??= $this->evaluate($callback);
+        }
+
+        return $result;
     }
 }
