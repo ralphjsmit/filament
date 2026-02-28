@@ -6,9 +6,9 @@ use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\PostWithRichContent;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPlugin;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPluginWithoutToolbarButtons;
-use Filament\Tests\Fixtures\Models\PostWithRichContent;
 use Filament\Tests\TestCase;
 use Illuminate\Validation\ValidationException;
 
