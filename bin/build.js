@@ -1,6 +1,16 @@
 import * as esbuild from 'esbuild'
+import * as fs from 'fs'
+import { buildInter } from './fonts.js'
 
 const isDev = process.argv.includes('--dev')
+
+function cleanDirectory(directory) {
+    if (fs.existsSync(directory)) {
+        fs.rmSync(directory, { recursive: true })
+    }
+
+    fs.mkdirSync(directory, { recursive: true })
+}
 
 async function compile(options) {
     const context = await esbuild.context(options)
@@ -99,12 +109,9 @@ compile({
     outfile: `./packages/panels/dist/echo.js`,
 })
 
-compile({
-    ...defaultOptions,
-    platform: 'browser',
-    entryPoints: [`./packages/panels/resources/js/fonts/inter.js`],
-    outfile: `./packages/panels/dist/fonts/inter/index.js`,
-})
+cleanDirectory('./packages/panels/dist/fonts/inter')
+
+buildInter('./packages/panels/dist/fonts/inter')
 
 const formComponents = [
     'checkbox-list',

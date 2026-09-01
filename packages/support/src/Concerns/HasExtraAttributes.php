@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraAttributes
@@ -17,6 +18,9 @@ trait HasExtraAttributes
      */
     public function extraAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         if ($merge) {
             $this->extraAttributes[] = $attributes;
         } else {
@@ -31,7 +35,7 @@ trait HasExtraAttributes
      */
     public function getExtraAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag;
+        $temporaryAttributeBag = new FilamentComponentAttributeBag;
 
         foreach ($this->extraAttributes as $extraAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAttributes), escape: false);
@@ -42,6 +46,11 @@ trait HasExtraAttributes
 
     public function getExtraAttributeBag(): ComponentAttributeBag
     {
-        return new ComponentAttributeBag($this->getExtraAttributes());
+        return new FilamentComponentAttributeBag($this->getExtraAttributes());
+    }
+
+    public function hasExtraAttributes(): bool
+    {
+        return ! empty($this->extraAttributes);
     }
 }

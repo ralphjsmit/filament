@@ -1,11 +1,14 @@
 ---
 title: Overview
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Introduction
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app using tables and forms.
+
+<AutoScreenshot name="panels/resources/listing" alt="A resource listing page" version="4.x" />
 
 ## Creating a resource
 
@@ -52,6 +55,10 @@ php artisan make:filament-resource Customer --simple
 Your resource will have a "Manage" page, which is a List page with modals added.
 
 Additionally, your simple resource will have no `getRelations()` method, as [relation managers](managing-relationships) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
+
+<AutoScreenshot name="panels/resources/simple-modal-create" alt="Simple (modal) resource create modal" version="4.x" />
+
+<AutoScreenshot name="panels/resources/simple-modal-edit" alt="Simple (modal) resource edit modal" version="4.x" />
 
 ### Automatically generating forms and tables
 
@@ -416,7 +423,18 @@ public static function getNavigationGroup(): ?string
 
 #### Grouping resource navigation items under other items
 
-You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
+You may group navigation items as children of other items by setting the `$navigationParentItem` property. You may reference the parent item either by its page or resource class, or by its label:
+
+```php
+use App\Filament\Resources\Products\ProductsResource;
+use UnitEnum;
+
+protected static ?string $navigationParentItem = ProductsResource::class;
+
+protected static string | UnitEnum | null $navigationGroup = 'Shop';
+```
+
+Alternatively, you may reference the parent by its label:
 
 ```php
 use UnitEnum;
@@ -426,9 +444,18 @@ protected static ?string $navigationParentItem = 'Products';
 protected static string | UnitEnum | null $navigationGroup = 'Shop';
 ```
 
-As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
+You may also use the `getNavigationParentItem()` method to determine the parent dynamically:
 
-You may also use the `getNavigationParentItem()` method to set a dynamic parent item label:
+```php
+use App\Filament\Resources\Products\ProductsResource;
+
+public static function getNavigationParentItem(): ?string
+{
+    return ProductsResource::class;
+}
+```
+
+Alternatively, you may return the parent's label:
 
 ```php
 public static function getNavigationParentItem(): ?string
@@ -436,6 +463,8 @@ public static function getNavigationParentItem(): ?string
     return __('filament/navigation.groups.shop.items.products');
 }
 ```
+
+The parent and child items must belong to the same navigation group. If the parent item has a navigation group, that group must also be defined on the child, otherwise the correct parent item cannot be identified. This applies whether you reference the parent by its class or by its label.
 
 <Aside variant="tip">
     If you're reaching for a third level of navigation like this, you should consider using [clusters](../navigation/clusters) instead, which are a logical grouping of resources and [custom pages](../navigation/custom-pages), which can share their own separate navigation.
@@ -582,6 +611,8 @@ public static function getRecordSubNavigation(Page $page): array
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
 
+<AutoScreenshot name="panels/resources/sub-navigation" alt="Resource with sub-navigation" version="4.x" />
+
 <Aside variant="tip">
     If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../navigation/custom-pages), you might be looking for [clusters](../navigation/clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
 </Aside>
@@ -595,6 +626,12 @@ use Filament\Pages\Enums\SubNavigationPosition;
 
 protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
+
+<AutoScreenshot name="panels/resources/sub-navigation-end" alt="Resource with end sub-navigation position" version="4.x" />
+
+The `SubNavigationPosition::Top` option renders the sub-navigation as tabs above the page content:
+
+<AutoScreenshot name="panels/resources/sub-navigation-top" alt="Resource with top sub-navigation position" version="4.x" />
 
 ## Deleting resource pages
 
@@ -657,3 +694,15 @@ protected function mutateFormDataBeforeFill(array $data): array
 ```
 
 In this example, we remove the `is_admin` attribute from JavaScript, as it's not being used by the form.
+
+<Aside variant="warning">
+    Adding a column to `$hidden` is required, not just recommended, when it contains binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column. Since Filament exposes model attributes to JavaScript, these values are sent to the browser as part of the Livewire request, but they cannot be serialized to JSON. This causes the page to fail to load, often with a blank screen and no error in the Laravel log.
+
+    Adding such columns to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model excludes them from its array and JSON representations, resolving the issue:
+
+    ```php
+    protected $hidden = ['location'];
+    ```
+
+    If you need to work with the value, expose it through an [accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) instead of the raw column.
+</Aside>

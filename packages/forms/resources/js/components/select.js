@@ -3,6 +3,7 @@ import { Select } from '../../../../support/resources/js/utilities/select.js'
 export default function selectFormComponent({
     canOptionLabelsWrap,
     canSelectPlaceholder,
+    clearButtonLabel,
     getOptionLabelUsing,
     getOptionLabelsUsing,
     getOptionsUsing,
@@ -10,6 +11,7 @@ export default function selectFormComponent({
     hasDynamicOptions,
     hasDynamicSearchResults,
     hasInitialNoOptionsMessage,
+    id,
     initialOptionLabel,
     initialOptionLabels,
     initialState,
@@ -29,8 +31,10 @@ export default function selectFormComponent({
     optionsLimit,
     placeholder,
     position,
+    removeButtonLabel,
     searchDebounce,
     searchingMessage,
+    searchLabel,
     searchPrompt,
     searchableOptionFields,
     state,
@@ -45,6 +49,7 @@ export default function selectFormComponent({
             this.select = new Select({
                 canOptionLabelsWrap,
                 canSelectPlaceholder,
+                clearButtonLabel,
                 element: this.$refs.select,
                 getOptionLabelUsing,
                 getOptionLabelsUsing,
@@ -53,6 +58,7 @@ export default function selectFormComponent({
                 hasDynamicOptions,
                 hasDynamicSearchResults,
                 hasInitialNoOptionsMessage,
+                id,
                 initialOptionLabel,
                 initialOptionLabels,
                 initialState,
@@ -75,20 +81,24 @@ export default function selectFormComponent({
                 optionsLimit,
                 placeholder,
                 position,
+                removeButtonLabel,
                 searchableOptionFields,
                 searchDebounce,
                 searchingMessage,
+                searchLabel,
                 searchPrompt,
                 state: this.state,
                 statePath,
             })
 
             this.$watch('state', (newState) => {
-                if (this.select && this.select.state !== newState) {
-                    this.select.state = newState
-                    this.select.updateSelectedDisplay()
-                    this.select.renderOptions()
-                }
+                this.$nextTick(() => {
+                    if (this.select && this.select.state !== newState) {
+                        this.select.state = newState
+                        this.select.updateSelectedDisplay()
+                        this.select.renderOptions()
+                    }
+                })
             })
         },
 

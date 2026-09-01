@@ -15,11 +15,30 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('avatar')
 ```
 
-In this case, the `header_image` state could contain `posts/header-images/4281246003439.jpg`, which is relative to the root directory of the storage disk. The storage disk is defined in the [configuration file](../../introduction/installation#publishing-configuration), `local` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this.
+In this case, the `avatar` state could contain `users/avatars/4281246003439.jpg`, which is relative to the root directory of the storage disk. The storage disk is defined in the [configuration file](../../introduction/installation#publishing-configuration), `local` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this.
 
-Alternatively, the state could contain an absolute URL to an image, such as `https://example.com/images/header.jpg`.
+Alternatively, the state could contain an absolute URL to an image, such as `https://example.com/images/avatar.jpg`.
 
 <AutoScreenshot name="tables/columns/image/simple" alt="Image column" version="4.x" />
+
+## Setting the alt text
+
+You should set descriptive alt text on your images so that screen reader users understand what each image shows. Use the `alt()` method:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('avatar')
+    ->alt('User avatar')
+```
+
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `alt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters, including the `$state` of the current image.</UtilityInjection>
+
+If you do not set any alt text, the image is rendered with an empty `alt` attribute, which marks it as decorative for assistive technology.
+
+<Aside variant="warning">
+    When an image [links to a URL](overview#opening-urls), its alt text becomes the accessible name of the link. Always set meaningful `alt()` text on linked images, otherwise screen reader users will encounter a link with no name.
+</Aside>
 
 ## Managing the image disk
 
@@ -63,6 +82,8 @@ ImageColumn::make('header_image')
 ImageColumn::make('avatar')
     ->imageSize(40)
 ```
+
+<AutoScreenshot name="tables/columns/image/size" alt="Image column with custom size" version="4.x" />
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static values, the `imageWidth()`, `imageHeight()` and `imageSize()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -173,6 +194,8 @@ ImageColumn::make('colleagues.avatar')
     ->ring(5)
 ```
 
+<AutoScreenshot name="tables/columns/image/stacked-ring" alt="Image column with stacked ring width" version="4.x" />
+
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `ring()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the stacked overlap
@@ -188,6 +211,8 @@ ImageColumn::make('colleagues.avatar')
     ->stacked()
     ->overlap(2)
 ```
+
+<AutoScreenshot name="tables/columns/image/stacked-overlap" alt="Image column with stacked overlap" version="4.x" />
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `overlap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

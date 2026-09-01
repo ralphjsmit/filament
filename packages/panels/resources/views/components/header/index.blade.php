@@ -6,6 +6,11 @@
     'subheading' => null,
 ])
 
+@php
+    use Filament\Support\Facades\FilamentView;
+    use Filament\View\PanelsRenderHook;
+@endphp
+
 <header
     {{
         $attributes->class([
@@ -19,11 +24,15 @@
             <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
         @endif
 
+        {{ FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_HEADING_BEFORE, scopes: $this->getRenderHookScopes()) }}
+
         @if (filled($heading))
             <h1 class="fi-header-heading">
                 {{ $heading }}
             </h1>
         @endif
+
+        {{ FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_HEADING_AFTER, scopes: $this->getRenderHookScopes()) }}
 
         @if (filled($subheading))
             <p class="fi-header-subheading">
@@ -33,8 +42,8 @@
     </div>
 
     @php
-        $beforeActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes());
-        $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
+        $beforeActions = FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes());
+        $afterActions = FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
     @endphp
 
     @if (filled($beforeActions) || $actions || filled($afterActions))

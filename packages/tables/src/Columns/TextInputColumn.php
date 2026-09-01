@@ -11,17 +11,21 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
 
 class TextInputColumn extends Column implements Editable, HasEmbeddedView
 {
+    // Security: This column saves directly without checking Laravel
+    // Model Policies. Use `disabled()` to restrict editing
+    // based on your own authorization logic.
+
     use Concerns\CanBeValidated;
     use Concerns\CanUpdateState;
     use HasExtraInputAttributes;
@@ -240,12 +244,13 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
 
         $inputAttributes = $this->getExtraInputAttributeBag()
             ->merge([
+                'aria-label' => e(trim(strip_tags(($ariaLabel = $this->getLabel()) instanceof Htmlable ? $ariaLabel->toHtml() : $ariaLabel)), doubleEncode: false),
                 'disabled' => $isDisabled,
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
                 'x-bind:disabled' => $isDisabled ? null : 'isLoading',
                 'inputmode' => $this->getInputMode(),
-                'placeholder' => $this->getPlaceholder(),
+                'placeholder' => filled($placeholder = $this->getPlaceholder()) ? e($placeholder) : null,
                 'step' => $this->getStep(),
                 'type' => $type,
                 'x-mask' . ($mask instanceof RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
@@ -268,7 +273,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
-            <input type="hidden" value="<?= str($state)->replace('"', '\\"') ?>" x-ref="serverState" />
+            <input type="hidden" value="<?= e($state) ?>" x-ref="serverState" />
 
             <div
                 x-bind:class="{
@@ -290,7 +295,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                     <div
                         class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content <?= $isPrefixInline ? 'fi-inline' : '' ?> <?= filled($prefixLabel) ? 'fi-input-wrp-prefix-has-label' : '' ?>"
                     >
-                        <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)
+                        <?= generate_icon_html($prefixIcon, null, (new FilamentComponentAttributeBag)
                             ->color(IconComponent::class, $prefixIconColor))?->toHtml() ?>
 
                         <?php if (filled($prefixLabel)) { ?>
@@ -303,6 +308,9 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
 
                 <div class="fi-input-wrp-content-ctn">
                     <input
+                        <?php if (in_array($type, ['color'])) { ?>
+                            onclick="if (typeof this.showPicker === 'function') { this.showPicker() }"
+                        <?php } ?>
                         x-model.lazy="state"
                         <?= $inputAttributes->toHtml() ?>
                     />
@@ -318,7 +326,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                             </span>
                         <?php } ?>
 
-                        <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)
+                        <?= generate_icon_html($suffixIcon, null, (new FilamentComponentAttributeBag)
                             ->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
                     </div>
                 <?php } ?>

@@ -12,6 +12,10 @@ return [
                 'label' => 'Zastosuj kolumny',
             ],
 
+            'reorder' => [
+                'label' => 'Zmień kolejność kolumn',
+            ],
+
             'reset' => [
                 'label' => 'Zresetuj',
             ],
@@ -26,9 +30,20 @@ return [
             'label' => 'Akcja|Akcje',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Tak',
+                'false' => 'Nie',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Ładowanie...',
+
+            'no_options_message' => 'Brak dostępnych opcji.',
 
             'no_search_results_message' => 'Brak wyników.',
 
@@ -113,6 +128,10 @@ return [
             'label' => 'Zmień kolejność',
         ],
 
+        'reorder_record' => [
+            'label' => 'Zmień kolejność pozycji :key',
+        ],
+
         'filter' => [
             'label' => 'Filtr',
         ],
@@ -127,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => 'Wybierz kolumny',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Rozwiń/zwiń pozycję :key',
         ],
 
     ],
@@ -171,11 +194,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Wszystkie',
 
             'relationship' => [
                 'empty_option_label' => 'Brak',
             ],
+
         ],
 
         'trashed' => [
@@ -215,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Ładowanie...',
+
     'reorder_indicator' => 'Zmień kolejność przeciągając.',
+
+    'result_count' => '{0} Brak wyników|{1} :count wynik|[2,*] :count wyników',
 
     'selection_indicator' => [
 

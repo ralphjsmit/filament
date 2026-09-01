@@ -88,7 +88,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         if (! ($record instanceof Model)) {
             return match ($parameterType) {
@@ -98,7 +98,6 @@ class Schema extends ViewComponent implements HasEmbeddedView
         }
 
         return match ($parameterType) {
-            static::class, self::class => [$this],
             Model::class, $record::class => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
@@ -146,6 +145,11 @@ class Schema extends ViewComponent implements HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
+        return Component::withVisibilityCache(fn (): string => $this->renderEmbeddedHtml());
+    }
+
+    protected function renderEmbeddedHtml(): string
+    {
         if ($this->isDirectlyHidden()) {
             return '';
         }
@@ -180,8 +184,9 @@ class Schema extends ViewComponent implements HasEmbeddedView
             )
             ->merge([
                 'wire:partial' => $this->shouldPartiallyRender() ? ('schema.' . $this->getKey()) : null,
-                'x-data' => $isRoot ? 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ' })' : null,
+                'x-data' => $isRoot ? 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ', schemaKey: ' . Js::from($this->getKey()) . ' })' : null,
                 'x-on:form-validation-error.window' => $isRoot ? 'handleFormValidationError' : null,
+                'x-on:reset-schema-component-state.window' => $isRoot ? 'handleClientSideStateReset' : null,
             ], escape: false)
             ->class([
                 'fi-sc',
@@ -196,7 +201,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
         <div <?= $attributes->toHtml() ?>>
             <?php foreach ($componentsWithVisibility as [$schemaComponent, $isSchemaComponentVisible]) { ?>
                 <?php if (($schemaComponent instanceof Action) || ($schemaComponent instanceof ActionGroup)) { ?>
-                    <div <?php if (! $isSchemaComponentVisible) { ?> class="fi-hidden"<?php } ?>>
+                    <div class="fi-sc-action<?php if (! $isSchemaComponentVisible) { ?> fi-hidden<?php } ?>">
                         <?php if ($isSchemaComponentVisible) { ?>
                             <?= $schemaComponent->toHtml() ?>
                         <?php } ?>
@@ -210,5 +215,16 @@ class Schema extends ViewComponent implements HasEmbeddedView
         </div>
 
         <?php return ob_get_clean();
+    }
+
+    public function dispatchClientSideStateReset(): void
+    {
+        $livewire = $this->getLivewire();
+
+        $livewire->dispatch(
+            'reset-schema-component-state',
+            livewireId: $livewire->getId(),
+            schemaKey: $this->getKey(),
+        );
     }
 }

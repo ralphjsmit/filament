@@ -17,7 +17,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 {
     use EvaluatesClosures;
 
-    protected MediaCollection $media;
+    protected ?MediaCollection $media = null;
 
     protected RichContentAttribute $attribute;
 
@@ -92,11 +92,11 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     public function getMedia(): ?MediaCollection
     {
-        if (isset($this->media)) {
+        if ($this->media) {
             return $this->media;
         }
 
-        /** @var MediaCollection $media */
+        /** @var ?MediaCollection $media */
         $media = $this->getExistingModel()?->getMedia($this->getCollection())->keyBy('uuid');
 
         return $this->media = $media;
@@ -119,7 +119,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         if ($this->attribute->getFileAttachmentsVisibility() === 'private') {
             try {
                 return $fileAttachment->getTemporaryUrl(
-                    now()->addMinutes(30)->endOfHour(),
+                    now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.
@@ -131,8 +131,8 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
     {
-        $media = $this->getExistingModel() /** @phpstan-ignore method.notFound */
-            ->addMediaFromString($file->get())
+        $media = $this->getExistingModel()
+            ->addMediaFromString($file->get()) /** @phpstan-ignore method.notFound */
             ->usingFileName($this->shouldPreserveFilenames() ? $file->getClientOriginalName() : (Str::ulid() . '.' . $file->getClientOriginalExtension()))
             ->usingName($this->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
             ->withCustomProperties($this->getCustomProperties())

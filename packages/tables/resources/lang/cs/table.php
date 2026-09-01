@@ -12,6 +12,10 @@ return [
                 'label' => 'Použít sloupce',
             ],
 
+            'reorder' => [
+                'label' => 'Přesunout sloupec',
+            ],
+
             'reset' => [
                 'label' => 'Resetovat sloupce',
             ],
@@ -26,9 +30,20 @@ return [
             'label' => 'Akce|Akce',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Ano',
+                'false' => 'Ne',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Načítává se...',
+
+            'no_options_message' => 'Nejsou dostupné žádné možnosti.',
 
             'no_search_results_message' => 'Žádné možnosti neodpovídají vašemu hledání.',
 
@@ -112,6 +127,10 @@ return [
             'label' => 'Změnit pořadí položek',
         ],
 
+        'reorder_record' => [
+            'label' => 'Přesunout položku :key',
+        ],
+
         'filter' => [
             'label' => 'Filtrovat',
         ],
@@ -126,6 +145,10 @@ return [
 
         'column_manager' => [
             'label' => 'Skrýt/zobrazit sloupce',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Rozbalit/sbalit položku :key',
         ],
 
     ],
@@ -216,7 +239,11 @@ return [
 
     ],
 
+    'loading' => 'Načítává se...',
+
     'reorder_indicator' => 'Vyberte a přesuňte položky.',
+
+    'result_count' => '{0} Žádné výsledky|{1} :count výsledek|[2,4] :count výsledky|[5,*] :count výsledků',
 
     'selection_indicator' => [
 

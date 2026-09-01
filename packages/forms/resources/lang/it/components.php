@@ -548,6 +548,35 @@ return [
 
                         'color' => [
                             'label' => 'Colore',
+
+                            'options' => [
+                                'slate' => 'Slate',
+                                'gray' => 'Gray',
+                                'zinc' => 'Zinc',
+                                'neutral' => 'Neutral',
+                                'stone' => 'Stone',
+                                'mauve' => 'Mauve',
+                                'olive' => 'Olive',
+                                'mist' => 'Mist',
+                                'taupe' => 'Taupe',
+                                'red' => 'Red',
+                                'orange' => 'Orange',
+                                'amber' => 'Amber',
+                                'yellow' => 'Yellow',
+                                'lime' => 'Lime',
+                                'green' => 'Green',
+                                'emerald' => 'Emerald',
+                                'teal' => 'Teal',
+                                'cyan' => 'Cyan',
+                                'sky' => 'Sky',
+                                'blue' => 'Blue',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violet',
+                                'purple' => 'Purple',
+                                'fuchsia' => 'Fuchsia',
+                                'pink' => 'Pink',
+                                'rose' => 'Rose',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -562,10 +591,18 @@ return [
 
         ],
 
-        'no_merge_tag_search_results_message' => 'Nessun risultato per i tag mergiati.',
         'file_attachments_accepted_file_types_message' => 'I file caricati devono essere di tipo: :values.',
 
         'file_attachments_max_size_message' => 'I file caricati non devono superare i :max kilobyte.',
+
+        'no_merge_tag_search_results_message' => 'Nessun risultato per i tag mergiati.',
+
+        'mentions' => [
+            'no_options_message' => 'Nessuna opzione disponibile.',
+            'no_search_results_message' => 'Nessun risultato corrisponde alla tua ricerca.',
+            'search_prompt' => 'Inizia a digitare per cercare...',
+            'searching_message' => 'Ricerca in corso...',
+        ],
 
         'tools' => [
             'align_center' => 'Allinea al centro',
@@ -584,6 +621,9 @@ return [
             'h1' => 'Titolo',
             'h2' => 'Intestazione',
             'h3' => 'Sottotitolo',
+            'h4' => 'Titolo 4',
+            'h5' => 'Titolo 5',
+            'h6' => 'Titolo 6',
             'grid' => 'Griglia',
             'grid_delete' => 'Elimina griglia',
             'highlight' => 'Evidenzia',
@@ -593,6 +633,7 @@ return [
             'link' => 'Link',
             'merge_tags' => 'Merge tag',
             'ordered_list' => 'Elenco numerato',
+            'paragraph' => 'Paragrafo',
             'redo' => 'Ripristina',
             'small' => 'Testo piccolo',
             'strike' => 'Barrato',
@@ -609,6 +650,7 @@ return [
             'table_merge_cells' => 'Unisci celle',
             'table_split_cell' => 'Dividi cella',
             'table_toggle_header_row' => 'Attiva/disattiva riga intestazione',
+            'table_toggle_header_cell' => 'Attiva/disattiva cella intestazione',
             'text_color' => 'Colore testo',
             'underline' => 'Sottolineato',
             'undo' => 'Annulla',
@@ -677,6 +719,8 @@ return [
 
         'max_items_message' => 'È possibile selezionare solo :count.',
 
+        'no_options_message' => 'Nessuna opzione disponibile.',
+
         'no_search_results_message' => 'Nessuna opzione corrisponde alla tua ricerca.',
 
         'placeholder' => "Seleziona un'opzione",
@@ -688,6 +732,14 @@ return [
     ],
 
     'tags_input' => [
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Elimina',
+            ],
+
+        ],
+
         'placeholder' => 'Nuovo tag',
     ],
 

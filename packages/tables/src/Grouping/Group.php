@@ -46,6 +46,11 @@ class Group extends Component
 
     protected bool $isDate = false;
 
+    /**
+     * @var array<string, string | Htmlable | null>
+     */
+    protected array $cachedTitles = [];
+
     protected string $evaluationIdentifier = 'group';
 
     final public function __construct(?string $id = null)
@@ -192,7 +197,10 @@ class Group extends Component
             ->ucfirst();
     }
 
-    public function getDescription(Model $record, string | Htmlable | null $title): string | Htmlable | null
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getDescription(Model | array $record, string | Htmlable | null $title): string | Htmlable | null
     {
         if (! $this->getDescriptionFromRecordUsing) {
             return null;
@@ -204,14 +212,17 @@ class Group extends Component
                 'record' => $record,
                 'title' => $title,
             ],
-            typedInjections: [
+            typedInjections: ($record instanceof Model) ? [
                 Model::class => $record,
                 $record::class => $record,
-            ],
+            ] : [],
         );
     }
 
-    public function getStringKey(Model $record): ?string
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getStringKey(Model | array $record): ?string
     {
         $key = $this->getKey($record);
 
@@ -230,7 +241,10 @@ class Group extends Component
         return filled($key) ? strval($key) : null;
     }
 
-    public function getKey(Model $record): mixed
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getKey(Model | array $record): mixed
     {
         $column = $this->getColumn();
 
@@ -241,17 +255,38 @@ class Group extends Component
                     'column' => $column,
                     'record' => $record,
                 ],
-                typedInjections: [
+                typedInjections: ($record instanceof Model) ? [
                     Model::class => $record,
                     $record::class => $record,
-                ],
+                ] : [],
             );
         }
 
         return Arr::get($record, $this->getColumn());
     }
 
-    public function getTitle(Model $record): string | Htmlable | null
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getTitle(Model | array $record, ?string $key = null): string | Htmlable | null
+    {
+        if ($this->getTitleFromRecordUsing) {
+            return $this->resolveTitle($record);
+        }
+
+        $key ??= $this->getStringKey($record);
+
+        if (! array_key_exists($key, $this->cachedTitles)) {
+            $this->cachedTitles[$key] = $this->resolveTitle($record);
+        }
+
+        return $this->cachedTitles[$key];
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    protected function resolveTitle(Model | array $record): string | Htmlable | null
     {
         $column = $this->getColumn();
 
@@ -262,10 +297,10 @@ class Group extends Component
                     'column' => $column,
                     'record' => $record,
                 ],
-                typedInjections: [
+                typedInjections: ($record instanceof Model) ? [
                     Model::class => $record,
                     $record::class => $record,
-                ],
+                ] : [],
             );
         } else {
             $title = Arr::get($record, $column);
@@ -332,7 +367,10 @@ class Group extends Component
         return $query->orderBy($this->getRelationshipAttribute(), $direction);
     }
 
-    public function scopeQuery(EloquentBuilder $query, Model $record): EloquentBuilder
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function scopeQuery(EloquentBuilder $query, Model | array $record): EloquentBuilder
     {
         if ($this->scopeQueryUsing) {
             return $this->evaluate(
@@ -342,10 +380,10 @@ class Group extends Component
                     'query' => $query,
                     'record' => $record,
                 ],
-                typedInjections: [
+                typedInjections: ($record instanceof Model) ? [
                     Model::class => $record,
                     $record::class => $record,
-                ],
+                ] : [],
             ) ?? $query;
         }
 

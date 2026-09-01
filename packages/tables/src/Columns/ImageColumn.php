@@ -7,6 +7,7 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -40,6 +41,8 @@ class ImageColumn extends Column implements HasEmbeddedView
      * @var array<array<mixed> | Closure>
      */
     protected array $extraImgAttributes = [];
+
+    protected string | Closure | null $alt = null;
 
     protected string | Closure | null $defaultImageUrl = null;
 
@@ -190,6 +193,18 @@ class ImageColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
+    public function alt(string | Closure | null $alt): static
+    {
+        $this->alt = $alt;
+
+        return $this;
+    }
+
+    public function getAlt(mixed $state = null): ?string
+    {
+        return $this->evaluate($this->alt, ['state' => $state]);
+    }
+
     public function getImageUrl(?string $state = null): ?string
     {
         if ((filter_var($state, FILTER_VALIDATE_URL) !== false) || str($state)->startsWith('data:')) {
@@ -213,7 +228,7 @@ class ImageColumn extends Column implements HasEmbeddedView
             try {
                 return $storage->temporaryUrl(
                     $state,
-                    now()->addMinutes(30)->endOfHour(),
+                    now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.
@@ -282,6 +297,9 @@ class ImageColumn extends Column implements HasEmbeddedView
      */
     public function extraImgAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         if ($merge) {
             $this->extraImgAttributes[] = $attributes;
         } else {
@@ -296,7 +314,7 @@ class ImageColumn extends Column implements HasEmbeddedView
      */
     public function getExtraImgAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag;
+        $temporaryAttributeBag = new FilamentComponentAttributeBag;
 
         foreach ($this->extraImgAttributes as $extraImgAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraImgAttributes), escape: false);
@@ -307,7 +325,7 @@ class ImageColumn extends Column implements HasEmbeddedView
 
     public function getExtraImgAttributeBag(): ComponentAttributeBag
     {
-        return new ComponentAttributeBag($this->getExtraImgAttributes());
+        return new FilamentComponentAttributeBag($this->getExtraImgAttributes());
     }
 
     public function stacked(bool | Closure $condition = true): static
@@ -490,7 +508,8 @@ class ImageColumn extends Column implements HasEmbeddedView
         $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
             $item = '<img ' . $this->getExtraImgAttributeBag()
                 ->merge([
-                    'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
+                    'alt' => e($this->getAlt($stateItem) ?? ''),
+                    'src' => e(filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl),
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{
                                 content: ' . Js::from($tooltip) . ',
@@ -500,8 +519,8 @@ class ImageColumn extends Column implements HasEmbeddedView
                         : null,
                 ], escape: false)
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml()
                 . ' />';
@@ -521,14 +540,14 @@ class ImageColumn extends Column implements HasEmbeddedView
             <?php } ?>
 
             <?php if ($hasLimitedRemainingText) { ?>
-                <div <?= (new ComponentAttributeBag)
+                <div <?= (new FilamentComponentAttributeBag)
                 ->class([
                     'fi-ta-image-limited-remaining-text',
                     (($limitedRemainingTextSize instanceof TextSize) ? "fi-size-{$limitedRemainingTextSize->value}" : $limitedRemainingTextSize) => $limitedRemainingTextSize,
                 ])
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml() ?>>
                     +<?= $stateOverLimitCount ?>

@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\RichEditor;
 
 use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\CustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsContentExtension;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\GridColumnExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\GridExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\MentionExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
@@ -84,6 +86,11 @@ class RichContentRenderer implements Htmlable
     protected ?array $customBlocks = null;
 
     /**
+     * @var ?array<MentionProvider>
+     */
+    protected ?array $mentionProviders = null;
+
+    /**
      * @var array<string, mixed>
      */
     protected array $cachedMergeTagValues = [];
@@ -97,6 +104,11 @@ class RichContentRenderer implements Htmlable
      * @var ?array<string, string | TextColor>
      */
     protected ?array $textColors = null;
+
+    /**
+     * @var ?array<string>
+     */
+    protected ?array $linkProtocols = null;
 
     /**
      * @param  string | array<string, mixed> | null  $content
@@ -143,6 +155,14 @@ class RichContentRenderer implements Htmlable
 
     public function getFileAttachmentUrl(mixed $file): ?string
     {
+        // The `$file` value comes from a `data-id` attribute on an image node in
+        // client-submitted rich editor content, and is not authorized here before
+        // being passed to the filesystem. Applications whose disk stores files
+        // belonging to multiple users or records must supply a custom file
+        // attachment provider (or use the Spatie Media Library provider) that
+        // validates the id against records the current user is allowed to read.
+        // See the "Securing file attachment IDs" section of the rich editor
+        // documentation.
         $fileAttachmentProvider = $this->getFileAttachmentProvider();
 
         if ($fileAttachmentProvider) {
@@ -166,7 +186,7 @@ class RichContentRenderer implements Htmlable
             try {
                 return $storage->temporaryUrl(
                     $file,
-                    now()->addMinutes(30)->endOfHour(),
+                    now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.
@@ -269,6 +289,134 @@ class RichContentRenderer implements Htmlable
         });
     }
 
+    protected function flattenMergeTagsForText(Editor $editor): void
+    {
+        $editor->descendants(function (object &$node): void {
+            if (! isset($node->content) || ! is_array($node->content)) {
+                return;
+            }
+
+            $hasMergeTags = false;
+
+            foreach ($node->content as $child) {
+                if (in_array($child->type, ['mergeTag', 'rawHtmlMergeTag'])) {
+                    $hasMergeTags = true;
+
+                    break;
+                }
+            }
+
+            if (! $hasMergeTags) {
+                return;
+            }
+
+            $merged = [];
+
+            foreach ($node->content as $child) {
+                foreach ($this->resolveTextNodesFromMergeTag($child) as $textNode) {
+                    $last = end($merged);
+
+                    if ($last && $last->type === 'text' && $textNode->type === 'text') {
+                        $last->text .= $textNode->text;
+                    } else {
+                        $merged[] = $textNode;
+                    }
+                }
+            }
+
+            $node->content = $merged;
+        });
+    }
+
+    /**
+     * @return array<object>
+     */
+    protected function resolveTextNodesFromMergeTag(object $node): array
+    {
+        if ($node->type === 'mergeTag') {
+            return $node->content ?? [];
+        }
+
+        if ($node->type === 'rawHtmlMergeTag') {
+            $text = trim(preg_replace('/\s+/', ' ', strip_tags($node->html ?? '')));
+
+            if ($text === '') {
+                return [];
+            }
+
+            return [
+                (object) [
+                    'type' => 'text',
+                    'text' => $text,
+                ],
+            ];
+        }
+
+        return [$node];
+    }
+
+    protected function processMentions(Editor $editor): void
+    {
+        if (blank($this->mentionProviders)) {
+            return;
+        }
+
+        $mentionsByChar = [];
+
+        $editor->descendants(function (object &$node) use (&$mentionsByChar): void {
+            if ($node->type !== 'mention') {
+                return;
+            }
+
+            $id = $node->attrs->id ?? null;
+
+            if (blank($id)) {
+                return;
+            }
+
+            $char = $node->attrs->char ?? '@';
+            $mentionsByChar[$char][] = (string) $id;
+        });
+
+        $labelsByChar = [];
+
+        foreach ($mentionsByChar as $char => $ids) {
+            $provider = $this->getMentionProvider($char);
+
+            if ($provider) {
+                $labelsByChar[$char] = $provider->getLabels(array_unique($ids));
+            }
+        }
+
+        $editor->descendants(function (object &$node) use ($labelsByChar): void {
+            if ($node->type !== 'mention') {
+                return;
+            }
+
+            $id = $node->attrs->id ?? null;
+            $char = $node->attrs->char ?? '@';
+
+            if (blank($id)) {
+                return;
+            }
+
+            $provider = $this->getMentionProvider($char);
+
+            if (! $provider) {
+                return;
+            }
+
+            $label = $labelsByChar[$char][(string) $id] ?? $node->attrs->label ?? (string) $id;
+            $node->attrs->label = $label;
+
+            $url = $provider->getUrl((string) $id, $label);
+
+            if ($url) {
+                $node->attrs->href = $url;
+            }
+        });
+    }
+
     public function processNodesUsing(Closure $callback): static
     {
         $this->nodeProcessors[] = $callback;
@@ -324,8 +472,14 @@ class RichContentRenderer implements Htmlable
             app(Italic::class),
             app(ImageExtension::class),
             app(LeadExtension::class),
-            app(Link::class),
+            app(Link::class, [
+                'options' => [
+                    'HTMLAttributes' => [],
+                    'allowedProtocols' => $this->getLinkProtocols(),
+                ],
+            ]),
             app(ListItem::class),
+            app(MentionExtension::class),
             app(MergeTagExtension::class),
             app(OrderedList::class),
             app(Paragraph::class),
@@ -375,7 +529,21 @@ class RichContentRenderer implements Htmlable
 
     public function getFileAttachmentProvider(): ?FileAttachmentProvider
     {
-        return $this->fileAttachmentProvider;
+        if ($this->fileAttachmentProvider) {
+            return $this->fileAttachmentProvider;
+        }
+
+        foreach ($this->plugins as $plugin) {
+            if ($plugin instanceof HasFileAttachmentProvider) {
+                $provider = $plugin->getFileAttachmentProvider();
+
+                if ($provider) {
+                    return $this->fileAttachmentProvider = $provider;
+                }
+            }
+        }
+
+        return null;
     }
 
     public function getEditor(): Editor
@@ -391,11 +559,15 @@ class RichContentRenderer implements Htmlable
 
     public function toUnsafeHtml(): string
     {
+        // Security: This method returns unsanitized HTML. Only use for
+        // internal processing — never render in Blade. Use `toHtml()`.
+
         $editor = $this->getEditor();
 
         $this->processCustomBlocks($editor);
         $this->processFileAttachments($editor);
         $this->processMergeTags($editor);
+        $this->processMentions($editor);
         $this->processNodes($editor);
 
         return $editor->getHTML();
@@ -403,6 +575,10 @@ class RichContentRenderer implements Htmlable
 
     public function toHtml(): string
     {
+        // Security: Always use `toHtml()` (not `toUnsafeHtml()`) when
+        // rendering user-provided rich content. This applies
+        // Symfony's `HtmlSanitizer` to prevent XSS.
+
         return Str::sanitizeHtml($this->toUnsafeHtml());
     }
 
@@ -411,6 +587,7 @@ class RichContentRenderer implements Htmlable
         $editor = $this->getEditor();
 
         $this->processMergeTags($editor);
+        $this->flattenMergeTagsForText($editor);
 
         return $editor->getText();
     }
@@ -447,10 +624,34 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
+     * @param  ?array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure> | array<string, mixed> | Closure>  $blocks
      */
     public function customBlocks(?array $blocks): static
     {
+        if ($blocks !== null) {
+            $flattened = [];
+
+            foreach ($blocks as $key => $value) {
+                if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                    // Data association: `BlockClass::class => $data`
+                    $flattened[$key] = $value;
+                } elseif (is_array($value)) {
+                    // Group or ungrouped section: `'Label' => [...]` or `[...]`
+                    foreach ($value as $innerKey => $innerValue) {
+                        if (is_string($innerKey)) {
+                            $flattened[$innerKey] = $innerValue;
+                        } else {
+                            $flattened[] = $innerValue;
+                        }
+                    }
+                } else {
+                    $flattened[] = $value;
+                }
+            }
+
+            $blocks = $flattened;
+        }
+
         $this->customBlocks = $blocks;
 
         return $this;
@@ -470,6 +671,39 @@ class RichContentRenderer implements Htmlable
         }
 
         return null;
+    }
+
+    /**
+     * @param  ?array<MentionProvider>  $providers
+     */
+    public function mentions(?array $providers): static
+    {
+        $this->mentionProviders = $providers;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<MentionProvider>
+     */
+    public function getMentionProviders(): ?array
+    {
+        return $this->mentionProviders;
+    }
+
+    public function getMentionProvider(string $char): ?MentionProvider
+    {
+        if (blank($this->mentionProviders)) {
+            return null;
+        }
+
+        foreach ($this->mentionProviders as $provider) {
+            if ($provider->getChar() === $char) {
+                return $provider;
+            }
+        }
+
+        return $this->mentionProviders[0] ?? null;
     }
 
     /**
@@ -493,5 +727,23 @@ class RichContentRenderer implements Htmlable
             $textColors,
             fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
         );
+    }
+
+    /**
+     * @param  ?array<string>  $protocols
+     */
+    public function linkProtocols(?array $protocols): static
+    {
+        $this->linkProtocols = $protocols;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getLinkProtocols(): array
+    {
+        return $this->linkProtocols ?? app(Link::class)->options['allowedProtocols'];
     }
 }

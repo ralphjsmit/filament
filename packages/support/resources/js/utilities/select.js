@@ -18,8 +18,10 @@ function filled(value) {
 
 export class Select {
     constructor({
+        ariaLabel = null,
         canOptionLabelsWrap = true,
         canSelectPlaceholder = true,
+        clearButtonLabel = 'Clear selection',
         element,
         getOptionLabelUsing = null,
         getOptionLabelsUsing = null,
@@ -28,6 +30,7 @@ export class Select {
         hasDynamicOptions = false,
         hasDynamicSearchResults = true,
         hasInitialNoOptionsMessage = false,
+        id = null,
         initialOptionLabel = null,
         initialOptionLabels = null,
         initialState = null,
@@ -48,15 +51,19 @@ export class Select {
         optionsLimit = null,
         placeholder,
         position = null,
+        removeButtonLabel = 'Remove :label',
         searchableOptionFields = ['label'],
         searchDebounce = 1000,
         searchingMessage = 'Searching...',
+        searchLabel = 'Search',
         searchPrompt = 'Search...',
         state,
         statePath = null,
     }) {
+        this.ariaLabel = ariaLabel
         this.canOptionLabelsWrap = canOptionLabelsWrap
         this.canSelectPlaceholder = canSelectPlaceholder
+        this.clearButtonLabel = clearButtonLabel
         this.element = element
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
@@ -65,6 +72,7 @@ export class Select {
         this.hasDynamicOptions = hasDynamicOptions
         this.hasDynamicSearchResults = hasDynamicSearchResults
         this.hasInitialNoOptionsMessage = hasInitialNoOptionsMessage
+        this.id = id
         this.initialOptionLabel = initialOptionLabel
         this.initialOptionLabels = initialOptionLabels
         this.initialState = initialState
@@ -86,11 +94,13 @@ export class Select {
         this.originalOptions = JSON.parse(JSON.stringify(options))
         this.placeholder = placeholder
         this.position = position
+        this.removeButtonLabel = removeButtonLabel
         this.searchableOptionFields = Array.isArray(searchableOptionFields)
             ? searchableOptionFields
             : ['label']
         this.searchDebounce = searchDebounce
         this.searchingMessage = searchingMessage
+        this.searchLabel = searchLabel
         this.searchPrompt = searchPrompt
         this.state = state
         this.statePath = statePath
@@ -106,6 +116,7 @@ export class Select {
         this.searchQuery = ''
         this.searchTimeout = null
         this.isSearching = false
+        this.maxItemsMessageElement = null
         // Version token to prevent race conditions when updating the selected display
         this.selectedDisplayVersion = 0
 
@@ -151,13 +162,22 @@ export class Select {
             )
         }
 
-        this.container.setAttribute('aria-haspopup', 'listbox')
-
         // Create the button that toggles the dropdown
         this.selectButton = document.createElement('button')
         this.selectButton.className = 'fi-select-input-btn'
         this.selectButton.type = 'button'
+        this.selectButton.setAttribute('role', 'combobox')
+        this.selectButton.setAttribute('aria-haspopup', 'listbox')
         this.selectButton.setAttribute('aria-expanded', 'false')
+
+        // Associate the button with the field's `<label>`, or name it directly
+        if (filled(this.id)) {
+            this.selectButton.id = this.id
+        }
+
+        if (filled(this.ariaLabel)) {
+            this.selectButton.setAttribute('aria-label', this.ariaLabel)
+        }
 
         // Create the selected value display
         this.selectedDisplay = document.createElement('div')
@@ -178,6 +198,7 @@ export class Select {
         // Generate a unique ID for the dropdown
         this.dropdownId = `fi-select-input-dropdown-${Math.random().toString(36).substring(2, 11)}`
         this.dropdown.id = this.dropdownId
+        this.selectButton.setAttribute('aria-controls', this.dropdownId)
 
         // Set aria-multiselectable for multi-select
         if (this.isMultiple) {
@@ -193,7 +214,7 @@ export class Select {
             this.searchInput.className = 'fi-input'
             this.searchInput.type = 'text'
             this.searchInput.placeholder = this.searchPrompt
-            this.searchInput.setAttribute('aria-label', 'Search')
+            this.searchInput.setAttribute('aria-label', this.searchLabel)
 
             this.searchContainer.appendChild(this.searchInput)
             this.dropdown.appendChild(this.searchContainer)
@@ -317,12 +338,21 @@ export class Select {
         // Create the options list
         this.optionsList = document.createElement('ul')
 
+        // Create a visually hidden live region to announce loading / empty / limit messages,
+        // before `renderOptions()` since it may announce a "no options" message
+        this.statusRegion = document.createElement('div')
+        this.statusRegion.className = 'fi-sr-only'
+        this.statusRegion.setAttribute('role', 'status')
+        this.statusRegion.setAttribute('aria-live', 'polite')
+        this.statusRegion.setAttribute('aria-atomic', 'true')
+
         // Render options
         this.renderOptions()
 
         // Append everything to the container
         this.container.appendChild(this.selectButton)
         this.container.appendChild(this.dropdown)
+        this.container.appendChild(this.statusRegion)
 
         // Append the container to the element
         this.element.appendChild(this.container)
@@ -372,7 +402,7 @@ export class Select {
         let renderedCount = 0
 
         for (const option of optionsToRender) {
-            if (this.optionsLimit && renderedCount >= this.optionsLimit) {
+            if (this.optionsLimit > 0 && renderedCount >= this.optionsLimit) {
                 break
             }
 
@@ -394,7 +424,7 @@ export class Select {
 
                 if (groupOptions.length > 0) {
                     // Apply limit to group options if needed
-                    if (this.optionsLimit) {
+                    if (this.optionsLimit > 0) {
                         const remainingSlots = this.optionsLimit - renderedCount
                         if (remainingSlots < groupOptions.length) {
                             groupOptions = groupOptions.slice(0, remainingSlots)
@@ -439,10 +469,14 @@ export class Select {
         if (totalRenderedCount === 0) {
             // Show a message if:
             // - There is an active search query (show "no search results" message), or
-            // - The field has hasInitialNoOptionsMessage enabled (show "no options" message)
+            // - The field has `hasInitialNoOptionsMessage` enabled (show "no options" message), or
+            // - The field has dynamic options and no options were returned (show "no options" message)
             if (this.searchQuery) {
                 this.showNoResultsMessage()
-            } else if (this.hasInitialNoOptionsMessage) {
+            } else if (
+                this.hasInitialNoOptionsMessage ||
+                this.hasDynamicOptions
+            ) {
                 this.showNoOptionsMessage()
             }
             // If in multiple mode and no search query, hide the dropdown
@@ -626,6 +660,15 @@ export class Select {
 
             if (renderVersion === this.selectedDisplayVersion) {
                 this.selectedDisplay.replaceChildren(fragment)
+
+                // Remove the remove button since there's no selection
+                const existingRemoveButton = this.container.querySelector(
+                    '.fi-select-input-value-remove-btn',
+                )
+                if (existingRemoveButton) {
+                    existingRemoveButton.remove()
+                }
+                this.container.classList.remove('fi-select-input-ctn-clearable')
             }
             return
         }
@@ -775,13 +818,23 @@ export class Select {
         const removeButton = document.createElement('button')
         removeButton.type = 'button'
         removeButton.className = 'fi-badge-delete-btn'
-        removeButton.innerHTML =
-            '<svg class="fi-icon fi-size-xs" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path></svg>'
         removeButton.setAttribute(
             'aria-label',
-            'Remove ' +
-                (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
+            this.removeButtonLabel.replace(
+                ':label',
+                this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label,
+            ),
         )
+
+        const removeButtonIcon = document.createElement('span')
+        removeButtonIcon.className = 'fi-badge-delete-btn-icon'
+        removeButtonIcon.setAttribute('aria-hidden', 'true')
+        removeButton.appendChild(removeButtonIcon)
+
+        if (this.isDisabled) {
+            removeButton.setAttribute('disabled', 'disabled')
+            removeButton.classList.add('fi-disabled')
+        }
 
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
@@ -909,12 +962,20 @@ export class Select {
             return
         }
 
+        // Only add the remove button if one doesn't already exist
+        if (this.container.querySelector('.fi-select-input-value-remove-btn')) {
+            return
+        }
+
         const removeButton = document.createElement('button')
         removeButton.type = 'button'
         removeButton.className = 'fi-select-input-value-remove-btn'
-        removeButton.innerHTML =
-            '<svg class="fi-icon fi-size-sm" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>'
-        removeButton.setAttribute('aria-label', 'Clear selection')
+        removeButton.setAttribute('aria-label', this.clearButtonLabel)
+
+        if (this.isDisabled) {
+            removeButton.setAttribute('disabled', 'disabled')
+            removeButton.classList.add('fi-disabled')
+        }
 
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
@@ -930,7 +991,8 @@ export class Select {
             }
         })
 
-        target.appendChild(removeButton)
+        this.container.appendChild(removeButton)
+        this.container.classList.add('fi-select-input-ctn-clearable')
     }
 
     getSelectedOptionLabel(value) {
@@ -1547,6 +1609,7 @@ export class Select {
 
         // Remove any loading / no-results messages
         this.hideLoadingState()
+        this.hideMaxItemsMessage()
 
         // Remove resize listener
         if (this.resizeListener) {
@@ -1712,7 +1775,6 @@ export class Select {
                     if (found) break
                 } else if (option.value === value) {
                     labels[value] = option.label
-                    found = true
                     break
                 }
             }
@@ -1833,6 +1895,12 @@ export class Select {
             ? this.searchingMessage
             : this.loadingMessage
         this.dropdown.appendChild(loadingItem)
+
+        // Announce the message to screen readers, unless the dropdown is closed,
+        // such as when rendering the initial options on page load
+        if (this.isOpen) {
+            this.statusRegion.textContent = loadingItem.textContent
+        }
     }
 
     hideLoadingState() {
@@ -1842,6 +1910,8 @@ export class Select {
         )
         if (loadingItem) {
             loadingItem.remove()
+
+            this.statusRegion.textContent = ''
         }
     }
 
@@ -1859,6 +1929,12 @@ export class Select {
         noOptionsItem.className = 'fi-select-input-message'
         noOptionsItem.textContent = this.noOptionsMessage
         this.dropdown.appendChild(noOptionsItem)
+
+        // Announce the message to screen readers, unless the dropdown is closed,
+        // such as when rendering the initial options on page load
+        if (this.isOpen) {
+            this.statusRegion.textContent = this.noOptionsMessage
+        }
     }
 
     showNoResultsMessage() {
@@ -1875,6 +1951,49 @@ export class Select {
         noResultsItem.className = 'fi-select-input-message'
         noResultsItem.textContent = this.noSearchResultsMessage
         this.dropdown.appendChild(noResultsItem)
+
+        // Announce the message to screen readers, unless the dropdown is closed,
+        // such as when rendering the initial options on page load
+        if (this.isOpen) {
+            this.statusRegion.textContent = this.noSearchResultsMessage
+        }
+    }
+
+    showMaxItemsMessage() {
+        // Remove any existing message so it is re-inserted in the correct position
+        this.hideMaxItemsMessage()
+
+        this.maxItemsMessageElement = document.createElement('div')
+        this.maxItemsMessageElement.className =
+            'fi-select-input-max-items-message'
+        this.maxItemsMessageElement.textContent = this.maxItemsMessage
+
+        // Insert the message above the options list so it is visible without scrolling
+        if (this.optionsList.parentNode === this.dropdown) {
+            this.dropdown.insertBefore(
+                this.maxItemsMessageElement,
+                this.optionsList,
+            )
+        } else {
+            this.dropdown.appendChild(this.maxItemsMessageElement)
+        }
+
+        // Announce the message to screen readers
+        this.statusRegion.textContent = this.maxItemsMessage
+    }
+
+    hideMaxItemsMessage() {
+        if (!this.maxItemsMessageElement) {
+            return
+        }
+
+        this.maxItemsMessageElement.remove()
+        this.maxItemsMessageElement = null
+
+        // Clear the announcement so reaching the limit again re-announces the same text
+        if (this.statusRegion.textContent === this.maxItemsMessage) {
+            this.statusRegion.textContent = ''
+        }
     }
 
     filterOptions(query) {
@@ -1988,6 +2107,9 @@ export class Select {
                 this.updateSelectedDisplay()
             }
 
+            // An item was deselected, so any previous limit message is stale
+            this.hideMaxItemsMessage()
+
             this.renderOptions()
 
             // Reevaluate dropdown position after options are removed
@@ -2002,12 +2124,15 @@ export class Select {
 
         // Check if maxItems limit has been reached
         if (this.maxItems && newState.length >= this.maxItems) {
-            // Show a message or alert about reaching the limit
+            // Show and announce a message about reaching the limit, without a blocking `alert()`
             if (this.maxItemsMessage) {
-                alert(this.maxItemsMessage)
+                this.showMaxItemsMessage()
             }
             return // Don't add more items
         }
+
+        // A new item can be selected, so any previous limit message is stale
+        this.hideMaxItemsMessage()
 
         // Add the new value
         newState.push(value)
@@ -2152,7 +2277,7 @@ export class Select {
             // If there are remove buttons in multiple mode, disable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-input-badge-remove',
+                    '.fi-badge-delete-btn',
                 )
                 removeButtons.forEach((button) => {
                     button.setAttribute('disabled', 'disabled')
@@ -2185,7 +2310,7 @@ export class Select {
             // If there are remove buttons in multiple mode, enable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-input-badge-remove',
+                    '.fi-badge-delete-btn',
                 )
                 removeButtons.forEach((button) => {
                     button.removeAttribute('disabled')
@@ -2200,7 +2325,7 @@ export class Select {
                 )
                 if (removeButton) {
                     removeButton.removeAttribute('disabled')
-                    removeButton.classList.add('fi-disabled')
+                    removeButton.classList.remove('fi-disabled')
                 }
             }
 

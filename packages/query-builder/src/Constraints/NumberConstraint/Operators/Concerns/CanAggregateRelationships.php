@@ -62,41 +62,36 @@ trait CanAggregateRelationships
         $relationshipName = $this->getConstraint()->getRelationshipName();
         $attributeForQuery = $this->getConstraint()->getAttributeForQuery();
         $aggregate = $this->getAggregate();
+        $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
 
         /** @var Relation $relationship */
-        $relationship = $query->getModel()->{$relationshipName}();
+        $relationship = Relation::noConstraints(
+            static fn (): Relation => $query->getModel()->{$relationshipName}(),
+        );
 
         $relatedModel = $relationship->getModel();
-        $attributeForQuery = $relatedModel->qualifyColumn($attributeForQuery);
         $castType = $this->getNumericCastType($query);
 
-        if ($relationship instanceof BelongsToMany) {
-            $pivotTable = $relationship->getTable();
-            $foreignPivotKey = $relationship->getQualifiedForeignPivotKeyName();
-            $relatedPivotKey = $relationship->getQualifiedRelatedPivotKeyName();
-            $parentKey = $relationship->getQualifiedParentKeyName();
-            $relatedKey = $relationship->getQualifiedRelatedKeyName();
-
-            $subQuery = $relatedModel->query()
-                ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
-                ->join($pivotTable, $relatedKey, '=', $relatedPivotKey)
-                ->whereColumn($foreignPivotKey, $parentKey);
-
-            return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
+        if (! ($relationship instanceof BelongsToMany) && ! ($relationship instanceof HasOneOrMany)) {
+            throw new LogicException('Relationship type [' . get_class($relationship) . '] is not supported for aggregate queries.');
         }
 
-        if ($relationship instanceof HasOneOrMany) {
-            $foreignKeyName = $relationship->getQualifiedForeignKeyName();
-            $parentKeyName = $relationship->getQualifiedParentKeyName();
+        $subQuery = $relationship->getRelationExistenceQuery(
+            $relatedModel->newQueryWithoutRelationships(),
+            $query,
+            [],
+        )->mergeConstraintsFrom($relationship->getQuery());
 
-            $subQuery = $relatedModel->query()
-                ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
-                ->whereColumn($foreignKeyName, $parentKeyName);
+        $attributeForQuery = $subQuery->qualifyColumn($attributeForQuery);
+        $attributeForQuery = $subQuery->getQuery()->getGrammar()->wrap($attributeForQuery);
 
-            return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
+        $subQuery->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})");
+
+        if ($modifyRelationshipQueryUsing) {
+            $subQuery = $this->evaluate($modifyRelationshipQueryUsing, ['query' => $subQuery]) ?? $subQuery;
         }
 
-        throw new LogicException('Relationship type [' . get_class($relationship) . '] is not supported for aggregate queries.');
+        return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
     }
 
     protected function getAggregateSelect(): Select
@@ -106,15 +101,32 @@ trait CanAggregateRelationships
             ->options([
                 static::getAggregateSumKey() => __('filament-query-builder::query-builder.operators.number.aggregates.sum.label'),
                 static::getAggregateAverageKey() => __('filament-query-builder::query-builder.operators.number.aggregates.average.label'),
-                static::getAggregateMinKey() => __('filament-query-builder::query-builder.operators.number.aggregates.max.label'),
-                static::getAggregateMaxKey() => __('filament-query-builder::query-builder.operators.number.aggregates.min.label'),
+                static::getAggregateMaxKey() => __('filament-query-builder::query-builder.operators.number.aggregates.max.label'),
+                static::getAggregateMinKey() => __('filament-query-builder::query-builder.operators.number.aggregates.min.label'),
             ])
             ->visible($this->getConstraint()->queriesRelationships());
     }
 
     protected function getAggregate(): ?string
     {
-        return $this->getSettings()[static::getAggregateSelectName()] ?? null;
+        $aggregate = $this->getSettings()[static::getAggregateSelectName()] ?? null;
+
+        if ($aggregate === null) {
+            return null;
+        }
+
+        // Security: a tampered request can set the aggregate to a non-scalar (e.g. an array),
+        // which would throw a `TypeError` at the `array_key_exists()` offset check below. Fail
+        // closed by treating anything that is not a recognised option as no aggregate.
+        if (! is_scalar($aggregate)) {
+            return null;
+        }
+
+        if (! array_key_exists($aggregate, $this->getAggregateSelect()->getOptions())) {
+            return null;
+        }
+
+        return (string) $aggregate;
     }
 
     protected function getAttributeLabel(): string

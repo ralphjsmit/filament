@@ -2,6 +2,7 @@
 title: Multi-tenancy
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -109,6 +110,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
 In this example, users belong to many teams, so there is a `teams()` relationship. The `getTenants()` method returns the teams that the user belongs to. Filament uses this to list the tenants that the user has access to.
 
+<AutoScreenshot name="panels/tenancy" alt="A panel with multi-tenancy and a tenant switcher" version="4.x" />
+
 For security, you also need to implement the `canAccessTenant()` method of the `HasTenants` interface to prevent users from accessing the data of other tenants by guessing their tenant ID and putting it into the URL.
 
 You'll also want users to be able to [register new teams](#adding-a-tenant-registration-page).
@@ -172,6 +175,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/tenancy/registration" alt="Tenant registration page" version="4.x" />
+
 ### Customizing the tenant registration page
 
 You can override any method you want on the base registration page class to make it act as you want. Even the `$view` property can be overridden to use a custom view of your choice.
@@ -222,6 +227,8 @@ public function panel(Panel $panel): Panel
         ->tenantProfile(EditTeamProfile::class);
 }
 ```
+
+<AutoScreenshot name="panels/tenancy/profile" alt="Tenant profile page" version="4.x" />
 
 ### Customizing the tenant profile page
 
@@ -367,6 +374,53 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Grouping tenant menu items
+
+By default, all tenant menu items are rendered in a single list. If you want to separate them into distinct groups, you can pass an array of arrays to the `tenantMenuItems()` method. Each array is rendered as its own group, separated by a divider:
+
+```php
+use App\Filament\Pages\Members;
+use App\Filament\Pages\Settings;
+use Filament\Actions\Action;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenuItems([
+            [
+                Action::make('settings')
+                    ->url(fn (): string => Settings::getUrl())
+                    ->icon('heroicon-m-cog-8-tooth'),
+                Action::make('members')
+                    ->url(fn (): string => Members::getUrl())
+                    ->icon('heroicon-m-user-group'),
+            ],
+            [
+                Action::make('documentation')
+                    ->url('https://filamentphp.com/docs')
+                    ->icon('heroicon-m-book-open'),
+            ],
+        ]);
+}
+```
+
+<AutoScreenshot name="tenancy/tenant-menu-grouping" alt="Tenant menu items split into separate groups" version="4.x" />
+
+<Aside variant="info">
+    The `register` item is added to the last group by default. To place it yourself, register it explicitly in any group using the `register` array key. Since its default `sort()` puts it at the end of its group, adjust the sort if you want it elsewhere within the group:
+
+    ```php
+    ->tenantMenuItems([
+        // ...
+        [
+            'register' => fn (Action $action): Action => $action->sort(2),
+        ],
+    ])
+    ```
+</Aside>
+
 ### Allowing the tenants to be searched
 
 You can use the `searchableTenantMenu()` method in the [configuration](../panel-configuration) to allow the tenants to be searched:
@@ -465,6 +519,23 @@ Action::make('lockSession')
     ->url(fn (): string => route('lock-session'))
     ->postToUrl()
 ```
+
+### Disabling the tenant switcher
+
+By default, users can switch between tenants using the tenant menu. If you want to keep the tenant menu visible but prevent users from switching tenants, you can use the `tenantSwitcher()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantSwitcher(false);
+}
+```
+
+This keeps the tenant menu visible, showing the current tenant name and any custom menu items, but hides the list of other tenants. This is useful when you want to display tenant information without allowing switching, or when switching should be controlled through other means.
 
 ### Hiding the tenant menu
 

@@ -122,9 +122,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Color picker',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Month',
+        ],
+
+        'year_input' => [
+            'label' => 'Year',
+        ],
+
+        'hour_input' => [
+            'label' => 'Hour',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minute',
+        ],
+
+        'second_input' => [
+            'label' => 'Second',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Download',
+            ],
+
+            'open' => [
+                'label' => 'Open in new tab',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Image editor',
 
             'actions' => [
 
@@ -268,6 +312,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Actions',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -338,6 +394,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Actions',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -548,6 +616,35 @@ return [
 
                         'color' => [
                             'label' => 'Color',
+
+                            'options' => [
+                                'slate' => 'Slate',
+                                'gray' => 'Gray',
+                                'zinc' => 'Zinc',
+                                'neutral' => 'Neutral',
+                                'stone' => 'Stone',
+                                'mauve' => 'Mauve',
+                                'olive' => 'Olive',
+                                'mist' => 'Mist',
+                                'taupe' => 'Taupe',
+                                'red' => 'Red',
+                                'orange' => 'Orange',
+                                'amber' => 'Amber',
+                                'yellow' => 'Yellow',
+                                'lime' => 'Lime',
+                                'green' => 'Green',
+                                'emerald' => 'Emerald',
+                                'teal' => 'Teal',
+                                'cyan' => 'Cyan',
+                                'sky' => 'Sky',
+                                'blue' => 'Blue',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violet',
+                                'purple' => 'Purple',
+                                'fuchsia' => 'Fuchsia',
+                                'pink' => 'Pink',
+                                'rose' => 'Rose',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -568,6 +665,17 @@ return [
 
         'no_merge_tag_search_results_message' => 'No merge tag results.',
 
+        'mentions' => [
+            'no_options_message' => 'No options available.',
+            'no_search_results_message' => 'No results match your search.',
+            'search_prompt' => 'Start typing to search...',
+            'searching_message' => 'Searching...',
+        ],
+
+        'toolbar' => [
+            'label' => 'Editor toolbar',
+        ],
+
         'tools' => [
             'align_center' => 'Align center',
             'align_end' => 'Align end',
@@ -583,8 +691,11 @@ return [
             'custom_blocks' => 'Blocks',
             'details' => 'Details',
             'h1' => 'Title',
-            'h2' => 'Heading',
-            'h3' => 'Subheading',
+            'h2' => 'Heading 2',
+            'h3' => 'Heading 3',
+            'h4' => 'Heading 4',
+            'h5' => 'Heading 5',
+            'h6' => 'Heading 6',
             'grid' => 'Grid',
             'grid_delete' => 'Delete grid',
             'highlight' => 'Highlight',
@@ -594,6 +705,7 @@ return [
             'link' => 'Link',
             'merge_tags' => 'Merge tags',
             'ordered_list' => 'Numbered list',
+            'paragraph' => 'Paragraph',
             'redo' => 'Redo',
             'small' => 'Small text',
             'strike' => 'Strikethrough',
@@ -623,6 +735,10 @@ return [
     'select' => [
 
         'actions' => [
+
+            'clear' => [
+                'label' => 'Clear selection',
+            ],
 
             'create_option' => [
 
@@ -668,6 +784,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Remove :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -687,12 +807,28 @@ return [
 
         'searching_message' => 'Searching...',
 
+        'search_label' => 'Search',
+
         'search_prompt' => 'Start typing to search...',
 
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Delete',
+            ],
+
+        ],
+
         'placeholder' => 'New tag',
+
+        'tag_added' => 'Added: :tag',
+
+        'tag_removed' => 'Removed: :tag',
+
     ],
 
     'text_input' => [

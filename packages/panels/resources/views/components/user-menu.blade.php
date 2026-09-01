@@ -5,9 +5,16 @@
 @php
     use Filament\Actions\Action;
     use Filament\Enums\UserMenuPosition;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\View\PanelsIconAlias;
+    use Filament\View\PanelsRenderHook;
     use Illuminate\Support\Arr;
 
     $user = filament()->auth()->user();
+
+    $userName = filament()->getUserName($user);
 
     $items = $this->getUserMenuItems();
 
@@ -25,12 +32,15 @@
         $itemsBeforeThemeSwitcher = $itemsBeforeThemeSwitcher->prepend($itemsBeforeThemeSwitcher->pull('profile'), 'profile');
     }
 
+    $multiGroupAfterTheme = $this->hasMultipleUserMenuItemGroups();
+    $afterThemeItemGroups = $multiGroupAfterTheme ? $this->getUserMenuItemGroupsAfterTheme() : [];
+
     $position ??= filament()->getUserMenuPosition();
 
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
-{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_BEFORE) }}
+{{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_BEFORE) }}
 
 <x-filament::dropdown
     :placement="($position === UserMenuPosition::Topbar) ? 'bottom-end' : 'top-end'"
@@ -51,7 +61,7 @@
             </button>
         @else
             <button
-                aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
+                aria-label="{{ filled($userName) ? $userName : __('filament-panels::layout.actions.open_user_menu.label') }}"
                 type="button"
                 class="fi-user-menu-trigger"
             >
@@ -63,11 +73,11 @@
                     @endif
                     class="fi-user-menu-trigger-text"
                 >
-                    {{ filament()->getUserName($user) }}
+                    {{ $userName }}
                 </span>
 
                 {{
-                    \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON, attributes: new \Illuminate\View\ComponentAttributeBag([
+                    \Filament\Support\generate_icon_html(Heroicon::ChevronUp, alias: PanelsIconAlias::USER_MENU_TOGGLE_BUTTON, attributes: new ComponentAttributeBag([
                         'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
                     ]))
                 }}
@@ -84,24 +94,24 @@
             unset($itemsBeforeThemeSwitcher['profile']);
         @endphp
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+        {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
 
         <x-filament::dropdown.header :color="$itemColor" :icon="$itemIcon">
             {{ $item->getLabel() }}
         </x-filament::dropdown.header>
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
+        {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
     @endif
 
     @if ($itemsBeforeThemeSwitcher->isNotEmpty())
         <x-filament::dropdown.list>
             @foreach ($itemsBeforeThemeSwitcher as $key => $item)
                 @if ($key === 'profile')
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+                    {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
 
                     {{ $item }}
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
+                    {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
                 @else
                     {{ $item }}
                 @endif
@@ -109,21 +119,37 @@
         </x-filament::dropdown.list>
     @endif
 
-    @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
+    @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()) && filament()->hasThemeSwitcher())
         <x-filament::dropdown.list>
             <x-filament-panels::theme-switcher />
         </x-filament::dropdown.list>
     @endif
 
-    @if ($itemsAfterThemeSwitcher->isNotEmpty())
+    @if ($multiGroupAfterTheme && $afterThemeItemGroups !== [])
+        @foreach ($afterThemeItemGroups as $afterThemeGroup)
+            <x-filament::dropdown.list>
+                @foreach ($afterThemeGroup as $key => $item)
+                    @if ($key === 'profile')
+                        {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+
+                        {{ $item }}
+
+                        {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
+                    @else
+                        {{ $item }}
+                    @endif
+                @endforeach
+            </x-filament::dropdown.list>
+        @endforeach
+    @elseif ($itemsAfterThemeSwitcher->isNotEmpty())
         <x-filament::dropdown.list>
             @foreach ($itemsAfterThemeSwitcher as $key => $item)
                 @if ($key === 'profile')
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+                    {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
 
                     {{ $item }}
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
+                    {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
                 @else
                     {{ $item }}
                 @endif
@@ -132,4 +158,4 @@
     @endif
 </x-filament::dropdown>
 
-{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_AFTER) }}
+{{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_AFTER) }}

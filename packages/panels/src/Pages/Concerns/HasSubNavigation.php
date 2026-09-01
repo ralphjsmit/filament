@@ -25,7 +25,7 @@ trait HasSubNavigation
      */
     public function getSubNavigation(): array
     {
-        if (filled($cluster = static::getCluster())) {
+        if (filled($cluster = static::getCluster()) && $cluster::shouldRegisterSubNavigation()) {
             return $this->generateNavigationItems($cluster::getClusteredComponents());
         }
 
@@ -82,7 +82,7 @@ trait HasSubNavigation
                     $itemGroupKey = $itemGroup->name;
                 }
 
-                if (array_key_exists($itemGroupKey, $navigationGroups)) {
+                if (array_key_exists($itemGroupKey ?? '', $navigationGroups)) {
                     $navigationGroups[$itemGroupKey]->items([
                         ...$navigationGroups[$itemGroupKey]->getItems(),
                         $item,
@@ -134,18 +134,26 @@ trait HasSubNavigation
     {
         $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
 
-        $items = $parentItems->get('', collect())
-            ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
+        $items = $parentItems->get('', collect());
 
-        $parentItems->except([''])->each(function (Collection $childItems, string $parentItemLabel) use ($items): void {
-            if (! $items->has($parentItemLabel)) {
+        $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemKey) use ($items): void {
+            $parent = $items->first(
+                fn (NavigationItem $item): bool => $item->getKey() === $parentItemKey || $item->getLabel() === $parentItemKey
+            );
+
+            if (! $parent) {
                 return;
             }
 
-            $items->get($parentItemLabel)->childItems($childItems);
+            $mergedChildren = collect($parent->getChildItems())
+                ->merge($parentItemItems)
+                ->sortBy(fn (NavigationItem $item): int => $item->getSort())
+                ->values();
+
+            $parent->childItems($mergedChildren);
         });
 
-        return $items->values();
+        return $items;
     }
 
     /**

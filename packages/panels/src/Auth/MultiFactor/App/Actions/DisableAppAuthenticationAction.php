@@ -14,8 +14,12 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
+use SensitiveParameter;
 
 class DisableAppAuthenticationAction
 {
@@ -26,10 +30,10 @@ class DisableAppAuthenticationAction
         return Action::make('disableAppAuthentication')
             ->label(__('filament-panels::auth/multi-factor/app/actions/disable.label'))
             ->color('danger')
-            ->icon(Heroicon::LockOpen)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE) ?? Heroicon::LockOpen)
             ->link()
             ->modalWidth(Width::Medium)
-            ->modalIcon(Heroicon::OutlinedLockOpen)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE_MODAL) ?? Heroicon::OutlinedLockOpen)
             ->modalHeading(__('filament-panels::auth/multi-factor/app/actions/disable.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/app/actions/disable.modal.description'))
             ->schema([
@@ -41,10 +45,20 @@ class DisableAppAuthenticationAction
                         ->action(fn (Set $set) => $set('useRecoveryCode', true))
                         ->visible(fn (): bool => $isRecoverable && (! $get('useRecoveryCode'))))
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.validation_attribute'))
-                    ->required(fn (Get $get): bool => (! $isRecoverable) || blank($get('recoveryCode')))
+                    ->required(fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode')))
                     ->rule(function () use ($appAuthentication): Closure {
-                        return function (string $attribute, mixed $value, Closure $fail) use ($appAuthentication): void {
-                            if (is_string($value) && $appAuthentication->verifyCode($value)) {
+                        return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
+                            $rateLimitingKey = 'filament-disable-app-authentication:' . Filament::auth()->id();
+
+                            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                                $fail(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.messages.rate_limited'));
+
+                                return;
+                            }
+
+                            RateLimiter::hit($rateLimitingKey);
+
+                            if (is_string($value) && $appAuthentication->verifyCode($value, shouldPreventCodeReuse: true)) {
                                 return;
                             }
 
@@ -56,11 +70,22 @@ class DisableAppAuthenticationAction
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.recovery_code.validation_attribute'))
                     ->password()
                     ->revealable(Filament::arePasswordsRevealable())
+                    ->autocomplete('one-time-code')
                     ->rule(function () use ($appAuthentication): Closure {
-                        return function (string $attribute, mixed $value, Closure $fail) use ($appAuthentication): void {
+                        return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
                             if (blank($value)) {
                                 return;
                             }
+
+                            $rateLimitingKey = 'filament-disable-app-authentication:' . Filament::auth()->id();
+
+                            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                                $fail(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.recovery_code.messages.rate_limited'));
+
+                                return;
+                            }
+
+                            RateLimiter::hit($rateLimitingKey);
 
                             if (is_string($value) && $appAuthentication->verifyRecoveryCode($value)) {
                                 return;
@@ -89,7 +114,7 @@ class DisableAppAuthenticationAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/app/actions/disable.notifications.disabled.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedLockOpen)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE_NOTIFICATION) ?? Heroicon::OutlinedLockOpen)
                     ->send();
             })
             ->rateLimit(5);

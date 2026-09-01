@@ -115,6 +115,8 @@ TextInput::make('name')
     ->hiddenLabel()
 ```
 
+<AutoScreenshot name="forms/fields/hidden-label" alt="Form field with a hidden label" version="4.x" />
+
 Optionally, you may pass a boolean value to control if the label should be hidden or not:
 
 ```php
@@ -306,7 +308,7 @@ Toggle::make('is_admin')
 Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on field to be `live()`.
 
 <Aside variant="danger">
-    Any JS string passed to the `hiddenJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+    Any JavaScript string passed to the `hiddenJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
 </Aside>
 
 The `visibleJs()` method is also available, which works in the same way as `hiddenJs()`, but controls if the field should be visible or not:
@@ -328,7 +330,7 @@ Toggle::make('is_admin')
 ```
 
 <Aside variant="danger">
-    Any JS string passed to the `visibleJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+    Any JavaScript string passed to the `visibleJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
 </Aside>
 
 <Aside variant="info">
@@ -635,6 +637,10 @@ TextInput::make('name')
 ```
 
 <AutoScreenshot name="forms/fields/below-content/action" alt="Form field with action below content" version="4.x" />
+
+<Aside variant="tip">
+    If you need a simple action that runs JavaScript without making a network request, you can use the [`actionJs()` method](../actions/overview#running-javascript-when-an-action-is-clicked). This is useful for simple interactions like updating form field values using `$get()` and `$set()`. Actions using `actionJs()` cannot open modals.
+</Aside>
 
 You can insert any combination of content into the slots by passing an array of content to the method:
 
@@ -1149,6 +1155,10 @@ TextInput::make('greetingResponse')
 
 The [`$state`](#injecting-the-current-state-of-the-field) and [`$get`](#injecting-the-state-of-another-field) utilities are available in this JavaScript context, so you can use them to access the state of the field and other fields in the schema.
 
+<Aside variant="danger">
+    The string passed to `JsContent` is evaluated in the browser, so you should never concatenate user input into it — that would lead to XSS. Values read at runtime via `$state` or `$get()` are safe to use as string values inside the expression, but should never be evaluated as JavaScript code themselves.
+</Aside>
+
 ## The basics of reactivity
 
 [Livewire](https://livewire.laravel.com) is a tool that allows Blade-rendered HTML to dynamically re-render without requiring a full page reload. Filament schemas are built on top of Livewire, so they are able to re-render dynamically, allowing their content to adapt after they are initially rendered.
@@ -1303,7 +1313,7 @@ If your schema auto-saves data to the database, like in a [resource](../resource
 
 ### Field rendering
 
-Each time a reactive field is updated, the HTML entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
+Each time a reactive field is updated, the HTML of the entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
 
 #### Field partial rendering
 
@@ -1378,7 +1388,7 @@ TextInput::make('email')
 ```
 
 <Aside variant="danger">
-    Any JS string passed to the `afterStateUpdatedJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+    Any JavaScript string passed to the `afterStateUpdatedJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
 </Aside>
 
 ## Reactive forms cookbook
@@ -1721,6 +1731,30 @@ Group::make()
 ```
 
 In this example, the customer's name is not `required()`, and the email address is only required when the `name` is filled. The `condition` function is used to check whether the `name` field is filled, and if it is, then the customer will be created / updated. Otherwise, the customer will not be created, or will be deleted if it already exists.
+
+### Saving relationship data when the component is hidden
+
+By default, if a layout component using `relationship()` is hidden when the form is submitted, Filament skips it entirely — the related record is not created or updated, and any existing record is left untouched. This is usually what you want, since hidden components have no state to save.
+
+If you need Filament to save the relationship even when the component is hidden — for example, when its field values are populated by [defaults](#setting-the-default-value-of-a-field) — call `saveRelationshipsWhenHidden()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+
+Group::make()
+    ->relationship('metadata')
+    ->saveRelationshipsWhenHidden()
+    ->hidden()
+    ->schema([
+        TextInput::make('source')
+            ->default('admin'),
+    ])
+```
+
+<Aside variant="warning">
+    Combining `saveRelationshipsWhenHidden()` with a `condition` that returns `false` while the component is hidden will cause any existing related record to be deleted when the form is submitted. If you only want to skip saving when the component is hidden, omit `saveRelationshipsWhenHidden()` and rely on the default behavior instead.
+</Aside>
 
 ## Global settings
 

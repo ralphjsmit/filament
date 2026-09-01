@@ -48,7 +48,9 @@ trait InteractsWithTable
 
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
 
-        $this->cacheMountedActions($this->mountedActions);
+        if (empty($this->cacheMountedActions($this->mountedActions))) {
+            $this->mountedActions = [];
+        }
 
         $this->initTableColumnManager();
 
@@ -125,8 +127,11 @@ trait InteractsWithTable
         }
 
         $this->tableColumnSearches = $this->castTableColumnSearches(
-            $this->tableColumnSearches ?? [],
+            $this->tableColumnSearches,
         );
+
+        // Seed individually searchable columns named after a JavaScript array property (e.g. `length`), so `$tableColumnSearches` serializes to a JSON object instead of an array and `wire:model` reads the search value rather than the array property.
+        $this->fillReservedTableColumnSearchKeys();
 
         if ($shouldPersistColumnSearchesInSession) {
             session()->put(
@@ -155,7 +160,7 @@ trait InteractsWithTable
         }
 
         if ($this->getTable()->isPaginated()) {
-            $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
+            $this->tableRecordsPerPage ??= $this->getDefaultTableRecordsPerPageSelectOption();
         }
     }
 

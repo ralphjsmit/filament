@@ -5,8 +5,10 @@ namespace Filament\Actions\Concerns;
 use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\SlideOverPosition;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -18,12 +20,12 @@ use Illuminate\Support\Arr;
 trait CanOpenModal
 {
     /**
-     * @var array<string, Action>
+     * @var array<string, Action | ActionGroup>
      */
     protected array $cachedExtraModalFooterActions;
 
     /**
-     * @var array<Action> | Closure
+     * @var array<Action | ActionGroup> | Closure
      */
     protected array | Closure $extraModalFooterActions = [];
 
@@ -43,10 +45,12 @@ trait CanOpenModal
 
     protected bool | Closure $isModalSlideOver = false;
 
+    protected SlideOverPosition | Closure | null $modalSlideOverPosition = null;
+
     protected Alignment | string | Closure | null $modalAlignment = null;
 
     /**
-     * @var array<string, Action>
+     * @var array<string, Action | ActionGroup>
      */
     protected array $cachedModalFooterActions;
 
@@ -79,6 +83,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalHidden = null;
 
+    protected bool | Closure | null $isModalClickThrough = null;
+
     protected bool | Closure | null $hasModalCloseButton = null;
 
     protected bool | Closure | null $isModalClosedByClickingAway = null;
@@ -93,6 +99,13 @@ trait CanOpenModal
      * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $modalIconColor = null;
+
+    public function modalClickThrough(bool | Closure | null $condition = true): static
+    {
+        $this->isModalClickThrough = $condition;
+
+        return $this;
+    }
 
     public function closeModalByClickingAway(bool | Closure | null $condition = true): static
     {
@@ -165,10 +178,17 @@ trait CanOpenModal
         return $this;
     }
 
+    public function slideOverPosition(SlideOverPosition | Closure | null $position = null): static
+    {
+        $this->modalSlideOverPosition = $position;
+
+        return $this;
+    }
+
     /**
      * @param  array<Action> | Closure | null  $actions
      *
-     *@deprecated Use `modalFooterActions()` instead.
+     * @deprecated Use `modalFooterActions()` instead.
      */
     public function modalActions(array | Closure | null $actions = null): static
     {
@@ -197,7 +217,7 @@ trait CanOpenModal
     /**
      * @param  array<Action> | Closure  $actions
      *
-     *@deprecated Use `extraModalFooterActions()` instead.
+     * @deprecated Use `extraModalFooterActions()` instead.
      */
     public function extraModalActions(array | Closure $actions): static
     {
@@ -207,7 +227,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<Action> | Closure  $actions
+     * @param  array<Action | ActionGroup> | Closure  $actions
      */
     public function extraModalFooterActions(array | Closure $actions): static
     {
@@ -340,7 +360,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<string, Action>
+     * @return array<string, Action | ActionGroup>
      */
     public function getModalFooterActions(): array
     {
@@ -406,7 +426,17 @@ trait CanOpenModal
             return $this->cachedModalActions;
         }
 
-        $actions = $this->getModalFooterActions();
+        $actions = [];
+
+        foreach ($this->getModalFooterActions() as $key => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getFlatActions() as $flatAction) {
+                    $actions[$flatAction->getName()] = $flatAction;
+                }
+            } else {
+                $actions[$key] = $action;
+            }
+        }
 
         foreach ($this->modalActions as $action) {
             foreach (Arr::wrap($this->evaluate($action)) as $modalAction) {
@@ -436,14 +466,39 @@ trait CanOpenModal
             ->table($this->getTable());
     }
 
+    protected function prepareModalActionGroup(ActionGroup $group): ActionGroup
+    {
+        $group
+            ->schemaContainer($this->getSchemaContainer())
+            ->schemaComponent($this->getSchemaComponent())
+            ->livewire($this->getLivewire())
+            ->when(
+                ! $group->hasRecord(),
+                fn (ActionGroup $group) => $group->record($this->getRecord()),
+            )
+            ->table($this->getTable());
+
+        foreach ($group->getActions() as $nestedAction) {
+            if ($nestedAction instanceof ActionGroup) {
+                $this->prepareModalActionGroup($nestedAction);
+
+                continue;
+            }
+
+            $this->prepareModalAction($nestedAction);
+        }
+
+        return $group;
+    }
+
     /**
-     * @return array<Action>
+     * @return array<Action | ActionGroup>
      */
     public function getVisibleModalFooterActions(): array
     {
         return array_filter(
             $this->getModalFooterActions(),
-            fn (Action $action): bool => $action->isVisible(),
+            fn (Action | ActionGroup $action): bool => $action->isVisible(),
         );
     }
 
@@ -490,7 +545,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<Action>
+     * @return array<Action | ActionGroup>
      */
     public function getExtraModalFooterActions(): array
     {
@@ -501,7 +556,11 @@ trait CanOpenModal
         $actions = [];
 
         foreach ($this->evaluate($this->extraModalFooterActions) as $action) {
-            $actions[$action->getName()] = $this->prepareModalAction($action);
+            if ($action instanceof ActionGroup) {
+                $actions[] = $this->prepareModalActionGroup($action);
+            } else {
+                $actions[$action->getName()] = $this->prepareModalAction($action);
+            }
         }
 
         return $this->cachedExtraModalFooterActions = $actions;
@@ -619,6 +678,11 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
+    public function getModalSlideOverPosition(): ?SlideOverPosition
+    {
+        return $this->evaluate($this->modalSlideOverPosition);
+    }
+
     public function hasModal(): ?bool
     {
         return $this->evaluate($this->hasModal);
@@ -639,6 +703,11 @@ trait CanOpenModal
             $this->hasModalContent() ||
             $this->hasModalContentFooter() ||
             (value($checkForSchemaUsing, $this) ?? false);
+    }
+
+    public function isModalClickThrough(): bool
+    {
+        return (bool) $this->evaluate($this->isModalClickThrough);
     }
 
     public function hasModalCloseButton(): bool
@@ -721,5 +790,10 @@ trait CanOpenModal
         $this->isModalHeaderSticky = $condition;
 
         return $this;
+    }
+
+    public function hasCustomModalPresence(): bool
+    {
+        return $this->hasModal !== null;
     }
 }

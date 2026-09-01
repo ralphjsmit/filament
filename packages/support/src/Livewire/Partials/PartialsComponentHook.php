@@ -167,15 +167,25 @@ class PartialsComponentHook extends ComponentHook
         } elseif ($this->shouldRenderMountedActionOnly()) {
             $action = $this->component->getMountedAction();
 
-            $renderAndQueuePartials(fn (): array => [
-                "action-modals.{$action->getNestingIndex()}" => $action->renderModal(),
-            ]);
+            if ($action !== null) {
+                $renderAndQueuePartials(fn (): array => [
+                    "action-modals.{$action->getNestingIndex()}" => $action->renderModal(),
+                ]);
+            }
+
         }
 
         if ($this->shouldRenderMountedActionsOnly(whenActionMounted: $isLackingPartialRendersToCoverAllCallsAndUpdates)) {
             $renderAndQueuePartials(fn (): array => [
                 'action-modals' => view('filament-actions::components.modals'),
             ]);
+        }
+
+        $discoveredChildren = store($this->component)->get('children', []);
+
+        if (! empty($discoveredChildren)) {
+            $previousChildren = store($this->component)->get('previousChildren', []);
+            store($this->component)->set('previousChildren', array_merge($previousChildren, $discoveredChildren));
         }
 
         $context->addEffect('partials', $partials);

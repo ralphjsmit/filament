@@ -2,6 +2,7 @@
 title: Overview
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Changing the colors
 
@@ -27,6 +28,8 @@ public function panel(Panel $panel): Panel
 ```
 
 The `Filament\Support\Colors\Color` class contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
+
+<AutoScreenshot name="panels/styling/colors" alt="Panel with custom colors" version="4.x" />
 
 You can also pass in a function to `register()` which will only get called when the app is getting rendered. This is useful if you are calling `register()` from a service provider, and want to access objects like the currently authenticated user, which are initialized later in middleware.
 
@@ -83,6 +86,8 @@ public function panel(Panel $panel): Panel
 ```
 
 All [Google Fonts](https://fonts.google.com) are available to use.
+
+<AutoScreenshot name="panels/styling/font" alt="Panel with custom font" version="4.x" />
 
 ### Changing the font provider
 
@@ -176,20 +181,54 @@ You can now customize the theme by editing the CSS file in `resources/css/filame
 
 ## Using Tailwind CSS classes in your Blade views or PHP files
 
-Even though Filament uses Tailwind CSS to compile the framework, it is not set up to automatically scan for any Tailwind classes you use in your project, so these classes will not be included in the compiled CSS.
+<Aside variant="warning">
+    **A custom theme is required to use Tailwind CSS classes in your own code.** Filament's default compiled stylesheet does not include arbitrary Tailwind classes - it only contains the styles needed for Filament's own UI components.
+</Aside>
 
-To use Tailwind CSS classes in your project, you need to set up a [custom theme](#creating-a-custom-theme) to customize the compiled CSS file in the panel. In the `theme.css` file of the theme, you will find two lines:
+If you want to use Tailwind CSS utility classes (like `text-primary-600`, `bg-gray-100`, `p-4`, etc.) in your own Blade views, Livewire components, or PHP files, **you must create a custom theme first**.
 
-```css
-@source '../../../../app/Filament';
-@source '../../../../resources/views/filament';
+Without a custom theme, any Tailwind classes you add to your code will simply not work - the styles won't be applied because they're not included in the compiled CSS.
+
+### Setting up Tailwind CSS for your project
+
+To use Tailwind CSS classes in your project, you need to set up a [custom theme](#creating-a-custom-theme). Run the following command:
+
+```bash
+php artisan make:filament-theme
 ```
 
-These lines tell Tailwind to scan the `app/Filament` and `resources/views/filament` directories for any Tailwind classes you use in your project. You can [add any other directories](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources) you want to scan for Tailwind classes here.
+In the generated `theme.css` file, you will find `@source` directives that tell Tailwind CSS where to scan for classes:
 
-## Disabling dark mode
+```css
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+```
 
-To disable dark mode switching, you can use the [configuration](../panel-configuration) file:
+**Add your own directories** where you use Tailwind classes. For example:
+
+```css
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/components/**/*';
+@source '../../../../resources/views/livewire/**/*';
+@source '../../../../app/Livewire/**/*';
+```
+
+After adding your directories, rebuild your theme:
+
+```bash
+npm run build
+```
+
+You can [learn more about the `@source` directive](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources) in the Tailwind CSS documentation.
+
+## Dark mode
+
+By default, Filament allows users to switch between light and dark mode. The following sections cover how to customize this behavior.
+
+### Disabling dark mode
+
+To disable dark mode entirely, you can use the [configuration](../panel-configuration) file:
 
 ```php
 use Filament\Panel;
@@ -202,7 +241,41 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Changing the default theme mode
+### Hiding the theme switcher
+
+By default, users can switch between light and dark mode using the theme switcher in the user menu. If you want to keep dark mode enabled but prevent users from manually switching (so that Filament follows the [default theme mode](#changing-the-default-theme-mode) or the user's system preference), you can hide the theme switcher using the `themeSwitcher(false)` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->themeSwitcher(false);
+}
+```
+
+<Aside variant="info">
+    This is different from `darkMode(false)`, which disables dark mode altogether. `themeSwitcher(false)` keeps dark mode active but hides the switcher.
+</Aside>
+
+### Forcing dark mode
+
+If you want to force the panel to always use dark mode, regardless of the user's preference, you can pass `isForced: true` to the `darkMode()` method. This also hides the theme switcher:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->darkMode(isForced: true);
+}
+```
+
+### Changing the default theme mode
 
 By default, Filament uses the user's system theme as the default mode. For example, if the user's computer is in dark mode, Filament will use dark mode by default. The system mode in Filament is reactive if the user changes their computer's mode. If you want to change the default mode to force light or dark mode, you can use the `defaultThemeMode()` method, passing `ThemeMode::Light` or `ThemeMode::Dark`:
 
@@ -235,6 +308,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/styling/brand-name" alt="Panel with custom brand name" version="4.x" />
+
 To render an image instead, you can pass a URL to the `brandLogo()` method:
 
 ```php
@@ -247,6 +322,8 @@ public function panel(Panel $panel): Panel
         ->brandLogo(asset('images/logo.svg'));
 }
 ```
+
+<AutoScreenshot name="panels/styling/brand-logo" alt="Panel with custom brand logo" version="4.x" />
 
 Alternatively, you may directly pass HTML to the `brandLogo()` method to render an inline SVG element for example:
 

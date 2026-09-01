@@ -50,8 +50,8 @@ class TestsActions
 
     public function unmountAction(): Closure
     {
-        return function (): static {
-            $this->call('unmountAction');
+        return function (bool | string | null $cancelParentActions = null): static {
+            $this->call('unmountAction', $cancelParentActions);
 
             return $this;
         };
@@ -83,10 +83,24 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->assertActionVisible($actions, $arguments);
 
+            /** @var array<array<string, mixed>> $parsedActions */
+            /** @phpstan-ignore-next-line */
+            $parsedActions = $this->parseNestedActions($actions, $arguments);
+
             /** @phpstan-ignore-next-line */
             $this->mountAction($actions, $arguments);
 
             if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count(Arr::wrap($actions)))) {
+                return $this;
+            }
+
+            $lastParsedAction = Arr::last($parsedActions);
+            $lastMountedActionIndex = count($this->instance()->mountedActions) - 1;
+
+            if (
+                $lastMountedActionIndex >= 0 &&
+                ($this->instance()->mountedActions[$lastMountedActionIndex]['name'] ?? null) !== ($lastParsedAction['name'] ?? null)
+            ) {
                 return $this;
             }
 
@@ -133,10 +147,6 @@ class TestsActions
                 ...$actions,
             ]);
 
-            if ($action && filled($arguments = Arr::last($actions)['arguments'] ?? [])) {
-                $action->mergeArguments($arguments);
-            }
-
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::pluck($actions, 'name'));
 
@@ -174,10 +184,6 @@ class TestsActions
                 Assert::assertNull(null);
 
                 return $this;
-            }
-
-            if ($action && filled($arguments = Arr::last($actions)['arguments'] ?? [])) {
-                $action->mergeArguments($arguments);
             }
 
             $livewireClass = $this->instance()::class;

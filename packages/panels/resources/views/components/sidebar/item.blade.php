@@ -18,6 +18,9 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag;
+
     $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
@@ -33,8 +36,12 @@
 >
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
+        @if ($active)
+            aria-current="page"
+        @endif
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @if ($sidebarCollapsible && (! $subNavigation))
+            x-bind:aria-label="$store.sidebar.isOpen ? null : @js(trim(strip_tags($slot->toHtml())))"
             x-data="{ tooltip: false }"
             x-effect="
                 tooltip = $store.sidebar.isOpen
@@ -51,9 +58,9 @@
     >
         @if (filled($icon) && ((! $subGrouped) || ($sidebarCollapsible && (! $subNavigation))))
             {{
-                \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new \Illuminate\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new ComponentAttributeBag([
                     'x-show' => ($subGrouped && $sidebarCollapsible) ? '! $store.sidebar.isOpen' : false,
-                ]))->class(['fi-sidebar-item-icon']), size: \Filament\Support\Enums\IconSize::Large)
+                ]))->class(['fi-sidebar-item-icon']), size: IconSize::Large)
             }}
         @endif
 
@@ -112,7 +119,7 @@
         @endif
     </a>
 
-    @if (($active || $activeChildItems) && $childItems)
+    @if ($childItems && (blank($url) || $active || $activeChildItems))
         <ul class="fi-sidebar-sub-group-items">
             @foreach ($childItems as $childItem)
                 @php
@@ -120,11 +127,12 @@
                     $isChildActive = (! $isChildItemChildItemsActive) && $childItem->isActive();
                     $childItemActiveIcon = $childItem->getActiveIcon();
                     $childItemBadge = $childItem->getBadge();
-                    $childItemBadgeColor = $childItem->getBadgeColor();
-                    $childItemBadgeTooltip = $childItem->getBadgeTooltip();
+                    $childItemBadgeColor = $childItem->getBadgeColor($childItemBadge);
+                    $childItemBadgeTooltip = $childItem->getBadgeTooltip($childItemBadge);
                     $childItemIcon = $childItem->getIcon();
                     $shouldChildItemOpenUrlInNewTab = $childItem->shouldOpenUrlInNewTab();
                     $childItemUrl = $childItem->getUrl();
+                    $childItemExtraAttributes = $childItem->getExtraAttributeBag();
                 @endphp
 
                 <x-filament-panels::sidebar.item
@@ -142,6 +150,7 @@
                     sub-grouped
                     :sub-navigation="$subNavigation"
                     :url="$childItemUrl"
+                    :attributes="\Filament\Support\prepare_inherited_attributes($childItemExtraAttributes)"
                 >
                     {{ $childItem->getLabel() }}
                 </x-filament-panels::sidebar.item>

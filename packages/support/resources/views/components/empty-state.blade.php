@@ -1,10 +1,6 @@
-@php
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\SectionComponent\IconComponent;
-@endphp
-
 @props([
     'compact' => false,
+    'contained' => true,
     'description' => null,
     'footer' => null,
     'heading',
@@ -15,19 +11,25 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\Support\View\Components\SectionComponent\IconComponent;
+
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
         $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
     }
 
     $hasDescription = filled((string) $description);
+    $hasFooter = filled((string) $footer);
     $hasIcon = filled($icon);
 @endphp
 
-<section
+<div
     {{
         $attributes->class([
             'fi-empty-state',
             'fi-compact' => $compact,
+            'fi-empty-state-not-contained' => ! $contained,
         ])
     }}
 >
@@ -40,7 +42,7 @@
                 ])
             >
                 {{
-                    \Filament\Support\generate_icon_html($icon, attributes: (new \Illuminate\View\ComponentAttributeBag)
+                    \Filament\Support\generate_icon_html($icon, attributes: (new ComponentAttributeBag)
                         ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
                 }}
             </div>
@@ -57,9 +59,11 @@
                 </p>
             @endif
 
-            <footer class="fi-empty-state-footer">
-                {{ $footer }}
-            </footer>
+            @if ($hasFooter)
+                <footer class="fi-empty-state-footer">
+                    {{ $footer }}
+                </footer>
+            @endif
         </div>
     </div>
-</section>
+</div>

@@ -1,10 +1,13 @@
 ---
 title: Clusters
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 Clusters are a hierarchical structure in panels that allow you to group [resources](../resources) and [custom pages](custom-pages) together. They are useful for organizing your panel into logical sections, and can help reduce the size of your panel's sidebar.
+
+<AutoScreenshot name="panels/cluster" alt="A cluster page with sub-navigation" version="4.x" />
 
 When using a cluster, a few things happen:
 
@@ -77,8 +80,8 @@ When using clusters, it is recommended that you move all of your resources and p
 |   |   |   +-- ManageBranding.php
 |   |   |   +-- ManageNotifications.php
 |   |   +-- Resources
-|   |   |   +-- ColorResource.php
-|   |   |   +-- ColorResource
+|   |   |   +-- Colors
+|   |   |   |   +-- ColorResource.php
 |   |   |   |   +-- Pages
 |   |   |   |   |   +-- CreateColor.php
 |   |   |   |   |   +-- EditColor.php
@@ -99,6 +102,12 @@ use Filament\Pages\Enums\SubNavigationPosition;
 protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
 
+<AutoScreenshot name="panels/cluster-end" alt="Cluster with end sub-navigation position" version="4.x" />
+
+The `SubNavigationPosition::Top` option renders the sub-navigation as tabs above the page content:
+
+<AutoScreenshot name="panels/cluster-top" alt="Cluster with top sub-navigation position" version="4.x" />
+
 ## Customizing the cluster breadcrumb
 
 The cluster's name is in the breadcrumbs of all resources and pages in the cluster.
@@ -115,5 +124,22 @@ Alternatively, you may use the `getClusterBreadcrumb()` to define a dynamic brea
 public static function getClusterBreadcrumb(): string
 {
     return __('filament/clusters/cluster.name');
+}
+```
+
+## Removing the sub navigation from a cluster
+
+By default, all resources and pages in a cluster will show the sub-navigation. If you want to remove the sub-navigation from all resources and pages in a cluster, you can set the `$shouldRegisterSubNavigation` property to `false` in the cluster class:
+
+```php
+protected static bool $shouldRegisterSubNavigation = false;
+```
+
+Alternatively, you may override the `shouldRegisterSubNavigation()` method to define dynamic behavior:
+
+```php
+public static function shouldRegisterSubNavigation(): bool
+{
+    return FeatureFlag::active();
 }
 ```

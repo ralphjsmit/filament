@@ -3,11 +3,13 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Models\Post;
 
 class Actions extends Page
 {
@@ -19,6 +21,11 @@ class Actions extends Page
             Action::make('simple')
                 ->action(function (): void {
                     $this->dispatch('simple-called');
+                }),
+            Action::make('cancelWithDatabaseTransaction')
+                ->databaseTransaction()
+                ->action(function (Action $action): void {
+                    $action->cancel();
                 }),
             Action::make('data')
                 ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
@@ -114,6 +121,117 @@ class Actions extends Page
                         ])
                         ->action(fn () => null),
                 ]),
+            Action::make('staleSchemaParent')
+                ->schema([
+                    TextInput::make('parentField'),
+                ])
+                ->registerModalActions([
+                    Action::make('first')
+                        ->schema([
+                            TextInput::make('alpha'),
+                        ])
+                        ->action(fn () => null),
+                    Action::make('second')
+                        ->schema([
+                            TextInput::make('beta'),
+                        ])
+                        ->action(fn () => null),
+                ])
+                ->action(fn () => null),
+            Action::make('staleSchemaOther')
+                ->schema([
+                    TextInput::make('otherField'),
+                ])
+                ->action(fn () => null),
+            Action::make('grandparentWithModalCloseCancellation')
+                ->schema([
+                    TextInput::make('grandparentValue')
+                        ->required()
+                        ->registerActions([
+                            Action::make('parentWithModalCloseCancellation')
+                                ->schema([
+                                    TextInput::make('parentValue')
+                                        ->required()
+                                        ->registerActions([
+                                            Action::make('modalClosePreservesParentActions')
+                                                ->requiresConfirmation()
+                                                ->action(fn () => null),
+                                            Action::make('modalCloseCancelsAllParentActions')
+                                                ->requiresConfirmation()
+                                                ->cancelParentActionsOnClose()
+                                                ->action(fn () => null),
+                                            Action::make('modalCloseCancelsToNamedParentAction')
+                                                ->requiresConfirmation()
+                                                ->cancelParentActionsOnClose('parentWithModalCloseCancellation')
+                                                ->action(fn () => null),
+                                        ]),
+                                ])
+                                ->action(fn () => null),
+                        ]),
+                ])
+                ->action(fn () => null),
+            // No schema and no confirmation, so this action has no modal of its own.
+            Action::make('haltsWithoutModal')
+                ->action(function (Action $action): void {
+                    $this->dispatch('halts-without-modal-called');
+
+                    $action->halt();
+                }),
+            Action::make('callsTwoNestedActionsWithoutModal')
+                ->registerModalActions([
+                    Action::make('firstNestedActionWithoutModal')
+                        ->action(static fn () => null),
+                    Action::make('secondNestedActionWithModal')
+                        ->requiresConfirmation()
+                        ->action(static fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('firstNestedActionWithoutModal');
+                    $action->getLivewire()->mountAction('secondNestedActionWithModal');
+
+                    $action->halt();
+                }),
+            Action::make('haltsWithoutModalAfterMountingAChild')
+                ->registerModalActions([
+                    Action::make('childOfActionWithoutModal')
+                        ->modalHeading('Child')
+                        ->action(fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('childOfActionWithoutModal');
+
+                    $action->halt();
+                }),
+            Action::make('haltsWithModalAfterMountingAChild')
+                ->requiresConfirmation()
+                ->registerModalActions([
+                    Action::make('childOfActionWithModal')
+                        ->modalHeading('Child')
+                        ->action(fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('childOfActionWithModal');
+
+                    $action->halt();
+                }),
+            // The grandparent has a modal of its own, so only the two actions above it on the
+            // stack have nothing to be seen in.
+            Action::make('hasModalAndMountsAnActionWithoutModal')
+                ->requiresConfirmation()
+                ->registerModalActions([
+                    Action::make('nestedActionWithoutModal')
+                        ->registerModalActions([
+                            Action::make('childOfNestedActionWithoutModal')
+                                ->modalHeading('Child')
+                                ->action(fn () => null),
+                        ])
+                        ->action(function (Action $action): void {
+                            $action->getLivewire()->mountAction('childOfNestedActionWithoutModal');
+
+                            $action->halt();
+                        }),
+                ])
+                ->action(fn () => null),
             Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Action $action): void {
@@ -121,6 +239,30 @@ class Actions extends Page
 
                     $action->halt();
                 }),
+            Action::make('withGroupedExtraActions')
+                ->schema([
+                    TextInput::make('content')
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    $this->dispatch('grouped-extra-actions-called', content: $data['content']);
+                })
+                ->extraModalFooterActions([
+                    Action::make('simpleExtra')
+                        ->action(fn () => $this->dispatch('simple-extra-called')),
+                    ActionGroup::make([
+                        Action::make('option1')
+                            ->action(fn () => $this->dispatch('option1-called')),
+                        Action::make('option2')
+                            ->action(fn () => $this->dispatch('option2-called')),
+                        Action::make('option3')
+                            ->schema([
+                                TextInput::make('value')
+                                    ->required(),
+                            ])
+                            ->action(fn (array $data) => $this->dispatch('option3-called', value: $data['value'])),
+                    ])->button()->label('More Options'),
+                ]),
             Action::make('visible'),
             Action::make('hidden')
                 ->hidden(),
@@ -178,6 +320,55 @@ class Actions extends Page
                 ->action(function (array $arguments): void {
                     $this->dispatch('predefined-arguments-called', arguments: $arguments);
                 }),
+            Action::make('replaces-action')
+                ->action(function (): void {
+                    $this->replaceMountedAction('replaced-action');
+                }),
+            Action::make('replaced-action')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    $this->dispatch('replaced-action-called');
+                }),
+            Action::make('arguments-with-record-and-schema')
+                ->schema(
+                    fn (Post $record, Schema $schema) => $schema
+                        ->record($record)
+                        ->schema([
+                            TextInput::make('foo'),
+                        ])
+                )
+                ->record(fn (array $arguments) => Post::findOrFail($arguments['post_id'])),
+            Action::make('enforcementHidden')
+                ->hidden()
+                ->action(function (): void {
+                    $this->dispatch('enforcement-hidden-called');
+                }),
+            Action::make('enforcementInvisible')
+                ->visible(false)
+                ->action(function (): void {
+                    $this->dispatch('enforcement-invisible-called');
+                }),
+            Action::make('enforcementDisabled')
+                ->disabled()
+                ->action(function (): void {
+                    $this->dispatch('enforcement-disabled-called');
+                }),
+            Action::make('enforcementUnauthorized')
+                ->authorize(false)
+                ->action(function (): void {
+                    $this->dispatch('enforcement-unauthorized-called');
+                }),
+            Action::make('enforcementAuthorized')
+                ->authorize(true)
+                ->action(function (): void {
+                    $this->dispatch('enforcement-authorized-called');
+                }),
         ];
+    }
+
+    public function unmountThenMountAction(string $name): void
+    {
+        $this->unmountAction();
+        $this->mountAction($name);
     }
 }

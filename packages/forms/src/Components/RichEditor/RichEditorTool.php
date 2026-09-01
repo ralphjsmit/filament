@@ -41,6 +41,8 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     protected bool | Closure $hasActiveStyling = true;
 
+    protected bool | Closure $isToggle = false;
+
     protected RichEditor $editor;
 
     protected string $evaluationIdentifier = 'tool';
@@ -187,6 +189,18 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         return (bool) $this->evaluate($this->hasActiveStyling);
     }
 
+    public function toggle(bool | Closure $condition = true): static
+    {
+        $this->isToggle = $condition;
+
+        return $this;
+    }
+
+    public function isToggle(): bool
+    {
+        return (bool) $this->evaluate($this->isToggle);
+    }
+
     public function toEmbeddedHtml(): string
     {
         $activeJsExpression = $this->getActiveJsExpression();
@@ -197,16 +211,22 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
             $activeJsExpression = 'editorUpdatedAt && $getEditor()?.isActive(' . Js::from($this->getActiveKey())->toHtml() . ', ' . Js::from($this->getActiveOptions())->toHtml() . ')';
         }
 
+        $label = $this->getLabel();
         $isLabelHidden = $this->isLabelHidden();
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'tabindex' => -1,
                 'type' => 'button',
+                'aria-label' => e($label),
+                'aria-pressed' => $this->isToggle() ? 'false' : null,
                 'x-bind:class' => '{ \'fi-active\': ' . ($this->hasActiveStyling() ? $activeJsExpression : 'false') . ' }',
+                // Guard against the pre-init `undefined` (the TipTap editor loads asynchronously): Alpine
+                // preserves a falsy `aria-pressed` rather than removing it, so coerce to a valid token.
+                'x-bind:aria-pressed' => $this->isToggle() ? '(' . $activeJsExpression . ') ? \'true\' : \'false\'' : null,
                 'x-bind:disabled' => $this->isDisabledWhenNotActive() ? '!(' . $activeJsExpression . ')' : null,
                 'x-on:click' => $this->getJsHandler(),
-                'x-tooltip' => (filled($label = $this->getLabel()) && $isLabelHidden)
+                'x-tooltip' => (filled($label) && $isLabelHidden)
                     ? '{ content: ' . Js::from($label) . ', theme: $store.theme }'
                     : null,
             ], escape: false)
@@ -218,8 +238,8 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         ob_start(); ?>
 
         <button <?= $attributes->toHtml() ?>>
-            <?= generate_icon_html($this->getIcon(), alias: $this->getIconAlias())->toHtml() ?>
-            <?= $isLabelHidden ? null : '<span class="fi-fo-rich-editor-tool-label">' . $this->getLabel() . '</span>' ?>
+            <?= generate_icon_html($this->getIcon(), alias: $this->getIconAlias())?->toHtml() ?? '' ?>
+            <?= $isLabelHidden ? null : '<span class="fi-fo-rich-editor-tool-label">' . e($label) . '</span>' ?>
         </button>
 
         <?php return ob_get_clean();

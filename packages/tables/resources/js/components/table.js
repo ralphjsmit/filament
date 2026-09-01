@@ -34,6 +34,8 @@ export default ({
 
     cleanUpFiltersDropdown: null,
 
+    unsubscribeLivewireHook: null,
+
     init() {
         this.livewireId =
             this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
@@ -57,11 +59,14 @@ export default ({
 
         this.$nextTick(() => this.watchForCheckboxClicks())
 
-        Livewire.hook('element.init', ({ component }) => {
-            if (component.id === this.livewireId) {
-                this.watchForCheckboxClicks()
-            }
-        })
+        this.unsubscribeLivewireHook = Livewire.hook(
+            'element.init',
+            ({ component }) => {
+                if (component.id === this.livewireId) {
+                    this.watchForCheckboxClicks()
+                }
+            },
+        )
     },
 
     mountAction(...args) {
@@ -247,6 +252,18 @@ export default ({
 
     areRecordsSelected(keys) {
         return keys.every((key) => this.isRecordSelected(key))
+    },
+
+    areRecordsPartiallySelected(keys) {
+        if (keys.length === 0) {
+            return false
+        }
+
+        const selectedCount = keys.filter((key) =>
+            this.isRecordSelected(key),
+        ).length
+
+        return selectedCount > 0 && selectedCount < keys.length
     },
 
     areRecordsToggleable(keys) {
@@ -435,5 +452,9 @@ export default ({
             this.cleanUpFiltersDropdown()
             this.cleanUpFiltersDropdown = null
         }
+    },
+
+    destroy() {
+        this.unsubscribeLivewireHook?.()
     },
 })

@@ -17,10 +17,14 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
+use SensitiveParameter;
 
 class RegenerateAppAuthenticationRecoveryCodesAction
 {
@@ -29,10 +33,10 @@ class RegenerateAppAuthenticationRecoveryCodesAction
         return Action::make('regenerateAppAuthenticationRecoveryCodes')
             ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.label'))
             ->color('gray')
-            ->icon(Heroicon::ArrowPath)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES) ?? Heroicon::ArrowPath)
             ->link()
             ->modalWidth(Width::Large)
-            ->modalIcon(Heroicon::OutlinedArrowPath)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_MODAL) ?? Heroicon::OutlinedArrowPath)
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.description'))
@@ -42,8 +46,18 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.validation_attribute'))
                     ->requiredWithout('password')
                     ->rule(function () use ($appAuthentication): Closure {
-                        return function (string $attribute, $value, Closure $fail) use ($appAuthentication): void {
-                            if ($appAuthentication->verifyCode($value)) {
+                        return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($appAuthentication): void {
+                            $rateLimitingKey = 'filament-regenerate-recovery-codes:' . Filament::auth()->id();
+
+                            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                                $fail(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.rate_limited'));
+
+                                return;
+                            }
+
+                            RateLimiter::hit($rateLimitingKey);
+
+                            if ($appAuthentication->verifyCode($value, shouldPreventCodeReuse: true)) {
                                 return;
                             }
 
@@ -76,7 +90,7 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.notifications.regenerated.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedArrowPath)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_NOTIFICATION) ?? Heroicon::OutlinedArrowPath)
                     ->send();
             })
             ->registerModalActions([
@@ -113,7 +127,7 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                                     ->label(__('filament-panels::auth/multi-factor/recovery-codes-modal-content.actions.download.label'))
                                     ->link()
                                     ->url('data:application/octet-stream,' . urlencode(implode(PHP_EOL, $arguments['recoveryCodes'])))
-                                    ->extraAttributes(['download' => true])
+                                    ->extraAttributes(['download' => 'recovery-codes.txt'])
                                     ->toHtml() .
                                 ' ' .
                                 __('filament-panels::auth/multi-factor/recovery-codes-modal-content.actions.2')

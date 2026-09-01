@@ -132,6 +132,12 @@ class CreateAction extends Action
                     ...$preserveRawState ?? [],
                 ]);
 
+                // Rebuild child schemas without double-firing `afterStateHydrated()` hooks.
+                $hydratedDefaultState = null;
+                $schema->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
+
+                $schema->dispatchClientSideStateReset();
+
                 $this->halt();
 
                 return;

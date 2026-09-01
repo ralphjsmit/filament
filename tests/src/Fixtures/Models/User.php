@@ -2,8 +2,11 @@
 
 namespace Filament\Tests\Fixtures\Models;
 
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\Email\Concerns\InteractsWithEmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
@@ -27,6 +30,9 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 {
     use BelongsToThroughTrait;
     use HasFactory;
+    use InteractsWithAppAuthentication;
+    use InteractsWithAppAuthenticationRecovery;
+    use InteractsWithEmailAuthentication;
     use Notifiable;
 
     protected $guarded = [];
@@ -34,8 +40,6 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     protected $hidden = [
         'password',
         'remember_token',
-        'app_authentication_secret',
-        'app_authentication_recovery_codes',
     ];
 
     /**
@@ -46,20 +50,32 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         return [
             'json' => 'array',
             'email_verified_at' => 'datetime',
-            'app_authentication_secret' => 'encrypted',
-            'app_authentication_recovery_codes' => 'encrypted:array',
-            'has_email_authentication' => 'boolean',
         ];
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($panel->getId(), ['admin', 'slugs', 'app-authentication', 'email-authentication', 'required-multi-factor-authentication']);
+        return in_array($panel->getId(), ['admin', 'slugs', 'spa', 'app-authentication', 'email-authentication', 'required-multi-factor-authentication']);
     }
 
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class, 'author_id');
+    }
+
+    public function publishedPost(): HasOne
+    {
+        return $this->hasOne(Post::class, 'author_id')->where('is_published', true);
+    }
+
+    public function latestPost(): HasOne
+    {
+        return $this->hasOne(Post::class, 'author_id')->latestOfMany();
+    }
+
+    public function publishedPosts(): HasMany
+    {
+        return $this->hasMany(Post::class, 'author_id')->where('is_published', true);
     }
 
     protected static function newFactory()
@@ -77,44 +93,6 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         return Team::all();
     }
 
-    public function getAppAuthenticationSecret(): ?string
-    {
-        return $this->app_authentication_secret;
-    }
-
-    public function saveAppAuthenticationSecret(?string $secret): void
-    {
-        $this->app_authentication_secret = $secret;
-        $this->save();
-    }
-
-    public function getAppAuthenticationRecoveryCodes(): ?array
-    {
-        return $this->app_authentication_recovery_codes;
-    }
-
-    public function saveAppAuthenticationRecoveryCodes(?array $codes): void
-    {
-        $this->app_authentication_recovery_codes = $codes;
-        $this->save();
-    }
-
-    public function getAppAuthenticationHolderName(): string
-    {
-        return $this->email;
-    }
-
-    public function hasEmailAuthentication(): bool
-    {
-        return (bool) $this->has_email_authentication;
-    }
-
-    public function toggleEmailAuthentication(bool $condition): void
-    {
-        $this->has_email_authentication = $condition;
-        $this->save();
-    }
-
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
@@ -123,6 +101,11 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
+    }
+
+    public function ownedTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class)->wherePivot('role', 'owner');
     }
 
     public function profile(): HasOne

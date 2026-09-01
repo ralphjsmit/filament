@@ -188,7 +188,7 @@ TextColumn::make('name')
     ->label('Full name')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
@@ -241,7 +241,7 @@ TextColumn::make('full_name')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Direction;;string;;$direction;;The direction that the column is currently being sorted on, either <code>'asc'</code> or <code>'desc'</code>.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x" extras="Direction;;string;;$direction;;The direction that the column is currently being sorted on, either <code>'asc'</code> or <code>'desc'</code>.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
 
 ### Sorting by default
 
@@ -373,7 +373,7 @@ TextColumn::make('full_name')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Search;;string;;$search;;The current search input value.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x" extras="Search;;string;;$search;;The current search input value.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
 
 ### Adding extra searchable columns to the table
 
@@ -542,6 +542,20 @@ public function table(Table $table): Table
 }
 ```
 
+You can also use the `splitIndividualSearchTerms()` method on a column to override the table's setting for that column's [individual search](#searching-individually):
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->searchable(isIndividual: true)
+    ->splitIndividualSearchTerms(false)
+```
+
+<Aside variant="info">
+    This method only affects the column's individual search. Search term splitting for the table's global search is controlled by the table's `splitSearchTerms()` method.
+</Aside>
+
 ## Clickable cell content
 
 When a cell is clicked, you may open a URL or trigger an "action".
@@ -574,6 +588,10 @@ TextColumn::make('title')
     ->url(fn (Post $record): string => route('posts.edit', ['post' => $record]))
     ->openUrlInNewTab()
 ```
+
+<Aside variant="danger">
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
+</Aside>
 
 ### Triggering actions
 
@@ -649,6 +667,7 @@ TextColumn::make('sku')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `headerTooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/header-tooltips" alt="Table with header tooltip on a column" version="4.x" />
 
 ## Aligning column content
 
@@ -737,6 +756,8 @@ TextColumn::make('name')
 
 <UtilityInjection set="tableColumns" version="4.x">The `wrapHeader()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/wrap-header" alt="Table with wrapped column headers" version="4.x" />
+
 ## Controlling the width of columns
 
 By default, columns will take up as much space as they need. You may allow some columns to consume more space than others by using the `grow()` method:
@@ -759,7 +780,9 @@ IconColumn::make('is_paid')
     ->width('1%')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `width()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x">The `width()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="tables/columns/width" alt="Table with column width controls" version="4.x" />
 
 ## Grouping columns
 
@@ -893,9 +916,31 @@ public function table(Table $table): Table
 }
 ```
 
-#### Customizing the column manager dropdown trigger action
+#### Displaying the column manager in a modal
 
-To customize the column manager dropdown trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
+To render the column manager in a modal instead of in a dropdown, you may use the `columnManagerLayout()` method:
+
+```php
+use Filament\Tables\Enums\ColumnManagerLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerLayout(ColumnManagerLayout::Modal);
+}
+```
+
+<AutoScreenshot name="tables/columns/column-manager-modal" alt="Table with column manager in a modal" version="4.x" />
+
+You may use the [trigger action API](#customizing-the-column-manager-trigger-action) to [customize the modal](../../actions/modals), including [using a `slideOver()`](../../actions/modals#using-a-slide-over-instead-of-a-modal).
+
+#### Customizing the column manager trigger action
+
+To customize the column manager trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;
@@ -904,7 +949,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->filters([
+        ->columns([
             // ...
         ])
         ->columnManagerTriggerAction(
@@ -966,6 +1011,8 @@ public function table(Table $table): Table
         ->columnManagerColumns(2);
 }
 ```
+
+<AutoScreenshot name="tables/columns/column-manager-columns" alt="Table with a 2-column column manager" version="4.x" />
 
 ## Adding extra HTML attributes to a column content
 

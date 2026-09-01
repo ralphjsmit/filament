@@ -678,6 +678,40 @@ MorphToSelect::make('commentable')
     ->modifyTypeSelectUsing(fn (Select $select): Select => $select->native())
 ```
 
+#### Using toggle buttons for the type selector
+
+By default, the type selector is a select field. You may switch it to use inline [toggle buttons](toggle-buttons) using the `typeSelectToggleButtons()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->typeSelectToggleButtons()
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+```
+
+When using toggle buttons, you can customize them using the `modifyTypeSelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\ToggleButtons;
+
+MorphToSelect::make('commentable')
+    ->typeSelectToggleButtons()
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyTypeSelectUsing(fn (ToggleButtons $toggleButtons): ToggleButtons => $toggleButtons->grouped())
+```
+
 ## Allowing HTML in the option labels
 
 By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:
@@ -699,6 +733,8 @@ Select::make('technology')
 <Aside variant="danger">
     Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 </Aside>
+
+<AutoScreenshot name="forms/fields/select/html-labels" alt="Select with HTML option labels" version="4.x" />
 
 Optionally, you may pass a boolean value to control if the input should allow HTML or not:
 
@@ -728,6 +764,8 @@ use Filament\Forms\Components\Select;
 Select::make('truncate')
     ->wrapOptionLabels(false)
 ```
+
+<AutoScreenshot name="forms/fields/select/truncate-labels" alt="Select with truncated option labels" version="4.x" />
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `wrapOptionLabels()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -768,6 +806,8 @@ Select::make('status')
 ```
 
 <UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/select/disabled-options" alt="Select with disabled options" version="4.x" />
 
 ## Adding affix text aside the field
 
@@ -816,6 +856,8 @@ Select::make('domain')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/select/suffix-icon-color" alt="Select with suffix icon in color" version="4.x" />
+
 ## Limiting the number of options
 
 You can limit the number of options that are displayed in a searchable select or multi-select using the `optionsLimit()` method. The default is 50:
@@ -844,6 +886,8 @@ Select::make('feedback')
     ->label('Like this post?')
     ->boolean()
 ```
+
+<AutoScreenshot name="forms/fields/select/boolean" alt="Boolean select" version="4.x" />
 
 To customize the "Yes" label, you can use the `trueLabel` argument on the `boolean()` method:
 
@@ -928,6 +972,10 @@ ModalTableSelect::make('categories')
     ->tableConfiguration(CategoriesTable::class)
 ```
 
+<AutoScreenshot name="forms/fields/modal-table-select/simple" alt="Modal table select with selected options" version="4.x" />
+
+<AutoScreenshot name="forms/fields/modal-table-select/modal" alt="Modal table select with table open in a modal" version="4.x" />
+
 <UtilityInjection set="formFields" version="4.x">The `tableConfiguration()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the modal table select actions
@@ -993,6 +1041,8 @@ ModalTableSelect::make('categories')
     ->badgeColor('success')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Passing additional arguments to the table in a modal select
 
 You can pass arguments from your form to the table configuration class using the `tableArguments()` method. For example, this can be used to modify the table's query based on previously filled form fields:
@@ -1052,6 +1102,26 @@ class ProductsTable
     }
 }
 ```
+
+<Aside variant="danger">
+    Filtering the table's query using `modifyQueryUsing()` or `tableArguments()` is **presentational** — it only affects which records are displayed in the table for selection. It is **not** a security boundary: a user who tampers with the submitted form state can select a record that was excluded from the visible table, and it will still pass validation and be saved.
+
+    To restrict which records may actually be selected and saved, scope the field's relationship query instead, using the `modifyQueryUsing` argument of the [`relationship()` method](#customizing-the-relationship-query). Filament validates submitted values against that query, so records outside it are rejected:
+
+    ```php
+    use Filament\Forms\Components\ModalTableSelect;
+    use Illuminate\Database\Eloquent\Builder;
+
+    ModalTableSelect::make('products')
+        ->relationship(
+            name: 'products',
+            titleAttribute: 'name',
+            modifyQueryUsing: fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
+        )
+        ->multiple()
+        ->tableConfiguration(ProductsTable::class)
+    ```
+</Aside>
 
 ## Select validation
 

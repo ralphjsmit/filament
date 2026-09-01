@@ -41,6 +41,8 @@ trait InteractsWithRecord
     {
         $this->record = $record;
 
+        $this->clearVisibilityCache();
+
         return $this;
     }
 
@@ -112,35 +114,40 @@ trait InteractsWithRecord
             $this->record = $record;
         }
 
-        $ensureCorrectRecordType = function (Model | array | null $record): Model | array | null {
-            if (
-                ($record instanceof Model)
-                && filled($customModel = $this->getCustomModel())
-                && (! $record instanceof $customModel)
-            ) {
-                return null;
-            }
-
-            return $record;
-        };
-
         if ($record) {
-            return $ensureCorrectRecordType($record);
+            return $this->ensureCorrectRecordType($record);
         }
 
         if ($record = $this->getGroup()?->getRecord($withDefault)) {
-            return $ensureCorrectRecordType($record);
+            return $this->ensureCorrectRecordType($record);
         }
 
         if (($this instanceof Action) && $record = $this->getSchemaContainer()?->getRecord()) {
-            return $ensureCorrectRecordType($record);
+            return $this->ensureCorrectRecordType($record);
         }
 
         if (($this instanceof Action) && $record = $this->getSchemaComponent()?->getRecord()) {
-            return $ensureCorrectRecordType($record);
+            return $this->ensureCorrectRecordType($record);
         }
 
-        return ($withDefault && ($this instanceof Action)) ? $ensureCorrectRecordType($this->getHasActionsLivewire()?->getDefaultActionRecord($this)) : null;
+        return ($withDefault && ($this instanceof Action)) ? $this->ensureCorrectRecordType($this->getHasActionsLivewire()?->getDefaultActionRecord($this)) : null;
+    }
+
+    /**
+     * @param  Model | array<string, mixed> | null  $record
+     * @return Model | array<string, mixed> | null
+     */
+    protected function ensureCorrectRecordType(Model | array | null $record): Model | array | null
+    {
+        if (
+            ($record instanceof Model)
+            && filled($customModel = $this->getCustomModel())
+            && (! $record instanceof $customModel)
+        ) {
+            return null;
+        }
+
+        return $record;
     }
 
     public function getRecordTitle(?Model $record = null): ?string
@@ -308,15 +315,14 @@ trait InteractsWithRecord
         }
 
         $model = $this->getModel();
+        $hasActionsLivewire = ($this instanceof Action) ? $this->getHasActionsLivewire() : null;
 
         if (! $model) {
-            return $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModelLabel($this) : null;
+            return $hasActionsLivewire?->getDefaultActionModelLabel($this);
         }
 
-        $defaultModel = $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
-
-        if (($this instanceof Action) && ($model === $defaultModel)) {
-            return $this->getHasActionsLivewire()?->getDefaultActionModelLabel($this);
+        if ($hasActionsLivewire && ($model === $hasActionsLivewire->getDefaultActionModel($this))) {
+            return $hasActionsLivewire->getDefaultActionModelLabel($this);
         }
 
         return get_model_label($model);

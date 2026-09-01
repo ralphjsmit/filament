@@ -2,6 +2,7 @@
 title: Export action
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -34,6 +35,8 @@ use Filament\Actions\ExportAction;
 ExportAction::make()
     ->exporter(ProductExporter::class)
 ```
+
+<AutoScreenshot name="actions/export-action/modal" alt="Export action modal" version="4.x" />
 
 If you want to add this action to the header of a table, you may do so like this:
 
@@ -139,6 +142,38 @@ ExportAction::make()
     ->exporter(ProductExporter::class)
     ->enableVisibleTableColumnsByDefault()
 ```
+
+### Hiding an export column
+
+You may hide a column entirely by using the `hidden()` or `visible()` method. A hidden column is not shown in the column selection form, and is never written to the exported file:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('sku')
+    ->hidden()
+
+ExportColumn::make('sku')
+    ->visible()
+```
+
+To hide a column conditionally, you may pass a boolean value to either method:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('cost_price')
+    ->hidden(fn (): bool => ! auth()->user()->isAdmin())
+
+ExportColumn::make('cost_price')
+    ->visible(fn (): bool => auth()->user()->isAdmin())
+```
+
+<Aside variant="info">
+    Unlike table columns, export columns are resolved without a record, so a `hidden()` or `visible()` closure cannot depend on row data. Use it for schema-level conditions such as the authenticated user, feature flags, or configuration.
+
+    To keep a column selectable but unchecked by default instead of hiding it entirely, use [`enabledByDefault(false)`](#configuring-the-default-column-selection).
+</Aside>
 
 ### Configuring the column selection form layout
 
@@ -730,7 +765,29 @@ public function getXlsxWriterOptions(): ?Options
 }
 ```
 
-If you want to customize the XLSX writer before it is closed, you can override the `configureXlsxWriterBeforeClosing()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before it is closed:
+If you want to customize the XLSX writer immediately after it is opened, before any rows have been written, you can override the `configureXlsxWriterAfterOpen()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before the header and data rows are written. This is useful for adding custom rows, such as a title or sub-header, above the exported table:
+
+```php
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\XLSX\Writer;
+
+public function configureXlsxWriterAfterOpen(Writer $writer): Writer
+{
+    $writer->addRow(Row::fromValues(
+        ['This is a custom header added after opening the XLSX writer.'],
+        (new Style())->setShouldWrapText(false),
+    ));
+
+    return $writer;
+}
+```
+
+<Aside variant="warning">
+    Any rows you add here appear above the header row, shifting the exported table down. If you also use `configureXlsxWriterBeforeClose()` to freeze rows, remember to account for the extra rows in `setFreezeRow()`.
+</Aside>
+
+If you want to customize the XLSX writer before it is closed, you can override the `configureXlsxWriterBeforeClose()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before it is closed:
 
 ```php
 use OpenSpout\Writer\XLSX\Entity\SheetView;
@@ -749,6 +806,49 @@ public function configureXlsxWriterBeforeClose(Writer $writer): Writer
     return $writer;
 }
 ```
+
+## Customizing the completion notification
+
+When an export finishes, Filament sends a notification to the user who started it. You can customize the title and body of that notification by overriding `getCompletedNotificationTitle()` and `getCompletedNotificationBody()` on your exporter:
+
+```php
+use Filament\Actions\Exports\Models\Export;
+
+public static function getCompletedNotificationTitle(Export $export): string
+{
+    return 'Your product export is ready';
+}
+
+public static function getCompletedNotificationBody(Export $export): string
+{
+    return $export->successful_rows . ' products were exported.';
+}
+```
+
+For anything beyond the title and body — for example, changing the notification color, adding extra actions, or replacing the icon — override `modifyCompletedNotification()`. You can either mutate the `Notification` passed in and return it, or build and return a completely new one:
+
+```php
+use Filament\Actions\Action;
+use Filament\Actions\Exports\Models\Export;
+use Filament\Notifications\Notification;
+
+public static function modifyCompletedNotification(Notification $notification, Export $export): Notification
+{
+    $notification->icon('heroicon-o-shopping-bag');
+
+    if ($export->getOptions()['notifyTeam'] ?? false) {
+        $notification->actions([
+            ...$notification->getActions(),
+            Action::make('shareWithTeam')
+                ->url(route('exports.share', $export)),
+        ]);
+    }
+
+    return $notification;
+}
+```
+
+The `Export` model exposes the column mapping and options the user selected via `$export->getColumnMap()` and `$export->getOptions()`, so you can tailor the notification based on what the user exported.
 
 ## Customizing the export job
 
@@ -889,3 +989,56 @@ public function view(User $user, Export $export): bool
     return $export->user()->is($user);
 }
 ```
+
+## Security
+
+### Per-record authorization
+
+The export system does not perform per-record authorization checks. When an export is triggered, all records matching the table query (or the model's full dataset, if used outside a table) are included in the export without consulting your application's [Laravel policies](https://laravel.com/docs/authorization#creating-policies). This means that if a user is allowed to trigger an export, they may receive records they would not normally be authorized to view through your application's UI.
+
+If you need to restrict which records are exported, you should scope the query using the [`modifyQueryUsing()` method](#modifying-the-eloquent-query):
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->modifyQueryUsing(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
+```
+
+You could also apply [global scopes](https://laravel.com/docs/eloquent#global-scopes) to your model to ensure that only authorized records are ever queried.
+
+<Aside variant="danger">
+    If your application has per-record visibility rules, you should scope the export query to ensure users only receive records they are authorized to view.
+</Aside>
+
+### CSV formula injection
+
+Filament's export system writes data to CSV and XLSX files exactly as it is stored in the database, without any transformation. This means that if your database contains values beginning with characters like `=`, `+`, `-`, or `@`, they will appear unchanged in the exported file. When opened in spreadsheet software such as Microsoft Excel or Google Sheets, these values may be interpreted as formulas, which could pose a security risk if your data includes untrusted or user-submitted content. You should ensure that your users are aware of this risk, or sanitize the data before export using the [`formatStateUsing()` method](export#formatting-the-value-of-an-export-column) on each column, for example by prefixing values with a single quote (`'`) to prevent formula interpretation.
+
+Alternatively, you may opt in to Filament's built-in protection. When enabled on a column, any value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is automatically prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Enable it using the `preventFormulaInjection()` method on the column:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('description')
+    ->preventFormulaInjection()
+```
+
+If you would like to enable this protection for every export column across your application, you can use the `configureUsing()` method inside the `boot()` method of a service provider. Since this is applied to all columns, you can opt an individual column back out by passing `false` to `preventFormulaInjection()`:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::configureUsing(function (ExportColumn $column): void {
+    $column->preventFormulaInjection();
+});
+
+// Opt a specific column back out:
+ExportColumn::make('temperature')
+    ->preventFormulaInjection(false)
+```
+
+<Aside variant="warning">
+    This protection is **opt in** and disabled by default, because prefixing a single quote alters legitimate data. For example, values such as `-5` or a phone number like `+44 1234 567890` are valid formula triggers and would be rewritten to `'-5` and `'+44 1234 567890`. Only enable it when you are exporting untrusted or user-submitted content, and make sure the transformation is acceptable for the columns you enable it on.
+</Aside>

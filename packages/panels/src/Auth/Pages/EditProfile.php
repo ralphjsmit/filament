@@ -2,6 +2,8 @@
 
 namespace Filament\Auth\Pages;
 
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
@@ -12,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Pages\Concerns;
 use Filament\Pages\Page;
+use Filament\Pages\PageConfiguration;
 use Filament\Panel;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
@@ -31,11 +34,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Js;
 use Illuminate\Validation\Rules\Password;
 use League\Uri\Components\Query;
 use LogicException;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -46,6 +51,7 @@ class EditProfile extends Page
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasMaxWidth;
     use Concerns\HasTopbar;
+    use WithRateLimiting;
 
     /**
      * @var array<string, mixed> | null
@@ -115,17 +121,17 @@ class EditProfile extends Page
         $this->callHook('afterFill');
     }
 
-    public static function registerRoutes(Panel $panel): void
+    public static function registerRoutes(Panel $panel, ?PageConfiguration $configuration = null): void
     {
         if (filled(static::getCluster())) {
             Route::name(static::prependClusterRouteBaseName($panel, ''))
                 ->prefix(static::prependClusterSlug($panel, ''))
-                ->group(fn () => static::routes($panel));
+                ->group(fn () => static::routes($panel, $configuration));
 
             return;
         }
 
-        static::routes($panel);
+        static::routes($panel, $configuration);
     }
 
     public static function getRouteName(?Panel $panel = null): string
@@ -148,13 +154,36 @@ class EditProfile extends Page
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    protected function mutateFormDataBeforeSave(array $data): array
+    protected function mutateFormDataBeforeSave(#[SensitiveParameter] array $data): array
     {
         return $data;
     }
 
     public function save(): void
     {
+        try {
+            $this->rateLimit(5);
+        } catch (TooManyRequestsException $exception) {
+            $this->getRateLimitedNotification($exception)?->send();
+
+            return;
+        }
+
+        $rateLimitingKey = 'filament-edit-profile:' . Filament::auth()->id();
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'save',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
         try {
             $this->beginDatabaseTransaction();
 
@@ -204,7 +233,7 @@ class EditProfile extends Page
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function handleRecordUpdate(Model $record, array $data): Model
+    protected function handleRecordUpdate(Model $record, #[SensitiveParameter] array $data): Model
     {
         if (Filament::hasEmailChangeVerification() && array_key_exists('email', $data)) {
             $this->sendEmailChangeVerification($record, $data['email']);
@@ -263,7 +292,7 @@ class EditProfile extends Page
 
         if (
             (! is_array($recipient))
-            || (! array_key_exists($currentEmail, $recipient))
+            || (! array_key_exists($currentEmail ?? '', $recipient))
         ) {
             return $newEmail;
         }
@@ -295,6 +324,20 @@ class EditProfile extends Page
     protected function getSavedNotificationTitle(): ?string
     {
         return __('filament-panels::auth/pages/edit-profile.notifications.saved.title');
+    }
+
+    protected function getRateLimitedNotification(TooManyRequestsException $exception): ?FilamentNotification
+    {
+        return FilamentNotification::make()
+            ->title(__('filament-panels::auth/pages/edit-profile.notifications.throttled.title', [
+                'seconds' => $exception->secondsUntilAvailable,
+                'minutes' => $exception->minutesUntilAvailable,
+            ]))
+            ->body(array_key_exists('body', __('filament-panels::auth/pages/edit-profile.notifications.throttled') ?: []) ? __('filament-panels::auth/pages/edit-profile.notifications.throttled.body', [
+                'seconds' => $exception->secondsUntilAvailable,
+                'minutes' => $exception->minutesUntilAvailable,
+            ]) : null)
+            ->danger();
     }
 
     protected function getRedirectUrl(): ?string
@@ -332,8 +375,8 @@ class EditProfile extends Page
             ->rule(Password::default())
             ->showAllValidationMessages()
             ->autocomplete('new-password')
-            ->dehydrated(fn ($state): bool => filled($state))
-            ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
+            ->dehydrated(fn (#[SensitiveParameter] $state): bool => filled($state))
+            ->dehydrateStateUsing(fn (#[SensitiveParameter] $state): string => Hash::make($state))
             ->live(debounce: 500)
             ->same('passwordConfirmation');
     }

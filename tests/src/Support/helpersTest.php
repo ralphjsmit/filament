@@ -50,6 +50,23 @@ it('will prepare data attributes', function (): void {
     ]);
 });
 
+it('preserves numeric keys in `prepare_inherited_attributes()`', function (array $originalAttributes, array $expectedAttributes): void {
+    $bag = new ComponentAttributeBag($originalAttributes);
+
+    $attributes = prepare_inherited_attributes($bag);
+
+    expect($attributes->getAttributes())->toBe($expectedAttributes);
+})->with([
+    'integer key' => [
+        [1 => 'integer'],
+        ['integer', 'integer'],
+    ],
+    'numeric string key' => [
+        ['01' => 'numeric string'],
+        ['01' => 'numeric string'],
+    ],
+]);
+
 it('can handle policy being an object when method does not exist', function (): void {
     Filament::getCurrentOrDefaultPanel()->strictAuthorization();
 
@@ -111,6 +128,7 @@ it('will generate a column expression for Postgres with colons in the table name
 
     $databaseConnection = Mockery::mock(Connection::class);
     $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getTablePrefix')->andReturn('');
     $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
 
     $grammar = new PostgresGrammar($databaseConnection);
@@ -123,6 +141,26 @@ it('will generate a column expression for Postgres with colons in the table name
     ->with([
         ['blog:posts.title', 'lower("blog:posts"."title"::text)'],
         ['blog:posts:comments.author.name', 'lower("blog:posts:comments"."author"."name"::text)'],
+    ]);
+
+it('will generate a search column expression for Postgres with a table prefix', function (string $column, string $expectedExpression): void {
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getTablePrefix')->andReturn('app_');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $actualExpression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($actualExpression->getValue($grammar))
+        ->toBe($expectedExpression);
+})
+    ->with([
+        ['posts.title', 'lower("app_posts"."title"::text)'],
+        ['posts.data->name', "lower(\"app_posts\".\"data\"->>'name'::text)"],
     ]);
 
 it('will generate a JSON search column expression for Postgres with explicit ->> operator', function (): void {
